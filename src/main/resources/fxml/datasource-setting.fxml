@@ -19,7 +19,6 @@
                    fx:id="password"/>
         <TextField layoutX="425.0" layoutY="35.0" prefHeight="23.0" prefWidth="55.0" promptText="port" text="3306" fx:id="port"/>
         <Button layoutX="350.0" layoutY="230.0" mnemonicParsing="false" onAction="#close" text="Cancel"/>
-        <Button layoutX="425.0" layoutY="230.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0"
-                prefWidth="55.0" text="Apply"/>
+        <Button layoutX="425.0" layoutY="230.0" mnemonicParsing="false" onAction="#apply" text="Apply"/>
     </children>
 </AnchorPane>

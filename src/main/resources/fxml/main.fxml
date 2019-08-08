@@ -28,7 +28,9 @@
             <items>
                 <BorderPane prefHeight="200.0" prefWidth="200.0">
                     <center>
-                        <TreeView fx:id="treeView" prefHeight="373.0" prefWidth="200.0"/>
+                        <TreeView prefHeight="373.0" prefWidth="200.0" >
+                            <TreeItem fx:id="treeItem1" expanded="true" value="数据源"/>
+                        </TreeView>
                     </center>
                 </BorderPane>
                 <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F4F4F4;"/>
