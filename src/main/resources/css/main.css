@@ -1,0 +1,30 @@
+.button {
+    -fx-background-color: #BFBFBF;
+    -fx-background-radius: 0em;
+}
+
+.button:hover {
+    -fx-background-color: #fff;
+}
+
+.button:pressed {
+    -fx-background-color: #fff;
+}
+
+.button:focused {
+    -fx-background-color: #fff;
+}
+
+.anchorPane{
+    -fx-background-color: #BFBFBF;
+}
+
+/*split-pane*/
+.split-pane:horizontal > .split-pane-divider {
+    /*-fx-background-color: black;*/
+    -fx-padding: 0 0 0 0;
+}
+
+.border1 {
+    -fx-border-width: 0;
+}

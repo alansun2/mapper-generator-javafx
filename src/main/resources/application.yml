@@ -1,0 +1,17 @@
+spring:
+  profiles:
+    active: test
+  #jackson日期格式化
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+#    locale: zh_CN
+#    time-zone: GMT+8
+#    default-property-inclusion: non_empty
+  datasource:
+    url: jdbc:mysql://192.168.34.131:3306/ehu_presell?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=CTT
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  main:
+    allow-bean-definition-overriding: true
