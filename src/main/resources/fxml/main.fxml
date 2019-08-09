@@ -1,23 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<BorderPane fx:id="borderPane" prefHeight="400.0" prefWidth="600.0" styleClass="border1" stylesheets="@../css/main.css"
-            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.alan344.controller.MainController">
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TreeItem?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+
+<BorderPane fx:id="borderPane" prefHeight="400.0" prefWidth="600.0" styleClass="border1" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.MainController">
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
             <menus>
                 <Menu mnemonicParsing="false" text="文件">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源"/>
-                        <MenuItem mnemonicParsing="false" text="退出" onAction="#exit"/>
+                        <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源" />
+                        <MenuItem mnemonicParsing="false" onAction="#exit" text="退出" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="帮助">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="关于"/>
-                        <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github"/>
+                        <MenuItem mnemonicParsing="false" text="关于" />
+                        <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github" />
                     </items>
                 </Menu>
             </menus>
@@ -28,21 +36,35 @@
             <items>
                 <BorderPane prefHeight="200.0" prefWidth="200.0">
                     <center>
-                        <TreeView fx:id="treeViewDataSource" fixedCellSize="25" prefHeight="373.0" prefWidth="200.0"
-                                  showRoot="false">
-                            <TreeItem fx:id="treeItemRoot"/>
+                        <TreeView fx:id="treeViewDataSource" fixedCellSize="25" prefHeight="373.0" prefWidth="200.0" showRoot="false">
+                            <TreeItem fx:id="treeItemRoot" />
                             <contextMenu>
                                 <ContextMenu>
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="导出" onAction="#export"/>
-                                        <MenuItem mnemonicParsing="false" text="删除" onAction="#deleteDataSource"/>
+                                        <MenuItem mnemonicParsing="false" onAction="#export" text="导出" />
+                                        <MenuItem mnemonicParsing="false" onAction="#deleteDataSource" text="删除" />
                                     </items>
                                 </ContextMenu>
                             </contextMenu>
                         </TreeView>
                     </center>
                 </BorderPane>
-                <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F4F4F4;"/>
+                <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F4F4F4;">
+               <center>
+                  <ListView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+               </center>
+               <top>
+                  <HBox alignment="CENTER" prefHeight="43.0" prefWidth="538.0" spacing="10.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <CheckBox mnemonicParsing="false" text="insert返回id" />
+                        <CheckBox mnemonicParsing="false" text="insert" />
+                        <CheckBox mnemonicParsing="false" text="count" />
+                        <CheckBox mnemonicParsing="false" text="update" />
+                        <CheckBox mnemonicParsing="false" text="delete" />
+                        <CheckBox mnemonicParsing="false" text="select" />
+                     </children>
+                  </HBox>
+               </top></BorderPane>
             </items>
         </SplitPane>
     </center>

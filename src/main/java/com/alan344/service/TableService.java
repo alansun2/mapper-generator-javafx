@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.collections.ObservableList;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -119,6 +120,14 @@ public class TableService {
             FileUtils.forceDelete(new File(BaseConstants.MG_TABLE_HOME + dataSource.toString()));
         } catch (IOException e) {
             log.error("删除表文件错误", e);
+        }
+    }
+
+    public void gen(ObservableList<TreeItem<DataItem>> tableTreeItems, ListView<Table> tableListView) {
+        for (TreeItem<DataItem> tableTreeItem : tableTreeItems) {
+            Table table = (Table) tableTreeItem.getValue();
+
+
         }
     }
 }
