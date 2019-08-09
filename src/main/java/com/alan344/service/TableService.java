@@ -8,9 +8,16 @@ import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.zaxxer.hikari.HikariDataSource;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -123,11 +130,30 @@ public class TableService {
         }
     }
 
-    public void gen(ObservableList<TreeItem<DataItem>> tableTreeItems, ListView<Table> tableListView) {
-        for (TreeItem<DataItem> tableTreeItem : tableTreeItems) {
-            Table table = (Table) tableTreeItem.getValue();
+    public void setListView(List<Table> tables, ListView<AnchorPane> tableListView) {
+        ObservableList<AnchorPane> anchorPanes = FXCollections.observableArrayList();
+        tableListView.setItems(anchorPanes);
+        for (Table table : tables) {
+            CheckBox returnId = new CheckBox("insert返回id");
+            CheckBox insert = new CheckBox("insert");
+            CheckBox count = new CheckBox("count");
+            CheckBox update = new CheckBox("update");
+            CheckBox delete = new CheckBox("delete");
+            CheckBox select = new CheckBox("select");
+            HBox hBox = new HBox(10, returnId, insert, count, update, delete, select);
+            hBox.setAlignment(Pos.CENTER);
 
+            BorderPane borderPane = new BorderPane(hBox);
 
+            Label tableNameLabel = new Label(table.getTableName());
+            tableNameLabel.setPrefWidth(150d);
+//            AnchorPane.setLeftAnchor(tableNameLabel, 10d);
+            double v = tableNameLabel.getLayoutX() + tableNameLabel.getPrefWidth() + 10d;
+            AnchorPane.setLeftAnchor(borderPane, v);
+            AnchorPane anchorPane = new AnchorPane(tableNameLabel, borderPane);
+            anchorPane.setPrefHeight(100);
+
+            anchorPanes.add(anchorPane);
         }
     }
 }
