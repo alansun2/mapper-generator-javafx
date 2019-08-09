@@ -1,6 +1,7 @@
 package com.alan344;
 
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -27,6 +28,8 @@ public class MapperGenApplication extends Application {
         ConfigurableApplicationContext run = SpringApplication.run(MapperGenApplication.class);
         fxmlLoader = new FXMLLoader();
         fxmlLoader.setControllerFactory(run::getBean);
+        HostServices hostServices = getHostServices();
+        run.getBeanFactory().registerSingleton("hostServices", hostServices);
     }
 
     @Override

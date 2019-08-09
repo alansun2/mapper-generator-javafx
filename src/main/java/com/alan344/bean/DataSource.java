@@ -9,7 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DataSource {
+public class DataSource implements DataItem {
 
     private String host;
 
@@ -20,4 +20,15 @@ public class DataSource {
     private String user;
 
     private String password;
+
+    private String driveName;
+
+    @Override
+    public String toString() {
+        if (this.host == null) {
+            return "空";
+        } else {
+            return this.host + "@" + this.database;
+        }
+    }
 }

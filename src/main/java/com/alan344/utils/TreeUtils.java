@@ -8,8 +8,9 @@ import javafx.scene.control.TreeItem;
  */
 public class TreeUtils {
 
-    public static void add2Tree(String treeName, TreeItem<String> node) {
-        TreeItem<String> item = new TreeItem<>(treeName);
-        node.getChildren().add(item);
+    public static <T> TreeItem<T> add2Tree(T content, TreeItem<T> parent) {
+        TreeItem<T> item = new TreeItem<>(content);
+        parent.getChildren().add(item);
+        return item;
     }
 }

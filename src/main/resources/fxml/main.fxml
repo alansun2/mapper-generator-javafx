@@ -11,25 +11,34 @@
                 <Menu mnemonicParsing="false" text="文件">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源"/>
-                        <MenuItem mnemonicParsing="false" text="退出"/>
+                        <MenuItem mnemonicParsing="false" text="退出" onAction="#exit"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="帮助">
                     <items>
                         <MenuItem mnemonicParsing="false" text="关于"/>
+                        <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github"/>
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
     </top>
     <center>
-        <SplitPane dividerPositions="0.1" prefHeight="160.0" prefWidth="200.0"
-                   BorderPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.1" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <items>
                 <BorderPane prefHeight="200.0" prefWidth="200.0">
                     <center>
-                        <TreeView prefHeight="373.0" prefWidth="200.0" >
-                            <TreeItem fx:id="treeItem1" expanded="true" value="数据源"/>
+                        <TreeView fx:id="treeViewDataSource" fixedCellSize="25" prefHeight="373.0" prefWidth="200.0"
+                                  showRoot="false">
+                            <TreeItem fx:id="treeItemRoot"/>
+                            <contextMenu>
+                                <ContextMenu>
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="导出" onAction="#export"/>
+                                        <MenuItem mnemonicParsing="false" text="删除" onAction="#deleteDataSource"/>
+                                    </items>
+                                </ContextMenu>
+                            </contextMenu>
                         </TreeView>
                     </center>
                 </BorderPane>
