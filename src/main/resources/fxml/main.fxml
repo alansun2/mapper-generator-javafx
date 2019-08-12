@@ -24,7 +24,7 @@
         </MenuBar>
     </top>
     <center>
-        <SplitPane dividerPositions="0.1" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <SplitPane dividerPositions="0.1" BorderPane.alignment="CENTER">
             <items>
                 <BorderPane prefHeight="200.0" prefWidth="200.0">
                     <center>
@@ -34,13 +34,13 @@
                         </TreeView>
                     </center>
                 </BorderPane>
-                <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #F4F4F4;">
+                <BorderPane fx:id="borderPane1" style="-fx-background-color: #F4F4F4;">
                     <center>
                         <ListView fx:id="anchorPaneListView" prefHeight="200.0" prefWidth="200.0"
                                   BorderPane.alignment="CENTER"/>
                     </center>
                     <top>
-                        <HBox alignment="CENTER" prefHeight="43.0" prefWidth="538.0" spacing="10.0"
+                        <HBox alignment="CENTER" prefHeight="50.0" spacing="20.0"
                               BorderPane.alignment="CENTER">
                             <children>
                                 <CheckBox mnemonicParsing="false" text="insert返回id"/>
@@ -49,6 +49,7 @@
                                 <CheckBox mnemonicParsing="false" text="update"/>
                                 <CheckBox mnemonicParsing="false" text="delete"/>
                                 <CheckBox mnemonicParsing="false" text="select"/>
+                                <Button mnemonicParsing="false" text="导出" onAction="#exportXml"/>
                             </children>
                         </HBox>
                     </top>

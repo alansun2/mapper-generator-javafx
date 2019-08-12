@@ -1,5 +1,6 @@
 package com.alan344.service;
 
+import com.alan344.bean.Column;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
@@ -15,9 +16,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -130,30 +130,47 @@ public class TableService {
         }
     }
 
-    public void setListView(List<Table> tables, ListView<AnchorPane> tableListView) {
-        ObservableList<AnchorPane> anchorPanes = FXCollections.observableArrayList();
+    public void setListView(List<Table> tables, ListView<VBox> tableListView) {
+        ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
         tableListView.setItems(anchorPanes);
         for (Table table : tables) {
+            Label tableNameLabel = new Label(table.getTableName());
+            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
+
+            HBox hBox = new HBox(tableNameLabel);
+            hBox.setAlignment(Pos.CENTER);
+
             CheckBox returnId = new CheckBox("insert返回id");
             CheckBox insert = new CheckBox("insert");
             CheckBox count = new CheckBox("count");
             CheckBox update = new CheckBox("update");
             CheckBox delete = new CheckBox("delete");
             CheckBox select = new CheckBox("select");
-            HBox hBox = new HBox(10, returnId, insert, count, update, delete, select);
-            hBox.setAlignment(Pos.CENTER);
+            HBox hBox2 = new HBox(20, returnId, insert, count, update, delete, select);
+            hBox2.setAlignment(Pos.CENTER);
 
-            BorderPane borderPane = new BorderPane(hBox);
+            VBox vBox = new VBox(10, hBox, hBox2);
 
-            Label tableNameLabel = new Label(table.getTableName());
-            tableNameLabel.setPrefWidth(150d);
-//            AnchorPane.setLeftAnchor(tableNameLabel, 10d);
-            double v = tableNameLabel.getLayoutX() + tableNameLabel.getPrefWidth() + 10d;
-            AnchorPane.setLeftAnchor(borderPane, v);
-            AnchorPane anchorPane = new AnchorPane(tableNameLabel, borderPane);
-            anchorPane.setPrefHeight(100);
-
-            anchorPanes.add(anchorPane);
+            anchorPanes.add(vBox);
         }
+    }
+
+    /**
+     * 获取表的
+     *
+     * @param tableName tableName
+     * @return 字段数组
+     */
+    public List<Column> getColumns(String tableName) {
+        List<Column> columns = new ArrayList<>();
+        jdbcTemplate.query("DESC " + tableName, (rs, rowNum) -> {
+            Column column = new Column();
+            column.setColumnName(rs.getString(1));
+            column.setType(rs.getString(2));
+            columns.add(column);
+            return column;
+        });
+
+        return columns;
     }
 }
