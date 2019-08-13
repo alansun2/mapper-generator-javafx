@@ -156,7 +156,7 @@ public class TableService {
     }
 
     /**
-     * 获取表的
+     * 获取表的字段
      *
      * @param tableName tableName
      * @return 字段数组

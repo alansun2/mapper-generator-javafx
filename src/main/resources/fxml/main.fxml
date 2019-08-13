@@ -14,6 +14,8 @@
                         <MenuItem mnemonicParsing="false" onAction="#exit" text="退出"/>
                     </items>
                 </Menu>
+                <Menu mnemonicParsing="false" text="设置" onAction="#generateConfig">
+                </Menu>
                 <Menu mnemonicParsing="false" text="帮助">
                     <items>
                         <MenuItem mnemonicParsing="false" text="关于"/>

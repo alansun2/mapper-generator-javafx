@@ -10,7 +10,7 @@
         <Label layoutX="44.0" layoutY="53.0" text="导出地址:" />
         <TextField fx:id="exportLocationText" layoutX="102.0" layoutY="49.0" prefHeight="23.0" prefWidth="228.0" />
         <Button layoutX="350.0" layoutY="49.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-        <Button layoutX="266.0" layoutY="120.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="64.0" text="取消" />
+        <Button layoutX="266.0" layoutY="120.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="64.0" text="取消" onAction="#cancel"/>
         <Button layoutX="350.0" layoutY="120.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="64.0" text="应用" onAction="#apply" />
     </children>
 </AnchorPane>

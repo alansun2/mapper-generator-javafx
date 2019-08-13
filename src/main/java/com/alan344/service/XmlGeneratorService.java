@@ -44,6 +44,7 @@ public class XmlGeneratorService {
         context.addAttribute("targetRuntime", "MyBatis3");
 
         Element commentGenerator = context.addElement("commentGenerator");
+        commentGenerator.addAttribute("type", "com.alan344.utils.MyCommentGenerator");
         Element suppressAllCommentsPro = commentGenerator.addElement("property");
         suppressAllCommentsPro.addAttribute("name", "suppressAllComments");
         suppressAllCommentsPro.addAttribute("value", "false");
@@ -58,10 +59,15 @@ public class XmlGeneratorService {
         authorPro.addAttribute("value", "AlanSun");
 
         Element jdbcConnection = context.addElement("jdbcConnection");
-        jdbcConnection.addAttribute("driverClass", "com.mysql.jdbc.Driver");
-        jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://test.ehoo100.com/ehu_presell");
+        jdbcConnection.addAttribute("driverClass", "com.mysql.cj.jdbc.Driver");
+        jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://test.ehoo100.com/ehu_presell?nullCatalogMeansCurrent=true");
         jdbcConnection.addAttribute("userId", "root");
         jdbcConnection.addAttribute("password", "eHu2016");
+
+        Element javaTypeResolver = context.addElement("javaTypeResolver");
+        Element useJSR310TypesProperty = javaTypeResolver.addElement("property");
+        useJSR310TypesProperty.addAttribute("name", "useJSR310Types");
+        useJSR310TypesProperty.addAttribute("value", "true");
 
         Element javaModelGenerator = context.addElement("javaModelGenerator");
         javaModelGenerator.addAttribute("targetPackage", "com.ehu.bean.model");
@@ -69,7 +75,7 @@ public class XmlGeneratorService {
 
         Element sqlMapGenerator = context.addElement("sqlMapGenerator");
         sqlMapGenerator.addAttribute("targetPackage", ".");
-        sqlMapGenerator.addAttribute("targetProject", "./src/main/resources/mapper");
+        sqlMapGenerator.addAttribute("targetProject", "D:/mapper");
 
         Element javaClientGenerator = context.addElement("javaClientGenerator");
         javaClientGenerator.addAttribute("targetPackage", "com.ehu.mapper");
@@ -81,25 +87,25 @@ public class XmlGeneratorService {
             Label tableNameLabel = (Label) ((HBox) children.get(0)).getChildren().get(0);
             Element table = context.addElement("table");
             table.addAttribute("tableName", tableNameLabel.getText());
+            table.addAttribute("enableSelectByExample", "true");
         }
-
-        OutputFormat outputFormat = OutputFormat.createPrettyPrint();
-//        outputFormat.setIndent(true); //设置是否缩进
-//        outputFormat.setIndent("\t"); //以四个空格方式实现缩进
-//        outputFormat.setNewlines(true); //设置是否换行
-//        outputFormat.setLineSeparator("\n\n");
 
         String generatorConfigName = System.getProperty("user.dir") + "/generatorConfig.xml";
         Writer fileWriter = new FileWriter(generatorConfigName);
-        XMLWriter xmlWriter = new HRXMLWriter(fileWriter, outputFormat);
+        XMLWriter xmlWriter = new HRXMLWriter(fileWriter, OutputFormat.createPrettyPrint());
         xmlWriter.write(document);
         xmlWriter.close();
 
-
-        testGenerateMyBatis3WithInvalidConfig(generatorConfigName);
+        this.generateMyBatis3WithInvalidConfig(generatorConfigName);
     }
 
-    private void testGenerateMyBatis3WithInvalidConfig(String fileName) throws Exception {
+    /**
+     * 调用mybatis-generator
+     *
+     * @param fileName 配置文件地址
+     * @throws Exception e
+     */
+    private void generateMyBatis3WithInvalidConfig(String fileName) throws Exception {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(new FileInputStream(fileName));
@@ -108,9 +114,9 @@ public class XmlGeneratorService {
 
         try {
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
-            myBatisGenerator.generate(null, null, null, false);
+            myBatisGenerator.generate(null, null, null);
         } catch (InvalidConfigurationException e) {
-            log.error("生成xml", e);
+            log.error("生成mapper error", e);
         }
     }
 }

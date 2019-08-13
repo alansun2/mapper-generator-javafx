@@ -1,5 +1,7 @@
 package com.alan344.controller;
 
+import com.alan344.bean.GeneratorConfig;
+import com.alan344.service.ExportService;
 import com.alan344.service.XmlGeneratorService;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author AlanSun
@@ -36,9 +39,21 @@ public class ExportController {
     @Autowired
     private XmlGeneratorService xmlGeneratorService;
 
+    @Autowired
+    private ExportService exportService;
+
     private Stage dateSourceStage;
 
     void export(Stage primaryStage) throws IOException {
+        //加载配置文件
+        List<GeneratorConfig> generatorConfigs = exportService.loadConfigFromFile();
+
+        if (generatorConfigs != null) {
+            generatorConfigs.forEach(generatorConfig -> {
+
+            });
+        }
+
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
         fxmlLoader.setControllerFactory(applicationContext::getBean);
@@ -48,7 +63,7 @@ public class ExportController {
         dateSourceStage = new Stage();
         dateSourceStage.setScene(new Scene(load));
         dateSourceStage.setResizable(false);
-        dateSourceStage.setTitle("生成");
+        dateSourceStage.setTitle("生成mapper");
         dateSourceStage.initModality(Modality.WINDOW_MODAL);
         dateSourceStage.initOwner(primaryStage);
         dateSourceStage.show();
@@ -57,9 +72,19 @@ public class ExportController {
     /**
      * 应用生成xml,并生成bean
      */
+    @FXML
     public void apply() throws Exception {
         ListView<VBox> anchorPaneListView = mainController.getAnchorPaneListView();
         ObservableList<VBox> items = anchorPaneListView.getItems();
         xmlGeneratorService.generatorXml(items);
+        dateSourceStage.close();
+    }
+
+    /**
+     * 关闭
+     */
+    @FXML
+    public void cancel() {
+        dateSourceStage.close();
     }
 }

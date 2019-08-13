@@ -20,7 +20,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -157,6 +157,11 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    public void generateConfig() throws IOException {
+        exportController.export((Stage) borderPane.getScene().getWindow());
+    }
+
+    @FXML
     public void openGithub() {
         HostServices hostServices = beanFactory.getBean(HostServices.class);
         hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
@@ -232,7 +237,7 @@ public class MainController implements Initializable {
     private void expand() {
         VBox selectedItem = anchorPaneListView.getSelectionModel().getSelectedItem();
 
-        String tableName = ((Label) (((GridPane) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
+        String tableName = ((Label) (((HBox) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
         List<Column> columns = tableService.getColumns(tableName);
 
         ObservableList<Column> gridPanes = FXCollections.observableArrayList(columns);
