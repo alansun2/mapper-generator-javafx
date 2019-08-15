@@ -1,8 +1,10 @@
 package com.alan344.service;
 
+import com.alan344.constants.BaseConstants;
 import com.alan344.utils.HRXMLWriter;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -33,6 +35,12 @@ import java.util.List;
 @Service
 public class XmlGeneratorService {
 
+    /**
+     * xml导出
+     *
+     * @param vBoxes
+     * @throws Exception
+     */
     public void generatorXml(ObservableList<VBox> vBoxes) throws Exception {
         Document document = DocumentHelper.createDocument();
         document.addDocType("generatorConfiguration", "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN", "mybatis-generator-config_1_0.dtd");
@@ -60,9 +68,9 @@ public class XmlGeneratorService {
 
         Element jdbcConnection = context.addElement("jdbcConnection");
         jdbcConnection.addAttribute("driverClass", "com.mysql.cj.jdbc.Driver");
-        jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://test.ehoo100.com/ehu_presell?nullCatalogMeansCurrent=true");
-        jdbcConnection.addAttribute("userId", "root");
-        jdbcConnection.addAttribute("password", "eHu2016");
+        jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://" + BaseConstants.currentDateSource.getHost() + "/" + BaseConstants.currentDateSource.getDatabase() + "?nullCatalogMeansCurrent=true");
+        jdbcConnection.addAttribute("userId", BaseConstants.currentDateSource.getUser());
+        jdbcConnection.addAttribute("password", BaseConstants.currentDateSource.getPassword());
 
         Element javaTypeResolver = context.addElement("javaTypeResolver");
         Element useJSR310TypesProperty = javaTypeResolver.addElement("property");
@@ -74,8 +82,8 @@ public class XmlGeneratorService {
         javaModelGenerator.addAttribute("targetProject", "./src/main/java");
 
         Element sqlMapGenerator = context.addElement("sqlMapGenerator");
-        sqlMapGenerator.addAttribute("targetPackage", ".");
-        sqlMapGenerator.addAttribute("targetProject", "D:/mapper");
+        sqlMapGenerator.addAttribute("targetPackage", "mapper");
+        sqlMapGenerator.addAttribute("targetProject", "./src/main/java");
 
         Element javaClientGenerator = context.addElement("javaClientGenerator");
         javaClientGenerator.addAttribute("targetPackage", "com.ehu.mapper");
@@ -87,7 +95,18 @@ public class XmlGeneratorService {
             Label tableNameLabel = (Label) ((HBox) children.get(0)).getChildren().get(0);
             Element table = context.addElement("table");
             table.addAttribute("tableName", tableNameLabel.getText());
-            table.addAttribute("enableSelectByExample", "true");
+
+//            CheckBox insertReturnCheckBox = (CheckBox) ((HBox) children.get(1)).getChildren().get(0);
+
+
+            this.checkBoxSelected("enableInsert", 1, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableCountByExample", 2, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableUpdateByPrimaryKey", 3, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableUpdateByExample", 3, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableDeleteByPrimaryKey", 4, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableDeleteByExample", 4, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableSelectByExample", 5, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableSelectByPrimaryKey", 5, table, ((HBox) children.get(1)));
         }
 
         String generatorConfigName = System.getProperty("user.dir") + "/generatorConfig.xml";
@@ -97,6 +116,15 @@ public class XmlGeneratorService {
         xmlWriter.close();
 
         this.generateMyBatis3WithInvalidConfig(generatorConfigName);
+    }
+
+    private void checkBoxSelected(String name, int index, Element table, HBox hBox) {
+        CheckBox checkBox = (CheckBox) hBox.getChildren().get(index);
+        if (checkBox.isSelected()) {
+            table.addAttribute(name, Boolean.TRUE.toString());
+        } else {
+            table.addAttribute(name, Boolean.FALSE.toString());
+        }
     }
 
     /**

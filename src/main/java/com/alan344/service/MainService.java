@@ -23,7 +23,7 @@ public class MainService {
         //添加展开监听
         dataItemTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
             //没有则区远程拉去数据库表列表
-            tableService.expandTables(event.getTreeItem());
+            tableService.loadTables(event.getTreeItem());
         });
 
         return dataItemTreeItem;

@@ -45,12 +45,12 @@
                         <HBox alignment="CENTER" prefHeight="50.0" spacing="20.0"
                               BorderPane.alignment="CENTER">
                             <children>
-                                <CheckBox mnemonicParsing="false" text="insert返回id"/>
-                                <CheckBox mnemonicParsing="false" text="insert"/>
-                                <CheckBox mnemonicParsing="false" text="count"/>
-                                <CheckBox mnemonicParsing="false" text="update"/>
-                                <CheckBox mnemonicParsing="false" text="delete"/>
-                                <CheckBox mnemonicParsing="false" text="select"/>
+                                <CheckBox fx:id="insertReturnCheckBox" mnemonicParsing="false" text="insert返回id"/>
+                                <CheckBox fx:id="insertCheckBox" mnemonicParsing="false" text="insert"/>
+                                <CheckBox fx:id="countCheckBox" mnemonicParsing="false" text="count"/>
+                                <CheckBox fx:id="updateCheckBox" mnemonicParsing="false" text="update"/>
+                                <CheckBox fx:id="deleteCheckBox" mnemonicParsing="false" text="delete"/>
+                                <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select"/>
                                 <Button mnemonicParsing="false" text="导出" onAction="#exportXml"/>
                             </children>
                         </HBox>

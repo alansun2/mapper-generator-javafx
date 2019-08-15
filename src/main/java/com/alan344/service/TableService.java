@@ -8,6 +8,8 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,7 +52,7 @@ public class TableService {
      *
      * @param dataSourceTreeItem 数据源的item
      */
-    void expandTables(TreeItem<DataItem> dataSourceTreeItem) {
+    void loadTables(TreeItem<DataItem> dataSourceTreeItem) {
         ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
 
         //当dataSourceTreeItem下只有一个item，并且该item是之前填充的item时才进行拉去table的操作
@@ -73,12 +75,33 @@ public class TableService {
 
                         tables.add(table);
                     });
+                    //写入文件
                     this.downLoadToFile(dataSource, tables);
                 }
             } catch (Exception e) {
                 log.error("数据源有问题" + dataSource, e);
             }
         }
+    }
+
+    /**
+     * 刷新tables
+     *
+     * @param dataSourceTreeItem 数据源 treeItem
+     */
+    public void refreshTables(TreeItem<DataItem> dataSourceTreeItem) {
+        File tableAddress = new File(BaseConstants.MG_TABLE_HOME);
+        try {
+            FileUtils.deleteDirectory(tableAddress);
+        } catch (IOException e) {
+            log.error("io错误", e);
+            return;
+        }
+        ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
+        children.remove(0, children.size());
+        //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
+        TreeUtils.add2Tree(new DataSource(), dataSourceTreeItem);
+        loadTables(dataSourceTreeItem);
     }
 
     /**
@@ -105,7 +128,6 @@ public class TableService {
             }
         }
         return true;
-
     }
 
     /**
@@ -113,8 +135,7 @@ public class TableService {
      */
     @Async
     public void downLoadToFile(DataSource dataSource, List<Table> tables) throws IOException {
-        String tablesStr = JSON.toJSONString(tables);
-
+        String tablesStr = JSON.toJSONString(tables, true);
         FileUtils.writeStringToFile(new File(BaseConstants.MG_TABLE_HOME + dataSource.toString()), tablesStr);
     }
 

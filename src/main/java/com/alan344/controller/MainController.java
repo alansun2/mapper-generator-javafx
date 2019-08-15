@@ -4,6 +4,7 @@ import com.alan344.bean.Column;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import com.alan344.constants.BaseConstants;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Toast;
@@ -61,6 +62,19 @@ public class MainController implements Initializable {
     @FXML
     private TreeView<DataItem> treeViewDataSource;
 
+    @FXML
+    private CheckBox insertReturnCheckBox;
+    @FXML
+    private CheckBox insertCheckBox;
+    @FXML
+    private CheckBox countCheckBox;
+    @FXML
+    private CheckBox updateCheckBox;
+    @FXML
+    private CheckBox deleteCheckBox;
+    @FXML
+    private CheckBox selectCheckBox;
+
     @Autowired
     private DateSourceController dateSourceController;
 
@@ -94,10 +108,12 @@ public class MainController implements Initializable {
                     menuItem.setOnAction(event1 -> export());
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
 
+                        MenuItem menuItem4 = new MenuItem("刷新");
+                        menuItem4.setOnAction(event1 -> refreshDataSource());
                         MenuItem menuItem2 = new MenuItem("修改数据源");
                         MenuItem menuItem3 = new MenuItem("删除数据源");
                         menuItem3.setOnAction(event1 -> deleteDataSource());
-                        contextMenu = new ContextMenu(menuItem, menuItem2, menuItem3);
+                        contextMenu = new ContextMenu(menuItem, menuItem4, menuItem2, menuItem3);
                     } else {
                         contextMenu = new ContextMenu(menuItem);
                     }
@@ -137,8 +153,26 @@ public class MainController implements Initializable {
             }
         });
 
+        this.checkBoxInit();
+
         //从文件加载数据源至pane
         dataSourceService.loadDataSourceFromFile(treeItemRoot);
+    }
+
+    private void checkBoxInit() {
+        insertReturnCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, newValue));
+        insertCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, newValue));
+        countCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(2, newValue));
+        updateCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(3, newValue));
+        deleteCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(4, newValue));
+        selectCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(5, newValue));
+    }
+
+    private void checkBoxAction(int index, boolean selected) {
+        ObservableList<VBox> items = anchorPaneListView.getItems();
+        for (VBox item : items) {
+            ((CheckBox) ((HBox) item.getChildren().get(1)).getChildren().get(index)).setSelected(selected);
+        }
     }
 
     /*---------------------------------------MenuBar------------------------------------------------------------------*/
@@ -178,6 +212,7 @@ public class MainController implements Initializable {
         if (selectedItems.size() == 1) {
             TreeItem<DataItem> dataItemTreeItem = selectedItems.get(0);
             if (dataItemTreeItem.getValue() instanceof DataSource) {
+                BaseConstants.currentDateSource = (DataSource) dataItemTreeItem.getValue();
                 //TODO 生成xml文件
                 ObservableList<TreeItem<DataItem>> children = dataItemTreeItem.getChildren();
                 tables = new ArrayList<>();
@@ -188,6 +223,8 @@ public class MainController implements Initializable {
                 //TODO 生成xml文件
                 Table table = (Table) dataItemTreeItem.getValue();
                 tables = Collections.singletonList(table);
+
+                BaseConstants.currentDateSource = ((DataSource) dataItemTreeItem.getParent().getValue());
             }
         } else {
             //TODO 生成xml文件
@@ -199,6 +236,8 @@ public class MainController implements Initializable {
                     tables.add(table);
                 }
             }
+
+            BaseConstants.currentDateSource = ((DataSource) selectedItems.get(0).getParent().getValue());
         }
         tableService.setListView(tables, anchorPaneListView);
     }
@@ -223,6 +262,16 @@ public class MainController implements Initializable {
         treeItemRoot.getChildren().remove(dataItemTreeItem);
 
         dataSourceService.deleteDataSource(((DataSource) dataItemTreeItem.getValue()));
+    }
+
+    /**
+     * 刷新数据源下的table
+     * <p>
+     * 对table
+     */
+    private void refreshDataSource() {
+        TreeItem<DataItem> selectedItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+        tableService.refreshTables(selectedItem);
     }
 
     /*------------------------------------ListView ContextMenu--------------------------------------------------------*/

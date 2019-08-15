@@ -1,5 +1,7 @@
 package com.alan344.constants;
 
+import com.alan344.bean.DataSource;
+
 /**
  * @author ：AlanSun
  * @date ：2019/8/8 21:43
@@ -9,4 +11,6 @@ public class BaseConstants {
     public static final String MG_DATASOURCE_HOME = MG_HOME + "/database/";
     public static final String MG_TABLE_HOME = MG_DATASOURCE_HOME + "/tables/";
     public static final String MG_CONFIG_HOME = MG_HOME + "/config/";
+
+    public static DataSource currentDateSource;
 }
