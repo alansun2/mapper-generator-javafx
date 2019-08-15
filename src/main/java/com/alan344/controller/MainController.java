@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -84,7 +85,7 @@ public class MainController implements Initializable {
     private DateSourceController dateSourceController;
 
     @Autowired
-    private ExportController exportController;
+    private ConfigController configController;
 
     @Autowired
     private DataSourceService dataSourceService;
@@ -97,6 +98,8 @@ public class MainController implements Initializable {
 
     @Autowired
     private BeanFactory beanFactory;
+
+    //--------------------------------init----------------------------------------------------------------------------//
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -217,8 +220,7 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void generateConfig() throws IOException {
-        exportController.export((Stage) borderPane.getScene().getWindow());
+    public void generateConfig() {
     }
 
     @FXML
@@ -269,7 +271,7 @@ public class MainController implements Initializable {
         //把选中要导出的表在右边的listView展示
         this.setListView(tables);
         //选中的表
-        BaseConstants.selectedTables = tables;
+        BaseConstants.tableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
 
         //show rightBorderTopHbox
         if (!rightBorderTopHbox.isVisible() && !rightBorderTopHbox.isManaged()) {
@@ -385,7 +387,7 @@ public class MainController implements Initializable {
      *
      * @throws IOException e
      */
-    public void exportXml() throws IOException {
-        exportController.export((Stage) borderPane.getScene().getWindow());
+    public void config() throws IOException {
+        configController.addConfig((Stage) borderPane.getScene().getWindow());
     }
 }

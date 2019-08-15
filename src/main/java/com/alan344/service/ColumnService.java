@@ -30,9 +30,6 @@ import java.util.Map;
 @Service
 public class ColumnService {
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private BeanFactory beanFactory;
 
     /**
@@ -63,7 +60,7 @@ public class ColumnService {
      * @return 字段数组
      */
     public List<Column> getColumns(DataSource dataSource, String tableName) {
-        jdbcTemplate.setDataSource(beanFactory.getBean(dataSource.toString(), HikariDataSource.class));
+        JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
         List<Column> columns = new ArrayList<>();
         jdbcTemplate.query("DESC " + tableName, (rs, rowNum) -> {
             Column column = new Column();
@@ -85,7 +82,7 @@ public class ColumnService {
     @Async
     void downLoadColumnsToFile(DataSource dataSource, Map<String, List<Column>> tableNameColumnsMap) {
         File columnsFile = BaseConstants.getColumnsFile(dataSource);
-        String tableNameColumnsMapStr = JSONObject.toJSONString(tableNameColumnsMap);
+        String tableNameColumnsMapStr = JSONObject.toJSONString(tableNameColumnsMap, true);
         try {
             FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr);
         } catch (IOException e) {

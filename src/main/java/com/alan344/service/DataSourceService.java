@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -125,14 +126,40 @@ public class DataSourceService {
      * @param dataSource 数据源信息
      */
     private void addDataSourceToSpring(DataSource dataSource) {
+
         ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) this.applicationContext;
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setUsername(dataSource.getUser());
         hikariDataSource.setPassword(dataSource.getPassword());
         hikariDataSource.setJdbcUrl("jdbc:mysql://" + dataSource.getHost() + ":" + dataSource.getPort() + "/" + dataSource.getDatabase() + "?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=CTT");
         hikariDataSource.setDriverClassName(dataSource.getDriveName());
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(hikariDataSource);
         if (!applicationContext.containsBean(dataSource.toString())) {
-            applicationContext.getBeanFactory().registerSingleton(dataSource.toString(), hikariDataSource);
+            applicationContext.getBeanFactory().registerSingleton(dataSource.toString(), jdbcTemplate);
         }
+    }
+
+    /**
+     * 测试数据源
+     *
+     * @param dataSource 数据源
+     * @return true 成功 false 失败
+     */
+    public boolean testConnection(DataSource dataSource) {
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setUsername(dataSource.getUser());
+        hikariDataSource.setPassword(dataSource.getPassword());
+        hikariDataSource.setJdbcUrl("jdbc:mysql://" + dataSource.getHost() + ":" + dataSource.getPort() + "/" + dataSource.getDatabase() + "?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=CTT");
+        hikariDataSource.setDriverClassName(dataSource.getDriveName());
+        hikariDataSource.setConnectionTimeout(250);
+        JdbcTemplate jdbcTemplate = applicationContext.getBean(JdbcTemplate.class);
+        jdbcTemplate.setDataSource(hikariDataSource);
+
+        try {
+            jdbcTemplate.query("SELECT 1", (rs, rowNum) -> rs.getString(1));
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }

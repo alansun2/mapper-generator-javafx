@@ -13,8 +13,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -51,6 +53,9 @@ public class DateSourceController implements Initializable {
     @FXML
     private ComboBox<String> driveName;
 
+    @FXML
+    private Label testConnectionResultLabel;
+
     @Autowired
     private MainController mainController;
 
@@ -65,19 +70,21 @@ public class DateSourceController implements Initializable {
 
     private Stage dateSourceStage;
 
+    /**
+     * 应用
+     *
+     * @throws IOException e
+     */
     @FXML
     public void apply() throws IOException {
         if (!TextUtils.checkTexts(dateSourceStage, host, port, database, user, password)) {
             return;
         }
 
-        String hostText = host.getText();
-        String databaseText = database.getText();
-
         DataSource dataSource = new DataSource();
-        dataSource.setHost(hostText);
+        dataSource.setHost(host.getText());
         dataSource.setPort(port.getText());
-        dataSource.setDatabase(databaseText);
+        dataSource.setDatabase(database.getText());
         dataSource.setUser(user.getText());
         dataSource.setPassword(password.getText());
         dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
@@ -91,12 +98,48 @@ public class DateSourceController implements Initializable {
         dateSourceStage.close();
     }
 
+    /**
+     * 关闭窗口
+     */
     @FXML
     public void close() {
         dateSourceStage.close();
     }
 
-    void addDataSource(Stage mainStage) throws IOException {
+    /**
+     * 测试连接
+     */
+    @FXML
+    public void testConnection() {
+        if (!TextUtils.checkTexts(dateSourceStage, host, port, database, user, password)) {
+            return;
+        }
+
+        DataSource dataSource = new DataSource();
+        dataSource.setHost(host.getText());
+        dataSource.setPort(port.getText());
+        dataSource.setDatabase(database.getText());
+        dataSource.setUser(user.getText());
+        dataSource.setPassword(password.getText());
+        dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
+        if (dataSourceService.testConnection(dataSource)) {
+            testConnectionResultLabel.setText("成功");
+            testConnectionResultLabel.setTextFill(Color.GREEN);
+        } else {
+            testConnectionResultLabel.setText("失败");
+            testConnectionResultLabel.setTextFill(Color.RED);
+        }
+        testConnectionResultLabel.setVisible(true);
+        testConnectionResultLabel.setManaged(true);
+    }
+
+    /**
+     * 添加数据源的 stage
+     *
+     * @param primaryStage 主窗口
+     * @throws IOException e
+     */
+    void addDataSource(Stage primaryStage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader();
         fxmlLoader.setLocation(getClass().getResource("/fxml/datasource-setting.fxml"));
         fxmlLoader.setControllerFactory(applicationContext::getBean);
@@ -108,12 +151,11 @@ public class DateSourceController implements Initializable {
         dateSourceStage.setResizable(false);
         dateSourceStage.setTitle("设置数据源");
         dateSourceStage.initModality(Modality.WINDOW_MODAL);
-        dateSourceStage.initOwner(mainStage);
+        dateSourceStage.initOwner(primaryStage);
         dateSourceStage.show();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
 }

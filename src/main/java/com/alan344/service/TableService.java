@@ -7,16 +7,8 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.zaxxer.hikari.HikariDataSource;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TreeItem;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -38,9 +30,6 @@ import java.util.List;
 @Service
 public class TableService {
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     private BeanFactory beanFactory;
 
     @Autowired
@@ -57,7 +46,7 @@ public class TableService {
         //当dataSourceTreeItem下只有一个item，并且该item是之前填充的item时才进行拉去table的操作
         if (emptyTable.getTableName() == null) {
             DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
-            jdbcTemplate.setDataSource(beanFactory.getBean(dataSource.toString(), HikariDataSource.class));
+            JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
 
             try {
                 List<String> tableNames = jdbcTemplate.query("SHOW TABLES", (rs, i) -> rs.getString(1));

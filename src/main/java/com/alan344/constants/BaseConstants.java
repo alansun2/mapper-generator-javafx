@@ -2,9 +2,11 @@ package com.alan344.constants;
 
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ：AlanSun
@@ -23,7 +25,7 @@ public class BaseConstants {
     /**
      * 选中的要导出的表
      */
-    public static List<Table> selectedTables;
+    public static Map<String, Table> tableNameTableMap;
 
     public static File getColumnsFile(DataSource dataSource) {
         return new File(MG_DATA_HOME + dataSource.toString() + "_columns");

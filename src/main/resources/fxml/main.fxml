@@ -51,7 +51,7 @@
                                 <CheckBox fx:id="updateCheckBox" mnemonicParsing="false" text="update"/>
                                 <CheckBox fx:id="deleteCheckBox" mnemonicParsing="false" text="delete"/>
                                 <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select"/>
-                                <Button mnemonicParsing="false" text="导出" onAction="#exportXml"/>
+                                <Button mnemonicParsing="false" text="导出" onAction="#config"/>
                             </children>
                         </HBox>
                     </top>

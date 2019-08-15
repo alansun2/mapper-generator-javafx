@@ -1,5 +1,7 @@
 package com.alan344.service;
 
+import com.alan344.bean.GeneratorConfig;
+import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.HRXMLWriter;
 import javafx.collections.ObservableList;
@@ -19,6 +21,7 @@ import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.internal.DefaultShellCallback;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -36,12 +39,13 @@ import java.util.List;
 public class XmlGeneratorService {
 
     /**
-     * xml导出
+     * 导出
      *
-     * @param vBoxes
-     * @throws Exception
+     * @param vBoxes listView的内容
+     * @throws Exception e
      */
-    public void generatorXml(ObservableList<VBox> vBoxes) throws Exception {
+    @Async
+    public void generatorXml(ObservableList<VBox> vBoxes, GeneratorConfig generatorConfig) throws Exception {
         Document document = DocumentHelper.createDocument();
         document.addDocType("generatorConfiguration", "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN", "mybatis-generator-config_1_0.dtd");
 
@@ -51,62 +55,95 @@ public class XmlGeneratorService {
         context.addAttribute("id", "context1");
         context.addAttribute("targetRuntime", "MyBatis3");
 
-        Element commentGenerator = context.addElement("commentGenerator");
-        commentGenerator.addAttribute("type", "com.alan344.utils.MyCommentGenerator");
-        Element suppressAllCommentsPro = commentGenerator.addElement("property");
-        suppressAllCommentsPro.addAttribute("name", "suppressAllComments");
-        suppressAllCommentsPro.addAttribute("value", "false");
-        Element addRemarkCommentsPro = commentGenerator.addElement("property");
-        addRemarkCommentsPro.addAttribute("name", "addRemarkComments");
-        addRemarkCommentsPro.addAttribute("value", "true");
-        Element suppressDatePro = commentGenerator.addElement("property");
-        suppressDatePro.addAttribute("name", "suppressDate");
-        suppressDatePro.addAttribute("value", "false");
-        Element authorPro = commentGenerator.addElement("property");
-        authorPro.addAttribute("name", "author");
-        authorPro.addAttribute("value", "AlanSun");
+        //是否成成注释
+        if (generatorConfig.isUseComment()) {
+            Element commentGenerator = context.addElement("commentGenerator");
+            commentGenerator.addAttribute("type", "com.alan344.utils.MyCommentGenerator");
+            Element suppressAllCommentsPro = commentGenerator.addElement("property");
+            suppressAllCommentsPro.addAttribute("name", "suppressAllComments");
+            suppressAllCommentsPro.addAttribute("value", "false");
+            Element addRemarkCommentsPro = commentGenerator.addElement("property");
+            addRemarkCommentsPro.addAttribute("name", "addRemarkComments");
+            addRemarkCommentsPro.addAttribute("value", "true");
+            Element suppressDatePro = commentGenerator.addElement("property");
+            suppressDatePro.addAttribute("name", "suppressDate");
+            suppressDatePro.addAttribute("value", "false");
 
+            Element authorPro = commentGenerator.addElement("property");
+            authorPro.addAttribute("name", "author");
+            authorPro.addAttribute("value", generatorConfig.getAuthor());
+        }
+
+        //jdbc 连接
         Element jdbcConnection = context.addElement("jdbcConnection");
         jdbcConnection.addAttribute("driverClass", "com.mysql.cj.jdbc.Driver");
         jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://" + BaseConstants.currentDateSource.getHost() + "/" + BaseConstants.currentDateSource.getDatabase() + "?nullCatalogMeansCurrent=true");
         jdbcConnection.addAttribute("userId", BaseConstants.currentDateSource.getUser());
         jdbcConnection.addAttribute("password", BaseConstants.currentDateSource.getPassword());
 
-        Element javaTypeResolver = context.addElement("javaTypeResolver");
-        Element useJSR310TypesProperty = javaTypeResolver.addElement("property");
-        useJSR310TypesProperty.addAttribute("name", "useJSR310Types");
-        useJSR310TypesProperty.addAttribute("value", "true");
+        //默认类型解析器
+        if (generatorConfig.isUserJava8() && generatorConfig.isUseBigDecimal()) {
+            Element javaTypeResolver = context.addElement("javaTypeResolver");
+
+            Element useJSR310TypesProperty = javaTypeResolver.addElement("property");
+            useJSR310TypesProperty.addAttribute("name", "useJSR310Types");
+            useJSR310TypesProperty.addAttribute("value", "true");
+
+            Element forceBigDecimals = javaTypeResolver.addElement("forceBigDecimals");
+            forceBigDecimals.addAttribute("name", "forceBigDecimals");
+            forceBigDecimals.addAttribute("value", "true");
+        } else if (generatorConfig.isUserJava8()) {
+            Element javaTypeResolver = context.addElement("javaTypeResolver");
+
+            Element useJSR310TypesProperty = javaTypeResolver.addElement("property");
+            useJSR310TypesProperty.addAttribute("name", "useJSR310Types");
+            useJSR310TypesProperty.addAttribute("value", "true");
+        } else if (generatorConfig.isUseBigDecimal()) {
+            Element javaTypeResolver = context.addElement("javaTypeResolver");
+
+            Element forceBigDecimals = javaTypeResolver.addElement("forceBigDecimals");
+            forceBigDecimals.addAttribute("name", "forceBigDecimals");
+            forceBigDecimals.addAttribute("value", "true");
+        }
 
         Element javaModelGenerator = context.addElement("javaModelGenerator");
-        javaModelGenerator.addAttribute("targetPackage", "com.ehu.bean.model");
-        javaModelGenerator.addAttribute("targetProject", "./src/main/java");
+        javaModelGenerator.addAttribute("targetPackage", generatorConfig.getBeanPackage());
+        javaModelGenerator.addAttribute("targetProject", generatorConfig.getBeanLocation());
 
         Element sqlMapGenerator = context.addElement("sqlMapGenerator");
-        sqlMapGenerator.addAttribute("targetPackage", "mapper");
-        sqlMapGenerator.addAttribute("targetProject", "./src/main/java");
+        sqlMapGenerator.addAttribute("targetPackage", generatorConfig.getMapperPackage());
+        sqlMapGenerator.addAttribute("targetProject", generatorConfig.getMapperLocation());
 
         Element javaClientGenerator = context.addElement("javaClientGenerator");
-        javaClientGenerator.addAttribute("targetPackage", "com.ehu.mapper");
-        javaClientGenerator.addAttribute("targetProject", "./src/main/java");
+        javaClientGenerator.addAttribute("targetPackage", ".");
+        javaClientGenerator.addAttribute("targetProject", generatorConfig.getMapperXmlLocation());
         javaClientGenerator.addAttribute("type", "XMLMAPPER");
 
-        for (VBox tableTreeItem : vBoxes) {
-            ObservableList<Node> children = tableTreeItem.getChildren();
+        for (VBox vBox : vBoxes) {
+            ObservableList<Node> children = vBox.getChildren();
+
             Label tableNameLabel = (Label) ((HBox) children.get(0)).getChildren().get(0);
-            Element table = context.addElement("table");
-            table.addAttribute("tableName", tableNameLabel.getText());
+            Element tableEl = context.addElement("table");
+            String tableName = tableNameLabel.getText();
+            tableEl.addAttribute("tableName", tableName);
 
-//            CheckBox insertReturnCheckBox = (CheckBox) ((HBox) children.get(1)).getChildren().get(0);
+            HBox secondHBox = (HBox) children.get(1);
+            CheckBox insertReturnCheckBox = (CheckBox) secondHBox.getChildren().get(0);
+            if (insertReturnCheckBox.isSelected()) {
+                Element generatedKey = tableEl.addElement("generatedKey");
+                Table table = BaseConstants.tableNameTableMap.get(tableName);
+                generatedKey.addAttribute("column", table.getColumns().get(0).getColumnName());
+                generatedKey.addAttribute("sqlStatement", "JDBC");
+            }
 
-
-            this.checkBoxSelected("enableInsert", 1, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableCountByExample", 2, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableUpdateByPrimaryKey", 3, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableUpdateByExample", 3, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableDeleteByPrimaryKey", 4, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableDeleteByExample", 4, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableSelectByExample", 5, table, ((HBox) children.get(1)));
-            this.checkBoxSelected("enableSelectByPrimaryKey", 5, table, ((HBox) children.get(1)));
+            this.checkBoxSelected("enableInsert", 1, tableEl, secondHBox);
+            this.checkBoxSelected("enableCountByExample", 2, tableEl, secondHBox);
+            this.checkBoxSelected("enableUpdateByPrimaryKey", 3, tableEl, secondHBox);
+            this.checkBoxSelected("enableUpdateByExample", 3, tableEl, secondHBox);
+            this.checkBoxSelected("enableDeleteByPrimaryKey", 4, tableEl, secondHBox);
+            this.checkBoxSelected("enableDeleteByExample", 4, tableEl, secondHBox);
+            this.checkBoxSelected("enableSelectByExample", 5, tableEl, secondHBox);
+            this.checkBoxSelected("enableSelectByPrimaryKey", 5, tableEl, secondHBox);
         }
 
         String generatorConfigName = System.getProperty("user.dir") + "/generatorConfig.xml";
