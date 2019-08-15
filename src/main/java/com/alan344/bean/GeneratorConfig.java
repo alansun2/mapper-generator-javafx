@@ -3,6 +3,8 @@ package com.alan344.bean;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 /**
  * @author AlanSun
  * @date 2019/8/13 16:20
@@ -10,6 +12,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GeneratorConfig {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GeneratorConfig that = (GeneratorConfig) o;
+        return Objects.equals(configName, that.configName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(configName);
+    }
+
     /**
      * 配置的名称
      */

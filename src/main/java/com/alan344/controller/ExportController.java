@@ -1,7 +1,7 @@
 package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
-import com.alan344.service.ExportService;
+import com.alan344.service.ConfigService;
 import com.alan344.service.XmlGeneratorService;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,10 +10,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -62,9 +64,10 @@ public class ExportController implements Initializable {
     private XmlGeneratorService xmlGeneratorService;
 
     @Autowired
-    private ExportService exportService;
+    private ConfigService configService;
 
-    private Stage dateSourceStage;
+    @Autowired
+    private ConfigController configController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -97,8 +100,12 @@ public class ExportController implements Initializable {
 
         ListView<VBox> anchorPaneListView = mainController.getAnchorPaneListView();
         ObservableList<VBox> items = anchorPaneListView.getItems();
+        //调用 mybatis 生成文件
         xmlGeneratorService.generatorXml(items, generatorConfig);
-        dateSourceStage.close();
+
+        configController.getConfigStage().close();
+
+        configService.addConfig(generatorConfig);
     }
 
     /**
@@ -106,6 +113,18 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void cancel() {
-        dateSourceStage.close();
+        configController.getConfigStage().close();
+    }
+
+
+    @FXML
+    public void fileScan() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        Stage fileStage = new Stage();
+        File file = fileChooser.showOpenDialog(fileStage);
+        System.out.println(file);
+        fileStage.show();
     }
 }

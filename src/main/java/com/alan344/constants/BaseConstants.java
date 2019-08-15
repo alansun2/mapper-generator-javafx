@@ -15,7 +15,7 @@ import java.util.Map;
 public class BaseConstants {
     private static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGenerator";
     public static final String MG_DATA_HOME = MG_HOME + "/data/";
-    public static final String MG_CONFIG_HOME = MG_HOME + "/config/";
+    private static final String MG_CONFIG_FILE = MG_HOME + "/config/base-config";
 
     /**
      * 选中的数据源
@@ -37,5 +37,9 @@ public class BaseConstants {
 
     public static File getDataSourceFile(DataSource dataSource) {
         return new File(MG_DATA_HOME + dataSource.toString() + "_datasource");
+    }
+
+    public static File getConfigFile() {
+        return new File(MG_CONFIG_FILE);
     }
 }

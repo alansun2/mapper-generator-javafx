@@ -3,7 +3,7 @@
     -fx-background-radius: 0em;
 }
 
-.button:hover {
+.addConfigButton:hover {
     -fx-background-color: #BFBFBF;
 }
 
