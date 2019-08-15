@@ -17,7 +17,7 @@
         <TextField fx:id="database" layoutX="121.0" layoutY="80.0" prefHeight="23.0" prefWidth="241.0"
                    promptText="database"/>
         <TextField fx:id="user" layoutX="121.0" layoutY="125.0" prefHeight="23.0" prefWidth="241.0" promptText="user"/>
-        <TextField fx:id="password" layoutX="121.0" layoutY="170.0" prefHeight="23.0" prefWidth="241.0"
+        <PasswordField fx:id="password" layoutX="121.0" layoutY="170.0" prefHeight="23.0" prefWidth="241.0"
                    promptText="password"/>
         <TextField fx:id="port" layoutX="425.0" layoutY="35.0" prefHeight="23.0" prefWidth="55.0" promptText="port"
                    text="3306"/>

@@ -1,6 +1,5 @@
 package com.alan344.service;
 
-import com.alan344.bean.Column;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
@@ -8,8 +7,6 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +28,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -47,6 +43,9 @@ public class TableService {
     @Autowired
     private BeanFactory beanFactory;
 
+    @Autowired
+    private ColumnService columnService;
+
     /**
      * 当展开datasource时加载tableItem，并将table写入文件
      *
@@ -54,17 +53,17 @@ public class TableService {
      */
     void loadTables(TreeItem<DataItem> dataSourceTreeItem) {
         ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
-
+        Table emptyTable = (Table) children.get(0).getValue();
         //当dataSourceTreeItem下只有一个item，并且该item是之前填充的item时才进行拉去table的操作
-        if (children.size() == 1 && ((DataSource) children.get(0).getValue()).getHost() == null) {
-            DataSource dataSource = ((DataSource) dataSourceTreeItem.getValue());
+        if (emptyTable.getTableName() == null) {
+            DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
             jdbcTemplate.setDataSource(beanFactory.getBean(dataSource.toString(), HikariDataSource.class));
 
             try {
                 List<String> tableNames = jdbcTemplate.query("SHOW TABLES", (rs, i) -> rs.getString(1));
                 if (!tableNames.isEmpty()) {
                     //删除用来填充的item
-                    dataSourceTreeItem.getChildren().remove(0);
+                    children.remove(0);
 
                     List<Table> tables = new ArrayList<>();
                     //把table填入dataSourceTreeItem
@@ -77,6 +76,9 @@ public class TableService {
                     });
                     //写入文件
                     this.downLoadToFile(dataSource, tables);
+
+                    //加载columns
+                    columnService.loadColumns(dataSource, tables);
                 }
             } catch (Exception e) {
                 log.error("数据源有问题" + dataSource, e);
@@ -90,18 +92,14 @@ public class TableService {
      * @param dataSourceTreeItem 数据源 treeItem
      */
     public void refreshTables(TreeItem<DataItem> dataSourceTreeItem) {
-        File tableAddress = new File(BaseConstants.MG_TABLE_HOME);
-        try {
-            FileUtils.deleteDirectory(tableAddress);
-        } catch (IOException e) {
-            log.error("io错误", e);
-            return;
-        }
+        DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+        this.deleteTable(dataSource);
+
         ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
         children.remove(0, children.size());
         //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-        TreeUtils.add2Tree(new DataSource(), dataSourceTreeItem);
-        loadTables(dataSourceTreeItem);
+        TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
+        this.loadTables(dataSourceTreeItem);
     }
 
     /**
@@ -110,88 +108,53 @@ public class TableService {
      * @param treeItemDataSource treeItemDataSource
      */
     boolean loadTablesFromFile(TreeItem<DataItem> treeItemDataSource) {
-        File file1 = new File(BaseConstants.MG_TABLE_HOME);
-        if (!file1.exists()) {
+        DataSource dataSource = (DataSource) treeItemDataSource.getValue();
+        File tableFile = BaseConstants.getTableFile(dataSource);
+        if (!tableFile.exists()) {
             return false;
         }
-        Collection<File> files = FileUtils.listFiles(file1, null, false);
-        if (files.isEmpty()) {
+        List<Table> tables;
+        try {
+            tables = JSONArray.parseArray(FileUtils.readFileToString(tableFile), Table.class);
+            tables.forEach(table -> TreeUtils.add2Tree(table, treeItemDataSource));
+            columnService.loadColumnsFromFile(dataSource, tables);
+        } catch (IOException e) {
+            log.error("加载tables文件失败", e);
             return false;
         }
-        for (File file : files) {
-            try {
-                List<Table> tables = JSONArray.parseArray(FileUtils.readFileToString(file), Table.class);
-                tables.forEach(table -> TreeUtils.add2Tree(table, treeItemDataSource));
-            } catch (IOException e) {
-                log.error("加载tables文件失败", e);
-                return false;
-            }
-        }
+
         return true;
+    }
+
+    /**
+     * 删除table
+     *
+     * @param dataSource 数据源信息
+     */
+    void deleteTable(DataSource dataSource) {
+        this.deleteTableFile(dataSource);
+
+        columnService.deleteColumns(dataSource);
     }
 
     /**
      * 把tables信息记录到文件
      */
     @Async
-    public void downLoadToFile(DataSource dataSource, List<Table> tables) throws IOException {
+    void downLoadToFile(DataSource dataSource, List<Table> tables) throws IOException {
         String tablesStr = JSON.toJSONString(tables, true);
-        FileUtils.writeStringToFile(new File(BaseConstants.MG_TABLE_HOME + dataSource.toString()), tablesStr);
+        FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource), tablesStr);
     }
 
     /**
-     * 把datasource文件从磁盘删除
+     * 把table文件从磁盘删除
      */
     @Async
-    public void deleteTableFile(DataSource dataSource) {
+    void deleteTableFile(DataSource dataSource) {
         try {
-            FileUtils.forceDelete(new File(BaseConstants.MG_TABLE_HOME + dataSource.toString()));
+            FileUtils.forceDelete(BaseConstants.getTableFile(dataSource));
         } catch (IOException e) {
             log.error("删除表文件错误", e);
         }
-    }
-
-    public void setListView(List<Table> tables, ListView<VBox> tableListView) {
-        ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
-        tableListView.setItems(anchorPanes);
-        for (Table table : tables) {
-            Label tableNameLabel = new Label(table.getTableName());
-            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
-
-            HBox hBox = new HBox(tableNameLabel);
-            hBox.setAlignment(Pos.CENTER);
-
-            CheckBox returnId = new CheckBox("insert返回id");
-            CheckBox insert = new CheckBox("insert");
-            CheckBox count = new CheckBox("count");
-            CheckBox update = new CheckBox("update");
-            CheckBox delete = new CheckBox("delete");
-            CheckBox select = new CheckBox("select");
-            HBox hBox2 = new HBox(20, returnId, insert, count, update, delete, select);
-            hBox2.setAlignment(Pos.CENTER);
-
-            VBox vBox = new VBox(10, hBox, hBox2);
-
-            anchorPanes.add(vBox);
-        }
-    }
-
-    /**
-     * 获取表的字段
-     *
-     * @param tableName tableName
-     * @return 字段数组
-     */
-    public List<Column> getColumns(String tableName) {
-        List<Column> columns = new ArrayList<>();
-        jdbcTemplate.query("DESC " + tableName, (rs, rowNum) -> {
-            Column column = new Column();
-            column.setColumnName(rs.getString(1));
-            column.setType(rs.getString(2));
-            columns.add(column);
-            return column;
-        });
-
-        return columns;
     }
 }

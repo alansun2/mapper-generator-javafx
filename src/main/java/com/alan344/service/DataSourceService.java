@@ -2,6 +2,7 @@ package com.alan344.service;
 
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
+import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
@@ -55,9 +56,9 @@ public class DataSourceService {
      * @param dataSource 数据源信息
      */
     public void deleteDataSource(DataSource dataSource) {
-        deleteDataSourceFile(dataSource);
+        this.deleteDataSourceFile(dataSource);
 
-        tableService.deleteTableFile(dataSource);
+        tableService.deleteTable(dataSource);
     }
 
     /**
@@ -67,7 +68,7 @@ public class DataSourceService {
     public void downLoadToFile(DataSource dataSource) throws IOException {
         String datasourceStr = JSON.toJSONString(dataSource);
 
-        FileUtils.writeStringToFile(new File(BaseConstants.MG_DATASOURCE_HOME + dataSource.toString()), datasourceStr);
+        FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr);
     }
 
     /**
@@ -76,7 +77,7 @@ public class DataSourceService {
     @Async
     public void deleteDataSourceFile(DataSource dataSource) {
         try {
-            FileUtils.forceDelete(new File(BaseConstants.MG_DATASOURCE_HOME + dataSource.toString()));
+            FileUtils.forceDelete(BaseConstants.getDataSourceFile(dataSource));
         } catch (IOException e) {
             log.error("删除数据源文件错误", e);
         }
@@ -88,7 +89,7 @@ public class DataSourceService {
      * @param treeItemRoot treeItemRoot
      */
     public void loadDataSourceFromFile(TreeItem<DataItem> treeItemRoot) {
-        File file1 = new File(BaseConstants.MG_DATASOURCE_HOME);
+        File file1 = new File(BaseConstants.MG_DATA_HOME);
         if (!file1.exists()) {
             return;
         }
@@ -99,18 +100,18 @@ public class DataSourceService {
 
         files.forEach(file -> {
             try {
-                if (!file.isDirectory()) {
+                if (file.getName().endsWith("datasource")) {
                     DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file), DataSource.class);
-                    TreeItem<DataItem> dataItemTreeItem = mainService.add2Tree(dataSource, treeItemRoot);
+                    TreeItem<DataItem> dataSourceItemTreeItem = mainService.add2Tree(dataSource, treeItemRoot);
 
                     //从文件加表信息至pane
-                    boolean isTableEmpty = tableService.loadTablesFromFile(dataItemTreeItem);
+                    boolean isTableEmpty = tableService.loadTablesFromFile(dataSourceItemTreeItem);
                     if (!isTableEmpty) {
                         //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-                        TreeUtils.add2Tree(new DataSource(), dataItemTreeItem);
+                        TreeUtils.add2Tree(new Table(), dataSourceItemTreeItem);
                     }
-                    //向Spring注册dataSource
-                    addDataSourceToSpring(dataSource);
+                    //向Spring注册dataSource TODO 可以直接注册jdbcTemplate
+                    this.addDataSourceToSpring(dataSource);
                 }
             } catch (IOException e) {
                 log.error("加载dataSource文件失败", e);

@@ -19,13 +19,13 @@ public class MainService {
     private TableService tableService;
 
     public TreeItem<DataItem> add2Tree(DataItem dataItem, TreeItem<DataItem> dataSourceTreeItemRoot) {
-        TreeItem<DataItem> dataItemTreeItem = TreeUtils.add2Tree(dataItem, dataSourceTreeItemRoot);
+        TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataItem, dataSourceTreeItemRoot);
         //添加展开监听
-        dataItemTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
+        dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
             //没有则区远程拉去数据库表列表
             tableService.loadTables(event.getTreeItem());
         });
 
-        return dataItemTreeItem;
+        return dataSourceTreeItem;
     }
 }

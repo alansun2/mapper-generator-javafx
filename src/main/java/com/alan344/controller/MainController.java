@@ -5,6 +5,7 @@ import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
+import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Toast;
@@ -16,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
@@ -60,6 +62,9 @@ public class MainController implements Initializable {
     private ListView<VBox> anchorPaneListView;
 
     @FXML
+    private HBox rightBorderTopHbox;
+
+    @FXML
     private TreeView<DataItem> treeViewDataSource;
 
     @FXML
@@ -88,12 +93,30 @@ public class MainController implements Initializable {
     private TableService tableService;
 
     @Autowired
+    private ColumnService columnService;
+
+    @Autowired
     private BeanFactory beanFactory;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         menuBar.prefWidthProperty().bind(borderPane.widthProperty());
 
+        this.treeViewInit();
+
+        this.listViewInit();
+
+        this.checkBoxInit();
+
+        //从文件加载数据源至pane
+        dataSourceService.loadDataSourceFromFile(treeItemRoot);
+    }
+
+    /**
+     * treeView init
+     */
+    private void treeViewInit() {
+        //设置多选
         treeViewDataSource.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
         treeViewDataSource.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
@@ -121,7 +144,12 @@ public class MainController implements Initializable {
                 }
             }
         });
+    }
 
+    /**
+     * listView init
+     */
+    private void listViewInit() {
         //listView
         anchorPaneListView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
@@ -130,7 +158,7 @@ public class MainController implements Initializable {
                 menuItem1.setOnAction(event1 -> refresh());
                 if (children.size() == 2) {
                     MenuItem menuItem2 = new MenuItem("展开");
-                    menuItem2.setOnAction(event1 -> expand());
+                    menuItem2.setOnAction(event1 -> expandColumns());
                     anchorPaneListView.setContextMenu(new ContextMenu(menuItem1, menuItem2));
                 } else {
                     TableView tableView = (TableView) children.get(2);
@@ -152,13 +180,11 @@ public class MainController implements Initializable {
                 }
             }
         });
-
-        this.checkBoxInit();
-
-        //从文件加载数据源至pane
-        dataSourceService.loadDataSourceFromFile(treeItemRoot);
     }
 
+    /**
+     * checkbox init
+     */
     private void checkBoxInit() {
         insertReturnCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, newValue));
         insertCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, newValue));
@@ -212,22 +238,23 @@ public class MainController implements Initializable {
         if (selectedItems.size() == 1) {
             TreeItem<DataItem> dataItemTreeItem = selectedItems.get(0);
             if (dataItemTreeItem.getValue() instanceof DataSource) {
-                BaseConstants.currentDateSource = (DataSource) dataItemTreeItem.getValue();
-                //TODO 生成xml文件
+                //选中数据源时的导出
                 ObservableList<TreeItem<DataItem>> children = dataItemTreeItem.getChildren();
                 tables = new ArrayList<>();
                 if (!children.isEmpty()) {
                     children.forEach(itemTreeItem -> tables.add(((Table) itemTreeItem.getValue())));
                 }
+
+                BaseConstants.currentDateSource = (DataSource) dataItemTreeItem.getValue();
             } else {
-                //TODO 生成xml文件
+                //单独选中table的导出
                 Table table = (Table) dataItemTreeItem.getValue();
                 tables = Collections.singletonList(table);
 
                 BaseConstants.currentDateSource = ((DataSource) dataItemTreeItem.getParent().getValue());
             }
         } else {
-            //TODO 生成xml文件
+            //选中多个table的导出
             tables = new ArrayList<>();
             for (TreeItem<DataItem> selectedItem : selectedItems) {
                 DataItem dataItem = selectedItem.getValue();
@@ -239,7 +266,41 @@ public class MainController implements Initializable {
 
             BaseConstants.currentDateSource = ((DataSource) selectedItems.get(0).getParent().getValue());
         }
-        tableService.setListView(tables, anchorPaneListView);
+        //把选中要导出的表在右边的listView展示
+        this.setListView(tables);
+        //选中的表
+        BaseConstants.selectedTables = tables;
+
+        //show rightBorderTopHbox
+        if (!rightBorderTopHbox.isVisible() && !rightBorderTopHbox.isManaged()) {
+            rightBorderTopHbox.setVisible(true);
+            rightBorderTopHbox.setManaged(true);
+        }
+    }
+
+    private void setListView(List<Table> tables) {
+        ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
+        anchorPaneListView.setItems(anchorPanes);
+        for (Table table : tables) {
+            Label tableNameLabel = new Label(table.getTableName());
+            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
+
+            HBox hBox = new HBox(tableNameLabel);
+            hBox.setAlignment(Pos.CENTER);
+
+            CheckBox returnId = new CheckBox("insert返回id");
+            CheckBox insert = new CheckBox("insert");
+            CheckBox count = new CheckBox("count");
+            CheckBox update = new CheckBox("update");
+            CheckBox delete = new CheckBox("delete");
+            CheckBox select = new CheckBox("select");
+            HBox hBox2 = new HBox(25, returnId, insert, count, update, delete, select);
+            hBox2.setAlignment(Pos.CENTER);
+
+            VBox vBox = new VBox(10, hBox, hBox2);
+
+            anchorPanes.add(vBox);
+        }
     }
 
     /**
@@ -283,11 +344,11 @@ public class MainController implements Initializable {
     /**
      * 展开字段
      */
-    private void expand() {
+    private void expandColumns() {
         VBox selectedItem = anchorPaneListView.getSelectionModel().getSelectedItem();
 
         String tableName = ((Label) (((HBox) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
-        List<Column> columns = tableService.getColumns(tableName);
+        List<Column> columns = columnService.getColumns(BaseConstants.currentDateSource, tableName);
 
         ObservableList<Column> gridPanes = FXCollections.observableArrayList(columns);
         TableView<Column> columnTableView = new TableView<>(gridPanes);

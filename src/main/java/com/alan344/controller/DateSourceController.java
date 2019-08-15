@@ -2,6 +2,7 @@ package com.alan344.controller;
 
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
+import com.alan344.bean.Table;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.MainService;
 import com.alan344.utils.TextUtils;
@@ -14,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -83,9 +83,9 @@ public class DateSourceController implements Initializable {
         dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
 
         TreeItem<DataItem> dataItemTreeItem = mainService.add2Tree(dataSource, mainController.getTreeItemRoot());
-        
+
         //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-        TreeUtils.add2Tree(new DataSource(), dataItemTreeItem);
+        TreeUtils.add2Tree(new Table(), dataItemTreeItem);
         dataSourceService.addDataSource(dataSource);
 
         dateSourceStage.close();
