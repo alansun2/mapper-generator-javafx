@@ -13,7 +13,7 @@ public class TextUtils {
     private static boolean checkText(Stage primaryStage, TextField textField) {
         String text = textField.getText();
         if (StringUtils.isEmpty(text)) {
-            Toast.Companion.makeText(primaryStage, textField.getPromptText() + "不能为空", 3000, 500, 500, 15, 5);
+            Toast.makeText(primaryStage, textField.getPromptText() + "不能为空", 3000, 500, 500, 15, 5);
             return false;
         } else {
             return true;

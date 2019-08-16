@@ -313,13 +313,13 @@ public class MainController implements Initializable {
         Stage primaryStage = (Stage) borderPane.getScene().getWindow();
         ObservableList<TreeItem<DataItem>> selectedItems = treeViewDataSource.getSelectionModel().getSelectedItems();
         if (selectedItems.size() != 1) {
-            Toast.Companion.makeText(primaryStage, "只能选择一个", 3000, 500, 500, 15, 5);
+            Toast.makeText(primaryStage, "只能选择一个", 3000, 500, 500, 15, 5);
             return;
         }
 
         TreeItem<DataItem> dataItemTreeItem = selectedItems.get(0);
         if (dataItemTreeItem.getValue() instanceof Table) {
-            Toast.Companion.makeText(primaryStage, "无法对表进行操作", 3000, 500, 500, 15, 5);
+            Toast.makeText(primaryStage, "无法对表进行操作", 3000, 500, 500, 15, 5);
             return;
         }
 

@@ -5,6 +5,7 @@ import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -39,6 +40,8 @@ public class MapperGenApplication extends Application {
 
 //        primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setScene(new Scene(root));
+        //图标
+        primaryStage.getIcons().add(new Image("/image/icon.png"));
         primaryStage.setWidth(1000);
         primaryStage.setHeight(700);
         primaryStage.setTitle("mapper自动生成器");
