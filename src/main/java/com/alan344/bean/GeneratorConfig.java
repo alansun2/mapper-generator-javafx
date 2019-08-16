@@ -54,7 +54,7 @@ public class GeneratorConfig {
     /**
      * 是否使用追加
      */
-    private boolean isAppend;
+    private boolean append;
     /**
      * bean 的导出地址
      */

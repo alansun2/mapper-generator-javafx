@@ -1,11 +1,10 @@
 package com.alan344.constants;
 
 import com.alan344.bean.DataSource;
+import com.alan344.bean.GeneratorConfig;
 import com.alan344.bean.Table;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 /**

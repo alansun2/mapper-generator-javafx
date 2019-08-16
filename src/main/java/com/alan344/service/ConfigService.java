@@ -2,15 +2,16 @@ package com.alan344.service;
 
 import com.alan344.bean.GeneratorConfig;
 import com.alan344.constants.BaseConstants;
+import com.alan344happyframework.util.BeanUtils;
 import com.alibaba.fastjson.JSONArray;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -24,36 +25,47 @@ public class ConfigService {
      * 添加配置
      *
      * @param generatorConfig 配置信息
+     * @return 1:原来文件被修改；2：已存在配置且和原来配置相同；3：新配置
      */
-    public void addConfig(GeneratorConfig generatorConfig) {
+    public int addConfig(GeneratorConfig generatorConfig) {
         File configFile = BaseConstants.getConfigFile();
-        List<GeneratorConfig> generatorConfigs;
+        LinkedList<GeneratorConfig> generatorConfigs;
         if (configFile.exists()) {
             generatorConfigs = this.loadConfigFromFile();
         } else {
-            generatorConfigs = new ArrayList<>();
+            generatorConfigs = new LinkedList<>();
         }
 
-        generatorConfigs.add(generatorConfig);
+        LinkedList<GeneratorConfig> existConfigLinkedList = generatorConfigs.stream().filter(generatorConfig1 -> generatorConfig.getConfigName().equals(generatorConfig1.getConfigName())).collect(Lists::newLinkedList, LinkedList::add, List::addAll);
 
-        this.downLoadConfigToFile(generatorConfigs);
+        //配置已存在，如果内容修改，则修改
+        if (!existConfigLinkedList.isEmpty()) {
+            GeneratorConfig olderConfig = existConfigLinkedList.getFirst();
+            boolean isSame = BeanUtils.checkPropertyOfBean(generatorConfig, olderConfig);
+            if (!isSame) {
+                existConfigLinkedList.remove(olderConfig);
+                existConfigLinkedList.addFirst(generatorConfig);
+                this.downLoadConfigToFile(existConfigLinkedList);
+                return 1;
+            } else {
+                return 2;
+            }
+        } else {
+            generatorConfigs.addFirst(generatorConfig);
+            this.downLoadConfigToFile(generatorConfigs);
+            return 3;
+        }
     }
 
     /**
-     * 从文件加载配置至pane
+     * 删除配置
+     *
+     * @param generatorConfig 配置信息
      */
-    public List<GeneratorConfig> loadConfigFromFile() {
-        File file = BaseConstants.getConfigFile();
-        if (!file.exists()) {
-            return Collections.emptyList();
-        }
-
-        try {
-            return JSONArray.parseArray(FileUtils.readFileToString(file), GeneratorConfig.class);
-        } catch (IOException e) {
-            log.error("加载dataSource文件失败", e);
-            return Collections.emptyList();
-        }
+    public void deleteConfig(GeneratorConfig generatorConfig) {
+        List<GeneratorConfig> generatorConfigs = loadConfigFromFile();
+        generatorConfigs.remove(generatorConfig);
+        this.downLoadConfigToFile(generatorConfigs);
     }
 
     /**
@@ -67,6 +79,25 @@ public class ConfigService {
             FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr);
         } catch (IOException e) {
             log.error("写入配置信息失败", e);
+        }
+    }
+
+
+    /**
+     * 从文件加载配置至pane
+     */
+    public LinkedList<GeneratorConfig> loadConfigFromFile() {
+        File file = BaseConstants.getConfigFile();
+        if (!file.exists()) {
+            return Lists.newLinkedList();
+        }
+
+        try {
+            List<GeneratorConfig> generatorConfigs = JSONArray.parseArray(FileUtils.readFileToString(file), GeneratorConfig.class);
+            return generatorConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
+        } catch (IOException e) {
+            log.error("加载dataSource文件失败", e);
+            return Lists.newLinkedList();
         }
     }
 

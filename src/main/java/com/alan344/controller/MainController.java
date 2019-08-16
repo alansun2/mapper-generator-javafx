@@ -220,10 +220,6 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    public void generateConfig() {
-    }
-
-    @FXML
     public void openGithub() {
         HostServices hostServices = beanFactory.getBean(HostServices.class);
         hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
@@ -292,10 +288,15 @@ public class MainController implements Initializable {
 
             CheckBox returnId = new CheckBox("insert返回id");
             CheckBox insert = new CheckBox("insert");
+            insert.setSelected(true);
             CheckBox count = new CheckBox("count");
+            count.setSelected(true);
             CheckBox update = new CheckBox("update");
+            update.setSelected(true);
             CheckBox delete = new CheckBox("delete");
+            delete.setSelected(true);
             CheckBox select = new CheckBox("select");
+            select.setSelected(true);
             HBox hBox2 = new HBox(25, returnId, insert, count, update, delete, select);
             hBox2.setAlignment(Pos.CENTER);
 
@@ -387,7 +388,8 @@ public class MainController implements Initializable {
      *
      * @throws IOException e
      */
-    public void config() throws IOException {
-        configController.addConfig((Stage) borderPane.getScene().getWindow());
+    @FXML
+    public void openConfigWindow() throws IOException {
+        configController.openConfigPane((Stage) borderPane.getScene().getWindow());
     }
 }

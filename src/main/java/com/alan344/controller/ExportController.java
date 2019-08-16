@@ -1,7 +1,7 @@
 package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
-import com.alan344.service.ConfigService;
+import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.XmlGeneratorService;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,8 +10,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -54,6 +52,7 @@ public class ExportController implements Initializable {
     @FXML
 
     private CheckBox useCommentCheckBox;
+
     @FXML
     private CheckBox useSwaggerCheckBox;
 
@@ -64,18 +63,11 @@ public class ExportController implements Initializable {
     private XmlGeneratorService xmlGeneratorService;
 
     @Autowired
-    private ConfigService configService;
-
-    @Autowired
     private ConfigController configController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("ExportController initialize");
-    }
-
-    void addConfig() {
-
+//        System.out.println("ExportController initialize");
     }
 
     /**
@@ -83,10 +75,10 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void apply() throws Exception {
+        configController.getConfigStage().close();
         GeneratorConfig generatorConfig = new GeneratorConfig();
         generatorConfig.setConfigName(configNameText.getText());
         generatorConfig.setAuthor(authorText.getText());
-        generatorConfig.setConfigName(configNameText.getText());
         generatorConfig.setBeanLocation(beanLocationText.getText());
         generatorConfig.setBeanPackage(beanPackageText.getText());
         generatorConfig.setMapperLocation(mapperLocationText.getText());
@@ -98,14 +90,12 @@ public class ExportController implements Initializable {
         generatorConfig.setUseComment(useCommentCheckBox.isSelected());
         generatorConfig.setUseSwagger(useSwaggerCheckBox.isSelected());
 
+        configController.addConfig(generatorConfig);
+
         ListView<VBox> anchorPaneListView = mainController.getAnchorPaneListView();
-        ObservableList<VBox> items = anchorPaneListView.getItems();
+        ObservableList<VBox> vBoxes = anchorPaneListView.getItems();
         //调用 mybatis 生成文件
-        xmlGeneratorService.generatorXml(items, generatorConfig);
-
-        configController.getConfigStage().close();
-
-        configService.addConfig(generatorConfig);
+        xmlGeneratorService.generatorXml(vBoxes, generatorConfig);
     }
 
     /**
@@ -116,15 +106,76 @@ public class ExportController implements Initializable {
         configController.getConfigStage().close();
     }
 
+    //-------------------------文件夹浏览------------------------------------------------------------------------------//
 
+    /**
+     * bean 文件夹选择器
+     */
     @FXML
-    public void fileScan() {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
-        Stage fileStage = new Stage();
-        File file = fileChooser.showOpenDialog(fileStage);
-        System.out.println(file);
-        fileStage.show();
+    public void beanDirectoryScan() {
+        File directory = FileDirChooserFactory.createDirectoryScan(null, null);
+        if (directory != null) {
+            beanLocationText.setText(directory.getPath());
+        }
+    }
+
+    /**
+     * mapper 文件夹选择器
+     */
+    @FXML
+    public void mapperDirectoryScan() {
+        File directory = FileDirChooserFactory.createDirectoryScan(null, null);
+        if (directory != null) {
+            mapperLocationText.setText(directory.getPath());
+        }
+    }
+
+    /**
+     * mapper 文件夹选择器
+     */
+    @FXML
+    public void xmlDirectoryScan() {
+        File directory = FileDirChooserFactory.createDirectoryScan(null, null);
+        if (directory != null) {
+            xmlLocationText.setText(directory.getPath());
+        }
+    }
+
+    /**
+     * 展示配置信息
+     *
+     * @param generatorConfig 配置信息
+     */
+    void showConfig(GeneratorConfig generatorConfig) {
+        configNameText.setText(generatorConfig.getConfigName());
+        authorText.setText(generatorConfig.getAuthor());
+        beanLocationText.setText(generatorConfig.getBeanLocation());
+        beanPackageText.setText(generatorConfig.getBeanPackage());
+        mapperLocationText.setText(generatorConfig.getMapperLocation());
+        mapperPackageText.setText(generatorConfig.getMapperPackage());
+        xmlLocationText.setText(generatorConfig.getMapperXmlLocation());
+
+        userJava8CheckBox.setSelected(generatorConfig.isUserJava8());
+        useBigDecimalCheckBox.setSelected(generatorConfig.isUseBigDecimal());
+        useCommentCheckBox.setSelected(generatorConfig.isUseComment());
+        useSwaggerCheckBox.setSelected(generatorConfig.isUseSwagger());
+    }
+
+    /**
+     * 点击新增配置时清空配置面板
+     */
+    void clearPane() {
+        configNameText.setText(null);
+        authorText.setText(null);
+        beanLocationText.setText(null);
+        beanPackageText.setText(null);
+        mapperLocationText.setText(null);
+        mapperPackageText.setText(null);
+        xmlLocationText.setText(null);
+
+        userJava8CheckBox.setSelected(true);
+        useBigDecimalCheckBox.setSelected(false);
+        useCommentCheckBox.setSelected(true);
+        useSwaggerCheckBox.setSelected(false);
     }
 }

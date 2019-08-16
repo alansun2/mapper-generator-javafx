@@ -6,9 +6,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -27,6 +31,12 @@ import java.util.ResourceBundle;
  */
 @Controller
 public class ConfigController implements Initializable {
+
+    @FXML
+    private VBox centerVBox;
+
+    @FXML
+    private BorderPane rightBorderPane;
 
     @Autowired
     private ConfigService configService;
@@ -40,9 +50,13 @@ public class ConfigController implements Initializable {
     @Getter
     private Stage configStage;
 
+    /**
+     * 配置信息
+     */
+    private Map<String, GeneratorConfig> configNameConfigMap;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        System.out.println("initialize");
     }
 
     /**
@@ -51,40 +65,99 @@ public class ConfigController implements Initializable {
      * @param primaryStage 主窗口
      * @throws IOException e
      */
-    void addConfig(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("/fxml/config.fxml"));
-        fxmlLoader.setControllerFactory(beanFactory::getBean);
+    void openConfigPane(Stage primaryStage) throws IOException {
 
-        BorderPane configBorderPane = fxmlLoader.load();
-        //加载配置文件
-        List<GeneratorConfig> generatorConfigs = configService.loadConfigFromFile();
+        if (configStage == null) {
+            FXMLLoader fxmlLoader = new FXMLLoader();
 
-        if (generatorConfigs.isEmpty()) {
-            FXMLLoader exportFxmlLoader = new FXMLLoader();
-            exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
-            exportFxmlLoader.setControllerFactory(beanFactory::getBean);
+            fxmlLoader.setLocation(getClass().getResource("/fxml/config.fxml"));
+            fxmlLoader.setControllerFactory(beanFactory::getBean);
 
-            AnchorPane exportAnchorPane = exportFxmlLoader.load();
-            BorderPane leftBorderPane = (BorderPane) ((SplitPane) configBorderPane.getCenter()).getItems().get(1);
-            leftBorderPane.setCenter(exportAnchorPane);
+            BorderPane configBorderPane = fxmlLoader.load();
+
+            configStage = new Stage();
+            configStage.setScene(new Scene(configBorderPane));
+            configStage.setTitle("生成mapper");
+            configStage.setResizable(false);
+            configStage.initModality(Modality.WINDOW_MODAL);
+            configStage.initOwner(primaryStage);
+            configStage.show();
+
+            //加载配置文件
+            List<GeneratorConfig> generatorConfigs = configService.loadConfigFromFile();
+
+            this.configNameConfigMap = generatorConfigs.stream().collect(Collectors.toMap(GeneratorConfig::getConfigName, o -> o));
+
+            if (generatorConfigs.isEmpty()) {
+                FXMLLoader exportFxmlLoader = new FXMLLoader();
+                exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
+                exportFxmlLoader.setControllerFactory(beanFactory::getBean);
+
+                rightBorderPane.setCenter(exportFxmlLoader.load());
+            } else {
+                this.configNameConfigMap.forEach((k, v) -> this.addConfigButton(v));
+
+                FXMLLoader exportFxmlLoader = new FXMLLoader();
+                exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
+                exportFxmlLoader.setControllerFactory(beanFactory::getBean);
+
+                rightBorderPane.setCenter(exportFxmlLoader.load());
+
+                GeneratorConfig generatorConfig = generatorConfigs.get(0);
+                exportController.showConfig(generatorConfig);
+            }
         } else {
-            generatorConfigs.forEach(generatorConfig -> {
-
-            });
+            configStage.show();
         }
-
-        configStage = new Stage();
-        configStage.setScene(new Scene(configBorderPane));
-        configStage.setTitle("生成mapper");
-        configStage.setResizable(false);
-        configStage.initModality(Modality.WINDOW_MODAL);
-        configStage.initOwner(primaryStage);
-        configStage.show();
     }
 
+    /**
+     * 新增一个配置
+     */
     @FXML
-    public void addConfig() {
-        exportController.addConfig();
+    public void addEmptyExportPane() {
+        exportController.clearPane();
+    }
+
+    /**
+     * 添加配置
+     *
+     * @param generatorConfig 配置信息
+     */
+    void addConfig(GeneratorConfig generatorConfig) {
+        //写入文件
+        int addType = configService.addConfig(generatorConfig);
+        //同时更新内存的配置信息
+        if (addType == 3) {
+            this.addConfigButton(generatorConfig);
+            this.configNameConfigMap.put(generatorConfig.getConfigName(), generatorConfig);
+        } else if (addType == 1) {
+            this.configNameConfigMap.put(generatorConfig.getConfigName(), generatorConfig);
+        }
+    }
+
+    /**
+     * 删除配置
+     *
+     * @param generatorConfig 配置信息
+     */
+    private void deleteConfig(Button button, GeneratorConfig generatorConfig) {
+        centerVBox.getChildren().remove(button);
+        configService.deleteConfig(generatorConfig);
+    }
+
+    /**
+     * 添加配置文件有左边的button
+     *
+     * @param generatorConfig 配置信息
+     */
+    private void addConfigButton(GeneratorConfig generatorConfig) {
+        Button button = new Button(generatorConfig.getConfigName());
+        MenuItem removeMenuItem = new MenuItem("删除");
+        removeMenuItem.setOnAction(event -> this.deleteConfig(button, generatorConfig));
+        button.setContextMenu(new ContextMenu(removeMenuItem));
+        button.prefWidthProperty().bind(centerVBox.widthProperty());
+        button.setOnAction(event -> exportController.showConfig(this.configNameConfigMap.get(generatorConfig.getConfigName())));
+        centerVBox.getChildren().add(button);
     }
 }

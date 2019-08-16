@@ -4,6 +4,7 @@ import com.alan344.bean.GeneratorConfig;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.HRXMLWriter;
+import com.alan344happyframework.constants.SeparatorConstants;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
@@ -108,15 +109,15 @@ public class XmlGeneratorService {
 
         Element javaModelGenerator = context.addElement("javaModelGenerator");
         javaModelGenerator.addAttribute("targetPackage", generatorConfig.getBeanPackage());
-        javaModelGenerator.addAttribute("targetProject", generatorConfig.getBeanLocation());
+        javaModelGenerator.addAttribute("targetProject", generatorConfig.getBeanLocation().replaceAll("\\\\", "/"));
 
         Element sqlMapGenerator = context.addElement("sqlMapGenerator");
-        sqlMapGenerator.addAttribute("targetPackage", generatorConfig.getMapperPackage());
-        sqlMapGenerator.addAttribute("targetProject", generatorConfig.getMapperLocation());
+        sqlMapGenerator.addAttribute("targetPackage", SeparatorConstants.DOT);
+        sqlMapGenerator.addAttribute("targetProject", generatorConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
 
         Element javaClientGenerator = context.addElement("javaClientGenerator");
-        javaClientGenerator.addAttribute("targetPackage", ".");
-        javaClientGenerator.addAttribute("targetProject", generatorConfig.getMapperXmlLocation());
+        javaClientGenerator.addAttribute("targetPackage", generatorConfig.getMapperPackage());
+        javaClientGenerator.addAttribute("targetProject", generatorConfig.getMapperLocation().replaceAll("\\\\", "/"));
         javaClientGenerator.addAttribute("type", "XMLMAPPER");
 
         for (VBox vBox : vBoxes) {

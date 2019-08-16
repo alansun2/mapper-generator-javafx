@@ -1,17 +1,15 @@
 package com.alan344.utils;
 
+import com.alan344happyframework.util.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.StringUtility;
 
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
@@ -114,8 +112,8 @@ public class MyCommentGenerator implements CommentGenerator {
         //字段备注信息
         String remarks = introspectedColumn.getRemarks();
         field.addJavaDocLine("/**");
-        field.addJavaDocLine("* " + remarks);
-        field.addJavaDocLine("*/");
+        field.addJavaDocLine(" * " + remarks);
+        field.addJavaDocLine(" */");
         if (supportSwagger) {
             field.addJavaDocLine("@ApiModelProperty(value = \"" + remarks + "\")");
         }
@@ -135,8 +133,8 @@ public class MyCommentGenerator implements CommentGenerator {
         String remarks = introspectedTable.getRemarks();
         //获取实体类名称
         String entityName = introspectedTable.getFullyQualifiedTable().getDomainObjectName();
-        StringBuilder sb = new StringBuilder();
 
+        topLevelClass.addJavaDocLine("");
         //添加导入类的信息
         if (supportSwagger) {
             topLevelClass.addJavaDocLine("import io.swagger.annotations.ApiModel;");
@@ -144,14 +142,16 @@ public class MyCommentGenerator implements CommentGenerator {
         }
         topLevelClass.addJavaDocLine("import lombok.Getter;");
         topLevelClass.addJavaDocLine("import lombok.Setter;");
+        topLevelClass.addJavaDocLine("");
 
         //添加类注释
         topLevelClass.addJavaDocLine("/**");
-        sb.append(" * ").append(remarks);
-        sb.append("\n");
-        sb.append(" * 实体类对应的数据表为：  ");
-        sb.append(introspectedTable.getFullyQualifiedTable());
-        topLevelClass.addJavaDocLine(sb.toString());
+        topLevelClass.addJavaDocLine(" * 实体类对应的数据表为：" + introspectedTable.getFullyQualifiedTable());
+        topLevelClass.addJavaDocLine(" *");
+        if (StringUtils.isNotEmpty(remarks)) {
+            topLevelClass.addJavaDocLine(" * " + remarks);
+            topLevelClass.addJavaDocLine(" *");
+        }
         topLevelClass.addJavaDocLine(" * @author " + author);
 
         //添加时间
