@@ -77,7 +77,7 @@ public class ConfigService {
     private void downLoadConfigToFile(List<GeneratorConfig> generatorConfigs) {
         String configsStr = JSONArray.toJSONString(generatorConfigs);
         try {
-            FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr);
+            FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
             log.error("写入配置信息失败", e);
         }
