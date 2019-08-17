@@ -56,6 +56,16 @@ public class XmlGeneratorService {
         context.addAttribute("id", "context1");
         context.addAttribute("targetRuntime", "MyBatis3");
 
+        //指定编码
+        Element javaFileEncodingProperty = context.addElement("property");
+        javaFileEncodingProperty.addAttribute("name", "javaFileEncoding");
+        javaFileEncodingProperty.addAttribute("value", "UTF-8");
+
+        //使用java8 (默认是使用java8)
+        Element targetJava8Property = context.addElement("property");
+        targetJava8Property.addAttribute("name", "targetJava8");
+        targetJava8Property.addAttribute("value", "true");
+
         //是否成成注释
         if (generatorConfig.isUseComment()) {
             Element commentGenerator = context.addElement("commentGenerator");
