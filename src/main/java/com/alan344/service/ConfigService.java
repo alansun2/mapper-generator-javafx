@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,7 +94,7 @@ public class ConfigService {
         }
 
         try {
-            List<GeneratorConfig> generatorConfigs = JSONArray.parseArray(FileUtils.readFileToString(file), GeneratorConfig.class);
+            List<GeneratorConfig> generatorConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), GeneratorConfig.class);
             return generatorConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
