@@ -4,6 +4,7 @@ import com.alan344.bean.GeneratorConfig;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.HRXMLWriter;
+import com.alan344.utils.MyShellCallback;
 import com.alan344happyframework.constants.SeparatorConstants;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -21,7 +22,6 @@ import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
-import org.mybatis.generator.internal.DefaultShellCallback;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -186,7 +186,7 @@ public class XmlGeneratorService {
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(new FileInputStream(fileName));
 
-        DefaultShellCallback shellCallback = new DefaultShellCallback(true);
+        MyShellCallback shellCallback = new MyShellCallback(true, false);
 
         try {
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);

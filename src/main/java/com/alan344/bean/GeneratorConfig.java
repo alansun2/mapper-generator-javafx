@@ -48,13 +48,13 @@ public class GeneratorConfig {
      */
     private boolean useSwagger;
     /**
+     * 使用支持 swagger
+     */
+    private boolean userMerge;
+    /**
      * 使用注释
      */
     private boolean useComment = true;
-    /**
-     * 是否使用追加
-     */
-    private boolean append;
     /**
      * bean 的导出地址
      */

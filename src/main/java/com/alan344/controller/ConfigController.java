@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -36,7 +37,7 @@ public class ConfigController implements Initializable {
     private VBox centerVBox;
 
     @FXML
-    private BorderPane rightBorderPane;
+    private SplitPane splitPane;
 
     @Autowired
     private ConfigService configService;
@@ -93,7 +94,7 @@ public class ConfigController implements Initializable {
                 exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
                 exportFxmlLoader.setControllerFactory(beanFactory::getBean);
 
-                rightBorderPane.setCenter(exportFxmlLoader.load());
+                splitPane.getItems().add(exportFxmlLoader.load());
             } else {
                 this.configNameConfigMap.forEach((k, v) -> this.addConfigButton(v));
 
@@ -101,7 +102,7 @@ public class ConfigController implements Initializable {
                 exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
                 exportFxmlLoader.setControllerFactory(beanFactory::getBean);
 
-                rightBorderPane.setCenter(exportFxmlLoader.load());
+                splitPane.getItems().add(exportFxmlLoader.load());
 
                 GeneratorConfig generatorConfig = generatorConfigs.get(0);
                 exportController.showConfig(generatorConfig);

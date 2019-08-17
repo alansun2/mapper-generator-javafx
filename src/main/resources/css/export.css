@@ -16,15 +16,5 @@
 /*}*/
 
 .anchorPane{
-    -fx-background-color: #BFBFBF;
-}
-
-/*split-pane*/
-.split-pane:horizontal > .split-pane-divider {
-    /*-fx-background-color: black;*/
-    -fx-padding: 0 0 0 0;
-}
-
-.border1 {
-    -fx-border-width: 0;
+    -fx-background-color: #E8E8E8;
 }
