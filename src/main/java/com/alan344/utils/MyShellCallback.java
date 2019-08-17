@@ -9,16 +9,25 @@ import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.printer.PrettyPrinterConfiguration;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.generator.api.GeneratedXmlFile;
+import org.mybatis.generator.exception.ShellException;
 import org.mybatis.generator.internal.DefaultShellCallback;
+import org.mybatis.generator.internal.DomWriter;
+import org.w3c.dom.*;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
 /**
  * @author AlanSun
@@ -113,5 +122,144 @@ public class MyShellCallback extends DefaultShellCallback {
         }
 
         return existingCompilationUnit.toString();
+    }
+
+    @Override
+    public String mergeXmlFile(GeneratedXmlFile gxf, File targetFile) throws ShellException {
+
+        try {
+            return getMergedSource(new InputSource(new StringReader(gxf.getFormattedContent())),
+                    new InputSource(new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)),
+                    targetFile.getName());
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            throw new ShellException(getString("Warning.13", //$NON-NLS-1$
+                    targetFile.getName()), e);
+        }
+    }
+
+    private static String getMergedSource(InputSource newFile,
+                                          InputSource existingFile, String existingFileName) throws IOException, SAXException,
+            ParserConfigurationException, ShellException {
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setExpandEntityReferences(false);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        builder.setEntityResolver(new NullEntityResolver());
+
+        Document existingDocument = builder.parse(existingFile);
+        existingDocument.setStrictErrorChecking(false);
+        Document newDocument = builder.parse(newFile);
+
+        DocumentType newDocType = newDocument.getDoctype();
+        DocumentType existingDocType = existingDocument.getDoctype();
+
+        if (!newDocType.getName().equals(existingDocType.getName())) {
+            throw new ShellException(getString("Warning.12", //$NON-NLS-1$
+                    existingFileName));
+        }
+
+        Element existingRootElement = existingDocument.getDocumentElement();
+        Element newRootElement = newDocument.getDocumentElement();
+
+        // reconcile the root element attributes -
+        // take all attributes from the new element and add to the existing
+        // element
+
+        // remove all attributes from the existing root element
+        NamedNodeMap attributes = existingRootElement.getAttributes();
+        int attributeCount = attributes.getLength();
+        for (int i = attributeCount - 1; i >= 0; i--) {
+            Node node = attributes.item(i);
+            existingRootElement.removeAttribute(node.getNodeName());
+        }
+
+        // add attributes from the new root node to the old root node
+        attributes = newRootElement.getAttributes();
+        attributeCount = attributes.getLength();
+        for (int i = 0; i < attributeCount; i++) {
+            Node node = attributes.item(i);
+            existingRootElement.setAttribute(node.getNodeName(), node.getNodeValue());
+        }
+
+        // remove the old generated elements and any
+        // white space before the old nodes
+        org.w3c.dom.NodeList existChildren = existingRootElement.getChildNodes();
+        int existLength = existChildren.getLength();
+        Map<String, Node> existIdChildMap = new HashMap<>();
+
+        for (int i = 0; i < existLength; i++) {
+            Node node = existChildren.item(i);
+            if (!isWhiteSpace(node)) {
+                existIdChildMap.put(node.getAttributes().getNamedItem("id").toString(), node);
+            }
+        }
+
+        org.w3c.dom.NodeList newChildren = newRootElement.getChildNodes();
+        int newLength = newChildren.getLength();
+        Map<String, Node> newIdChildMap = new HashMap<>();
+        for (int i = 0; i < newLength; i++) {
+            Node node = newChildren.item(i);
+            if (!isWhiteSpace(node)) {
+                newIdChildMap.put(node.getAttributes().getNamedItem("id").toString(), node);
+            }
+        }
+
+        existIdChildMap.forEach((k, v) -> {
+            if (newIdChildMap.containsKey(k)) {
+                existingRootElement.replaceChild(newIdChildMap.get(k), v);
+                newIdChildMap.remove(k);
+            }
+        });
+
+        Text whiteNode = existingDocument.createTextNode("\n  ");
+        for (Map.Entry<String, Node> entry : newIdChildMap.entrySet()) {
+            Node node = entry.getValue();
+            Node whiteNodeClone = whiteNode.cloneNode(true);
+            existingRootElement.appendChild(whiteNodeClone);
+            existingRootElement.appendChild(node);
+        }
+
+        if (!newIdChildMap.isEmpty()) {
+            Text textNode = existingDocument.createTextNode("\n");
+            existingRootElement.appendChild(textNode);
+        }
+
+        // pretty print the result
+        return prettyPrint(existingDocument);
+    }
+
+    private static String prettyPrint(Document document) throws ShellException {
+        DomWriter dw = new DomWriter();
+        return dw.toString(document);
+    }
+
+    private static boolean isWhiteSpace(Node node) {
+        boolean rc = false;
+
+        if (node != null && node.getNodeType() == Node.TEXT_NODE) {
+            Text tn = (Text) node;
+            if (tn.getData().trim().length() == 0) {
+                rc = true;
+            }
+        }
+
+        return rc;
+    }
+
+    private static class NullEntityResolver implements EntityResolver {
+        /**
+         * returns an empty reader. This is done so that the parser doesn't
+         * attempt to read a DTD. We don't need that support for the merge and
+         * it can cause problems on systems that aren't Internet connected.
+         */
+        @Override
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+
+            StringReader sr = new StringReader(""); //$NON-NLS-1$
+
+            return new InputSource(sr);
+        }
     }
 }

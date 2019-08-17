@@ -66,6 +66,11 @@ public class XmlGeneratorService {
         targetJava8Property.addAttribute("name", "targetJava8");
         targetJava8Property.addAttribute("value", "true");
 
+        if (!generatorConfig.isUserMerge()) {
+            Element UnmergeableXmlMappersPlugin = context.addElement("plugin");
+            UnmergeableXmlMappersPlugin.addAttribute("type", "org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin");
+        }
+
         //是否成成注释
         if (generatorConfig.isUseComment()) {
             Element commentGenerator = context.addElement("commentGenerator");
@@ -163,7 +168,7 @@ public class XmlGeneratorService {
         xmlWriter.write(document);
         xmlWriter.close();
 
-        this.generateMyBatis3WithInvalidConfig(generatorConfigName);
+        this.generateMyBatis3WithInvalidConfig(generatorConfigName, generatorConfig);
     }
 
     private void checkBoxSelected(String name, int index, Element table, HBox hBox) {
@@ -181,12 +186,12 @@ public class XmlGeneratorService {
      * @param fileName 配置文件地址
      * @throws Exception e
      */
-    private void generateMyBatis3WithInvalidConfig(String fileName) throws Exception {
+    private void generateMyBatis3WithInvalidConfig(String fileName, GeneratorConfig generatorConfig) throws Exception {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
         Configuration config = cp.parseConfiguration(new FileInputStream(fileName));
 
-        MyShellCallback shellCallback = new MyShellCallback(true, false);
+        MyShellCallback shellCallback = new MyShellCallback(true, generatorConfig.isUserMerge());
 
         try {
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
