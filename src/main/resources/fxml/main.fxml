@@ -73,8 +73,7 @@
                                   BorderPane.alignment="CENTER"/>
                     </center>
                     <top>
-                        <HBox fx:id="rightBorderTopHbox" alignment="CENTER" prefHeight="50.0" spacing="20.0"
-                              BorderPane.alignment="CENTER" visible="false" managed="false">
+                        <HBox fx:id="rightBorderTopHbox" alignment="CENTER" prefHeight="50.0" spacing="20.0" visible="false" managed="false">
                             <children>
                                 <CheckBox fx:id="insertReturnCheckBox" mnemonicParsing="false" text="insert返回id"/>
                                 <CheckBox fx:id="insertCheckBox" mnemonicParsing="false" text="insert" selected="true"/>

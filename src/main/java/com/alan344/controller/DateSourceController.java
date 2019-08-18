@@ -6,6 +6,7 @@ import com.alan344.bean.Table;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.MainService;
 import com.alan344.utils.TextUtils;
+import com.alan344.utils.Toast;
 import com.alan344.utils.TreeUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,13 +90,20 @@ public class DateSourceController implements Initializable {
         dataSource.setPassword(password.getText());
         dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
 
-        TreeItem<DataItem> dataSourceItemTreeItem = mainService.add2Tree(dataSource, mainController.getTreeItemRoot());
+        //判断数据源是否存在
+        if (dataSourceService.getNameDataSourceMap().containsKey(dataSource.toString())) {
+            Toast.makeText(dateSourceStage, "该数据源已存在", 3000, 500, 500, 15, 5);
+            return;
+        }
 
+        //添加入treeView
+        TreeItem<DataItem> dataSourceItemTreeItem = mainService.add2Tree(dataSource, mainController.getTreeItemRoot());
         //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
         TreeUtils.add2Tree(new Table(), dataSourceItemTreeItem);
-        dataSourceService.addDataSource(dataSource);
 
         dateSourceStage.close();
+        //写入文件
+        dataSourceService.addDataSource(dataSource);
     }
 
     /**

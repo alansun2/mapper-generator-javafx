@@ -366,7 +366,7 @@ public class MainController implements Initializable {
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);
 
-        columnTableView.setFixedCellSize(25);
+        columnTableView.setFixedCellSize(28);
         columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.01)));
         selectedItem.getChildren().add(columnTableView);
 

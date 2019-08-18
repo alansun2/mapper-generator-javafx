@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zaxxer.hikari.HikariDataSource;
 import javafx.scene.control.TreeItem;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ：AlanSun
@@ -38,6 +42,9 @@ public class DataSourceService {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Getter
+    private Map<String, DataSource> nameDataSourceMap = new HashMap<>();
 
     /**
      * 添加数据源
@@ -69,7 +76,7 @@ public class DataSourceService {
     public void downLoadToFile(DataSource dataSource) throws IOException {
         String datasourceStr = JSON.toJSONString(dataSource);
 
-        FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr);
+        FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr, StandardCharsets.UTF_8.toString());
     }
 
     /**
@@ -102,7 +109,9 @@ public class DataSourceService {
         files.forEach(file -> {
             try {
                 if (file.getName().endsWith("datasource")) {
-                    DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file), DataSource.class);
+                    DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
+                    nameDataSourceMap.put(dataSource.toString(), dataSource);
+
                     TreeItem<DataItem> dataSourceItemTreeItem = mainService.add2Tree(dataSource, treeItemRoot);
 
                     //从文件加表信息至pane

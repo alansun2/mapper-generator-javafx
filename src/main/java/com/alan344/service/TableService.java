@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class TableService {
         }
         List<Table> tables;
         try {
-            tables = JSONArray.parseArray(FileUtils.readFileToString(tableFile), Table.class);
+            tables = JSONArray.parseArray(FileUtils.readFileToString(tableFile, StandardCharsets.UTF_8.toString()), Table.class);
             tables.forEach(table -> {
                 TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, treeItemDataSource);
                 tableTreeItem.setGraphic(new ImageView("/image/table.png"));
@@ -137,7 +138,7 @@ public class TableService {
     @Async
     void downLoadToFile(DataSource dataSource, List<Table> tables) throws IOException {
         String tablesStr = JSON.toJSONString(tables, true);
-        FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource), tablesStr);
+        FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource), tablesStr, StandardCharsets.UTF_8.toString());
     }
 
     /**
