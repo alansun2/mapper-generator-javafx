@@ -2,9 +2,11 @@ package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
 import com.alan344.service.ConfigService;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -143,7 +145,19 @@ public class ConfigController implements Initializable {
      * @param generatorConfig 配置信息
      */
     private void deleteConfig(Button button, GeneratorConfig generatorConfig) {
-        centerVBox.getChildren().remove(button);
+        ObservableList<Node> children = centerVBox.getChildren();
+        int size = children.size();
+        if (size == 1) {
+            exportController.clearPane();
+        } else {
+            int i = children.indexOf(button);
+            if (i == 0) {
+                exportController.showConfig(configNameConfigMap.get(((Button) children.get(1)).getText()));
+            } else {
+                exportController.showConfig(configNameConfigMap.get(((Button) children.get(i - 1)).getText()));
+            }
+        }
+        children.remove(button);
         configService.deleteConfig(generatorConfig);
     }
 

@@ -28,7 +28,7 @@
             <items>
                 <BorderPane prefHeight="200.0" prefWidth="200.0">
                     <center>
-                        <TreeView fx:id="treeViewDataSource" fixedCellSize="25" prefHeight="373.0" prefWidth="200.0"
+                        <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="200.0"
                                   showRoot="false">
                             <TreeItem fx:id="treeItemRoot"/>
                         </TreeView>
