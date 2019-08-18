@@ -2,6 +2,8 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <BorderPane fx:id="borderPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.alan344.controller.MainController">
@@ -10,14 +12,46 @@
             <menus>
                 <Menu mnemonicParsing="false" text="文件">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源"/>
-                        <MenuItem mnemonicParsing="false" onAction="#exit" text="退出"/>
+                        <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源">
+                            <graphic>
+                                <ImageView >
+                                    <image>
+                                        <Image url="/image/add-database.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#exit" text="退出">
+                            <graphic>
+                                <ImageView >
+                                    <image>
+                                        <Image url="/image/exit.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="帮助">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="关于"/>
-                        <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github"/>
+                        <MenuItem mnemonicParsing="false" text="关于">
+                            <graphic>
+                                <ImageView >
+                                    <image>
+                                        <Image url="/image/about.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github">
+                            <graphic>
+                                <ImageView >
+                                    <image>
+                                        <Image url="/image/github.png" />
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuItem>
                     </items>
                 </Menu>
             </menus>
@@ -28,8 +62,7 @@
             <items>
                 <BorderPane prefHeight="200.0" prefWidth="200.0">
                     <center>
-                        <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="200.0"
-                                  showRoot="false">
+                        <TreeView fx:id="treeViewDataSource" fixedCellSize="28" showRoot="false">
                             <TreeItem fx:id="treeItemRoot"/>
                         </TreeView>
                     </center>
@@ -49,7 +82,15 @@
                                 <CheckBox fx:id="updateCheckBox" mnemonicParsing="false" text="update" selected="true"/>
                                 <CheckBox fx:id="deleteCheckBox" mnemonicParsing="false" text="delete" selected="true"/>
                                 <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select" selected="true"/>
-                                <Button mnemonicParsing="false" text="导出" onAction="#openConfigWindow"/>
+                                <Button styleClass="exportButton" mnemonicParsing="false" text="导出" onAction="#openConfigWindow">
+                                    <graphic>
+                                        <ImageView >
+                                            <image>
+                                                <Image url="/image/export.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
                             </children>
                         </HBox>
                     </top>

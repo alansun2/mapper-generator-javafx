@@ -11,6 +11,10 @@
     -fx-background-color: #fff;
 }
 
+.exportButton {
+    -fx-text-fill: #1296db;
+}
+
 /*.button:focused {*/
     /*-fx-background-color: #fff;*/
 /*}*/

@@ -157,12 +157,12 @@ public class MainController implements Initializable {
         anchorPaneListView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 ObservableList<Node> children = anchorPaneListView.getSelectionModel().getSelectedItem().getChildren();
-                MenuItem menuItem1 = new MenuItem("刷新");
-                menuItem1.setOnAction(event1 -> refresh());
+//                MenuItem menuItem1 = new MenuItem("刷新");
+//                menuItem1.setOnAction(event1 -> refresh());
                 if (children.size() == 2) {
                     MenuItem menuItem2 = new MenuItem("展开");
                     menuItem2.setOnAction(event1 -> expandColumns());
-                    anchorPaneListView.setContextMenu(new ContextMenu(menuItem1, menuItem2));
+                    anchorPaneListView.setContextMenu(new ContextMenu(menuItem2));
                 } else {
                     TableView tableView = (TableView) children.get(2);
                     if (tableView.isVisible()) {
@@ -171,14 +171,14 @@ public class MainController implements Initializable {
                             tableView.setVisible(false);
                             tableView.setManaged(false);
                         });
-                        anchorPaneListView.setContextMenu(new ContextMenu(menuItem1, menuItem2));
+                        anchorPaneListView.setContextMenu(new ContextMenu(menuItem2));
                     } else {
                         MenuItem menuItem2 = new MenuItem("展开");
                         menuItem2.setOnAction(event1 -> {
                             tableView.setVisible(true);
                             tableView.setManaged(true);
                         });
-                        anchorPaneListView.setContextMenu(new ContextMenu(menuItem1, menuItem2));
+                        anchorPaneListView.setContextMenu(new ContextMenu(menuItem2));
                     }
                 }
             }
@@ -340,9 +340,9 @@ public class MainController implements Initializable {
 
     /*------------------------------------ListView ContextMenu--------------------------------------------------------*/
 
-    private void refresh() {
-
-    }
+//    private void refresh() {
+//
+//    }
 
     /**
      * 展开字段

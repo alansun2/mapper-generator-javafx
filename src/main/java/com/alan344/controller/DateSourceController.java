@@ -89,10 +89,10 @@ public class DateSourceController implements Initializable {
         dataSource.setPassword(password.getText());
         dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
 
-        TreeItem<DataItem> dataItemTreeItem = mainService.add2Tree(dataSource, mainController.getTreeItemRoot());
+        TreeItem<DataItem> dataSourceItemTreeItem = mainService.add2Tree(dataSource, mainController.getTreeItemRoot());
 
         //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-        TreeUtils.add2Tree(new Table(), dataItemTreeItem);
+        TreeUtils.add2Tree(new Table(), dataSourceItemTreeItem);
         dataSourceService.addDataSource(dataSource);
 
         dateSourceStage.close();

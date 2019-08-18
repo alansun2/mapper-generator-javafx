@@ -44,7 +44,7 @@ public class MapperGenApplication extends Application {
         primaryStage.getIcons().add(new Image("/image/icon.png"));
         primaryStage.setWidth(1000);
         primaryStage.setHeight(700);
-        primaryStage.setTitle("mapper生成小工具");
+        primaryStage.setTitle("mapper 生成小工具");
         primaryStage.show();
     }
 }

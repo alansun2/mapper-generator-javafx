@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -59,7 +60,8 @@ public class TableService {
                     tableNames.forEach(tableName -> {
                         Table table = new Table();
                         table.setTableName(tableName);
-                        TreeUtils.add2Tree(table, dataSourceTreeItem);
+                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
 
                         tables.add(table);
                     });
@@ -105,7 +107,10 @@ public class TableService {
         List<Table> tables;
         try {
             tables = JSONArray.parseArray(FileUtils.readFileToString(tableFile), Table.class);
-            tables.forEach(table -> TreeUtils.add2Tree(table, treeItemDataSource));
+            tables.forEach(table -> {
+                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, treeItemDataSource);
+                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+            });
             columnService.loadColumnsFromFile(dataSource, tables);
         } catch (IOException e) {
             log.error("加载tables文件失败", e);

@@ -3,6 +3,7 @@ package com.alan344.service;
 import com.alan344.bean.DataItem;
 import com.alan344.utils.TreeUtils;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class MainService {
             tableService.loadTables(event.getTreeItem());
         });
 
+        dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
         return dataSourceTreeItem;
     }
 }

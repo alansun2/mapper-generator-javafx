@@ -15,7 +15,7 @@
                         </VBox>
                     </center>
                     <top>
-                        <AnchorPane prefHeight="29.0" prefWidth="149.0" BorderPane.alignment="CENTER">
+                        <AnchorPane prefHeight="35.0" BorderPane.alignment="CENTER">
                             <children>
                                 <Button styleClass="addConfigButton" layoutX="6.0" layoutY="3.0" mnemonicParsing="false" focusTraversable="false"
                                         text="+添加" onAction="#addEmptyExportPane"/>
