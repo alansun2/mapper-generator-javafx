@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -80,7 +81,8 @@ public class ConfigController implements Initializable {
 
             configStage = new Stage();
             configStage.setScene(new Scene(configBorderPane));
-            configStage.setTitle("生成mapper");
+            configStage.setTitle("设置导出");
+            configStage.getIcons().add(new Image("/image/setting@32.png"));
             configStage.setResizable(false);
             configStage.initModality(Modality.WINDOW_MODAL);
             configStage.initOwner(primaryStage);

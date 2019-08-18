@@ -17,6 +17,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -157,6 +158,7 @@ public class DateSourceController implements Initializable {
         dateSourceStage = new Stage();
         dateSourceStage.setScene(new Scene(load));
         dateSourceStage.setResizable(false);
+        dateSourceStage.getIcons().add(new Image("/image/database@32.png"));
         dateSourceStage.setTitle("设置数据源");
         dateSourceStage.initModality(Modality.WINDOW_MODAL);
         dateSourceStage.initOwner(primaryStage);
