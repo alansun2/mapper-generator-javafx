@@ -83,15 +83,6 @@
                     <appName>mapper生成工具</appName>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.mybatis.generator</groupId>
-                <artifactId>mybatis-generator-maven-plugin</artifactId>
-                <version>1.4.0-SNAPSHOT</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <overwrite>true</overwrite>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
