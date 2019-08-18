@@ -82,7 +82,7 @@
                                 <CheckBox fx:id="updateCheckBox" mnemonicParsing="false" text="update" selected="true"/>
                                 <CheckBox fx:id="deleteCheckBox" mnemonicParsing="false" text="delete" selected="true"/>
                                 <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select" selected="true"/>
-                                <Button styleClass="exportButton" mnemonicParsing="false" text="导出" onAction="#openConfigWindow">
+                                <Button styleClass="exportButton" mnemonicParsing="false" prefWidth="80" text="导出" onAction="#openConfigWindow">
                                     <graphic>
                                         <ImageView >
                                             <image>

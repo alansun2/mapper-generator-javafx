@@ -20,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -107,12 +108,13 @@ public class MainController implements Initializable {
 
         this.treeViewInit();
 
-        this.listViewInit();
-
         this.checkBoxInit();
 
         //从文件加载数据源至pane
         dataSourceService.loadDataSourceFromFile(treeItemRoot);
+        if (treeItemRoot.getChildren().size() == 1) {
+            treeItemRoot.getChildren().get(0).setExpanded(true);
+        }
     }
 
     /**
@@ -144,42 +146,6 @@ public class MainController implements Initializable {
                         contextMenu = new ContextMenu(menuItem);
                     }
                     treeViewDataSource.setContextMenu(contextMenu);
-                }
-            }
-        });
-    }
-
-    /**
-     * listView init
-     */
-    private void listViewInit() {
-        //listView
-        anchorPaneListView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            if (event.getButton() == MouseButton.SECONDARY) {
-                ObservableList<Node> children = anchorPaneListView.getSelectionModel().getSelectedItem().getChildren();
-//                MenuItem menuItem1 = new MenuItem("刷新");
-//                menuItem1.setOnAction(event1 -> refresh());
-                if (children.size() == 2) {
-                    MenuItem menuItem2 = new MenuItem("展开");
-                    menuItem2.setOnAction(event1 -> expandColumns());
-                    anchorPaneListView.setContextMenu(new ContextMenu(menuItem2));
-                } else {
-                    TableView tableView = (TableView) children.get(2);
-                    if (tableView.isVisible()) {
-                        MenuItem menuItem2 = new MenuItem("闭合");
-                        menuItem2.setOnAction(event1 -> {
-                            tableView.setVisible(false);
-                            tableView.setManaged(false);
-                        });
-                        anchorPaneListView.setContextMenu(new ContextMenu(menuItem2));
-                    } else {
-                        MenuItem menuItem2 = new MenuItem("展开");
-                        menuItem2.setOnAction(event1 -> {
-                            tableView.setVisible(true);
-                            tableView.setManaged(true);
-                        });
-                        anchorPaneListView.setContextMenu(new ContextMenu(menuItem2));
-                    }
                 }
             }
         });
@@ -276,6 +242,11 @@ public class MainController implements Initializable {
         }
     }
 
+    /**
+     * 设置listView
+     *
+     * @param tables 已选表
+     */
     private void setListView(List<Table> tables) {
         ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
         anchorPaneListView.setItems(anchorPanes);
@@ -297,7 +268,34 @@ public class MainController implements Initializable {
             delete.setSelected(true);
             CheckBox select = new CheckBox("select");
             select.setSelected(true);
-            HBox hBox2 = new HBox(25, returnId, insert, count, update, delete, select);
+
+            Button expand = new Button();
+            expand.setGraphic(new ImageView("/image/expand.png"));
+            expand.setPrefWidth(80);
+            expand.setStyle("-fx-background-color: transparent");
+
+            expand.setOnAction(event -> {
+                Button source = (Button) event.getSource();
+                VBox selectedVBox = ((VBox) source.getParent().getParent());
+
+                ObservableList<Node> children = selectedVBox.getChildren();
+                if (children.size() == 2) {
+                    expand.setGraphic(new ImageView("/image/close.png"));
+                    expandColumns(selectedVBox);
+                } else {
+                    TableView tableView = (TableView) children.get(2);
+                    if (tableView.isVisible()) {
+                        expand.setGraphic(new ImageView("/image/expand.png"));
+                        tableView.setVisible(false);
+                        tableView.setManaged(false);
+                    } else {
+                        expand.setGraphic(new ImageView("/image/close.png"));
+                        tableView.setVisible(true);
+                        tableView.setManaged(true);
+                    }
+                }
+            });
+            HBox hBox2 = new HBox(20, returnId, insert, count, update, delete, select, expand);
             hBox2.setAlignment(Pos.CENTER);
 
             VBox vBox = new VBox(10, hBox, hBox2);
@@ -347,9 +345,7 @@ public class MainController implements Initializable {
     /**
      * 展开字段
      */
-    private void expandColumns() {
-        VBox selectedItem = anchorPaneListView.getSelectionModel().getSelectedItem();
-
+    private void expandColumns(VBox selectedItem) {
         String tableName = ((Label) (((HBox) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
         List<Column> columns = columnService.getColumns(BaseConstants.currentDateSource, tableName);
 
