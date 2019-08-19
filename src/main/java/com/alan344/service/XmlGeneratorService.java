@@ -93,9 +93,9 @@ public class XmlGeneratorService {
         //jdbc 连接
         Element jdbcConnection = context.addElement("jdbcConnection");
         jdbcConnection.addAttribute("driverClass", "com.mysql.cj.jdbc.Driver");
-        jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://" + BaseConstants.currentDateSource.getHost() + "/" + BaseConstants.currentDateSource.getDatabase() + "?nullCatalogMeansCurrent=true");
-        jdbcConnection.addAttribute("userId", BaseConstants.currentDateSource.getUser());
-        jdbcConnection.addAttribute("password", BaseConstants.currentDateSource.getPassword());
+        jdbcConnection.addAttribute("connectionURL", "jdbc:mysql://" + BaseConstants.selectedDateSource.getHost() + "/" + BaseConstants.selectedDateSource.getDatabase() + "?nullCatalogMeansCurrent=true");
+        jdbcConnection.addAttribute("userId", BaseConstants.selectedDateSource.getUser());
+        jdbcConnection.addAttribute("password", BaseConstants.selectedDateSource.getPassword());
 
         //默认类型解析器
         if (generatorConfig.isUserJava8() && generatorConfig.isUseBigDecimal()) {
@@ -147,7 +147,7 @@ public class XmlGeneratorService {
             CheckBox insertReturnCheckBox = (CheckBox) secondHBox.getChildren().get(0);
             if (insertReturnCheckBox.isSelected()) {
                 Element generatedKey = tableEl.addElement("generatedKey");
-                Table table = BaseConstants.tableNameTableMap.get(tableName);
+                Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
                 generatedKey.addAttribute("column", table.getColumns().get(0).getColumnName());
                 generatedKey.addAttribute("sqlStatement", "JDBC");
             }

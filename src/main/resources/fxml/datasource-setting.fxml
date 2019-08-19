@@ -22,8 +22,8 @@
         <TextField fx:id="user" layoutX="140.0" layoutY="125.0" prefHeight="23.0" prefWidth="241.0" promptText="user" />
         <PasswordField fx:id="password" layoutX="140.0" layoutY="170.0" prefHeight="23.0" prefWidth="241.0" promptText="password" />
         <TextField fx:id="port" layoutX="450.0" layoutY="35.0" prefHeight="23.0" prefWidth="55.0" promptText="port" text="3306" />
-        <Button layoutX="375.0" layoutY="265.0" mnemonicParsing="false" onAction="#close" text="取消" />
-        <Button layoutX="450.0" layoutY="265.0" mnemonicParsing="false" onAction="#apply" text="应用" />
+        <Button layoutX="375.0" layoutY="265.0" prefWidth="64.0" mnemonicParsing="false" onAction="#close" text="取消" />
+        <Button layoutX="450.0" layoutY="265.0" prefWidth="64.0" mnemonicParsing="false" onAction="#apply" text="应用" />
         <ComboBox fx:id="driveName" layoutX="140.0" layoutY="215.0" prefHeight="23.0" prefWidth="241.0" value="com.mysql.cj.jdbc.Driver">
             <items>
                 <FXCollections fx:factory="observableArrayList">
@@ -31,7 +31,7 @@
                 </FXCollections>
             </items>
         </ComboBox>
-        <Button layoutX="140.0" layoutY="265.0" mnemonicParsing="false" onAction="#testConnection" prefHeight="23.0" prefWidth="150.0" text="Test Connection"/>
-        <Label fx:id="testConnectionResultLabel" layoutX="290.0" layoutY="264.0" prefHeight="31.0" prefWidth="75.0" visible="false" managed="false" />
+        <Button layoutX="140.0" layoutY="265.0" mnemonicParsing="false" onAction="#testConnection" prefHeight="23.0" prefWidth="130.0" text="Test Connection"/>
+        <Label fx:id="testConnectionResultLabel" layoutX="270.0" layoutY="264.0" prefHeight="31.0" prefWidth="75.0" visible="false" managed="false" />
     </children>
 </AnchorPane>

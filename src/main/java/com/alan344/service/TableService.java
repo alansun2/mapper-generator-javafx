@@ -47,34 +47,16 @@ public class TableService {
         Table emptyTable = (Table) children.get(0).getValue();
         //当dataSourceTreeItem下只有一个item，并且该item是之前填充的item时才进行拉去table的操作
         if (emptyTable.getTableName() == null) {
+            //删除用来填充的item
+            children.remove(0);
+
+            List<Table> tables = pullTablesFromRemote(dataSourceTreeItem);
+
             DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
-            JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
-
-            try {
-                List<String> tableNames = jdbcTemplate.query("SHOW TABLES", (rs, i) -> rs.getString(1));
-                if (!tableNames.isEmpty()) {
-                    //删除用来填充的item
-                    children.remove(0);
-
-                    List<Table> tables = new ArrayList<>();
-                    //把table填入dataSourceTreeItem
-                    tableNames.forEach(tableName -> {
-                        Table table = new Table();
-                        table.setTableName(tableName);
-                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-
-                        tables.add(table);
-                    });
-                    //写入文件
-                    this.downLoadToFile(dataSource, tables);
-
-                    //加载columns
-                    columnService.loadColumns(dataSource, tables);
-                }
-            } catch (Exception e) {
-                log.error("数据源有问题" + dataSource, e);
-            }
+            //写入文件
+            this.downLoadToFile(dataSource, tables);
+            //加载columns
+            columnService.loadColumns(dataSource, tables);
         }
     }
 
@@ -85,13 +67,40 @@ public class TableService {
      */
     public void refreshTables(TreeItem<DataItem> dataSourceTreeItem) {
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
-        this.deleteTable(dataSource);
+        this.deleteTableOnly(dataSource);
 
         ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
         children.remove(0, children.size());
-        //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-        TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
-        this.loadTables(dataSourceTreeItem);
+        List<Table> tables = pullTablesFromRemote(dataSourceTreeItem);
+
+        //写入文件
+        this.downLoadToFile(dataSource, tables);
+    }
+
+    /**
+     * 从远程拉去表信息
+     *
+     * @param dataSourceTreeItem 数据源 TreeView
+     * @return {@link Table}
+     */
+    private List<Table> pullTablesFromRemote(TreeItem<DataItem> dataSourceTreeItem) {
+        DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+        JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
+        List<Table> tables = new ArrayList<>();
+        List<String> tableNames = jdbcTemplate.query("SHOW TABLES", (rs, i) -> rs.getString(1));
+        if (!tableNames.isEmpty()) {
+            //把table填入dataSourceTreeItem
+            tableNames.forEach(tableName -> {
+                Table table = new Table();
+                table.setTableName(tableName);
+                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+
+                tables.add(table);
+            });
+        }
+
+        return tables;
     }
 
     /**
@@ -129,16 +138,29 @@ public class TableService {
     void deleteTable(DataSource dataSource) {
         this.deleteTableFile(dataSource);
 
-        columnService.deleteColumns(dataSource);
+        columnService.deleteColumnsDirectory(dataSource);
+    }
+
+    /**
+     * 删除table
+     *
+     * @param dataSource 数据源信息
+     */
+    void deleteTableOnly(DataSource dataSource) {
+        this.deleteTableFile(dataSource);
     }
 
     /**
      * 把tables信息记录到文件
      */
     @Async
-    void downLoadToFile(DataSource dataSource, List<Table> tables) throws IOException {
+    void downLoadToFile(DataSource dataSource, List<Table> tables) {
         String tablesStr = JSON.toJSONString(tables, true);
-        FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource), tablesStr, StandardCharsets.UTF_8.toString());
+        try {
+            FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource), tablesStr, StandardCharsets.UTF_8.toString());
+        } catch (IOException e) {
+            log.error("写入表文件错误", e);
+        }
     }
 
     /**

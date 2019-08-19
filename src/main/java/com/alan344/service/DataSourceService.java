@@ -120,7 +120,7 @@ public class DataSourceService {
                         //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
                         TreeUtils.add2Tree(new Table(), dataSourceItemTreeItem);
                     }
-                    //向Spring注册dataSource TODO 可以直接注册jdbcTemplate
+                    //向Spring注册dataSource
                     this.addDataSourceToSpring(dataSource);
                 }
             } catch (IOException e) {

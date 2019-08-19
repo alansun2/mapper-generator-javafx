@@ -1,7 +1,6 @@
 package com.alan344.constants;
 
 import com.alan344.bean.DataSource;
-import com.alan344.bean.GeneratorConfig;
 import com.alan344.bean.Table;
 
 import java.io.File;
@@ -19,15 +18,19 @@ public class BaseConstants {
     /**
      * 选中的数据源
      */
-    public static DataSource currentDateSource;
+    public static DataSource selectedDateSource;
 
     /**
      * 选中的要导出的表
      */
-    public static Map<String, Table> tableNameTableMap;
+    public static Map<String, Table> selectedTableNameTableMap;
 
-    public static File getColumnsFile(DataSource dataSource) {
-        return new File(MG_DATA_HOME + dataSource.toString() + "_columns");
+    public static File getColumnsFile(DataSource dataSource, String tableName) {
+        return new File(MG_DATA_HOME + dataSource.toString() + "/" + tableName);
+    }
+
+    public static File getColumnsDirectory(DataSource dataSource) {
+        return new File(MG_DATA_HOME + dataSource.toString());
     }
 
     public static File getTableFile(DataSource dataSource) {

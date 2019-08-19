@@ -20,6 +20,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -132,18 +133,18 @@ public class MainController implements Initializable {
                 ContextMenu contextMenu;
                 if (selectedItems != null) {
                     //open context menu on current screen position
-                    MenuItem menuItem = new MenuItem("导出");
-                    menuItem.setOnAction(event1 -> export());
+                    MenuItem exportMenuItem = new MenuItem("导出");
+                    exportMenuItem.setOnAction(event1 -> export());
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
 
-                        MenuItem menuItem4 = new MenuItem("刷新");
-                        menuItem4.setOnAction(event1 -> refreshDataSource());
-                        MenuItem menuItem2 = new MenuItem("修改数据源");
-                        MenuItem menuItem3 = new MenuItem("删除数据源");
-                        menuItem3.setOnAction(event1 -> deleteDataSource());
-                        contextMenu = new ContextMenu(menuItem, menuItem4, menuItem2, menuItem3);
+                        MenuItem refreshMenuItem = new MenuItem("刷新");
+                        refreshMenuItem.setOnAction(event1 -> refreshDataSource());
+                        MenuItem modifyMenuItem = new MenuItem("修改数据源");
+                        MenuItem deleteMenuItem = new MenuItem("删除数据源");
+                        deleteMenuItem.setOnAction(event1 -> deleteDataSource());
+                        contextMenu = new ContextMenu(exportMenuItem, refreshMenuItem, modifyMenuItem, deleteMenuItem);
                     } else {
-                        contextMenu = new ContextMenu(menuItem);
+                        contextMenu = new ContextMenu(exportMenuItem);
                     }
                     treeViewDataSource.setContextMenu(contextMenu);
                 }
@@ -209,13 +210,13 @@ public class MainController implements Initializable {
                     children.forEach(itemTreeItem -> tables.add(((Table) itemTreeItem.getValue())));
                 }
 
-                BaseConstants.currentDateSource = (DataSource) dataItemTreeItem.getValue();
+                BaseConstants.selectedDateSource = (DataSource) dataItemTreeItem.getValue();
             } else {
                 //单独选中table的导出
                 Table table = (Table) dataItemTreeItem.getValue();
                 tables = Collections.singletonList(table);
 
-                BaseConstants.currentDateSource = ((DataSource) dataItemTreeItem.getParent().getValue());
+                BaseConstants.selectedDateSource = ((DataSource) dataItemTreeItem.getParent().getValue());
             }
         } else {
             //选中多个table的导出
@@ -228,12 +229,19 @@ public class MainController implements Initializable {
                 }
             }
 
-            BaseConstants.currentDateSource = ((DataSource) selectedItems.get(0).getParent().getValue());
+            BaseConstants.selectedDateSource = ((DataSource) selectedItems.get(0).getParent().getValue());
         }
         //把选中要导出的表在右边的listView展示
         this.setListView(tables);
         //选中的表
-        BaseConstants.tableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
+        BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
+
+        for (Table table : tables) {
+            if (table.getColumns() != null) {
+                List<Column> columns = columnService.getColumnsFromRemote(BaseConstants.selectedDateSource, table.getTableName());
+                table.setColumns(columns);
+            }
+        }
 
         //show rightBorderTopHbox
         if (!rightBorderTopHbox.isVisible() && !rightBorderTopHbox.isManaged()) {
@@ -347,27 +355,41 @@ public class MainController implements Initializable {
      */
     private void expandColumns(VBox selectedItem) {
         String tableName = ((Label) (((HBox) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
-        List<Column> columns = columnService.getColumns(BaseConstants.currentDateSource, tableName);
+        List<Column> columns = BaseConstants.selectedTableNameTableMap.get(tableName).getColumns();
 
         ObservableList<Column> gridPanes = FXCollections.observableArrayList(columns);
         TableView<Column> columnTableView = new TableView<>(gridPanes);
+        columnTableView.setEditable(true);
 
         double borderPane1Width = borderPane1.getWidth();
-        double columnWidth = borderPane1Width / 2;
+        double columnWidth = borderPane1Width / 3;
 
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
         tcColumnNam.setPrefWidth(columnWidth);
+        tcColumnNam.setSortable(false);
 
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
         tcType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType()));
         tcType.setPrefWidth(columnWidth);
+        tcType.setSortable(false);
+
+        TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
+        ignoreCheckBox.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
+            final Column column = columnTableView.getItems().get(param);
+            column.ignoreProperty().addListener((observable, oldValue, newValue) -> column.setIgnore(newValue));
+            return column.ignoreProperty();
+        }));
+        ignoreCheckBox.setPrefWidth(columnWidth);
+        ignoreCheckBox.setSortable(false);
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);
+        columnTableView.getColumns().add(ignoreCheckBox);
 
         columnTableView.setFixedCellSize(28);
         columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.01)));
+
         selectedItem.getChildren().add(columnTableView);
 
         MenuItem overrideColumnMenuItem = new MenuItem("重写");
