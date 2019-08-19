@@ -90,6 +90,9 @@ public class MainController implements Initializable {
     private ConfigController configController;
 
     @Autowired
+    private ColumnUpdateController columnUpdateController;
+
+    @Autowired
     private DataSourceService dataSourceService;
 
     @Autowired
@@ -371,8 +374,8 @@ public class MainController implements Initializable {
     /**
      * 展开字段
      */
-    private void expandTableViewColumns(VBox selectedItem) {
-        String tableName = ((Label) (((HBox) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
+    private void expandTableViewColumns(VBox selectedVBox) {
+        String tableName = ((Label) (((HBox) selectedVBox.getChildren().get(0))).getChildren().get(0)).getText();
         List<Column> columns = BaseConstants.selectedTableNameTableMap.get(tableName).getColumns();
 
         ObservableList<Column> gridPanes = FXCollections.observableArrayList(columns);
@@ -408,11 +411,12 @@ public class MainController implements Initializable {
         columnTableView.setFixedCellSize(28);
         columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.01)));
 
-        selectedItem.getChildren().add(columnTableView);
+        selectedVBox.getChildren().add(columnTableView);
 
         MenuItem overrideColumnMenuItem = new MenuItem("override");
         overrideColumnMenuItem.setOnAction(event -> {
-
+            Column selectedColumn = columnTableView.getSelectionModel().getSelectedItem();
+            columnUpdateController.openStage((Stage) borderPane.getScene().getWindow(), selectedColumn);
         });
         columnTableView.setContextMenu(new ContextMenu(overrideColumnMenuItem));
     }

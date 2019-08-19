@@ -6,10 +6,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.alan344.controller.ColumnUpdateController"
-            styleClass="@../css/column-update.css"
-            prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane prefHeight="400.0" prefWidth="570.0" stylesheets="@../css/column-update.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ColumnUpdateController">
+   <children>
+      <Label  layoutX="70.0" layoutY="50.0" prefHeight="31.0" prefWidth="75.0" text="字段名：" />
+      <Label layoutX="70.0" layoutY="100.0" prefHeight="31.0" prefWidth="120.0" text="java 属性名：" />
+      <Label layoutX="70.0" layoutY="150.0" prefHeight="31.0" prefWidth="110.0" text="java type：" />
+      <Label layoutX="70.0" layoutY="200.0" prefHeight="31.0" prefWidth="120.0" text="type handler：" />
+      <TextField fx:id="columnNameText" editable="false" layoutX="200.0" layoutY="50.0" prefHeight="30.0" prefWidth="300.0" />
+      <TextField fx:id="propertyText" layoutX="200.0" layoutY="100.0" prefHeight="30.0" prefWidth="300.0" promptText="非必填，默认根据 column 生成" />
+      <TextField fx:id="javaTypeText" layoutX="200.0" layoutY="150.0" prefHeight="30.0" prefWidth="300.0" promptText="非必填，格式 java.lang.Integer" />
+      <TextField fx:id="typeHandlerText" layoutX="200.0" layoutY="200.0" prefHeight="30.0" prefWidth="300.0" promptText="非必填，自定义类型处理器，例如把 Json String to Bean" />
+      <CheckBox fx:id="isGeneratedAlways" layoutX="70.0" layoutY="250.0" mnemonicParsing="false" text="isGeneratedAlways" />
+      <CheckBox fx:id="delimitedColumnName" layoutX="70.0" layoutY="300.0" mnemonicParsing="false" text="delimitedColumnName" />
+      <Button layoutX="313.0" layoutY="344.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="取消" onAction="#cancel"/>
+      <Button layoutX="420.0" layoutY="344.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="应用" onAction="#apply"/>
+   </children>
 </AnchorPane>
