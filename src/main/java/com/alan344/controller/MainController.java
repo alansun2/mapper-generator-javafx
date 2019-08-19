@@ -410,7 +410,7 @@ public class MainController implements Initializable {
 
         selectedItem.getChildren().add(columnTableView);
 
-        MenuItem overrideColumnMenuItem = new MenuItem("重写");
+        MenuItem overrideColumnMenuItem = new MenuItem("override");
         overrideColumnMenuItem.setOnAction(event -> {
 
         });
