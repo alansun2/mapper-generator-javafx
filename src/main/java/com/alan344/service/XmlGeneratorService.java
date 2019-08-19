@@ -1,17 +1,12 @@
 package com.alan344.service;
 
+import com.alan344.bean.Column;
 import com.alan344.bean.GeneratorConfig;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.HRXMLWriter;
 import com.alan344.utils.MyShellCallback;
 import com.alan344happyframework.constants.SeparatorConstants;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -29,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -42,11 +38,10 @@ public class XmlGeneratorService {
     /**
      * 导出
      *
-     * @param vBoxes listView的内容
      * @throws Exception e
      */
     @Async
-    public void generatorXml(ObservableList<VBox> vBoxes, GeneratorConfig generatorConfig) throws Exception {
+    public void generatorXml(GeneratorConfig generatorConfig) throws Exception {
         Document document = DocumentHelper.createDocument();
         document.addDocType("generatorConfiguration", "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN", "mybatis-generator-config_1_0.dtd");
 
@@ -135,31 +130,39 @@ public class XmlGeneratorService {
         javaClientGenerator.addAttribute("targetProject", generatorConfig.getMapperLocation().replaceAll("\\\\", "/"));
         javaClientGenerator.addAttribute("type", "XMLMAPPER");
 
-        for (VBox vBox : vBoxes) {
-            ObservableList<Node> children = vBox.getChildren();
+        Collection<Table> tables = BaseConstants.selectedTableNameTableMap.values();
+        for (Table table : tables) {
 
-            Label tableNameLabel = (Label) ((HBox) children.get(0)).getChildren().get(0);
             Element tableEl = context.addElement("table");
-            String tableName = tableNameLabel.getText();
-            tableEl.addAttribute("tableName", tableName);
+            tableEl.addAttribute("tableName", table.getTableName());
 
-            HBox secondHBox = (HBox) children.get(1);
-            CheckBox insertReturnCheckBox = (CheckBox) secondHBox.getChildren().get(0);
-            if (insertReturnCheckBox.isSelected()) {
+            List<Column> columns = table.getColumns();
+
+            if (table.isReturnInsertId()) {
                 Element generatedKey = tableEl.addElement("generatedKey");
-                Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
-                generatedKey.addAttribute("column", table.getColumns().get(0).getColumnName());
+                generatedKey.addAttribute("column", columns.get(0).getColumnName());
                 generatedKey.addAttribute("sqlStatement", "JDBC");
             }
 
-            this.checkBoxSelected("enableInsert", 1, tableEl, secondHBox);
-            this.checkBoxSelected("enableCountByExample", 2, tableEl, secondHBox);
-            this.checkBoxSelected("enableUpdateByPrimaryKey", 3, tableEl, secondHBox);
-            this.checkBoxSelected("enableUpdateByExample", 3, tableEl, secondHBox);
-            this.checkBoxSelected("enableDeleteByPrimaryKey", 4, tableEl, secondHBox);
-            this.checkBoxSelected("enableDeleteByExample", 4, tableEl, secondHBox);
-            this.checkBoxSelected("enableSelectByExample", 5, tableEl, secondHBox);
-            this.checkBoxSelected("enableSelectByPrimaryKey", 5, tableEl, secondHBox);
+            this.checkBoxSelected("enableInsert", tableEl, table.isInsert());
+            this.checkBoxSelected("enableCountByExample", tableEl, table.isCount());
+            this.checkBoxSelected("enableUpdateByPrimaryKey", tableEl, table.isUpdate());
+            this.checkBoxSelected("enableUpdateByExample", tableEl, table.isUpdate());
+            this.checkBoxSelected("enableDeleteByPrimaryKey", tableEl, table.isDelete());
+            this.checkBoxSelected("enableDeleteByExample", tableEl, table.isDelete());
+            this.checkBoxSelected("enableSelectByExample", tableEl, table.isSelect());
+            this.checkBoxSelected("enableSelectByPrimaryKey", tableEl, table.isSelect());
+
+            if (generatorConfig.isUseActualColumnNames()) {
+                tableEl.addAttribute("useActualColumnNames", "true");
+            }
+
+            columns.forEach(column -> {
+                if (column.isIgnore()) {
+                    Element ignoreColumn = tableEl.addElement("ignoreColumn");
+                    ignoreColumn.addAttribute("column", column.getColumnName());
+                }
+            });
         }
 
         String generatorConfigName = System.getProperty("user.dir") + "/generatorConfig.xml";
@@ -171,9 +174,8 @@ public class XmlGeneratorService {
         this.generateMyBatis3WithInvalidConfig(generatorConfigName, generatorConfig);
     }
 
-    private void checkBoxSelected(String name, int index, Element table, HBox hBox) {
-        CheckBox checkBox = (CheckBox) hBox.getChildren().get(index);
-        if (checkBox.isSelected()) {
+    private void checkBoxSelected(String name, Element table, boolean flag) {
+        if (flag) {
             table.addAttribute(name, Boolean.TRUE.toString());
         } else {
             table.addAttribute(name, Boolean.FALSE.toString());

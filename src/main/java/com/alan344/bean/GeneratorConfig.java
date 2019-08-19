@@ -75,4 +75,8 @@ public class GeneratorConfig {
      * xml导出地址
      */
     private String mapperXmlLocation;
+    /**
+     * 使用原来的字段名
+     */
+    private boolean useActualColumnNames;
 }

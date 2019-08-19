@@ -7,6 +7,7 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
@@ -146,7 +147,7 @@ public class TableService {
      *
      * @param dataSource 数据源信息
      */
-    void deleteTableOnly(DataSource dataSource) {
+    private void deleteTableOnly(DataSource dataSource) {
         this.deleteTableFile(dataSource);
     }
 

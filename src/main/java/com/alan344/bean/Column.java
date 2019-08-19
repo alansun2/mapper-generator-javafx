@@ -1,5 +1,7 @@
 package com.alan344.bean;
 
+import com.alan344.config.BooleanPropertySerializer;
+import com.alibaba.fastjson.annotation.JSONField;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import lombok.Setter;
 public class Column {
     private String columnName;
     private String type;
+    @JSONField(serializeUsing = BooleanPropertySerializer.class)
     private BooleanProperty ignore = new SimpleBooleanProperty(false);
 
     public boolean isIgnore() {

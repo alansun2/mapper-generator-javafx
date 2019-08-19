@@ -4,13 +4,10 @@ import com.alan344.bean.GeneratorConfig;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.XmlGeneratorService;
 import com.alan344.utils.TextUtils;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -62,9 +59,6 @@ public class ExportController implements Initializable {
     private CheckBox useMergeCheckBox;
 
     @Autowired
-    private MainController mainController;
-
-    @Autowired
     private XmlGeneratorService xmlGeneratorService;
 
     @Autowired
@@ -102,10 +96,8 @@ public class ExportController implements Initializable {
 
         configController.addConfig(generatorConfig);
 
-        ListView<VBox> anchorPaneListView = mainController.getAnchorPaneListView();
-        ObservableList<VBox> vBoxes = anchorPaneListView.getItems();
         //调用 mybatis 生成文件
-        xmlGeneratorService.generatorXml(vBoxes, generatorConfig);
+        xmlGeneratorService.generatorXml(generatorConfig);
     }
 
     /**

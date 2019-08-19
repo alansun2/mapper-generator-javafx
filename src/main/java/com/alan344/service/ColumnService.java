@@ -32,25 +32,6 @@ public class ColumnService {
     private BeanFactory beanFactory;
 
     /**
-     * 加载columns
-     *
-     * @param dataSource 数据源
-     * @param tables     表
-     */
-    void loadColumns(DataSource dataSource, List<Table> tables) {
-        Map<String, List<Column>> tableNameColumnsMap = new HashMap<>();
-        for (Table table : tables) {
-            String tableName = table.getTableName();
-            List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
-            table.setColumns(columns);
-            tableNameColumnsMap.put(tableName, columns);
-        }
-
-        //写入文件
-        this.downLoadColumnsToFile(dataSource, tableNameColumnsMap);
-    }
-
-    /**
      * 获取表的字段
      *
      * @param tableName tableName
@@ -68,6 +49,48 @@ public class ColumnService {
         });
 
         return columns;
+    }
+
+    /**
+     * 重新加载表字段信息
+     *
+     * @param tableName 表命
+     */
+    public void refreshColumns(String tableName) {
+        Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
+        List<Column> existColumns = table.getColumns();
+        Map<String, Column> existColumnNameColumnMap = existColumns.stream().collect(Collectors.toMap(Column::getColumnName, column -> column));
+
+        DataSource dataSource = BaseConstants.selectedDateSource;
+        List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
+        deleteColumnFile(dataSource, tableName);
+
+        for (Column column : columns) {
+            if (existColumnNameColumnMap.containsKey(column.getColumnName())) {
+                column.setIgnore(existColumnNameColumnMap.get(column.getColumnName()).isIgnore());
+            }
+        }
+
+        table.setColumns(columns);
+    }
+
+    /**
+     * 加载columns
+     *
+     * @param dataSource 数据源
+     * @param tables     表
+     */
+    void loadColumns(DataSource dataSource, List<Table> tables) {
+        Map<String, List<Column>> tableNameColumnsMap = new HashMap<>();
+        for (Table table : tables) {
+            String tableName = table.getTableName();
+            List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
+            table.setColumns(columns);
+            tableNameColumnsMap.put(tableName, columns);
+        }
+
+        //写入文件
+        this.downLoadColumnsToFile(dataSource, tableNameColumnsMap);
     }
 
     /**

@@ -69,11 +69,26 @@
                 </BorderPane>
                 <BorderPane fx:id="borderPane1" style="-fx-background-color: #F4F4F4;">
                     <center>
-                        <ListView fx:id="anchorPaneListView" prefHeight="200.0" prefWidth="200.0"
-                                  BorderPane.alignment="CENTER"/>
+                        <ListView fx:id="vBoxListView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                            <contextMenu>
+                                <ContextMenu>
+                                    <items>
+                                        <MenuItem text="刷新字段" onAction="#refreshTableColumn">
+                                            <graphic>
+                                                <ImageView >
+                                                    <image>
+                                                        <Image url="/image/refresh@16.png" />
+                                                    </image>
+                                                </ImageView>
+                                            </graphic>
+                                        </MenuItem>
+                                    </items>
+                                </ContextMenu>
+                            </contextMenu>
+                        </ListView>
                     </center>
                     <top>
-                        <HBox fx:id="rightBorderTopHbox" alignment="CENTER" prefHeight="50.0" spacing="20.0" visible="false" managed="false">
+                        <HBox fx:id="rightBorderTopHBox" alignment="CENTER" prefHeight="50.0" spacing="20.0" visible="false" managed="false">
                             <children>
                                 <CheckBox fx:id="insertReturnCheckBox" mnemonicParsing="false" text="insert返回id"/>
                                 <CheckBox fx:id="insertCheckBox" mnemonicParsing="false" text="insert" selected="true"/>

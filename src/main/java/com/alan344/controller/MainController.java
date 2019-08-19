@@ -62,10 +62,10 @@ public class MainController implements Initializable {
 
     @Getter
     @FXML
-    private ListView<VBox> anchorPaneListView;
+    private ListView<VBox> vBoxListView;
 
     @FXML
-    private HBox rightBorderTopHbox;
+    private HBox rightBorderTopHBox;
 
     @FXML
     private TreeView<DataItem> treeViewDataSource;
@@ -134,15 +134,17 @@ public class MainController implements Initializable {
                 if (selectedItems != null) {
                     //open context menu on current screen position
                     MenuItem exportMenuItem = new MenuItem("导出");
+                    exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
                     exportMenuItem.setOnAction(event1 -> export());
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
 
                         MenuItem refreshMenuItem = new MenuItem("刷新");
+                        refreshMenuItem.setGraphic(new ImageView("/image/refresh@16.png"));
                         refreshMenuItem.setOnAction(event1 -> refreshDataSource());
-                        MenuItem modifyMenuItem = new MenuItem("修改数据源");
                         MenuItem deleteMenuItem = new MenuItem("删除数据源");
+                        deleteMenuItem.setGraphic(new ImageView("/image/delete@16.png"));
                         deleteMenuItem.setOnAction(event1 -> deleteDataSource());
-                        contextMenu = new ContextMenu(exportMenuItem, refreshMenuItem, modifyMenuItem, deleteMenuItem);
+                        contextMenu = new ContextMenu(exportMenuItem, refreshMenuItem, deleteMenuItem);
                     } else {
                         contextMenu = new ContextMenu(exportMenuItem);
                     }
@@ -165,7 +167,7 @@ public class MainController implements Initializable {
     }
 
     private void checkBoxAction(int index, boolean selected) {
-        ObservableList<VBox> items = anchorPaneListView.getItems();
+        ObservableList<VBox> items = vBoxListView.getItems();
         for (VBox item : items) {
             ((CheckBox) ((HBox) item.getChildren().get(1)).getChildren().get(index)).setSelected(selected);
         }
@@ -237,78 +239,16 @@ public class MainController implements Initializable {
         BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
 
         for (Table table : tables) {
-            if (table.getColumns() != null) {
+            if (table.getColumns() == null) {
                 List<Column> columns = columnService.getColumnsFromRemote(BaseConstants.selectedDateSource, table.getTableName());
                 table.setColumns(columns);
             }
         }
 
-        //show rightBorderTopHbox
-        if (!rightBorderTopHbox.isVisible() && !rightBorderTopHbox.isManaged()) {
-            rightBorderTopHbox.setVisible(true);
-            rightBorderTopHbox.setManaged(true);
-        }
-    }
-
-    /**
-     * 设置listView
-     *
-     * @param tables 已选表
-     */
-    private void setListView(List<Table> tables) {
-        ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
-        anchorPaneListView.setItems(anchorPanes);
-        for (Table table : tables) {
-            Label tableNameLabel = new Label(table.getTableName());
-            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
-
-            HBox hBox = new HBox(tableNameLabel);
-            hBox.setAlignment(Pos.CENTER);
-
-            CheckBox returnId = new CheckBox("insert返回id");
-            CheckBox insert = new CheckBox("insert");
-            insert.setSelected(true);
-            CheckBox count = new CheckBox("count");
-            count.setSelected(true);
-            CheckBox update = new CheckBox("update");
-            update.setSelected(true);
-            CheckBox delete = new CheckBox("delete");
-            delete.setSelected(true);
-            CheckBox select = new CheckBox("select");
-            select.setSelected(true);
-
-            Button expand = new Button();
-            expand.setGraphic(new ImageView("/image/expand.png"));
-            expand.setPrefWidth(80);
-            expand.setStyle("-fx-background-color: transparent");
-
-            expand.setOnAction(event -> {
-                Button source = (Button) event.getSource();
-                VBox selectedVBox = ((VBox) source.getParent().getParent());
-
-                ObservableList<Node> children = selectedVBox.getChildren();
-                if (children.size() == 2) {
-                    expand.setGraphic(new ImageView("/image/close.png"));
-                    expandColumns(selectedVBox);
-                } else {
-                    TableView tableView = (TableView) children.get(2);
-                    if (tableView.isVisible()) {
-                        expand.setGraphic(new ImageView("/image/expand.png"));
-                        tableView.setVisible(false);
-                        tableView.setManaged(false);
-                    } else {
-                        expand.setGraphic(new ImageView("/image/close.png"));
-                        tableView.setVisible(true);
-                        tableView.setManaged(true);
-                    }
-                }
-            });
-            HBox hBox2 = new HBox(20, returnId, insert, count, update, delete, select, expand);
-            hBox2.setAlignment(Pos.CENTER);
-
-            VBox vBox = new VBox(10, hBox, hBox2);
-
-            anchorPanes.add(vBox);
+        //show rightBorderTopHBox
+        if (!rightBorderTopHBox.isVisible() && !rightBorderTopHBox.isManaged()) {
+            rightBorderTopHBox.setVisible(true);
+            rightBorderTopHBox.setManaged(true);
         }
     }
 
@@ -346,14 +286,92 @@ public class MainController implements Initializable {
 
     /*------------------------------------ListView ContextMenu--------------------------------------------------------*/
 
-//    private void refresh() {
-//
-//    }
+    /**
+     * 设置listView
+     *
+     * @param tables 已选表
+     */
+    private void setListView(List<Table> tables) {
+        ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
+        vBoxListView.setItems(anchorPanes);
+        for (Table table : tables) {
+            Label tableNameLabel = new Label(table.getTableName());
+            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
+
+            HBox hBox = new HBox(tableNameLabel);
+            hBox.setAlignment(Pos.CENTER);
+
+            CheckBox returnId = new CheckBox("insert返回id");
+            returnId.selectedProperty().addListener((observable, oldValue, newValue) -> table.setReturnInsertId(newValue));
+            CheckBox insert = new CheckBox("insert");
+            insert.setSelected(true);
+            insert.selectedProperty().addListener((observable, oldValue, newValue) -> table.setInsert(newValue));
+            CheckBox count = new CheckBox("count");
+            count.setSelected(true);
+            count.selectedProperty().addListener((observable, oldValue, newValue) -> table.setCount(newValue));
+            CheckBox update = new CheckBox("update");
+            update.setSelected(true);
+            update.selectedProperty().addListener((observable, oldValue, newValue) -> table.setUpdate(newValue));
+            CheckBox delete = new CheckBox("delete");
+            delete.setSelected(true);
+            delete.selectedProperty().addListener((observable, oldValue, newValue) -> table.setDelete(newValue));
+            CheckBox select = new CheckBox("select");
+            select.setSelected(true);
+            select.selectedProperty().addListener((observable, oldValue, newValue) -> table.setSelect(newValue));
+
+            Button expand = new Button();
+            expand.setGraphic(new ImageView("/image/expand.png"));
+            expand.setPrefWidth(80);
+            expand.setStyle("-fx-background-color: transparent");
+
+            expand.setOnAction(event -> {
+                Button source = (Button) event.getSource();
+                VBox selectedVBox = ((VBox) source.getParent().getParent());
+
+                ObservableList<Node> children = selectedVBox.getChildren();
+                if (children.size() == 2) {
+                    expand.setGraphic(new ImageView("/image/close.png"));
+                    this.expandTableViewColumns(selectedVBox);
+                } else {
+                    TableView tableView = (TableView) children.get(2);
+                    if (tableView.isVisible()) {
+                        expand.setGraphic(new ImageView("/image/expand.png"));
+                        tableView.setVisible(false);
+                        tableView.setManaged(false);
+                    } else {
+                        expand.setGraphic(new ImageView("/image/close.png"));
+                        tableView.setVisible(true);
+                        tableView.setManaged(true);
+                    }
+                }
+            });
+            HBox hBox2 = new HBox(20, returnId, insert, count, update, delete, select, expand);
+            hBox2.setAlignment(Pos.CENTER);
+
+            VBox vBox = new VBox(10, hBox, hBox2);
+
+            anchorPanes.add(vBox);
+        }
+    }
+
+    /**
+     * 刷新字段信息
+     */
+    @FXML
+    private void refreshTableColumn() {
+        VBox selectedItemVBox = vBoxListView.getSelectionModel().getSelectedItem();
+        String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
+        columnService.refreshColumns(tableName);
+        selectedItemVBox.getChildren().remove(2);
+        this.expandTableViewColumns(selectedItemVBox);
+    }
+
+    //-----------------------------------------tableView--------------------------------------------------------------//
 
     /**
      * 展开字段
      */
-    private void expandColumns(VBox selectedItem) {
+    private void expandTableViewColumns(VBox selectedItem) {
         String tableName = ((Label) (((HBox) selectedItem.getChildren().get(0))).getChildren().get(0)).getText();
         List<Column> columns = BaseConstants.selectedTableNameTableMap.get(tableName).getColumns();
 
