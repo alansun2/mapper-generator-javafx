@@ -13,6 +13,7 @@ import com.alan344.utils.TreeUtils;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -507,15 +508,17 @@ public class MainController implements Initializable {
         TableView<Column> columnTableView = new TableView<>(gridPanes);
         columnTableView.setEditable(true);
 
+        DoubleBinding widthBind = selectedVBox.widthProperty().divide(6.05);
+
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
         tcColumnNam.setSortable(false);
-        tcColumnNam.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+        tcColumnNam.prefWidthProperty().bind(widthBind);
 
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
         tcType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType()));
         tcType.setSortable(false);
-        tcType.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+        tcType.prefWidthProperty().bind(widthBind);
 
         TableColumn<Column, String> javaType = new TableColumn<>("java type");
         javaType.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -525,7 +528,7 @@ public class MainController implements Initializable {
             BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
         });
         javaType.setSortable(false);
-        javaType.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+        javaType.prefWidthProperty().bind(widthBind);
 
         TableColumn<Column, String> property = new TableColumn<>("property");
         property.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -535,7 +538,7 @@ public class MainController implements Initializable {
             BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
         });
         property.setSortable(false);
-        property.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+        property.prefWidthProperty().bind(widthBind);
 
         TableColumn<Column, String> typeHandler = new TableColumn<>("typeHandler");
         typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -545,7 +548,7 @@ public class MainController implements Initializable {
             BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
         });
         typeHandler.setSortable(false);
-        typeHandler.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+        typeHandler.prefWidthProperty().bind(widthBind);
 
         TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
         ignoreCheckBox.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
@@ -557,18 +560,18 @@ public class MainController implements Initializable {
             return column.ignoreProperty();
         }));
         ignoreCheckBox.setSortable(false);
-        ignoreCheckBox.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+        ignoreCheckBox.prefWidthProperty().bind(widthBind);
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);
+        columnTableView.getColumns().add(ignoreCheckBox);
         columnTableView.getColumns().add(property);
         columnTableView.getColumns().add(javaType);
         columnTableView.getColumns().add(typeHandler);
-        columnTableView.getColumns().add(ignoreCheckBox);
 
-        columnTableView.setFixedCellSize(28);
-        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(2)));
-        columnTableView.prefWidthProperty().bind(vBoxListView.widthProperty());
+        columnTableView.setFixedCellSize(35);
+        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.93)));
+        columnTableView.prefWidthProperty().bind(selectedVBox.widthProperty());
 
         selectedVBox.getChildren().add(columnTableView);
     }
