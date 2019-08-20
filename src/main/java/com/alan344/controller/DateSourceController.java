@@ -109,16 +109,14 @@ public class DateSourceController implements Initializable {
         dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
             TreeItem<DataItem> firstItem = dataSourceTreeItem.getChildren().get(0);
             if (((Table) firstItem.getValue()).getTableName() == null) {
+                dataSourceTreeItem.getChildren().remove(0);
                 //没有则去远程拉取数据库表列表
                 List<Table> tables = tableService.loadTables(dataSource);
                 if (!tables.isEmpty()) {
-                    dataSourceTreeItem.getChildren().remove(0);
                     tables.forEach(table -> {
                         TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                         tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                     });
-                } else {
-                    dataSourceTreeItem.getChildren().remove(0);
                 }
             }
         });
