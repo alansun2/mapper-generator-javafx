@@ -95,6 +95,9 @@ public class MainController implements Initializable {
     private ConfigController configController;
 
     @Autowired
+    private AboutController aboutController;
+
+    @Autowired
     private DataSourceService dataSourceService;
 
     @Autowired
@@ -131,14 +134,9 @@ public class MainController implements Initializable {
         if (!dataSources.isEmpty()) {
             for (DataSource dataSource : dataSources) {
                 TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemRoot);
-                //添加展开监听
-                dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
-                    //没有则区远程拉去数据库表列表
-                    tableService.loadTables(dataSource);
-                });
                 dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
                 List<Table> tables = dataSource.getTables();
-                if (!tables.isEmpty()) {
+                if (tables != null && !tables.isEmpty()) {
                     tables.forEach(table -> {
                         TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                         tableTreeItem.setGraphic(new ImageView("/image/table.png"));
@@ -322,9 +320,14 @@ public class MainController implements Initializable {
     private void refreshDataSource() {
         TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
-        if (tableService.refreshTables(dataSource)) {
+        List<Table> tables = tableService.refreshTables(dataSource);
+        if (!tables.isEmpty()) {
             ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
             children.remove(0, children.size());
+            tables.forEach(table -> {
+                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+            });
         }
 
         if (BaseConstants.selectedDateSource == null || BaseConstants.selectedDateSource == dataSource) {
@@ -562,5 +565,10 @@ public class MainController implements Initializable {
     @FXML
     public void openConfigWindow() throws IOException {
         configController.openConfigPane((Stage) borderPane.getScene().getWindow());
+    }
+
+    @FXML
+    public void openAboutWindow() throws IOException {
+        aboutController.openWindow((Stage) borderPane.getScene().getWindow());
     }
 }

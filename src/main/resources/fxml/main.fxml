@@ -25,7 +25,7 @@
                 </MenuItem>
             </Menu>
             <Menu mnemonicParsing="false" text="帮助">
-                <MenuItem mnemonicParsing="false" text="关于">
+                <MenuItem mnemonicParsing="false"  onAction="#openAboutWindow" text="关于">
                     <graphic>
                         <ImageView>
                             <Image url="/image/about.png"/>

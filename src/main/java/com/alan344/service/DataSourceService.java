@@ -34,8 +34,11 @@ public class DataSourceService {
     @Autowired
     private ApplicationContext applicationContext;
 
+    /**
+     * 用户判断数据源是否重复
+     */
     @Getter
-    private Map<String, DataSource> nameDataSourceMap = new HashMap<>();
+    private Set<DataSource> dataSourceSet = new HashSet<>();
 
     /**
      * 添加数据源
@@ -47,6 +50,8 @@ public class DataSourceService {
         this.downLoadToFile(dataSource);
 
         this.addDataSourceToSpring(dataSource);
+
+        dataSourceSet.add(dataSource);
     }
 
     /**
@@ -58,6 +63,8 @@ public class DataSourceService {
         this.deleteDataSourceFile(dataSource);
 
         tableService.deleteTables(dataSource);
+
+        dataSourceSet.remove(dataSource);
     }
 
     /**
@@ -102,7 +109,7 @@ public class DataSourceService {
                     //从文件加表信息至pane
                     tableService.loadTablesFromFile(dataSource);
 
-                    nameDataSourceMap.put(dataSource.toString(), dataSource);
+                    dataSourceSet.add(dataSource);
                     //向Spring注册dataSource
                     this.addDataSourceToSpring(dataSource);
                 }
@@ -110,7 +117,7 @@ public class DataSourceService {
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
         }
-        return new ArrayList<>(nameDataSourceMap.values());
+        return new ArrayList<>(dataSourceSet);
     }
 
     /**

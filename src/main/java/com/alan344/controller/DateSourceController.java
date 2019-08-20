@@ -96,26 +96,26 @@ public class DateSourceController implements Initializable {
         dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
 
         //判断数据源是否存在
-        if (dataSourceService.getNameDataSourceMap().containsKey(dataSource.toString())) {
+        if (dataSourceService.getDataSourceSet().contains(dataSource)) {
             Toast.makeText(dateSourceStage, "该数据源已存在", 3000, 500, 500, 15, 5);
             return;
         }
 
         //添加入treeView
         TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemRoot());
-
+        //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
+        TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
         //添加展开监听
         dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
-            //没有则区远程拉去数据库表列表
+            //没有则去远程拉取数据库表列表
             List<Table> tables = tableService.loadTables(dataSource);
             if (!tables.isEmpty()) {
                 tables.forEach(table -> {
                     TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                     tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                 });
-            }else{
-                //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-                TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
+            } else {
+                dataSourceTreeItem.getChildren().remove(0);
             }
         });
 

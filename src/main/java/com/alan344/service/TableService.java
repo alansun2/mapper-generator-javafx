@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,18 +40,15 @@ public class TableService {
      * @param dataSource 数据源的item
      */
     public List<Table> loadTables(DataSource dataSource) {
-        List<Table> existTables = dataSource.getTables();
-        if (existTables == null) {
-            List<Table> tables = this.pullTablesFromRemote(dataSource);
+        List<Table> tables = this.pullTablesFromRemote(dataSource);
+        if (!tables.isEmpty()) {
             //加载columns
             columnService.loadColumns(dataSource, tables);
             dataSource.setTables(tables);
             //写入文件
             this.downLoadToFileBatch(dataSource, tables);
-            return tables;
         }
-
-        return Collections.emptyList();
+        return tables;
     }
 
     /**
@@ -60,32 +56,34 @@ public class TableService {
      *
      * @param dataSource 数据源
      */
-    public boolean refreshTables(DataSource dataSource) {
-        List<Table> existTables = dataSource.getTables();
-
+    public List<Table> refreshTables(DataSource dataSource) {
         List<Table> tables = this.pullTablesFromRemote(dataSource);
-        if (existTables != null && !existTables.isEmpty()) {
-            Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName, table -> table));
-            for (Table table : tables) {
-                if (tableNameTableMap.containsKey(table.getTableName())) {
-                    Table table1 = tableNameTableMap.get(table.getTableName());
-                    table.setReturnInsertId(table1.isReturnInsertId());
-                    table.setInsert(table1.isInsert());
-                    table.setCount(table1.isCount());
-                    table.setUpdate(table1.isUpdate());
-                    table.setDelete(table1.isDelete());
-                    table.setSelect(table1.isSelect());
-                    table.setUpdateExample(table1.isUpdateExample());
-                    table.setDeleteExample(table1.isDeleteExample());
-                    table.setSelectExample(table1.isSelectExample());
+        if (!tables.isEmpty()) {
+            List<Table> existTables = dataSource.getTables();
+            if (existTables != null && !existTables.isEmpty()) {
+                Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName, table -> table));
+                for (Table table : tables) {
+                    if (tableNameTableMap.containsKey(table.getTableName())) {
+                        Table table1 = tableNameTableMap.get(table.getTableName());
+                        table.setReturnInsertId(table1.isReturnInsertId());
+                        table.setInsert(table1.isInsert());
+                        table.setCount(table1.isCount());
+                        table.setUpdate(table1.isUpdate());
+                        table.setDelete(table1.isDelete());
+                        table.setSelect(table1.isSelect());
+                        table.setUpdateExample(table1.isUpdateExample());
+                        table.setDeleteExample(table1.isDeleteExample());
+                        table.setSelectExample(table1.isSelectExample());
+                    }
                 }
             }
-        }
 
-        this.deleteTableDirectory(dataSource);
-        //写入文件
-        this.downLoadToFileBatch(dataSource, tables);
-        return true;
+            //删除表文件夹
+            this.deleteTableDirectory(dataSource);
+            //表写入文件
+            this.downLoadToFileBatch(dataSource, tables);
+        }
+        return tables;
     }
 
     /**

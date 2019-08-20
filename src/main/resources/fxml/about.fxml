@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<AnchorPane styleClass="anchorPane" prefHeight="200.0" prefWidth="380.0" xmlns="http://javafx.com/javafx/" stylesheets="@../css/about.css">
+    <Label alignment="CENTER" layoutX="135.0" layoutY="132.0" prefHeight="49.0" prefWidth="110.0" text="作者：AlanSun"
+           textFill="#110c0c">
+        <font>
+            <Font size="13.0"/>
+        </font>
+    </Label>
+    <Label alignment="CENTER" layoutX="60.0" layoutY="30.0" prefHeight="49.0" prefWidth="260.0"
+           text="欢迎各位大家在 github 提出意见和 bug">
+        <font>
+            <Font size="14.0"/>
+        </font>
+    </Label>
+    <Label alignment="CENTER" layoutX="135.0" layoutY="83.0" prefHeight="49.0" prefWidth="110.0" text="版本号：1.0.0"
+           textFill="#110c0c">
+        <font>
+            <Font size="13.0"/>
+        </font>
+    </Label>
+</AnchorPane>
