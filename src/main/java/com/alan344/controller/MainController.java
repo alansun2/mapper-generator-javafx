@@ -357,43 +357,55 @@ public class MainController implements Initializable {
             CheckBox returnId = new CheckBox("insert返回id");
             returnId.setSelected(table.isReturnInsertId());
             returnId.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setReturnInsertId(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isReturnInsertId() != newValue) {
+                    table.setReturnInsertId(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox insert = new CheckBox("insert");
             insert.setSelected(table.isInsert());
             insert.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setInsert(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isInsert() != newValue) {
+                    table.setInsert(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox count = new CheckBox("count");
             count.setSelected(table.isCount());
             count.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setCount(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isCount() != newValue) {
+                    table.setCount(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox update = new CheckBox("update");
             update.setSelected(table.isSelect());
             update.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setUpdate(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isUpdate() != newValue) {
+                    table.setUpdate(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox delete = new CheckBox("delete");
             delete.setSelected(table.isDelete());
             delete.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setDelete(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isDelete() != newValue) {
+                    table.setDelete(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox select = new CheckBox("select");
             select.setSelected(table.isSelect());
             select.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setSelect(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isSelect() != newValue) {
+                    table.setSelect(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             HBox checkBoxHBox1 = new HBox(returnId, insert, count, update, delete, select);
@@ -403,22 +415,28 @@ public class MainController implements Initializable {
             CheckBox updateExample = new CheckBox("updateExample");
             updateExample.setSelected(table.isUpdateExample());
             updateExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setUpdateExample(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isUpdateExample() != newValue) {
+                    table.setUpdateExample(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox deleteExample = new CheckBox("deleteExample");
             deleteExample.setSelected(table.isDeleteExample());
             deleteExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setDeleteExample(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isSelectExample() != newValue) {
+                    table.setDeleteExample(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             CheckBox selectExample = new CheckBox("selectExample");
             selectExample.setSelected(table.isSelectExample());
             selectExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                table.setSelectExample(newValue);
-                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                if (table.isSelectExample() != newValue) {
+                    table.setSelectExample(newValue);
+                    BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+                }
             });
 
             HBox checkBoxHBox2 = new HBox(updateExample, deleteExample, selectExample);
