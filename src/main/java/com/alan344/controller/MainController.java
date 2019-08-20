@@ -134,18 +134,15 @@ public class MainController implements Initializable {
                 //添加展开监听
                 dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
                     //没有则区远程拉去数据库表列表
-                    tableService.loadTables(event.getTreeItem());
+                    tableService.loadTables(dataSource);
                 });
                 dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
                 List<Table> tables = dataSource.getTables();
-                if (tables != null && !tables.isEmpty()) {
+                if (!tables.isEmpty()) {
                     tables.forEach(table -> {
                         TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                         tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                     });
-                } else {
-                    //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-                    TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
                 }
             }
         }
@@ -323,10 +320,13 @@ public class MainController implements Initializable {
      * 对table
      */
     private void refreshDataSource() {
-        TreeItem<DataItem> selectedItem = treeViewDataSource.getSelectionModel().getSelectedItem();
-        tableService.refreshTables(selectedItem);
+        TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+        DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+        if (tableService.refreshTables(dataSource)) {
+            ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
+            children.remove(0, children.size());
+        }
 
-        DataSource dataSource = (DataSource) selectedItem.getValue();
         if (BaseConstants.selectedDateSource == null || BaseConstants.selectedDateSource == dataSource) {
             borderPane1.setVisible(false);
             borderPane1.setManaged(false);

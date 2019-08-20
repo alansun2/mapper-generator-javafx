@@ -4,7 +4,7 @@ import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.service.DataSourceService;
-import com.alan344.service.MainService;
+import com.alan344.service.TableService;
 import com.alan344.utils.TextUtils;
 import com.alan344.utils.Toast;
 import com.alan344.utils.TreeUtils;
@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -68,7 +70,7 @@ public class DateSourceController implements Initializable {
     private DataSourceService dataSourceService;
 
     @Autowired
-    private MainService mainService;
+    private TableService tableService;
 
     private Stage dateSourceStage;
 
@@ -79,6 +81,8 @@ public class DateSourceController implements Initializable {
      */
     @FXML
     public void apply() throws IOException {
+        dateSourceStage.close();
+
         if (!TextUtils.checkTexts(dateSourceStage, host, port, database, user, password)) {
             return;
         }
@@ -98,11 +102,25 @@ public class DateSourceController implements Initializable {
         }
 
         //添加入treeView
-        TreeItem<DataItem> dataSourceItemTreeItem = mainService.add2Tree(dataSource, mainController.getTreeItemRoot());
-        //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-        TreeUtils.add2Tree(new Table(), dataSourceItemTreeItem);
+        TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemRoot());
 
-        dateSourceStage.close();
+        //添加展开监听
+        dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
+            //没有则区远程拉去数据库表列表
+            List<Table> tables = tableService.loadTables(dataSource);
+            if (!tables.isEmpty()) {
+                tables.forEach(table -> {
+                    TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                    tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+                });
+            }else{
+                //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
+                TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
+            }
+        });
+
+        dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
+
         //写入文件
         dataSourceService.addDataSource(dataSource);
     }

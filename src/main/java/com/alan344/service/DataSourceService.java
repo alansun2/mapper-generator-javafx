@@ -1,7 +1,6 @@
 package com.alan344.service;
 
 import com.alan344.bean.DataSource;
-import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -28,9 +27,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class DataSourceService {
-
-    @Autowired
-    private MainService mainService;
 
     @Autowired
     private TableService tableService;
@@ -61,14 +57,14 @@ public class DataSourceService {
     public void deleteDataSource(DataSource dataSource) {
         this.deleteDataSourceFile(dataSource);
 
-        tableService.deleteTable(dataSource);
+        tableService.deleteTables(dataSource);
     }
 
     /**
      * 把datasource信息记录到文件
      */
     @Async
-    public void downLoadToFile(DataSource dataSource) throws IOException {
+    void downLoadToFile(DataSource dataSource) throws IOException {
         String datasourceStr = JSON.toJSONString(dataSource);
 
         FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr, StandardCharsets.UTF_8.toString());
@@ -78,7 +74,7 @@ public class DataSourceService {
      * 把datasource文件从磁盘删除
      */
     @Async
-    public void deleteDataSourceFile(DataSource dataSource) {
+    void deleteDataSourceFile(DataSource dataSource) {
         try {
             FileUtils.forceDelete(BaseConstants.getDataSourceFile(dataSource));
         } catch (IOException e) {
@@ -104,8 +100,8 @@ public class DataSourceService {
                 if (file.getName().endsWith("datasource")) {
                     DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
                     //从文件加表信息至pane
-                    List<Table> tables = tableService.loadTablesFromFile(dataSource);
-                    dataSource.setTables(tables);
+                    tableService.loadTablesFromFile(dataSource);
+
                     nameDataSourceMap.put(dataSource.toString(), dataSource);
                     //向Spring注册dataSource
                     this.addDataSourceToSpring(dataSource);
@@ -123,7 +119,6 @@ public class DataSourceService {
      * @param dataSource 数据源信息
      */
     private void addDataSourceToSpring(DataSource dataSource) {
-
         ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) this.applicationContext;
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setUsername(dataSource.getUser());

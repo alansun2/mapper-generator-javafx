@@ -1,15 +1,10 @@
 package com.alan344.service;
 
-import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
-import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import javafx.collections.ObservableList;
-import javafx.scene.control.TreeItem;
-import javafx.scene.image.ImageView;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -43,40 +38,32 @@ public class TableService {
     /**
      * 当展开datasource时加载tableItem，并将table写入文件
      *
-     * @param dataSourceTreeItem 数据源的item
+     * @param dataSource 数据源的item
      */
-    public void loadTables(TreeItem<DataItem> dataSourceTreeItem) {
-        ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
-        Table emptyTable = (Table) children.get(0).getValue();
-        //当dataSourceTreeItem下只有一个item，并且该item是之前填充的item时才进行拉去table的操作
-        if (emptyTable.getTableName() == null) {
-            //删除用来填充的item
-            children.remove(0);
-
-            List<Table> tables = this.pullTablesFromRemote(dataSourceTreeItem);
-
-            DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+    public List<Table> loadTables(DataSource dataSource) {
+        List<Table> existTables = dataSource.getTables();
+        if (existTables == null) {
+            List<Table> tables = this.pullTablesFromRemote(dataSource);
+            //加载columns
+            columnService.loadColumns(dataSource, tables);
             dataSource.setTables(tables);
             //写入文件
             this.downLoadToFileBatch(dataSource, tables);
-            //加载columns
-            columnService.loadColumns(dataSource, tables);
+            return tables;
         }
+
+        return Collections.emptyList();
     }
 
     /**
      * 刷新tables
      *
-     * @param dataSourceTreeItem 数据源 treeItem
+     * @param dataSource 数据源
      */
-    public void refreshTables(TreeItem<DataItem> dataSourceTreeItem) {
-        DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
-        this.deleteTableOnly(dataSource);
-
-        ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
-        children.remove(0, children.size());
-        List<Table> tables = this.pullTablesFromRemote(dataSourceTreeItem);
+    public boolean refreshTables(DataSource dataSource) {
         List<Table> existTables = dataSource.getTables();
+
+        List<Table> tables = this.pullTablesFromRemote(dataSource);
         if (existTables != null && !existTables.isEmpty()) {
             Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName, table -> table));
             for (Table table : tables) {
@@ -94,20 +81,20 @@ public class TableService {
                 }
             }
         }
-        dataSource.setTables(tables);
 
+        this.deleteTableDirectory(dataSource);
         //写入文件
         this.downLoadToFileBatch(dataSource, tables);
+        return true;
     }
 
     /**
      * 从远程拉去表信息
      *
-     * @param dataSourceTreeItem 数据源 TreeView
+     * @param dataSource 数据源
      * @return {@link Table}
      */
-    private List<Table> pullTablesFromRemote(TreeItem<DataItem> dataSourceTreeItem) {
-        DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+    private List<Table> pullTablesFromRemote(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
         List<Table> tables = new ArrayList<>();
         List<String> tableNames = jdbcTemplate.query("SHOW TABLES", (rs, i) -> rs.getString(1));
@@ -116,9 +103,6 @@ public class TableService {
             tableNames.forEach(tableName -> {
                 Table table = new Table();
                 table.setTableName(tableName);
-                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-
                 tables.add(table);
             });
         }
@@ -131,15 +115,15 @@ public class TableService {
      *
      * @param dataSource 数据源
      */
-    List<Table> loadTablesFromFile(DataSource dataSource) {
+    void loadTablesFromFile(DataSource dataSource) {
         File tableDirectory = BaseConstants.getTableDirectory(dataSource);
         if (!tableDirectory.exists()) {
-            return Collections.emptyList();
+            return;
         }
 
         File[] files = tableDirectory.listFiles();
         if (files == null || files.length <= 0) {
-            return Collections.emptyList();
+            return;
         }
 
         List<Table> tables = new ArrayList<>();
@@ -150,11 +134,12 @@ public class TableService {
             }
         } catch (IOException e) {
             log.error("加载tables文件失败", e);
-            return Collections.emptyList();
+            return;
         }
 
         columnService.loadColumnsFromFile(dataSource, tables);
-        return tables;
+
+        dataSource.setTables(tables);
     }
 
     /**
@@ -162,19 +147,10 @@ public class TableService {
      *
      * @param dataSource 数据源信息
      */
-    void deleteTable(DataSource dataSource) {
+    void deleteTables(DataSource dataSource) {
         this.deleteTableDirectory(dataSource);
 
-        columnService.deleteColumnsDirectory(dataSource);
-    }
-
-    /**
-     * 删除table
-     *
-     * @param dataSource 数据源信息
-     */
-    private void deleteTableOnly(DataSource dataSource) {
-        this.deleteTableDirectory(dataSource);
+        columnService.deleteColumnsAll(dataSource);
     }
 
     /**
@@ -193,7 +169,7 @@ public class TableService {
     }
 
     /**
-     * 把tables信息记录到文件
+     * 把table信息记录到文件
      */
     @Async
     void downLoadToFileSingle(DataSource dataSource, Table table) {
@@ -206,7 +182,7 @@ public class TableService {
     }
 
     /**
-     * 把table文件从磁盘删除
+     * 把 table 文件从磁盘删除
      */
     @Async
     void deleteTableFile(DataSource dataSource, String tableName) {
@@ -218,7 +194,7 @@ public class TableService {
     }
 
     /**
-     * 把table文件从磁盘删除
+     * 把 table 目录从磁盘删除
      */
     @Async
     void deleteTableDirectory(DataSource dataSource) {

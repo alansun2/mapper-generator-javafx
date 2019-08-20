@@ -101,6 +101,4 @@ public class ConfigService {
             return Lists.newLinkedList();
         }
     }
-
-
 }

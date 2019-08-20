@@ -32,23 +32,22 @@ public class ColumnService {
     private BeanFactory beanFactory;
 
     /**
-     * 获取表的字段
+     * 加载columns
      *
-     * @param tableName tableName
-     * @return 字段数组
+     * @param dataSource 数据源
+     * @param tables     表
      */
-    public List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
-        JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
-        List<Column> columns = new ArrayList<>();
-        jdbcTemplate.query("DESC " + tableName, (rs, rowNum) -> {
-            Column column = new Column();
-            column.setColumnName(rs.getString(1));
-            column.setType(rs.getString(2));
-            columns.add(column);
-            return column;
-        });
+    void loadColumns(DataSource dataSource, List<Table> tables) {
+        Map<String, List<Column>> tableNameColumnsMap = new HashMap<>();
+        for (Table table : tables) {
+            String tableName = table.getTableName();
+            List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
+            table.setColumns(columns);
+            tableNameColumnsMap.put(tableName, columns);
+        }
 
-        return columns;
+        //写入文件
+        this.downLoadColumnsToFileBatch(dataSource, tableNameColumnsMap);
     }
 
     /**
@@ -62,7 +61,7 @@ public class ColumnService {
     }
 
     /**
-     * 重新加载表字段信息
+     * 如果字段不为null重新加载表字段信息
      *
      * @param table 表
      */
@@ -98,24 +97,24 @@ public class ColumnService {
         this.downLoadColumnsToFileSingle(dataSource, table);
     }
 
-
     /**
-     * 加载columns
+     * 获取表的字段
      *
-     * @param dataSource 数据源
-     * @param tables     表
+     * @param tableName tableName
+     * @return 字段数组
      */
-    void loadColumns(DataSource dataSource, List<Table> tables) {
-        Map<String, List<Column>> tableNameColumnsMap = new HashMap<>();
-        for (Table table : tables) {
-            String tableName = table.getTableName();
-            List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
-            table.setColumns(columns);
-            tableNameColumnsMap.put(tableName, columns);
-        }
+    private List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
+        JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
+        List<Column> columns = new ArrayList<>();
+        jdbcTemplate.query("DESC " + tableName, (rs, rowNum) -> {
+            Column column = new Column();
+            column.setColumnName(rs.getString(1));
+            column.setType(rs.getString(2));
+            columns.add(column);
+            return column;
+        });
 
-        //写入文件
-        this.downLoadColumnsToFileBatch(dataSource, tableNameColumnsMap);
+        return columns;
     }
 
     /**
@@ -188,11 +187,11 @@ public class ColumnService {
     }
 
     /**
-     * 删除table
+     * 删除 columns 文件夹
      *
      * @param dataSource 数据源信息
      */
-    void deleteColumnsDirectory(DataSource dataSource) {
+    void deleteColumnsAll(DataSource dataSource) {
         this.deleteColumnDirectory(dataSource);
     }
 
