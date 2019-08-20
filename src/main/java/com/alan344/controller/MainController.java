@@ -409,7 +409,7 @@ public class MainController implements Initializable {
             });
 
             HBox checkBoxHBox1 = new HBox(returnId, insert, count, update, delete, select);
-            checkBoxHBox1.setAlignment(Pos.CENTER_LEFT);
+            checkBoxHBox1.setAlignment(Pos.CENTER);
             checkBoxHBox1.setSpacing(15);
 
             CheckBox updateExample = new CheckBox("updateExample");
@@ -440,10 +440,10 @@ public class MainController implements Initializable {
             });
 
             HBox checkBoxHBox2 = new HBox(updateExample, deleteExample, selectExample);
-            checkBoxHBox2.setAlignment(Pos.CENTER_LEFT);
+            checkBoxHBox2.setAlignment(Pos.CENTER);
             checkBoxHBox2.setSpacing(15);
 
-            VBox checkBoxVBox = new VBox(checkBoxHBox1, checkBoxHBox2);
+            VBox checkBoxVBox = new VBox(checkBoxHBox2, checkBoxHBox1);
             checkBoxVBox.setSpacing(15);
 
             selectedCheckBoxVBox.add(checkBoxVBox);
@@ -567,7 +567,7 @@ public class MainController implements Initializable {
         columnTableView.getColumns().add(ignoreCheckBox);
 
         columnTableView.setFixedCellSize(28);
-        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.0)));
+        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(2)));
         columnTableView.prefWidthProperty().bind(vBoxListView.widthProperty());
 
         selectedVBox.getChildren().add(columnTableView);

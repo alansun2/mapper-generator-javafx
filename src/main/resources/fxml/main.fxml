@@ -25,7 +25,7 @@
                 </MenuItem>
             </Menu>
             <Menu mnemonicParsing="false" text="帮助">
-                <MenuItem mnemonicParsing="false"  onAction="#openAboutWindow" text="关于">
+                <MenuItem mnemonicParsing="false" onAction="#openAboutWindow" text="关于">
                     <graphic>
                         <ImageView>
                             <Image url="/image/about.png"/>
@@ -74,7 +74,15 @@
                 <top>
                     <HBox styleClass="topHBox" alignment="CENTER" spacing="20">
                         <VBox spacing="15">
-                            <HBox alignment="CENTER_LEFT" spacing="15">
+                            <HBox alignment="CENTER" spacing="15">
+                                <CheckBox fx:id="updateExampleCheckBox" mnemonicParsing="false"
+                                          text="updateExample" selected="true"/>
+                                <CheckBox fx:id="deleteExampleCheckBox" mnemonicParsing="false"
+                                          text="deleteExample" selected="true"/>
+                                <CheckBox fx:id="selectExampleCheckBox" mnemonicParsing="false"
+                                          text="selectExample" selected="true"/>
+                            </HBox>
+                            <HBox alignment="CENTER" spacing="15">
                                 <CheckBox fx:id="insertReturnCheckBox" mnemonicParsing="false"
                                           text="insert返回id"/>
                                 <CheckBox fx:id="insertCheckBox" mnemonicParsing="false" text="insert"
@@ -87,14 +95,6 @@
                                           selected="true"/>
                                 <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select"
                                           selected="true"/>
-                            </HBox>
-                            <HBox alignment="CENTER_LEFT" spacing="15">
-                                <CheckBox fx:id="updateExampleCheckBox" mnemonicParsing="false"
-                                          text="updateExample" selected="true"/>
-                                <CheckBox fx:id="deleteExampleCheckBox" mnemonicParsing="false"
-                                          text="deleteExample" selected="true"/>
-                                <CheckBox fx:id="selectExampleCheckBox" mnemonicParsing="false"
-                                          text="selectExample" selected="true"/>
                             </HBox>
                         </VBox>
                         <Button styleClass="exportButton" mnemonicParsing="false" prefWidth="80" text="导出"
