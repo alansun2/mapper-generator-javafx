@@ -107,16 +107,19 @@ public class DateSourceController implements Initializable {
         TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
         //添加展开监听
         dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
-            //没有则去远程拉取数据库表列表
-            List<Table> tables = tableService.loadTables(dataSource);
-            if (!tables.isEmpty()) {
-                dataSourceTreeItem.getChildren().remove(0);
-                tables.forEach(table -> {
-                    TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                    tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-                });
-            } else {
-                dataSourceTreeItem.getChildren().remove(0);
+            TreeItem<DataItem> firstItem = dataSourceTreeItem.getChildren().get(0);
+            if (((Table) firstItem.getValue()).getTableName() == null) {
+                //没有则去远程拉取数据库表列表
+                List<Table> tables = tableService.loadTables(dataSource);
+                if (!tables.isEmpty()) {
+                    dataSourceTreeItem.getChildren().remove(0);
+                    tables.forEach(table -> {
+                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+                    });
+                } else {
+                    dataSourceTreeItem.getChildren().remove(0);
+                }
             }
         });
 
