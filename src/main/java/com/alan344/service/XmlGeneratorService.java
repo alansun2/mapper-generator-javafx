@@ -1,12 +1,14 @@
 package com.alan344.service;
 
 import com.alan344.bean.Column;
+import com.alan344.bean.ColumnOverride;
 import com.alan344.bean.GeneratorConfig;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.HRXMLWriter;
 import com.alan344.utils.MyShellCallback;
 import com.alan344happyframework.constants.SeparatorConstants;
+import com.alan344happyframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -147,11 +149,11 @@ public class XmlGeneratorService {
             this.checkBoxSelected("enableInsert", tableEl, table.isInsert());
             this.checkBoxSelected("enableCountByExample", tableEl, table.isCount());
             this.checkBoxSelected("enableUpdateByPrimaryKey", tableEl, table.isUpdate());
-            this.checkBoxSelected("enableUpdateByExample", tableEl, table.isUpdate());
+            this.checkBoxSelected("enableUpdateByExample", tableEl, table.isUpdateExample());
             this.checkBoxSelected("enableDeleteByPrimaryKey", tableEl, table.isDelete());
-            this.checkBoxSelected("enableDeleteByExample", tableEl, table.isDelete());
-            this.checkBoxSelected("enableSelectByExample", tableEl, table.isSelect());
+            this.checkBoxSelected("enableDeleteByExample", tableEl, table.isDeleteExample());
             this.checkBoxSelected("enableSelectByPrimaryKey", tableEl, table.isSelect());
+            this.checkBoxSelected("enableSelectByExample", tableEl, table.isSelectExample());
 
             if (generatorConfig.isUseActualColumnNames()) {
                 tableEl.addAttribute("useActualColumnNames", "true");
@@ -162,7 +164,29 @@ public class XmlGeneratorService {
                     Element ignoreColumn = tableEl.addElement("ignoreColumn");
                     ignoreColumn.addAttribute("column", column.getColumnName());
                 }
+
+                ColumnOverride columnOverride = column.getColumnOverride();
+                if (columnOverride.isNotEmpty()) {
+                    Element columnOverrideEl = tableEl.addElement("columnOverride");
+                    columnOverrideEl.addAttribute("column", column.getColumnName());
+                    if (StringUtils.isNotEmpty(columnOverride.getProperty())) {
+                        columnOverrideEl.addAttribute("property", columnOverride.getProperty());
+                    }
+                    if (StringUtils.isNotEmpty(columnOverride.getJavaType())) {
+                        columnOverrideEl.addAttribute("javaType", columnOverride.getJavaType());
+                    }
+                    if (StringUtils.isNotEmpty(columnOverride.getTypeHandler())) {
+                        columnOverrideEl.addAttribute("typeHandler", columnOverride.getTypeHandler());
+                    }
+                    if (columnOverride.isGeneratedAlways()) {
+                        columnOverrideEl.addAttribute("isGeneratedAlways", String.valueOf(columnOverride.isGeneratedAlways()));
+                    }
+                    if (columnOverride.isDelimitedColumnName()) {
+                        columnOverrideEl.addAttribute("delimitedColumnName", String.valueOf(columnOverride.isDelimitedColumnName()));
+                    }
+                }
             });
+
         }
 
         String generatorConfigName = System.getProperty("user.dir") + "/generatorConfig.xml";

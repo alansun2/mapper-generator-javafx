@@ -2,6 +2,8 @@ package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
 import com.alan344.factory.FileDirChooserFactory;
+import com.alan344.service.ColumnService;
+import com.alan344.service.TableService;
 import com.alan344.service.XmlGeneratorService;
 import com.alan344.utils.TextUtils;
 import javafx.fxml.FXML;
@@ -62,6 +64,12 @@ public class ExportController implements Initializable {
     private XmlGeneratorService xmlGeneratorService;
 
     @Autowired
+    private TableService tableService;
+
+    @Autowired
+    private ColumnService columnService;
+
+    @Autowired
     private ConfigController configController;
 
     @Override
@@ -95,6 +103,11 @@ public class ExportController implements Initializable {
         generatorConfig.setUserMerge(useMergeCheckBox.isSelected());
 
         configController.addConfig(generatorConfig);
+
+        tableService.downLoadTableIfOverrideModify();
+
+        //导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
+        columnService.downLoadColumnOverride();
 
         //调用 mybatis 生成文件
         xmlGeneratorService.generatorXml(generatorConfig);

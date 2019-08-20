@@ -6,7 +6,6 @@ import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.TreeUtils;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
@@ -24,6 +23,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -51,11 +52,12 @@ public class TableService {
             //删除用来填充的item
             children.remove(0);
 
-            List<Table> tables = pullTablesFromRemote(dataSourceTreeItem);
+            List<Table> tables = this.pullTablesFromRemote(dataSourceTreeItem);
 
             DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+            dataSource.setTables(tables);
             //写入文件
-            this.downLoadToFile(dataSource, tables);
+            this.downLoadToFileBatch(dataSource, tables);
             //加载columns
             columnService.loadColumns(dataSource, tables);
         }
@@ -72,10 +74,29 @@ public class TableService {
 
         ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
         children.remove(0, children.size());
-        List<Table> tables = pullTablesFromRemote(dataSourceTreeItem);
+        List<Table> tables = this.pullTablesFromRemote(dataSourceTreeItem);
+        List<Table> existTables = dataSource.getTables();
+        if (existTables != null && !existTables.isEmpty()) {
+            Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName, table -> table));
+            for (Table table : tables) {
+                if (tableNameTableMap.containsKey(table.getTableName())) {
+                    Table table1 = tableNameTableMap.get(table.getTableName());
+                    table.setReturnInsertId(table1.isReturnInsertId());
+                    table.setInsert(table1.isInsert());
+                    table.setCount(table1.isCount());
+                    table.setUpdate(table1.isUpdate());
+                    table.setDelete(table1.isDelete());
+                    table.setSelect(table1.isSelect());
+                    table.setUpdateExample(table1.isUpdateExample());
+                    table.setDeleteExample(table1.isDeleteExample());
+                    table.setSelectExample(table1.isSelectExample());
+                }
+            }
+        }
+        dataSource.setTables(tables);
 
         //写入文件
-        this.downLoadToFile(dataSource, tables);
+        this.downLoadToFileBatch(dataSource, tables);
     }
 
     /**
@@ -111,33 +132,41 @@ public class TableService {
      */
     boolean loadTablesFromFile(TreeItem<DataItem> treeItemDataSource) {
         DataSource dataSource = (DataSource) treeItemDataSource.getValue();
-        File tableFile = BaseConstants.getTableFile(dataSource);
-        if (!tableFile.exists()) {
+        File tableDirectory = BaseConstants.getTableDirectory(dataSource);
+        if (!tableDirectory.exists()) {
             return false;
         }
-        List<Table> tables;
+
+        File[] files = tableDirectory.listFiles();
+        if (files == null || files.length <= 0) {
+            return false;
+        }
+
+        List<Table> tables = new ArrayList<>();
         try {
-            tables = JSONArray.parseArray(FileUtils.readFileToString(tableFile, StandardCharsets.UTF_8.toString()), Table.class);
-            tables.forEach(table -> {
+            for (File file : files) {
+                Table table = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), Table.class);
                 TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, treeItemDataSource);
                 tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-            });
-            columnService.loadColumnsFromFile(dataSource, tables);
+                tables.add(table);
+            }
         } catch (IOException e) {
             log.error("加载tables文件失败", e);
             return false;
         }
 
+        columnService.loadColumnsFromFile(dataSource, tables);
+        dataSource.setTables(tables);
         return true;
     }
 
     /**
-     * 删除table
+     * 删除table 同时删除columns
      *
      * @param dataSource 数据源信息
      */
     void deleteTable(DataSource dataSource) {
-        this.deleteTableFile(dataSource);
+        this.deleteTableDirectory(dataSource);
 
         columnService.deleteColumnsDirectory(dataSource);
     }
@@ -148,17 +177,32 @@ public class TableService {
      * @param dataSource 数据源信息
      */
     private void deleteTableOnly(DataSource dataSource) {
-        this.deleteTableFile(dataSource);
+        this.deleteTableDirectory(dataSource);
     }
 
     /**
      * 把tables信息记录到文件
      */
     @Async
-    void downLoadToFile(DataSource dataSource, List<Table> tables) {
-        String tablesStr = JSON.toJSONString(tables, true);
+    void downLoadToFileBatch(DataSource dataSource, List<Table> tables) {
         try {
-            FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource), tablesStr, StandardCharsets.UTF_8.toString());
+            for (Table table : tables) {
+                String tablesStr = JSON.toJSONString(table, true);
+                FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr, StandardCharsets.UTF_8.toString());
+            }
+        } catch (IOException e) {
+            log.error("写入表文件错误", e);
+        }
+    }
+
+    /**
+     * 把tables信息记录到文件
+     */
+    @Async
+    void downLoadToFileSingle(DataSource dataSource, Table table) {
+        try {
+            String tablesStr = JSON.toJSONString(table, true);
+            FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
             log.error("写入表文件错误", e);
         }
@@ -168,11 +212,40 @@ public class TableService {
      * 把table文件从磁盘删除
      */
     @Async
-    void deleteTableFile(DataSource dataSource) {
+    void deleteTableFile(DataSource dataSource, String tableName) {
         try {
-            FileUtils.forceDelete(BaseConstants.getTableFile(dataSource));
+            FileUtils.forceDelete(BaseConstants.getTableFile(dataSource, tableName));
         } catch (IOException e) {
             log.error("删除表文件错误", e);
         }
+    }
+
+    /**
+     * 把table文件从磁盘删除
+     */
+    @Async
+    void deleteTableDirectory(DataSource dataSource) {
+        try {
+            FileUtils.forceDelete(BaseConstants.getTableDirectory(dataSource));
+        } catch (IOException e) {
+            log.error("删除表文件错误", e);
+        }
+    }
+
+    /**
+     * 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
+     */
+    public void downLoadTableIfOverrideModify() {
+        Map<String, Boolean> tableNameIsTableRecordMap = BaseConstants.tableNameIsTableRecordMap;
+        if (!tableNameIsTableRecordMap.isEmpty()) {
+            tableNameIsTableRecordMap.forEach((tableName, record) -> {
+                this.deleteTableFile(BaseConstants.selectedDateSource, tableName);
+                Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
+                this.downLoadToFileSingle(BaseConstants.selectedDateSource, table);
+            });
+        }
+
+        //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
+        BaseConstants.tableNameIsTableRecordMap.clear();
     }
 }

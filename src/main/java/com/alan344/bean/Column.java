@@ -19,7 +19,7 @@ public class Column {
     @JSONField(serializeUsing = BooleanPropertySerializer.class)
     private BooleanProperty ignore = new SimpleBooleanProperty(false);
 
-    private ColumnOverride columnOverride;
+    private ColumnOverride columnOverride = new ColumnOverride();
 
     public boolean isIgnore() {
         return ignore.get();

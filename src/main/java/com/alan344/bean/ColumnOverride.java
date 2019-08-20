@@ -5,6 +5,7 @@ package com.alan344.bean;/**
  * @since : $version$
  */
 
+import com.alan344happyframework.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,4 +36,32 @@ public class ColumnOverride {
      * 是否是关键字
      */
     private boolean delimitedColumnName;
+
+    /**
+     * 判断column override是否为空
+     *
+     * @return
+     */
+    public boolean isNotEmpty() {
+        if (StringUtils.isNotEmpty(this.property)) {
+            return true;
+        }
+
+        if (StringUtils.isNotEmpty(this.javaType)) {
+            return true;
+        }
+
+        if (StringUtils.isNotEmpty(this.typeHandler)) {
+            return true;
+        }
+
+        if (this.isGeneratedAlways) {
+            return true;
+        }
+
+        if (this.delimitedColumnName) {
+            return true;
+        }
+        return false;
+    }
 }

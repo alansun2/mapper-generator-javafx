@@ -1,115 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 <BorderPane fx:id="borderPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
-            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.alan344.controller.MainController">
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="文件">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源">
-                            <graphic>
-                                <ImageView >
-                                    <image>
-                                        <Image url="/image/add-database.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#exit" text="退出">
-                            <graphic>
-                                <ImageView >
-                                    <image>
-                                        <Image url="/image/exit.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </MenuItem>
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="帮助">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="关于">
-                            <graphic>
-                                <ImageView >
-                                    <image>
-                                        <Image url="/image/about.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </MenuItem>
-                        <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github">
-                            <graphic>
-                                <ImageView >
-                                    <image>
-                                        <Image url="/image/github.png" />
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                        </MenuItem>
-                    </items>
-                </Menu>
-            </menus>
+            <Menu mnemonicParsing="false" text="文件">
+                <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源">
+                    <graphic>
+                        <ImageView>
+                            <Image url="/image/add-database.png"/>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem mnemonicParsing="false" onAction="#exit" text="退出">
+                    <graphic>
+                        <ImageView>
+                            <Image url="/image/exit.png"/>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+            </Menu>
+            <Menu mnemonicParsing="false" text="帮助">
+                <MenuItem mnemonicParsing="false" text="关于">
+                    <graphic>
+                        <ImageView>
+                            <Image url="/image/about.png"/>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github">
+                    <graphic>
+                        <ImageView>
+                            <Image url="/image/github.png"/>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+            </Menu>
         </MenuBar>
     </top>
     <center>
-        <SplitPane dividerPositions="0.1" BorderPane.alignment="CENTER">
-            <items>
-                <BorderPane prefHeight="200.0" prefWidth="200.0">
-                    <center>
-                        <TreeView fx:id="treeViewDataSource" fixedCellSize="28" showRoot="false">
-                            <TreeItem fx:id="treeItemRoot"/>
-                        </TreeView>
-                    </center>
-                </BorderPane>
-                <BorderPane fx:id="borderPane1" style="-fx-background-color: #F4F4F4;">
-                    <center>
-                        <ListView fx:id="vBoxListView" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                            <contextMenu>
-                                <ContextMenu>
-                                    <items>
-                                        <MenuItem text="刷新字段" onAction="#refreshTableColumn">
-                                            <graphic>
-                                                <ImageView >
-                                                    <image>
-                                                        <Image url="/image/refresh@16.png" />
-                                                    </image>
-                                                </ImageView>
-                                            </graphic>
-                                        </MenuItem>
-                                    </items>
-                                </ContextMenu>
-                            </contextMenu>
-                        </ListView>
-                    </center>
-                    <top>
-                        <HBox fx:id="rightBorderTopHBox" alignment="CENTER" prefHeight="50.0" spacing="20.0" visible="false" managed="false">
-                            <children>
-                                <CheckBox fx:id="insertReturnCheckBox" mnemonicParsing="false" text="insert返回id"/>
-                                <CheckBox fx:id="insertCheckBox" mnemonicParsing="false" text="insert" selected="true"/>
-                                <CheckBox fx:id="countCheckBox" mnemonicParsing="false" text="count" selected="true"/>
-                                <CheckBox fx:id="updateCheckBox" mnemonicParsing="false" text="update" selected="true"/>
-                                <CheckBox fx:id="deleteCheckBox" mnemonicParsing="false" text="delete" selected="true"/>
-                                <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select" selected="true"/>
-                                <Button styleClass="exportButton" mnemonicParsing="false" prefWidth="80" text="导出" onAction="#openConfigWindow">
-                                    <graphic>
-                                        <ImageView >
-                                            <image>
-                                                <Image url="/image/export.png" />
-                                            </image>
-                                        </ImageView>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>
-                    </top>
-                </BorderPane>
-            </items>
+        <SplitPane dividerPositions="0.5016722408026756" BorderPane.alignment="CENTER">
+            <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
+                <center>
+                    <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="137.0"
+                              showRoot="false">
+                        <TreeItem fx:id="treeItemRoot"/>
+                    </TreeView>
+                </center>
+            </BorderPane>
+            <BorderPane fx:id="borderPane1" styleClass="borderPane1" managed="false" visible="false">
+                <center>
+                    <ListView fx:id="vBoxListView" prefHeight="200.0" prefWidth="200.0"
+                              BorderPane.alignment="CENTER">
+                        <contextMenu>
+                            <ContextMenu>
+                                <items>
+                                    <MenuItem onAction="#refreshTableColumn" text="刷新字段">
+                                        <graphic>
+                                            <ImageView>
+                                                <Image url="/image/refresh@16.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </MenuItem>
+                                </items>
+                            </ContextMenu>
+                        </contextMenu>
+                    </ListView>
+                </center>
+                <top>
+                    <HBox styleClass="topHBox" alignment="CENTER" spacing="20">
+                        <VBox spacing="15">
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <CheckBox fx:id="insertReturnCheckBox" mnemonicParsing="false"
+                                          text="insert返回id"/>
+                                <CheckBox fx:id="insertCheckBox" mnemonicParsing="false" text="insert"
+                                          selected="true"/>
+                                <CheckBox fx:id="countCheckBox" mnemonicParsing="false" text="count"
+                                          selected="true"/>
+                                <CheckBox fx:id="updateCheckBox" mnemonicParsing="false" text="update"
+                                          selected="true"/>
+                                <CheckBox fx:id="deleteCheckBox" mnemonicParsing="false" text="delete"
+                                          selected="true"/>
+                                <CheckBox fx:id="selectCheckBox" mnemonicParsing="false" text="select"
+                                          selected="true"/>
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="15">
+                                <CheckBox fx:id="updateExampleCheckBox" mnemonicParsing="false"
+                                          text="updateExample" selected="true"/>
+                                <CheckBox fx:id="deleteExampleCheckBox" mnemonicParsing="false"
+                                          text="deleteExample" selected="true"/>
+                                <CheckBox fx:id="selectExampleCheckBox" mnemonicParsing="false"
+                                          text="selectExample" selected="true"/>
+                            </HBox>
+                        </VBox>
+                        <Button styleClass="exportButton" mnemonicParsing="false" prefWidth="80" text="导出"
+                                onAction="#openConfigWindow">
+                            <graphic>
+                                <ImageView>
+                                    <Image url="/image/export.png"/>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                </top>
+            </BorderPane>
         </SplitPane>
     </center>
 </BorderPane>

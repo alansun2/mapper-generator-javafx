@@ -3,6 +3,8 @@ package com.alan344.bean;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author ：AlanSun
  * @date ：2019/8/8 21:33
@@ -22,6 +24,8 @@ public class DataSource implements DataItem {
     private String password;
 
     private String driveName;
+
+    private transient List<Table> tables;
 
     @Override
     public String toString() {

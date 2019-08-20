@@ -21,6 +21,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -65,9 +66,6 @@ public class MainController implements Initializable {
     private ListView<VBox> vBoxListView;
 
     @FXML
-    private HBox rightBorderTopHBox;
-
-    @FXML
     private TreeView<DataItem> treeViewDataSource;
 
     @FXML
@@ -79,18 +77,21 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox updateCheckBox;
     @FXML
+    private CheckBox updateExampleCheckBox;
+    @FXML
     private CheckBox deleteCheckBox;
     @FXML
+    private CheckBox deleteExampleCheckBox;
+    @FXML
     private CheckBox selectCheckBox;
+    @FXML
+    private CheckBox selectExampleCheckBox;
 
     @Autowired
     private DateSourceController dateSourceController;
 
     @Autowired
     private ConfigController configController;
-
-    @Autowired
-    private ColumnUpdateController columnUpdateController;
 
     @Autowired
     private DataSourceService dataSourceService;
@@ -103,6 +104,8 @@ public class MainController implements Initializable {
 
     @Autowired
     private BeanFactory beanFactory;
+
+    private List<VBox> selectedCheckBoxVBox = new ArrayList<>();
 
     //--------------------------------init----------------------------------------------------------------------------//
 
@@ -161,18 +164,20 @@ public class MainController implements Initializable {
      * checkbox init
      */
     private void checkBoxInit() {
-        insertReturnCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, newValue));
-        insertCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, newValue));
-        countCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(2, newValue));
-        updateCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(3, newValue));
-        deleteCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(4, newValue));
-        selectCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(5, newValue));
+        insertReturnCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 0, newValue));
+        insertCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 1, newValue));
+        countCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 2, newValue));
+        updateCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 3, newValue));
+        deleteCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 4, newValue));
+        selectCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 5, newValue));
+        updateExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 0, newValue));
+        deleteExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 1, newValue));
+        selectExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 2, newValue));
     }
 
-    private void checkBoxAction(int index, boolean selected) {
-        ObservableList<VBox> items = vBoxListView.getItems();
-        for (VBox item : items) {
-            ((CheckBox) ((HBox) item.getChildren().get(1)).getChildren().get(index)).setSelected(selected);
+    private void checkBoxAction(int columnIndex, int rowIndex, boolean selected) {
+        if (!selectedCheckBoxVBox.isEmpty()) {
+            selectedCheckBoxVBox.forEach(vBox -> ((CheckBox) ((HBox) vBox.getChildren().get(columnIndex)).getChildren().get(rowIndex)).setSelected(selected));
         }
     }
 
@@ -236,22 +241,21 @@ public class MainController implements Initializable {
 
             BaseConstants.selectedDateSource = ((DataSource) selectedItems.get(0).getParent().getValue());
         }
+        //清空当前checkBoxVBox
+        selectedCheckBoxVBox.clear();
+
         //把选中要导出的表在右边的listView展示
         this.setListView(tables);
         //选中的表
         BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
 
-        for (Table table : tables) {
-            if (table.getColumns() == null) {
-                List<Column> columns = columnService.getColumnsFromRemote(BaseConstants.selectedDateSource, table.getTableName());
-                table.setColumns(columns);
-            }
-        }
+        //如果没有字段，则从远程加载
+        tables.forEach(table -> columnService.reloadColumnsIfNotNull(table));
 
         //show rightBorderTopHBox
-        if (!rightBorderTopHBox.isVisible() && !rightBorderTopHBox.isManaged()) {
-            rightBorderTopHBox.setVisible(true);
-            rightBorderTopHBox.setManaged(true);
+        if (!borderPane1.isVisible() && !borderPane1.isManaged()) {
+            borderPane1.setVisible(true);
+            borderPane1.setManaged(true);
         }
     }
 
@@ -274,7 +278,13 @@ public class MainController implements Initializable {
 
         treeItemRoot.getChildren().remove(dataItemTreeItem);
 
-        dataSourceService.deleteDataSource(((DataSource) dataItemTreeItem.getValue()));
+        DataSource dataSource = (DataSource) dataItemTreeItem.getValue();
+        dataSourceService.deleteDataSource(dataSource);
+
+        if (BaseConstants.selectedDateSource == null || BaseConstants.selectedDateSource == dataSource) {
+            borderPane1.setVisible(false);
+            borderPane1.setManaged(false);
+        }
     }
 
     /**
@@ -285,6 +295,12 @@ public class MainController implements Initializable {
     private void refreshDataSource() {
         TreeItem<DataItem> selectedItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         tableService.refreshTables(selectedItem);
+
+        DataSource dataSource = (DataSource) selectedItem.getValue();
+        if (BaseConstants.selectedDateSource == null || BaseConstants.selectedDateSource == dataSource) {
+            borderPane1.setVisible(false);
+            borderPane1.setManaged(false);
+        }
     }
 
     /*------------------------------------ListView ContextMenu--------------------------------------------------------*/
@@ -295,38 +311,96 @@ public class MainController implements Initializable {
      * @param tables 已选表
      */
     private void setListView(List<Table> tables) {
-        ObservableList<VBox> anchorPanes = FXCollections.observableArrayList();
-        vBoxListView.setItems(anchorPanes);
-        for (Table table : tables) {
-            Label tableNameLabel = new Label(table.getTableName());
-            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
+        ObservableList<VBox> vBoxes = FXCollections.observableArrayList();
+        vBoxListView.setItems(vBoxes);
 
-            HBox hBox = new HBox(tableNameLabel);
-            hBox.setAlignment(Pos.CENTER);
+        for (Table table : tables) {
+            String tableName = table.getTableName();
+            Label tableNameLabel = new Label(tableName);
+            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
+            HBox tableNameLabelHBox = new HBox(tableNameLabel);
+            tableNameLabelHBox.setAlignment(Pos.CENTER);
 
             CheckBox returnId = new CheckBox("insert返回id");
-            returnId.selectedProperty().addListener((observable, oldValue, newValue) -> table.setReturnInsertId(newValue));
+            returnId.setSelected(table.isReturnInsertId());
+            returnId.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setReturnInsertId(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
             CheckBox insert = new CheckBox("insert");
-            insert.setSelected(true);
-            insert.selectedProperty().addListener((observable, oldValue, newValue) -> table.setInsert(newValue));
+            insert.setSelected(table.isInsert());
+            insert.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setInsert(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
             CheckBox count = new CheckBox("count");
-            count.setSelected(true);
-            count.selectedProperty().addListener((observable, oldValue, newValue) -> table.setCount(newValue));
+            count.setSelected(table.isCount());
+            count.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setCount(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
             CheckBox update = new CheckBox("update");
-            update.setSelected(true);
-            update.selectedProperty().addListener((observable, oldValue, newValue) -> table.setUpdate(newValue));
+            update.setSelected(table.isSelect());
+            update.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setUpdate(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
             CheckBox delete = new CheckBox("delete");
-            delete.setSelected(true);
-            delete.selectedProperty().addListener((observable, oldValue, newValue) -> table.setDelete(newValue));
+            delete.setSelected(table.isDelete());
+            delete.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setDelete(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
             CheckBox select = new CheckBox("select");
-            select.setSelected(true);
-            select.selectedProperty().addListener((observable, oldValue, newValue) -> table.setSelect(newValue));
+            select.setSelected(table.isSelect());
+            select.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setSelect(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
+            HBox checkBoxHBox1 = new HBox(returnId, insert, count, update, delete, select);
+            checkBoxHBox1.setAlignment(Pos.CENTER_LEFT);
+            checkBoxHBox1.setSpacing(15);
+
+            CheckBox updateExample = new CheckBox("updateExample");
+            updateExample.setSelected(table.isUpdateExample());
+            updateExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setUpdateExample(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
+            CheckBox deleteExample = new CheckBox("deleteExample");
+            deleteExample.setSelected(table.isDeleteExample());
+            deleteExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setDeleteExample(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
+            CheckBox selectExample = new CheckBox("selectExample");
+            selectExample.setSelected(table.isSelectExample());
+            selectExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                table.setSelectExample(newValue);
+                BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
+            });
+
+            HBox checkBoxHBox2 = new HBox(updateExample, deleteExample, selectExample);
+            checkBoxHBox2.setAlignment(Pos.CENTER_LEFT);
+            checkBoxHBox2.setSpacing(15);
+
+            VBox checkBoxVBox = new VBox(checkBoxHBox1, checkBoxHBox2);
+            checkBoxVBox.setSpacing(15);
+
+            selectedCheckBoxVBox.add(checkBoxVBox);
 
             Button expand = new Button();
             expand.setGraphic(new ImageView("/image/expand.png"));
             expand.setPrefWidth(80);
             expand.setStyle("-fx-background-color: transparent");
-
             expand.setOnAction(event -> {
                 Button source = (Button) event.getSource();
                 VBox selectedVBox = ((VBox) source.getParent().getParent());
@@ -348,12 +422,12 @@ public class MainController implements Initializable {
                     }
                 }
             });
-            HBox hBox2 = new HBox(20, returnId, insert, count, update, delete, select, expand);
+
+            HBox hBox2 = new HBox(20, checkBoxVBox, expand);
             hBox2.setAlignment(Pos.CENTER);
 
-            VBox vBox = new VBox(10, hBox, hBox2);
-
-            anchorPanes.add(vBox);
+            VBox vBox = new VBox(10, tableNameLabelHBox, hBox2);
+            vBoxes.add(vBox);
         }
     }
 
@@ -364,7 +438,7 @@ public class MainController implements Initializable {
     private void refreshTableColumn() {
         VBox selectedItemVBox = vBoxListView.getSelectionModel().getSelectedItem();
         String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
-        columnService.refreshColumns(tableName);
+        columnService.reloadColumns(tableName);
         selectedItemVBox.getChildren().remove(2);
         this.expandTableViewColumns(selectedItemVBox);
     }
@@ -382,43 +456,70 @@ public class MainController implements Initializable {
         TableView<Column> columnTableView = new TableView<>(gridPanes);
         columnTableView.setEditable(true);
 
-        double borderPane1Width = borderPane1.getWidth();
-        double columnWidth = borderPane1Width / 3;
-
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
-        tcColumnNam.setPrefWidth(columnWidth);
         tcColumnNam.setSortable(false);
+        tcColumnNam.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
 
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
         tcType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType()));
-        tcType.setPrefWidth(columnWidth);
         tcType.setSortable(false);
+        tcType.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+
+        TableColumn<Column, String> javaType = new TableColumn<>("java type");
+        javaType.setCellFactory(TextFieldTableCell.forTableColumn());
+        javaType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getJavaType()));
+        javaType.setOnEditCommit(event -> {
+            event.getRowValue().getColumnOverride().setJavaType(event.getNewValue());
+            BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
+        });
+        javaType.setSortable(false);
+        javaType.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+
+        TableColumn<Column, String> property = new TableColumn<>("property");
+        property.setCellFactory(TextFieldTableCell.forTableColumn());
+        property.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getProperty()));
+        property.setOnEditCommit(event -> {
+            event.getRowValue().getColumnOverride().setProperty(event.getNewValue());
+            BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
+        });
+        property.setSortable(false);
+        property.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
+
+        TableColumn<Column, String> typeHandler = new TableColumn<>("typeHandler");
+        typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
+        typeHandler.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getTypeHandler()));
+        typeHandler.setOnEditCommit(event -> {
+            event.getRowValue().getColumnOverride().setTypeHandler(event.getNewValue());
+            BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
+        });
+        typeHandler.setSortable(false);
+        typeHandler.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
 
         TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
         ignoreCheckBox.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
             final Column column = columnTableView.getItems().get(param);
-            column.ignoreProperty().addListener((observable, oldValue, newValue) -> column.setIgnore(newValue));
+            column.ignoreProperty().addListener((observable, oldValue, newValue) -> {
+                column.setIgnore(newValue);
+                BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
+            });
             return column.ignoreProperty();
         }));
-        ignoreCheckBox.setPrefWidth(columnWidth);
         ignoreCheckBox.setSortable(false);
+        ignoreCheckBox.prefWidthProperty().bind(vBoxListView.widthProperty().divide(6));
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);
+        columnTableView.getColumns().add(property);
+        columnTableView.getColumns().add(javaType);
+        columnTableView.getColumns().add(typeHandler);
         columnTableView.getColumns().add(ignoreCheckBox);
 
         columnTableView.setFixedCellSize(28);
-        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.01)));
+        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.0)));
+        columnTableView.prefWidthProperty().bind(vBoxListView.widthProperty());
 
         selectedVBox.getChildren().add(columnTableView);
-
-        MenuItem overrideColumnMenuItem = new MenuItem("override");
-        overrideColumnMenuItem.setOnAction(event -> {
-            Column selectedColumn = columnTableView.getSelectionModel().getSelectedItem();
-            columnUpdateController.openStage((Stage) borderPane.getScene().getWindow(), selectedColumn);
-        });
-        columnTableView.setContextMenu(new ContextMenu(overrideColumnMenuItem));
     }
 
     //-------------

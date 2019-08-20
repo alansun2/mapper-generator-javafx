@@ -6,7 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane styleClass="anchorPane" prefHeight="460.0" prefWidth="500.0" stylesheets="@../css/export.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ExportController">
+<AnchorPane styleClass="anchorPane" prefHeight="460.0" prefWidth="500.0" stylesheets="@../css/export.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ExportController">
     <children>
         <TextField fx:id="configNameText" layoutX="163.0" layoutY="39.0" prefHeight="23.0" prefWidth="209.0" promptText="配置名称" />
         <TextField fx:id="authorText" layoutX="163.0" layoutY="101.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称" />

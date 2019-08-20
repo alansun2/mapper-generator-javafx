@@ -56,23 +56,48 @@ public class ColumnService {
      *
      * @param tableName 表命
      */
-    public void refreshColumns(String tableName) {
+    public void reloadColumns(String tableName) {
         Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
-        List<Column> existColumns = table.getColumns();
-        Map<String, Column> existColumnNameColumnMap = existColumns.stream().collect(Collectors.toMap(Column::getColumnName, column -> column));
+        this.reloadColumnsInner(table);
+    }
 
+    /**
+     * 重新加载表字段信息
+     *
+     * @param table 表
+     */
+    public void reloadColumnsIfNotNull(Table table) {
+        if (table.getColumns() == null) {
+            this.reloadColumnsInner(table);
+        }
+    }
+
+    /**
+     * 重新加载表字段信息
+     *
+     * @param table 表
+     */
+    private void reloadColumnsInner(Table table) {
+        String tableName = table.getTableName();
+        List<Column> existColumns = table.getColumns();
         DataSource dataSource = BaseConstants.selectedDateSource;
         List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
-        deleteColumnFile(dataSource, tableName);
-
-        for (Column column : columns) {
-            if (existColumnNameColumnMap.containsKey(column.getColumnName())) {
-                column.setIgnore(existColumnNameColumnMap.get(column.getColumnName()).isIgnore());
+        if (existColumns != null && !existColumns.isEmpty()) {
+            Map<String, Column> existColumnNameColumnMap = existColumns.stream().collect(Collectors.toMap(Column::getColumnName, column -> column));
+            this.deleteColumnFile(dataSource, tableName);
+            for (Column column : columns) {
+                if (existColumnNameColumnMap.containsKey(column.getColumnName())) {
+                    Column existColumn = existColumnNameColumnMap.get(column.getColumnName());
+                    column.setIgnore(existColumn.isIgnore());
+                    column.setColumnOverride(existColumn.getColumnOverride());
+                }
             }
         }
 
         table.setColumns(columns);
+        this.downLoadColumnsToFileSingle(dataSource, table);
     }
+
 
     /**
      * 加载columns
@@ -90,17 +115,17 @@ public class ColumnService {
         }
 
         //写入文件
-        this.downLoadColumnsToFile(dataSource, tableNameColumnsMap);
+        this.downLoadColumnsToFileBatch(dataSource, tableNameColumnsMap);
     }
 
     /**
-     * columns 写入文件
+     * columns 批量写入文件
      *
      * @param dataSource          数据源
      * @param tableNameColumnsMap columnsMap
      */
     @Async
-    void downLoadColumnsToFile(DataSource dataSource, Map<String, List<Column>> tableNameColumnsMap) {
+    void downLoadColumnsToFileBatch(DataSource dataSource, Map<String, List<Column>> tableNameColumnsMap) {
         tableNameColumnsMap.forEach((tableName, columns) -> {
             File columnsFile = BaseConstants.getColumnsFile(dataSource, tableName);
             String tableNameColumnsMapStr = JSONArray.toJSONString(columns, true);
@@ -110,6 +135,23 @@ public class ColumnService {
                 log.error("columns download 失败");
             }
         });
+    }
+
+    /**
+     * columns 单个写入文件
+     *
+     * @param dataSource 数据源
+     * @param table      表信息
+     */
+    @Async
+    void downLoadColumnsToFileSingle(DataSource dataSource, Table table) {
+        File columnsFile = BaseConstants.getColumnsFile(dataSource, table.getTableName());
+        String tableNameColumnsMapStr = JSONArray.toJSONString(table.getColumns(), true);
+        try {
+            FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr);
+        } catch (IOException e) {
+            log.error("columns download 失败");
+        }
     }
 
     /**
@@ -150,15 +192,6 @@ public class ColumnService {
      *
      * @param dataSource 数据源信息
      */
-    void deleteColumns(DataSource dataSource, String tableName) {
-        this.deleteColumnFile(dataSource, tableName);
-    }
-
-    /**
-     * 删除table
-     *
-     * @param dataSource 数据源信息
-     */
     void deleteColumnsDirectory(DataSource dataSource) {
         this.deleteColumnDirectory(dataSource);
     }
@@ -185,5 +218,22 @@ public class ColumnService {
         } catch (IOException e) {
             log.error("删除字段文件错误", e);
         }
+    }
+
+    /**
+     * 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
+     */
+    public void downLoadColumnOverride() {
+        Map<String, Boolean> tableNameIsOverrideRecodeMap = BaseConstants.tableNameIsOverrideRecodeMap;
+        if (!tableNameIsOverrideRecodeMap.isEmpty()) {
+            tableNameIsOverrideRecodeMap.forEach((tableName, record) -> {
+                this.deleteColumnFile(BaseConstants.selectedDateSource, tableName);
+                Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
+                downLoadColumnsToFileSingle(BaseConstants.selectedDateSource, table);
+            });
+        }
+
+        //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
+        BaseConstants.tableNameIsOverrideRecodeMap.clear();
     }
 }

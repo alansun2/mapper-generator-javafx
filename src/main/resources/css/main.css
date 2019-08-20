@@ -23,7 +23,16 @@
     -fx-background-color: #BFBFBF;
 }
 
+.borderPane1 {
+    -fx-background-color: #F4F4F4;
+}
+
+.topHBox {
+    -fx-padding: 10 0 10 0;
+}
+
 /*split-pane*/
 .split-pane:horizontal > .split-pane-divider {
     -fx-padding: 0 0 0 0;
+    /*-fx-background-color: #E8E8E8;*/
 }

@@ -4,6 +4,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,15 +26,29 @@ public class BaseConstants {
      */
     public static Map<String, Table> selectedTableNameTableMap;
 
+    /**
+     * 记录该该表中的字段是否有过重写，如果有会在关闭应用时替换相应的表文件
+     */
+    public static Map<String, Boolean> tableNameIsOverrideRecodeMap = new HashMap<>();
+
+    /**
+     * 记录该该表中的字段是否有过重写，如果有会在关闭应用时替换相应的表文件
+     */
+    public static Map<String, Boolean> tableNameIsTableRecordMap = new HashMap<>();
+
     public static File getColumnsFile(DataSource dataSource, String tableName) {
-        return new File(MG_DATA_HOME + dataSource.toString() + "/" + tableName);
+        return new File(MG_DATA_HOME + dataSource.toString() + "_column/" + tableName);
     }
 
     public static File getColumnsDirectory(DataSource dataSource) {
-        return new File(MG_DATA_HOME + dataSource.toString());
+        return new File(MG_DATA_HOME + dataSource.toString() + "_column");
     }
 
-    public static File getTableFile(DataSource dataSource) {
+    public static File getTableFile(DataSource dataSource, String tableName) {
+        return new File(MG_DATA_HOME + dataSource.toString() + "_table/" + tableName);
+    }
+
+    public static File getTableDirectory(DataSource dataSource) {
         return new File(MG_DATA_HOME + dataSource.toString() + "_table");
     }
 
