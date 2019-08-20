@@ -111,6 +111,7 @@ public class DateSourceController implements Initializable {
             List<Table> tables = tableService.loadTables(dataSource);
             if (!tables.isEmpty()) {
                 tables.forEach(table -> {
+                    dataSourceTreeItem.getChildren().remove(0);
                     TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                     tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                 });

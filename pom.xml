@@ -79,7 +79,7 @@
                     <vendor>YourCompany</vendor>
                     <mainClass>com.alan344.MapperGenApplication</mainClass>
                     <!--<bundler>EXE</bundler>-->
-                    <appName>mapper生成工具</appName>
+                    <!--<appName>mapper生成工具</appName>-->
                 </configuration>
             </plugin>
         </plugins>
