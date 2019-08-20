@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,7 +45,7 @@ public class TableService {
      *
      * @param dataSourceTreeItem 数据源的item
      */
-    void loadTables(TreeItem<DataItem> dataSourceTreeItem) {
+    public void loadTables(TreeItem<DataItem> dataSourceTreeItem) {
         ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
         Table emptyTable = (Table) children.get(0).getValue();
         //当dataSourceTreeItem下只有一个item，并且该item是之前填充的item时才进行拉去table的操作
@@ -128,36 +129,32 @@ public class TableService {
     /**
      * 从文件加表信息至pane
      *
-     * @param treeItemDataSource treeItemDataSource
+     * @param dataSource 数据源
      */
-    boolean loadTablesFromFile(TreeItem<DataItem> treeItemDataSource) {
-        DataSource dataSource = (DataSource) treeItemDataSource.getValue();
+    List<Table> loadTablesFromFile(DataSource dataSource) {
         File tableDirectory = BaseConstants.getTableDirectory(dataSource);
         if (!tableDirectory.exists()) {
-            return false;
+            return Collections.emptyList();
         }
 
         File[] files = tableDirectory.listFiles();
         if (files == null || files.length <= 0) {
-            return false;
+            return Collections.emptyList();
         }
 
         List<Table> tables = new ArrayList<>();
         try {
             for (File file : files) {
                 Table table = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), Table.class);
-                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, treeItemDataSource);
-                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                 tables.add(table);
             }
         } catch (IOException e) {
             log.error("加载tables文件失败", e);
-            return false;
+            return Collections.emptyList();
         }
 
         columnService.loadColumnsFromFile(dataSource, tables);
-        dataSource.setTables(tables);
-        return true;
+        return tables;
     }
 
     /**
