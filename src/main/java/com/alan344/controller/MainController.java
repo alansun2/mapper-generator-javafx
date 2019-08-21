@@ -451,6 +451,7 @@ public class MainController implements Initializable {
 
             Button expand = new Button();
             expand.setGraphic(new ImageView("/image/expand.png"));
+            expand.setStyle("-fx-background-color: transparent");
             expand.setPrefWidth(80);
             expand.setOnAction(event -> {
                 Button source = (Button) event.getSource();
