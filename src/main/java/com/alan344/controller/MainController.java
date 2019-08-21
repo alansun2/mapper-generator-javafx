@@ -476,10 +476,8 @@ public class MainController implements Initializable {
 
             HBox hBox2 = new HBox(20, checkBoxVBox, expand);
             hBox2.setAlignment(Pos.CENTER);
-//            hBox2.prefWidthProperty().bind(vBoxListView.widthProperty());
 
             VBox vBox = new VBox(10, tableNameLabelHBox, hBox2);
-//            vBox.prefWidthProperty().bind(vBoxListView.widthProperty());
             vBoxes.add(vBox);
         }
     }
