@@ -17,7 +17,6 @@ import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -28,7 +27,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -353,7 +351,7 @@ public class MainController implements Initializable {
         for (Table table : tables) {
             String tableName = table.getTableName();
             Label tableNameLabel = new Label(tableName);
-            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold");
+            tableNameLabel.setStyle("-fx-font-size: 18; -fx-font-weight: bold;");
             HBox tableNameLabelHBox = new HBox(tableNameLabel);
             tableNameLabelHBox.setAlignment(Pos.CENTER);
 
@@ -454,7 +452,6 @@ public class MainController implements Initializable {
             Button expand = new Button();
             expand.setGraphic(new ImageView("/image/expand.png"));
             expand.setPrefWidth(80);
-            expand.setStyle("-fx-background-color: transparent");
             expand.setOnAction(event -> {
                 Button source = (Button) event.getSource();
                 VBox selectedVBox = ((VBox) source.getParent().getParent());
@@ -464,7 +461,7 @@ public class MainController implements Initializable {
                     expand.setGraphic(new ImageView("/image/close.png"));
                     this.expandTableViewColumns(selectedVBox);
                 } else {
-                    TableView tableView = (TableView) children.get(2);
+                    HBox tableView = (HBox) children.get(2);
                     if (tableView.isVisible()) {
                         expand.setGraphic(new ImageView("/image/expand.png"));
                         tableView.setVisible(false);
@@ -479,8 +476,10 @@ public class MainController implements Initializable {
 
             HBox hBox2 = new HBox(20, checkBoxVBox, expand);
             hBox2.setAlignment(Pos.CENTER);
+//            hBox2.prefWidthProperty().bind(vBoxListView.widthProperty());
 
             VBox vBox = new VBox(10, tableNameLabelHBox, hBox2);
+//            vBox.prefWidthProperty().bind(vBoxListView.widthProperty());
             vBoxes.add(vBox);
         }
     }
@@ -503,15 +502,15 @@ public class MainController implements Initializable {
      * 展开字段
      */
     private void expandTableViewColumns(VBox selectedVBox) {
-        String tableName = ((Label) (((HBox) selectedVBox.getChildren().get(0))).getChildren().get(0)).getText();
-        List<Column> columns = BaseConstants.selectedTableNameTableMap.get(tableName).getColumns();
+        HBox hBox = new HBox();
+        hBox.setAlignment(Pos.CENTER);
 
-        ObservableList<Column> gridPanes = FXCollections.observableArrayList(columns);
-        TableView<Column> columnTableView = new TableView<>(gridPanes);
+        String tableName = ((Label) (((HBox) selectedVBox.getChildren().get(0))).getChildren().get(0)).getText();
+        TableView<Column> columnTableView = new TableView<>(FXCollections.observableArrayList(BaseConstants.selectedTableNameTableMap.get(tableName).getColumns()));
         columnTableView.setEditable(true);
         columnTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        ReadOnlyDoubleProperty widthBind = selectedVBox.widthProperty();
+        ReadOnlyDoubleProperty widthBind = hBox.widthProperty();
 
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
@@ -578,11 +577,12 @@ public class MainController implements Initializable {
         columnTableView.getColumns().add(javaType);
         columnTableView.getColumns().add(typeHandler);
 
-        columnTableView.setFixedCellSize(35);
-        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.1)));
-        columnTableView.prefWidthProperty().bind(selectedVBox.widthProperty());
+        columnTableView.setFixedCellSize(30);
+        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.3)));
+        columnTableView.prefWidthProperty().bind(hBox.widthProperty());
 
-        selectedVBox.getChildren().add(columnTableView);
+        hBox.getChildren().add(columnTableView);
+        selectedVBox.getChildren().add(hBox);
     }
 
     //-------------

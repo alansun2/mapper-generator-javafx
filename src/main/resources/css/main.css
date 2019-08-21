@@ -16,15 +16,17 @@
 }
 
 /*.button:focused {*/
-    /*-fx-background-color: #fff;*/
+/*-fx-background-color: #fff;*/
 /*}*/
 
-.anchorPane{
+.anchorPane {
     -fx-background-color: #BFBFBF;
 }
 
 .borderPane1 {
     -fx-background-color: #F4F4F4;
+    -fx-border-width: 0;
+    -fx-padding: 0 0 0 0;
 }
 
 .topHBox {

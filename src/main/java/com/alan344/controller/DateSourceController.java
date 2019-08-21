@@ -101,6 +101,9 @@ public class DateSourceController implements Initializable {
             return;
         }
 
+        //添加数据源
+        dataSourceService.addDataSource(dataSource);
+
         //添加入treeView
         TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemRoot());
         //没有则去远程拉取数据库表列表
@@ -113,9 +116,6 @@ public class DateSourceController implements Initializable {
         }
 
         dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
-
-        //写入文件
-        dataSourceService.addDataSource(dataSource);
     }
 
     /**
