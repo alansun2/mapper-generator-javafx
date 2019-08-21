@@ -2,6 +2,8 @@
 这是一个由 `javafx`，`springboot` 开发的 mybatis-mapper-generator 小工具。
 让你可以快速生成数据库对应的实体类。目前只持支 `mysql`。如果有需求可以在 issue 上提，谢谢！
 
+该工具依赖`mybatis-generator`
+
 功能：
 * 可视化生成数据库相应的实体类，不用再写配置文件
 * 能够 **merge** 之前的 java bean 和 xml
