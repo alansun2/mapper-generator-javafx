@@ -42,7 +42,7 @@ public class MapperGenApplication extends Application {
         primaryStage.setScene(new Scene(root));
         //图标
         primaryStage.getIcons().add(new Image("/image/icon.png"));
-        primaryStage.setWidth(1000);
+        primaryStage.setWidth(1200);
         primaryStage.setHeight(700);
         primaryStage.setTitle("mapper 生成小工具");
         primaryStage.show();

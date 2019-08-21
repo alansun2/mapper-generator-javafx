@@ -31,6 +31,10 @@
     -fx-padding: 10 0 10 0;
 }
 
+.myColumn {
+    -fx-alignment: CENTER;
+}
+
 /*split-pane*/
 .split-pane:horizontal > .split-pane-divider {
     -fx-padding: 0 0 0 0;

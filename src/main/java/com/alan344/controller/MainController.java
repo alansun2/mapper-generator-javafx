@@ -13,10 +13,11 @@ import com.alan344.utils.TreeUtils;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -27,6 +28,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -507,28 +509,21 @@ public class MainController implements Initializable {
         ObservableList<Column> gridPanes = FXCollections.observableArrayList(columns);
         TableView<Column> columnTableView = new TableView<>(gridPanes);
         columnTableView.setEditable(true);
+        columnTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        DoubleBinding widthBind = selectedVBox.widthProperty().divide(6.05);
+        ReadOnlyDoubleProperty widthBind = selectedVBox.widthProperty();
 
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
         tcColumnNam.setSortable(false);
-        tcColumnNam.prefWidthProperty().bind(widthBind);
+        tcColumnNam.prefWidthProperty().bind(widthBind.multiply(0.16));
+        tcColumnNam.getStyleClass().setAll("myColumn");
 
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
         tcType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType()));
         tcType.setSortable(false);
-        tcType.prefWidthProperty().bind(widthBind);
-
-        TableColumn<Column, String> javaType = new TableColumn<>("java type");
-        javaType.setCellFactory(TextFieldTableCell.forTableColumn());
-        javaType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getJavaType()));
-        javaType.setOnEditCommit(event -> {
-            event.getRowValue().getColumnOverride().setJavaType(event.getNewValue());
-            BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
-        });
-        javaType.setSortable(false);
-        javaType.prefWidthProperty().bind(widthBind);
+        tcType.prefWidthProperty().bind(widthBind.multiply(0.16));
+        tcType.getStyleClass().setAll("myColumn");
 
         TableColumn<Column, String> property = new TableColumn<>("property");
         property.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -538,9 +533,21 @@ public class MainController implements Initializable {
             BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
         });
         property.setSortable(false);
-        property.prefWidthProperty().bind(widthBind);
+        property.prefWidthProperty().bind(widthBind.multiply(0.16));
+        property.getStyleClass().setAll("myColumn");
 
-        TableColumn<Column, String> typeHandler = new TableColumn<>("typeHandler");
+        TableColumn<Column, String> javaType = new TableColumn<>("java type");
+        javaType.setCellFactory(TextFieldTableCell.forTableColumn());
+        javaType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getJavaType()));
+        javaType.setOnEditCommit(event -> {
+            event.getRowValue().getColumnOverride().setJavaType(event.getNewValue());
+            BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
+        });
+        javaType.setSortable(false);
+        javaType.prefWidthProperty().bind(widthBind.multiply(0.2));
+        javaType.getStyleClass().setAll("myColumn");
+
+        TableColumn<Column, String> typeHandler = new TableColumn<>("type handler");
         typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
         typeHandler.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getTypeHandler()));
         typeHandler.setOnEditCommit(event -> {
@@ -548,7 +555,8 @@ public class MainController implements Initializable {
             BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
         });
         typeHandler.setSortable(false);
-        typeHandler.prefWidthProperty().bind(widthBind);
+        typeHandler.prefWidthProperty().bind(widthBind.multiply(0.22));
+        typeHandler.getStyleClass().setAll("myColumn");
 
         TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
         ignoreCheckBox.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
@@ -560,7 +568,8 @@ public class MainController implements Initializable {
             return column.ignoreProperty();
         }));
         ignoreCheckBox.setSortable(false);
-        ignoreCheckBox.prefWidthProperty().bind(widthBind);
+        ignoreCheckBox.prefWidthProperty().bind(widthBind.multiply(0.1));
+        ignoreCheckBox.getStyleClass().setAll("myColumn");
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);
@@ -570,7 +579,7 @@ public class MainController implements Initializable {
         columnTableView.getColumns().add(typeHandler);
 
         columnTableView.setFixedCellSize(35);
-        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.93)));
+        columnTableView.prefHeightProperty().bind(columnTableView.fixedCellSizeProperty().multiply(Bindings.size(columnTableView.getItems()).add(1.1)));
         columnTableView.prefWidthProperty().bind(selectedVBox.widthProperty());
 
         selectedVBox.getChildren().add(columnTableView);

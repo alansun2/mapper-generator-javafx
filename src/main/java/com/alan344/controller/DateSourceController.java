@@ -103,23 +103,14 @@ public class DateSourceController implements Initializable {
 
         //添加入treeView
         TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemRoot());
-        //下面个没啥用，填充table，让界面看前来有一个下拉箭头，可能会在loadTables方法中删除该item
-        TreeUtils.add2Tree(new Table(), dataSourceTreeItem);
-        //添加展开监听
-        dataSourceTreeItem.addEventHandler(TreeItem.<DataItem>branchExpandedEvent(), event -> {
-            TreeItem<DataItem> firstItem = dataSourceTreeItem.getChildren().get(0);
-            if (((Table) firstItem.getValue()).getTableName() == null) {
-                dataSourceTreeItem.getChildren().remove(0);
-                //没有则去远程拉取数据库表列表
-                List<Table> tables = tableService.loadTables(dataSource);
-                if (!tables.isEmpty()) {
-                    tables.forEach(table -> {
-                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-                    });
-                }
-            }
-        });
+        //没有则去远程拉取数据库表列表
+        List<Table> tables = tableService.loadTables(dataSource);
+        if (!tables.isEmpty()) {
+            tables.forEach(table -> {
+                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+            });
+        }
 
         dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
 
