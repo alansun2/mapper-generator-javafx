@@ -80,6 +80,9 @@
                     <mainClass>com.alan344.MapperGenApplication</mainClass>
                     <!--<bundler>EXE</bundler>-->
                     <appName>mybatis-friend</appName>
+                    <bundleArguments>
+                        <icon>${project.basedir}/src/main/resources/image/icon.ico</icon>
+                    </bundleArguments>
                 </configuration>
             </plugin>
             <plugin>
