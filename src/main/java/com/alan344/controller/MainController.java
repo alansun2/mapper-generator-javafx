@@ -190,15 +190,15 @@ public class MainController implements Initializable {
      * checkbox init
      */
     private void checkBoxInit() {
-        insertReturnCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 0, newValue));
-        insertCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 1, newValue));
-        countCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 2, newValue));
-        updateCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 3, newValue));
-        deleteCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 4, newValue));
-        selectCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 5, newValue));
-        updateExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 0, newValue));
-        deleteExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 1, newValue));
-        selectExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 2, newValue));
+        insertReturnCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 0, newValue));
+        insertCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 1, newValue));
+        countCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 2, newValue));
+        updateCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 3, newValue));
+        deleteCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 4, newValue));
+        selectCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(1, 5, newValue));
+        updateExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 0, newValue));
+        deleteExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 1, newValue));
+        selectExampleCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> checkBoxAction(0, 2, newValue));
     }
 
     private void checkBoxAction(int columnIndex, int rowIndex, boolean selected) {
