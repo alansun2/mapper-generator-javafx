@@ -79,9 +79,22 @@
                     <vendor>YourCompany</vendor>
                     <mainClass>com.alan344.MapperGenApplication</mainClass>
                     <!--<bundler>EXE</bundler>-->
-                    <!--<appName>mapper生成工具</appName>-->
+                    <appName>mybatis-friend</appName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.alan344.MapperGenApplication</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>mybatis-friend</finalName>
     </build>
 </project>
