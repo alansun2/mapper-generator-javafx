@@ -34,6 +34,7 @@
     ![table-rightclick.png](https://upload-images.jianshu.io/upload_images/5614480-a58f0d256fd70c1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3. 对需要导出的表进行配置
+
     表配置详情
     
     ![table-detail.png](https://upload-images.jianshu.io/upload_images/5614480-8c874dd5e9d45c1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
