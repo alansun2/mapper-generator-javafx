@@ -230,9 +230,8 @@ public class ColumnService {
                 Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
                 downLoadColumnsToFileSingle(BaseConstants.selectedDateSource, table);
             });
+            //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
+            BaseConstants.tableNameIsOverrideRecodeMap.clear();
         }
-
-        //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
-        BaseConstants.tableNameIsOverrideRecodeMap.clear();
     }
 }

@@ -3,6 +3,7 @@ package com.alan344.controller;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import com.alan344.constants.BaseConstants;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.TextUtils;
@@ -106,6 +107,14 @@ public class DateSourceController implements Initializable {
 
         //添加入treeView
         TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemRoot());
+        dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                if (BaseConstants.selectedDateSource != null && dataSource != BaseConstants.selectedDateSource) {
+                    BaseConstants.tableNameIsOverrideRecodeMap.clear();
+                    BaseConstants.tableNameIsTableRecordMap.clear();
+                }
+            }
+        });
         //没有则去远程拉取数据库表列表
         List<Table> tables = tableService.loadTables(dataSource);
         if (!tables.isEmpty()) {

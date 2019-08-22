@@ -136,6 +136,14 @@ public class MainController implements Initializable {
             for (DataSource dataSource : dataSources) {
                 TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemRoot);
                 dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
+                dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        if (BaseConstants.selectedDateSource != null && dataSource != BaseConstants.selectedDateSource) {
+                            BaseConstants.tableNameIsOverrideRecodeMap.clear();
+                            BaseConstants.tableNameIsTableRecordMap.clear();
+                        }
+                    }
+                });
                 List<Table> tables = dataSource.getTables();
                 if (tables != null && !tables.isEmpty()) {
                     tables.forEach(table -> {

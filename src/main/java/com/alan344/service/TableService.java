@@ -214,9 +214,8 @@ public class TableService {
                 Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
                 this.downLoadToFileSingle(BaseConstants.selectedDateSource, table);
             });
+            //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
+            BaseConstants.tableNameIsTableRecordMap.clear();
         }
-
-        //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
-        BaseConstants.tableNameIsTableRecordMap.clear();
     }
 }
