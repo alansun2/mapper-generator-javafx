@@ -21,9 +21,33 @@
    
 ### 1. 使用步骤介绍
 1. 右上角菜单栏点击文件 -> 添加数据源
+
+    ![adddatasource.png](https://upload-images.jianshu.io/upload_images/5614480-72f0e85b3f8ddd97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 2. 展开数据源，对需要的表进行导出（右键导出），也可以选择数据源导出该数据源所有表
+
+    点击数据源导出会导出数据源下所有表
+    
+    ![datasource-rightckick.png](https://upload-images.jianshu.io/upload_images/5614480-b7c3abc0a51994ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    
+    点击表导出(可多选)
+    
+    ![table-rightclick.png](https://upload-images.jianshu.io/upload_images/5614480-a58f0d256fd70c1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 3. 对需要导出的表进行配置
+    表配置详情
+    
+    ![table-detail.png](https://upload-images.jianshu.io/upload_images/5614480-8c874dd5e9d45c1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    
+    表字段详情
+    
+    ![table-column-detail.png](https://upload-images.jianshu.io/upload_images/5614480-c6f4062b785870d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 4. 配置完成后点击右上角导出按钮，对导出位置进行配置
+    配置导出位置
+    
+    ![export.png](https://upload-images.jianshu.io/upload_images/5614480-fede595824c044da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
 5. 点击应用
 
 ### 2. 运行环境
