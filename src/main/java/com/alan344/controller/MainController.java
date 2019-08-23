@@ -8,10 +8,10 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
+import com.alan344.utils.DialogUtils;
 import com.alan344.utils.Toast;
 import com.alan344.utils.TreeUtils;
 import javafx.application.HostServices;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -227,7 +227,8 @@ public class MainController implements Initializable {
 
     @FXML
     public void exit() {
-        Platform.exit();
+//        Platform.exit();
+        DialogUtils.closeDialog((Stage) borderPane.getScene().getWindow());
     }
 
     @FXML
