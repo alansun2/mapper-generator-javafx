@@ -10,6 +10,7 @@ import com.alan344.utils.MyShellCallback;
 import com.alan344happyframework.constants.SeparatorConstants;
 import com.alan344happyframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -23,8 +24,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -102,7 +103,7 @@ public class XmlGeneratorService {
             useJSR310TypesProperty.addAttribute("name", "useJSR310Types");
             useJSR310TypesProperty.addAttribute("value", "true");
 
-            Element forceBigDecimals = javaTypeResolver.addElement("forceBigDecimals");
+            Element forceBigDecimals = javaTypeResolver.addElement("property");
             forceBigDecimals.addAttribute("name", "forceBigDecimals");
             forceBigDecimals.addAttribute("value", "true");
         } else if (generatorConfig.isUserJava8()) {
@@ -190,7 +191,7 @@ public class XmlGeneratorService {
         }
 
         String generatorConfigName = System.getProperty("user.dir") + "/generatorConfig.xml";
-        Writer fileWriter = new FileWriter(generatorConfigName);
+        Writer fileWriter = new FileWriterWithEncoding(generatorConfigName, StandardCharsets.UTF_8);
         XMLWriter xmlWriter = new HRXMLWriter(fileWriter, OutputFormat.createPrettyPrint());
         xmlWriter.write(document);
         xmlWriter.close();

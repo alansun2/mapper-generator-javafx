@@ -7,30 +7,28 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane styleClass="anchorPane" prefHeight="460.0" prefWidth="500.0" stylesheets="@../css/export.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ExportController">
-    <children>
-        <TextField fx:id="configNameText" layoutX="163.0" layoutY="39.0" prefHeight="23.0" prefWidth="209.0" promptText="配置名称" />
-        <TextField fx:id="authorText" layoutX="163.0" layoutY="101.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称" />
-        <TextField fx:id="beanLocationText" layoutX="163.0" layoutY="131.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 地址" />
-        <TextField fx:id="beanPackageText" layoutX="163.0" layoutY="161.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名" />
-        <TextField fx:id="mapperLocationText" layoutX="163.0" layoutY="191.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 地址" />
-        <TextField fx:id="mapperPackageText" layoutX="163.0" layoutY="221.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名" />
-        <TextField fx:id="xmlLocationText" layoutX="163.0" layoutY="251.0" prefHeight="23.0" prefWidth="209.0" promptText="xml 地址" />
-        <CheckBox fx:id="userJava8CheckBox" layoutX="43.0" layoutY="291.0" mnemonicParsing="false" selected="true" text="支持 java8" />
-        <CheckBox fx:id="useBigDecimalCheckBox" layoutX="43.0" layoutY="321.0" mnemonicParsing="false" text="所有数字使用 BigDecimal" />
-        <CheckBox fx:id="useCommentCheckBox" layoutX="43.0" layoutY="351.0" mnemonicParsing="false" selected="true" text="启用注释" />
-        <CheckBox fx:id="useSwaggerCheckBox" layoutX="143.0" layoutY="351.0" mnemonicParsing="false" text="启用 swagger 注解" />
-        <CheckBox fx:id="useMergeCheckBox" layoutX="43.0" layoutY="381.0" mnemonicParsing="false" text="是否使用 merge (默认是覆盖)" />
-        <Label layoutX="43.0" layoutY="43.0" text="配置名称：" />
-        <Label layoutX="43.0" layoutY="101.0" text="作者名称：" />
-        <Label layoutX="43.0" layoutY="131.0" text="Bean 地址：" />
-        <Label layoutX="43.0" layoutY="161.0" text="Bean 包名：" />
-        <Label layoutX="43.0" layoutY="191.0" text="Mapper 地址：" />
-        <Label layoutX="43.0" layoutY="221.0" text="Mapper 包名：" />
-        <Label layoutX="43.0" layoutY="251.0" text="Xml 地址：" />
-        <Button layoutX="298.0" layoutY="410.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0" prefWidth="64.0" text="取消" />
-        <Button layoutX="389.0" layoutY="410.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="应用" />
-        <Button layoutX="392.0" layoutY="131.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-        <Button layoutX="392.0" layoutY="191.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-        <Button layoutX="392.0" layoutY="251.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-    </children>
+    <TextField fx:id="configNameText" layoutX="163.0" layoutY="39.0" prefHeight="23.0" prefWidth="209.0" promptText="配置名称" />
+    <TextField fx:id="authorText" layoutX="163.0" layoutY="101.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称" />
+    <TextField fx:id="beanLocationText" layoutX="163.0" layoutY="131.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 地址" />
+    <TextField fx:id="beanPackageText" layoutX="163.0" layoutY="161.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名" />
+    <TextField fx:id="mapperLocationText" layoutX="163.0" layoutY="191.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 地址" />
+    <TextField fx:id="mapperPackageText" layoutX="163.0" layoutY="221.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名" />
+    <TextField fx:id="xmlLocationText" layoutX="163.0" layoutY="251.0" prefHeight="23.0" prefWidth="209.0" promptText="xml 地址" />
+    <CheckBox fx:id="userJava8CheckBox" layoutX="43.0" layoutY="291.0" mnemonicParsing="false" selected="true" text="支持 java8" />
+    <CheckBox fx:id="useBigDecimalCheckBox" layoutX="43.0" layoutY="321.0" mnemonicParsing="false" text="使用 BigDecimal" selected="true"/>
+    <CheckBox fx:id="useCommentCheckBox" layoutX="43.0" layoutY="351.0" mnemonicParsing="false" selected="true" text="启用注释" />
+    <CheckBox fx:id="useSwaggerCheckBox" layoutX="143.0" layoutY="351.0" mnemonicParsing="false" text="启用 swagger 注解" />
+    <CheckBox fx:id="useMergeCheckBox" layoutX="43.0" layoutY="381.0" mnemonicParsing="false" text="是否使用 merge (默认是覆盖)" />
+    <Label layoutX="43.0" layoutY="43.0" text="配置名称：" />
+    <Label layoutX="43.0" layoutY="101.0" text="作者名称：" />
+    <Label layoutX="43.0" layoutY="131.0" text="Bean 地址：" />
+    <Label layoutX="43.0" layoutY="161.0" text="Bean 包名：" />
+    <Label layoutX="43.0" layoutY="191.0" text="Mapper 地址：" />
+    <Label layoutX="43.0" layoutY="221.0" text="Mapper 包名：" />
+    <Label layoutX="43.0" layoutY="251.0" text="Xml 地址：" />
+    <Button layoutX="298.0" layoutY="410.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0" prefWidth="64.0" text="取消" />
+    <Button layoutX="389.0" layoutY="410.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="应用" />
+    <Button layoutX="392.0" layoutY="131.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
+    <Button layoutX="392.0" layoutY="191.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
+    <Button layoutX="392.0" layoutY="251.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
 </AnchorPane>
