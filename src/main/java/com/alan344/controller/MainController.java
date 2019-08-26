@@ -434,7 +434,7 @@ public class MainController implements Initializable {
             CheckBox deleteExample = new CheckBox("deleteExample");
             deleteExample.setSelected(table.isDeleteExample());
             deleteExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if (table.isSelectExample() != newValue) {
+                if (table.isDeleteExample() != newValue) {
                     table.setDeleteExample(newValue);
                     BaseConstants.tableNameIsTableRecordMap.put(tableName, true);
                 }
