@@ -22,36 +22,36 @@
 ### 1. 使用步骤介绍
 1. 右上角菜单栏点击文件 -> 添加数据源
 
-    ![adddatasource.png](https://upload-images.jianshu.io/upload_images/5614480-72f0e85b3f8ddd97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![adddatasource.jpg](https://upload-images.jianshu.io/upload_images/5614480-6a038858b17097a1.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
     
 2. 展开数据源，对需要的表进行导出（右键导出），也可以选择数据源导出该数据源所有表
 
     点击数据源导出会导出数据源下所有表，数据源的刷新只是对表重新加载，并不会对字段重新加载。对字段的重新加载请看第三点
     
-    ![datasource-rightckick.png](https://upload-images.jianshu.io/upload_images/5614480-b7c3abc0a51994ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![datasource-rightckick.jpg](https://upload-images.jianshu.io/upload_images/5614480-2c51a393afe3f759.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
     
     点击表导出(可多选)
     
-    ![table-rightclick.png](https://upload-images.jianshu.io/upload_images/5614480-a58f0d256fd70c1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![table-rightclick.jpg](https://upload-images.jianshu.io/upload_images/5614480-6b39547b69601898.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 3. 对需要导出的表进行配置
 
     表配置，对想要导出的 sql 打上勾
     
-    ![table-detail.png](https://upload-images.jianshu.io/upload_images/5614480-8c874dd5e9d45c1a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![table-detail.jpg](https://upload-images.jianshu.io/upload_images/5614480-05f12a8b5f141bb9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
     
     表字段配置，可以忽略导出字段，指定导出的属性名(property)，对属性名的类型进行重写(java type)，对属性配置类型处理器（type handler）
     
-    ![table-column-detail.png](https://upload-images.jianshu.io/upload_images/5614480-c6f4062b785870d8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![table-column-detail.jpg](https://upload-images.jianshu.io/upload_images/5614480-be5a457502b2ef8a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
     
     表字段刷新
     
-    ![column-refresh.png](https://upload-images.jianshu.io/upload_images/5614480-758d84e9f8294571.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![column-refresh.jpg](https://upload-images.jianshu.io/upload_images/5614480-c57eb2ca36b3710e.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 4. 配置完成后点击右上角导出按钮，对导出位置进行配置
     配置导出位置
     
-    ![export.png](https://upload-images.jianshu.io/upload_images/5614480-fede595824c044da.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    ![export.jpg](https://upload-images.jianshu.io/upload_images/5614480-cda7b8fb39294f2a.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 5. 点击应用
 
