@@ -11,11 +11,6 @@
 功能：
 * 可视化生成数据库相应的实体类，不用再写配置文件
 
-* **能够 merge 之前的 java bean 和 xml**
-   比如你在使用了 `mapper-generator-javafx` 生成的 bean 上新增了一个方法或property，当你使用 **merge** 功能时新增的方法或 property 会保留。xml 同理。
-
-这个 java bean ***merge* 功能官方并没有实现，官方的xml **merge** 也不是很好。
-
 * 记录你每一次的变动
    这里讲一下自身使用官方的 `mybatis-generator` 感受，当我有多个数据源时，刚开始我在`数据源1`工作，生成`OrderInfo`，`OrderInfoMapper`，`OrderInfoMapper.xml`三个文件（忽略了一些字段，去除了delete update sql），接着我又在`数据源2`工作，此时我已经把`数据源1`的配置删除，后来我对`数据源1`的`order_info`表回复一些之前忽略的字段，或者我要去除一个 count sql方法，这时我又要重新配置`数据源1`，并且要比对之前生成的文件，很是麻烦。也许你会说，使用多个配置文件来回切换就可以。当然这也是一种方法。不过我相信当你用了`mybatis-friend`，你应该会抛弃这种想法。
    
