@@ -100,7 +100,7 @@ public class ExportController implements Initializable {
         generatorConfig.setUseBigDecimal(useBigDecimalCheckBox.isSelected());
         generatorConfig.setUseComment(useCommentCheckBox.isSelected());
         generatorConfig.setUseSwagger(useSwaggerCheckBox.isSelected());
-        generatorConfig.setUserMerge(useMergeCheckBox.isSelected());
+//        generatorConfig.setUserMerge(useMergeCheckBox.isSelected());
 
         configController.addConfig(generatorConfig);
 
@@ -174,7 +174,7 @@ public class ExportController implements Initializable {
         useBigDecimalCheckBox.setSelected(generatorConfig.isUseBigDecimal());
         useCommentCheckBox.setSelected(generatorConfig.isUseComment());
         useSwaggerCheckBox.setSelected(generatorConfig.isUseSwagger());
-        useMergeCheckBox.setSelected(generatorConfig.isUserMerge());
+//        useMergeCheckBox.setSelected(generatorConfig.isUserMerge());
     }
 
     /**
@@ -193,6 +193,6 @@ public class ExportController implements Initializable {
         useBigDecimalCheckBox.setSelected(false);
         useCommentCheckBox.setSelected(true);
         useSwaggerCheckBox.setSelected(false);
-        useMergeCheckBox.setSelected(false);
+//        useMergeCheckBox.setSelected(false);
     }
 }

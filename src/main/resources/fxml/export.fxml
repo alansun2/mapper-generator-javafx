@@ -18,7 +18,7 @@
     <CheckBox fx:id="useBigDecimalCheckBox" layoutX="43.0" layoutY="321.0" mnemonicParsing="false" text="使用 BigDecimal" selected="true"/>
     <CheckBox fx:id="useCommentCheckBox" layoutX="43.0" layoutY="351.0" mnemonicParsing="false" selected="true" text="启用注释" />
     <CheckBox fx:id="useSwaggerCheckBox" layoutX="143.0" layoutY="351.0" mnemonicParsing="false" text="启用 swagger 注解" />
-    <CheckBox fx:id="useMergeCheckBox" layoutX="43.0" layoutY="381.0" mnemonicParsing="false" text="是否使用 merge (默认是覆盖)" />
+    <!--<CheckBox fx:id="useMergeCheckBox" layoutX="43.0" layoutY="381.0" mnemonicParsing="false" text="是否使用 merge (默认生成新文件)" />-->
     <Label layoutX="43.0" layoutY="43.0" text="配置名称：" />
     <Label layoutX="43.0" layoutY="101.0" text="作者名称：" />
     <Label layoutX="43.0" layoutY="131.0" text="Bean 地址：" />

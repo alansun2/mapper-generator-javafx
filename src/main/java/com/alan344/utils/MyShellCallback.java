@@ -7,8 +7,8 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.api.GeneratedXmlFile;
 import org.mybatis.generator.exception.ShellException;
@@ -32,7 +32,9 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
 /**
  * @author AlanSun
  * @date 2019/8/17 19:43
+ * merge 现在不用，有点问题
  */
+@Deprecated
 @Slf4j
 public class MyShellCallback extends DefaultShellCallback {
     private boolean supportMerge;
@@ -79,6 +81,13 @@ public class MyShellCallback extends DefaultShellCallback {
         return mergerFile(newCompilationUnit, existingCompilationUnit);
     }
 
+    /**
+     * merge java bean
+     *
+     * @param newCompilationUnit      新的
+     * @param existingCompilationUnit 旧的
+     * @return merge 后的
+     */
     private String mergerFile(CompilationUnit newCompilationUnit, CompilationUnit existingCompilationUnit) {
 
         Optional<PackageDeclaration> newPackageDeclaration = newCompilationUnit.getPackageDeclaration();
@@ -92,33 +101,33 @@ public class MyShellCallback extends DefaultShellCallback {
 
         existingCompilationUnit.setImports(new NodeList<>(importSet));
 
-        //处理类信息
-        NodeList<TypeDeclaration<?>> types = newCompilationUnit.getTypes();
-        NodeList<TypeDeclaration<?>> oldTypes = existingCompilationUnit.getTypes();
+        //处理类 comment
+        TypeDeclaration<?> newType = newCompilationUnit.getTypes().get(0);
+        TypeDeclaration<?> existType = existingCompilationUnit.getTypes().get(0);
+        newType.getComment().ifPresent(existType::setComment);
 
-        for (int i = 0; i < types.size(); i++) {
-            //合并fields
-            TypeDeclaration<?> existingTypeDeclaration = oldTypes.get(i);
-            List<FieldDeclaration> oldFields = existingTypeDeclaration.getFields();
-            List<FieldDeclaration> fields = types.get(i).getFields();
-            Set<FieldDeclaration> fieldDeclarations = new HashSet<>();
-            fieldDeclarations.addAll(oldFields);
-            fieldDeclarations.addAll(fields);
+        List<FieldDeclaration> existFields = existType.getFields();
+        List<FieldDeclaration> newFields = newType.getFields();
 
-            oldFields.forEach(existingTypeDeclaration::remove);
+        //合并fields
+        int size = newFields.size();
+        for (int i = 0; i < size; i++) {
+            FieldDeclaration existField = newFields.get(0);
+            VariableDeclarator existVar = existField.getVariables().get(0);
+            for (FieldDeclaration newField : existFields) {
+                VariableDeclarator newVar = newField.getVariables().get(0);
+                // 名称相同
+                if (newVar.getName().equals(existVar.getName())) {
+                    // 名称相同 且 类型相同
+                    if (newVar.getTypeAsString().equals(existVar.getTypeAsString())) {
+                        newType.getComment().ifPresent(existType::setComment);
+                    } else {
 
-            fieldDeclarations.forEach(existingTypeDeclaration::addMember);
+                    }
+                }
+            }
 
             //合并methods
-            List<MethodDeclaration> existingMethods = existingTypeDeclaration.getMethods();
-            List<MethodDeclaration> methods = types.get(i).getMethods();
-            Set<MethodDeclaration> methodDeclarationHashSet = new HashSet<>();
-            methodDeclarationHashSet.addAll(existingMethods);
-            methodDeclarationHashSet.addAll(methods);
-
-            methodDeclarationHashSet.forEach(existingTypeDeclaration::remove);
-
-            methodDeclarationHashSet.forEach(existingTypeDeclaration::addMember);
         }
 
         return existingCompilationUnit.toString();
