@@ -6,6 +6,7 @@ import com.alan344.service.ColumnService;
 import com.alan344.service.TableService;
 import com.alan344.service.XmlGeneratorService;
 import com.alan344.utils.TextUtils;
+import com.alan344happyframework.util.StringUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -57,9 +58,6 @@ public class ExportController implements Initializable {
     @FXML
     private CheckBox useSwaggerCheckBox;
 
-    @FXML
-    private CheckBox useMergeCheckBox;
-
     @Autowired
     private XmlGeneratorService xmlGeneratorService;
 
@@ -71,6 +69,8 @@ public class ExportController implements Initializable {
 
     @Autowired
     private ConfigController configController;
+
+    private String baseDir;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -128,9 +128,10 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void beanDirectoryScan() {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, null);
+        File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.isEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
             beanLocationText.setText(directory.getPath());
+            this.baseDir = directory.getPath();
         }
     }
 
@@ -139,9 +140,10 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void mapperDirectoryScan() {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, null);
+        File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.isEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
             mapperLocationText.setText(directory.getPath());
+            this.baseDir = directory.getPath();
         }
     }
 
@@ -150,9 +152,10 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void xmlDirectoryScan() {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, null);
+        File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.isEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
             xmlLocationText.setText(directory.getPath());
+            this.baseDir = directory.getPath();
         }
     }
 

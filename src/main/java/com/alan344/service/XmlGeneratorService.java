@@ -23,6 +23,7 @@ import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -196,6 +197,9 @@ public class XmlGeneratorService {
         xmlWriter.write(document);
         xmlWriter.close();
 
+        // 判断文件夹是否存在，如果不存在则进行创建
+        this.checkAndGeneratorDir(generatorConfig);
+        // 执行创建
         this.generateMyBatis3WithInvalidConfig(generatorConfigName, generatorConfig);
     }
 
@@ -204,6 +208,26 @@ public class XmlGeneratorService {
             table.addAttribute(name, Boolean.TRUE.toString());
         } else {
             table.addAttribute(name, Boolean.FALSE.toString());
+        }
+    }
+
+    /**
+     * 判断文件夹是否存在，如果不存在则进行创建
+     */
+    private void checkAndGeneratorDir(GeneratorConfig generatorConfig) {
+        File beanFile = new File(generatorConfig.getBeanLocation());
+        if (!beanFile.exists() && !beanFile.mkdirs()) {
+            log.error("创建bean文件夹：{} 失败", generatorConfig.getBeanLocation());
+        }
+
+        File mapperFile = new File(generatorConfig.getMapperLocation());
+        if (!mapperFile.exists() && !mapperFile.mkdirs()) {
+            log.error("创建mapper文件夹：{} 失败", generatorConfig.getMapperLocation());
+        }
+
+        File xmlFile = new File(generatorConfig.getMapperXmlLocation());
+        if (!xmlFile.exists() && !xmlFile.mkdirs()) {
+            log.error("创建xml文件夹：{} 失败", generatorConfig.getMapperXmlLocation());
         }
     }
 
