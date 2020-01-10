@@ -44,11 +44,11 @@
     </top>
     <center>
         <SplitPane dividerPositions="0.15">
-            <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
+            <BorderPane fx:id="dataSourceBorderPane" maxWidth="400.0" minWidth="300" prefWidth="300.0">
                 <center>
                     <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="137.0"
                               showRoot="false">
-                        <TreeItem fx:id="treeItemRoot"/>
+                        <TreeItem fx:id="treeItemDataSourceRoot"/>
                     </TreeView>
                 </center>
             </BorderPane>

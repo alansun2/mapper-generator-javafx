@@ -25,6 +25,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -32,8 +33,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -50,6 +51,9 @@ import java.util.stream.Collectors;
  */
 @Controller
 public class MainController implements Initializable {
+    /**
+     * 主布局控件
+     */
     @FXML
     private BorderPane borderPane;
 
@@ -59,9 +63,12 @@ public class MainController implements Initializable {
     @FXML
     private MenuBar menuBar;
 
+    /**
+     * 数据源列表
+     */
     @Getter
     @FXML
-    private TreeItem<DataItem> treeItemRoot;
+    private TreeItem<DataItem> treeItemDataSourceRoot;
 
     @Getter
     @FXML
@@ -69,6 +76,9 @@ public class MainController implements Initializable {
 
     @FXML
     private TreeView<DataItem> treeViewDataSource;
+
+    @FXML
+    private BorderPane dataSourceBorderPane;
 
     @FXML
     private CheckBox insertReturnCheckBox;
@@ -89,25 +99,25 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox selectExampleCheckBox;
 
-    @Autowired
+    @Setter
     private DateSourceController dateSourceController;
 
-    @Autowired
+    @Setter
     private ConfigController configController;
 
-    @Autowired
+    @Setter
     private AboutController aboutController;
 
-    @Autowired
+    @Setter
     private DataSourceService dataSourceService;
 
-    @Autowired
+    @Setter
     private TableService tableService;
 
-    @Autowired
+    @Setter
     private ColumnService columnService;
 
-    @Autowired
+    @Setter
     private BeanFactory beanFactory;
 
     private List<VBox> selectedCheckBoxVBox = new ArrayList<>();
@@ -116,6 +126,7 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPane.widthProperty());
 
         this.treeViewInit();
@@ -124,26 +135,45 @@ public class MainController implements Initializable {
 
         //从文件加载数据源至pane
         this.loadData();
+
+        this.addListOnDataSourceBorderPane();
+    }
+
+    /**
+     * 给 DataSourceBorderPane 设置键盘监听，用于搜索 table
+     */
+    private void addListOnDataSourceBorderPane() {
+        dataSourceBorderPane.setOnKeyReleased(event -> {
+            KeyCode code = event.getCode();
+            if (code.isLetterKey()) {
+
+            } else if ("Backspace".equals(code.getName())) {
+            }
+        });
     }
 
     /**
      * 加载数据文件
      */
     private void loadData() {
-        //从文件加载数据源至pane
+        //从文件加载 dataSource 和 table 至 pane
         List<DataSource> dataSources = dataSourceService.loadDataSourceFromFile();
         if (!dataSources.isEmpty()) {
             for (DataSource dataSource : dataSources) {
-                TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemRoot);
+                // 把 dataSource 放入 treeItemRoot
+                TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemDataSourceRoot);
                 dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
+                // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
                 dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
-                        if (BaseConstants.selectedDateSource != null && dataSource != BaseConstants.selectedDateSource) {
+                        if (BaseConstants.selectedDateSource != null) {
                             BaseConstants.tableNameIsOverrideRecodeMap.clear();
                             BaseConstants.tableNameIsTableRecordMap.clear();
                         }
                     }
                 });
+
+                // 把 table 放入 dataSource TreeItem
                 List<Table> tables = dataSource.getTables();
                 if (tables != null && !tables.isEmpty()) {
                     tables.forEach(table -> {
@@ -153,8 +183,9 @@ public class MainController implements Initializable {
                 }
             }
         }
+        // 如果只有一个数据源，则自动展开
         if (dataSources.size() == 1) {
-            treeItemRoot.getChildren().get(0).setExpanded(true);
+            treeItemDataSourceRoot.getChildren().get(0).setExpanded(true);
         }
     }
 
@@ -225,12 +256,18 @@ public class MainController implements Initializable {
         dateSourceController.addDataSource((Stage) borderPane.getScene().getWindow());
     }
 
+    /**
+     * 退出时弹出询问
+     */
     @FXML
     public void exit() {
 //        Platform.exit();
         DialogUtils.closeDialog((Stage) borderPane.getScene().getWindow());
     }
 
+    /**
+     * 点开项目地址
+     */
     @FXML
     public void openGithub() {
         HostServices hostServices = beanFactory.getBean(HostServices.class);
@@ -311,7 +348,7 @@ public class MainController implements Initializable {
             return;
         }
 
-        treeItemRoot.getChildren().remove(dataItemTreeItem);
+        treeItemDataSourceRoot.getChildren().remove(dataItemTreeItem);
 
         DataSource dataSource = (DataSource) dataItemTreeItem.getValue();
         dataSourceService.deleteDataSource(dataSource);

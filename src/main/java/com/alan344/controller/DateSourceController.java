@@ -106,7 +106,7 @@ public class DateSourceController implements Initializable {
         dataSourceService.addDataSource(dataSource);
 
         //添加入treeView
-        TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemRoot());
+        TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemDataSourceRoot());
         dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 if (BaseConstants.selectedDateSource != null && dataSource != BaseConstants.selectedDateSource) {
@@ -115,9 +115,11 @@ public class DateSourceController implements Initializable {
                 }
             }
         });
+
         //没有则去远程拉取数据库表列表
         List<Table> tables = tableService.loadTables(dataSource);
         if (!tables.isEmpty()) {
+            // 把 table 放入数据源 treeItem
             tables.forEach(table -> {
                 TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                 tableTreeItem.setGraphic(new ImageView("/image/table.png"));

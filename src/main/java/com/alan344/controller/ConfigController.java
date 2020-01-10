@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,7 +46,7 @@ public class ConfigController implements Initializable {
     @Autowired
     private ConfigService configService;
 
-    @Autowired
+    @Setter
     private BeanFactory beanFactory;
 
     @Autowired
