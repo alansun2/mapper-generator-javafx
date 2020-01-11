@@ -37,6 +37,11 @@
     -fx-alignment: CENTER;
 }
 
+#tableFindLabel {
+    -fx-background-color: gray;
+    -fx-font-size: 16;
+}
+
 /*split-pane*/
 .split-pane:horizontal > .split-pane-divider {
     -fx-padding: 0 0 0 0;

@@ -11,6 +11,7 @@ import com.alan344.service.TableService;
 import com.alan344.utils.DialogUtils;
 import com.alan344.utils.Toast;
 import com.alan344.utils.TreeUtils;
+import com.alan344.view.FindView;
 import javafx.application.HostServices;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
@@ -33,10 +34,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class MainController implements Initializable {
     private TreeView<DataItem> treeViewDataSource;
 
     @FXML
-    private BorderPane dataSourceBorderPane;
+    private Label tableFindLabel;
 
     @FXML
     private CheckBox insertReturnCheckBox;
@@ -99,26 +100,29 @@ public class MainController implements Initializable {
     @FXML
     private CheckBox selectExampleCheckBox;
 
-    @Setter
+    @Resource
     private DateSourceController dateSourceController;
 
-    @Setter
+    @Resource
     private ConfigController configController;
 
-    @Setter
+    @Resource
     private AboutController aboutController;
 
-    @Setter
+    @Resource
     private DataSourceService dataSourceService;
 
-    @Setter
+    @Resource
     private TableService tableService;
 
-    @Setter
+    @Resource
     private ColumnService columnService;
 
-    @Setter
+    @Resource
     private BeanFactory beanFactory;
+
+    @Resource
+    private FindView findView;
 
     private List<VBox> selectedCheckBoxVBox = new ArrayList<>();
 
@@ -136,18 +140,41 @@ public class MainController implements Initializable {
         //从文件加载数据源至pane
         this.loadData();
 
-        this.addListOnDataSourceBorderPane();
+        this.addListenOnDataSourceBorderPane();
     }
+
+    private StringBuilder stringBuilder = new StringBuilder();
 
     /**
      * 给 DataSourceBorderPane 设置键盘监听，用于搜索 table
      */
-    private void addListOnDataSourceBorderPane() {
-        dataSourceBorderPane.setOnKeyReleased(event -> {
+    private void addListenOnDataSourceBorderPane() {
+        treeViewDataSource.setOnKeyReleased(event -> {
             KeyCode code = event.getCode();
-            if (code.isLetterKey()) {
+            if (code.isLetterKey() || code.isDigitKey()) {
+                stringBuilder.append(code.getName());
 
-            } else if ("Backspace".equals(code.getName())) {
+            } else if (KeyCode.BACK_SPACE.equals(code)) {
+                if (stringBuilder.length() > 0) {
+                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                }
+            }
+
+            if (stringBuilder.length() >= 0) {
+                tableFindLabel.setVisible(true);
+                tableFindLabel.setText("Search for: " + stringBuilder.toString());
+                findView.findTableByTableName(stringBuilder.toString(), treeItemDataSourceRoot, treeViewDataSource);
+                if (stringBuilder.length() == 0) {
+                    tableFindLabel.setVisible(false);
+                }
+            }
+        });
+
+        treeViewDataSource.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                tableFindLabel.setText(null);
+                tableFindLabel.setVisible(false);
+                stringBuilder.setLength(0);
             }
         });
     }
@@ -187,6 +214,7 @@ public class MainController implements Initializable {
         if (dataSources.size() == 1) {
             treeItemDataSourceRoot.getChildren().get(0).setExpanded(true);
         }
+
     }
 
     /**
