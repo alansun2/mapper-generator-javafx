@@ -177,13 +177,13 @@ public class MainController implements Initializable {
         });
 
         // treeViewDataSource 失焦后清除
-//        treeViewDataSource.focusedProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue) {
-//                tableFindLabel.setText(null);
-//                tableFindLabel.setVisible(false);
-//                stringBuilder.setLength(0);
-//            }
-//        });
+        treeViewDataSource.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                tableFindLabel.setText(null);
+                tableFindLabel.setVisible(false);
+                stringBuilder.setLength(0);
+            }
+        });
     }
 
     /**

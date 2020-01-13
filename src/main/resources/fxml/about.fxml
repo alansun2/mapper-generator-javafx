@@ -16,7 +16,7 @@
             <Font size="14.0"/>
         </font>
     </Label>
-    <Label alignment="CENTER" layoutX="135.0" layoutY="83.0" prefHeight="49.0" prefWidth="110.0" text="版本号：1.0.0"
+    <Label alignment="CENTER" layoutX="135.0" layoutY="83.0" prefHeight="49.0" prefWidth="110.0" text="版本号：1.1.0"
            textFill="#fff">
         <font>
             <Font size="13.0"/>
