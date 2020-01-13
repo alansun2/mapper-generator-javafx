@@ -151,32 +151,39 @@ public class MainController implements Initializable {
     private void addListenOnDataSourceBorderPane() {
         treeViewDataSource.setOnKeyReleased(event -> {
             KeyCode code = event.getCode();
-            if (code.isLetterKey() || code.isDigitKey()) {
-                stringBuilder.append(code.getName());
-
-            } else if (KeyCode.BACK_SPACE.equals(code)) {
-                if (stringBuilder.length() > 0) {
-                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            // 字母或数字键或回退键
+            if ((code.isLetterKey() || code.isDigitKey() || KeyCode.BACK_SPACE.equals(code))) {
+                if (code.isLetterKey() || code.isDigitKey()) {
+                    // 字母或数字键
+                    stringBuilder.append(code.getName());
+                } else {
+                    // 回退键
+                    if (stringBuilder.length() > 0) {
+                        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+                    }
                 }
-            }
 
-            if (stringBuilder.length() >= 0) {
-                tableFindLabel.setVisible(true);
-                tableFindLabel.setText("Search for: " + stringBuilder.toString());
-                findView.findTableByTableName(stringBuilder.toString(), treeItemDataSourceRoot, treeViewDataSource);
-                if (stringBuilder.length() == 0) {
-                    tableFindLabel.setVisible(false);
+                if (stringBuilder.length() >= 0) {
+                    findView.findTableByTableName(stringBuilder.toString(), treeViewDataSource);
+
+                    if (stringBuilder.length() > 0) {
+                        tableFindLabel.setVisible(true);
+                        tableFindLabel.setText("Search for: " + stringBuilder.toString());
+                    } else {
+                        tableFindLabel.setVisible(false);
+                    }
                 }
             }
         });
 
-        treeViewDataSource.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) {
-                tableFindLabel.setText(null);
-                tableFindLabel.setVisible(false);
-                stringBuilder.setLength(0);
-            }
-        });
+        // treeViewDataSource 失焦后清除
+//        treeViewDataSource.focusedProperty().addListener((observable, oldValue, newValue) -> {
+//            if (!newValue) {
+//                tableFindLabel.setText(null);
+//                tableFindLabel.setVisible(false);
+//                stringBuilder.setLength(0);
+//            }
+//        });
     }
 
     /**

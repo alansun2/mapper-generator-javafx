@@ -46,7 +46,7 @@ public class ConfigController implements Initializable {
     @Autowired
     private ConfigService configService;
 
-    @Setter
+    @Autowired
     private BeanFactory beanFactory;
 
     @Autowired
