@@ -41,7 +41,6 @@ public class FindView {
                         if (StringUtils.isNotEmpty(tableNamePrefix) && tableNameUpperCase.contains(tableNamePrefix)) {
 
                             if (isFirst[0]) {
-                                System.out.println(this.getIndex());
                                 treeViewDataSource.scrollTo(this.getIndex());
                                 selectionModel.clearAndSelect(this.getIndex());
                                 isFirst[0] = false;
@@ -67,7 +66,7 @@ public class FindView {
                             hBox.getChildren().addAll(label, label2);
                         } else {
                             // 未匹配
-                             hBox.getChildren().add(new Label(tableName));
+                            hBox.getChildren().add(new Label(tableName));
                         }
                         this.setGraphic(hBox);
                     } else {
@@ -81,5 +80,5 @@ public class FindView {
             }
         });
 
-     }
+    }
 }
