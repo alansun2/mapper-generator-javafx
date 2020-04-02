@@ -9,7 +9,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="320.0" prefWidth="550.0" stylesheets="@../css/datasource.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.DateSourceController">
+<AnchorPane prefHeight="320.0" prefWidth="550.0" stylesheets="@../css/datasource.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.DataSourceController">
     <children>
         <Label layoutX="50.0" layoutY="35.0" text="Host：" />
         <Label layoutX="50.0" layoutY="80.0" text="Database:" />

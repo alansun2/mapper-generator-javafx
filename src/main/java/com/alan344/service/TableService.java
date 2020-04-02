@@ -207,7 +207,7 @@ public class TableService {
      * 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
      */
     public void downLoadTableIfOverrideModify() {
-        Map<String, Boolean> tableNameIsTableRecordMap = BaseConstants.tableNameIsTableRecordMap;
+        Map<String, Boolean> tableNameIsTableRecordMap = BaseConstants.tableNameSetUpTableRecordMap;
         if (!tableNameIsTableRecordMap.isEmpty()) {
             tableNameIsTableRecordMap.forEach((tableName, record) -> {
                 this.deleteTableFile(BaseConstants.selectedDateSource, tableName);
@@ -215,7 +215,7 @@ public class TableService {
                 this.downLoadToFileSingle(BaseConstants.selectedDateSource, table);
             });
             //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
-            BaseConstants.tableNameIsTableRecordMap.clear();
+            BaseConstants.tableNameSetUpTableRecordMap.clear();
         }
     }
 }

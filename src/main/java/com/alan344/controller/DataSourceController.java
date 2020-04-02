@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
  * @date 2019/8/8 13:24
  */
 @Component
-public class DateSourceController implements Initializable {
+public class DataSourceController implements Initializable {
     @Getter
     @FXML
     private TextField host;
@@ -111,7 +111,7 @@ public class DateSourceController implements Initializable {
             if (newValue) {
                 if (BaseConstants.selectedDateSource != null && dataSource != BaseConstants.selectedDateSource) {
                     BaseConstants.tableNameIsOverrideRecodeMap.clear();
-                    BaseConstants.tableNameIsTableRecordMap.clear();
+                    BaseConstants.tableNameSetUpTableRecordMap.clear();
                 }
             }
         });

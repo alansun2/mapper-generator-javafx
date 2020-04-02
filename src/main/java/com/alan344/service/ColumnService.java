@@ -228,7 +228,7 @@ public class ColumnService {
             tableNameIsOverrideRecodeMap.forEach((tableName, record) -> {
                 this.deleteColumnFile(BaseConstants.selectedDateSource, tableName);
                 Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
-                downLoadColumnsToFileSingle(BaseConstants.selectedDateSource, table);
+                this.downLoadColumnsToFileSingle(BaseConstants.selectedDateSource, table);
             });
             //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
             BaseConstants.tableNameIsOverrideRecodeMap.clear();
