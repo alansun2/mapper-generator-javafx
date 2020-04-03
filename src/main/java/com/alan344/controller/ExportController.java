@@ -72,7 +72,6 @@ public class ExportController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-//        System.out.println("ExportController initialize");
     }
 
     /**
@@ -102,6 +101,7 @@ public class ExportController implements Initializable {
 
         configController.addConfig(generatorConfig);
 
+        // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 table 配置（如 insert）文件重写
         tableService.downLoadTableIfOverrideModify();
 
         // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
