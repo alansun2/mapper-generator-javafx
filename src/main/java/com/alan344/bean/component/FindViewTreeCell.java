@@ -30,40 +30,20 @@ public class FindViewTreeCell extends TreeCell<DataItem> {
         if (!empty) {
             if (item instanceof Table) {
                 // table
-                HBox hBox = new HBox(new ImageView("/image/table.png"));
-                Table table = (Table) item;
-                String tableName = table.getTableName();
+                final String tableName = item.toString();
+                HBox hBox = new HBox(new ImageView("/image/table.png"), new Label(tableName));
                 String tableNamePrefix = stringBuilder.toString();
                 // 判断是否存在搜索内容
-                if (StringUtils.isNotEmpty(tableNamePrefix) && tableName.contains(tableNamePrefix)) {
-
-                    treeViewDataSource.scrollTo(this.getIndex());
-                    treeViewDataSource.getSelectionModel().clearAndSelect(this.getIndex());
-
-                    // 搜索内容在表名上的开始索引
-                    int startIndex = tableName.indexOf(tableNamePrefix);
-                    // 搜索内容在表名上的结束索引
-                    int endIndex = startIndex + tableNamePrefix.length();
-                    // 如果开始索引不是从 0 开始，则截取索引前的内容
-                    if (startIndex != 0) {
-                        Label prefix = new Label(tableName.substring(0, startIndex));
-                        hBox.getChildren().add(prefix);
+                if (StringUtils.isNotEmpty(tableNamePrefix)) {
+                    if (tableName.contains(tableNamePrefix)) {
+                        this.setGraphic(hBox);
+                    } else {
+                        this.setGraphic(null);
                     }
-                    // 截取匹配内容，并修改
-                    String match = tableName.substring(startIndex, endIndex);
-                    Label label = new Label(match);
-                    label.setStyle("-fx-background-color: orange");
-
-                    // 匹配内容之后的字符
-                    String suffix = tableName.substring(endIndex);
-                    Label label2 = new Label(suffix);
-
-                    hBox.getChildren().addAll(label, label2);
                 } else {
-                    // 未匹配
-                    hBox.getChildren().add(new Label(tableName));
+                    this.setGraphic(hBox);
                 }
-                this.setGraphic(hBox);
+
             } else {
                 // 数据库
                 HBox hBox = new HBox(new ImageView("/image/database.png"), new Label(item.toString()));

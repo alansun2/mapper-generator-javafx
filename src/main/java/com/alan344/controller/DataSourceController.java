@@ -2,13 +2,12 @@ package com.alan344.controller;
 
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
-import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
+import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TextUtils;
-import com.alan344.utils.TreeUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,7 +18,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -73,10 +70,13 @@ public class DataSourceController implements Initializable {
     @Resource
     private TableService tableService;
 
+    @Resource
+    private DataSourceTreeItemInit dataSourceTreeItemInit;
+
     private Stage dateSourceStage;
 
     /**
-     * 应用
+     * 应用后 添加数据源
      *
      * @throws IOException e
      */
@@ -91,34 +91,19 @@ public class DataSourceController implements Initializable {
             return;
         }
 
-        //判断数据源是否存在
+        // 判断数据源是否存在
         Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
 
-        //添加数据源
+        // 添加数据源
         dataSourceService.addDataSource(dataSource);
+        // load table and column info
+        tableService.loadTables(dataSource);
 
-        //添加入treeView
-        TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, mainController.getTreeItemDataSourceRoot());
-        dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                if (BaseConstants.selectedDateSource != null && dataSource != BaseConstants.selectedDateSource) {
-                    BaseConstants.tableNameIsOverrideRecodeMap.clear();
-                    BaseConstants.tableNameSetUpTableRecordMap.clear();
-                }
-            }
-        });
+        // 把 dataSource 放入 treeItemRoot
+        dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
 
-        //没有则去远程拉取数据库表列表
-        List<Table> tables = tableService.loadTables(dataSource);
-        if (!tables.isEmpty()) {
-            // 把 table 放入数据源 treeItem
-            tables.forEach(table -> {
-                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-            });
-        }
+        BaseConstants.allDataSources.add(dataSource);
 
-        dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
     }
 
     /**
