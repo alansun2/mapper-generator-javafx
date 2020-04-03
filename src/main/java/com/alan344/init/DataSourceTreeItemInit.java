@@ -33,9 +33,6 @@ public class DataSourceTreeItemInit {
     private DataSourceService dataSourceService;
 
     @Resource
-    private DataSourceTreeViewInit dataSourceTreeViewInit;
-
-    @Resource
     private RightListViewInit rightListViewInit;
 
     @Resource
@@ -69,6 +66,7 @@ public class DataSourceTreeItemInit {
                 dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
                 // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
                 dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+                    // 切换 ListView 内容
                     rightListViewInit.treeViewSwitch(dataSource);
 
                     if (newValue) {
@@ -80,8 +78,23 @@ public class DataSourceTreeItemInit {
                             BaseConstants.tableNameSetUpTableRecordMap.clear();
                         }
                     } else {
-                        // 设置 table 单选
-                        mainController.getTreeViewDataSource().getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                        // false : 全部都未展开； true: 有展开的
+                        boolean hasExpanded = false;
+                        final ObservableList<TreeItem<DataItem>> children = treeItemDataSourceRoot.getChildren();
+                        if (children != null && !children.isEmpty()) {
+                            for (TreeItem<DataItem> dataSourceItem : children) {
+                                hasExpanded = dataSourceItem.isExpanded();
+                                if (hasExpanded) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        // 如果没有展开的 item，则改为单选
+                        if (!hasExpanded) {
+                            // 设置 table 单选
+                            mainController.getTreeViewDataSource().getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                        }
                     }
                 });
 

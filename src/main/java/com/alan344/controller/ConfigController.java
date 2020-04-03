@@ -18,13 +18,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -56,9 +56,9 @@ public class ConfigController implements Initializable {
     private Stage configStage;
 
     /**
-     * 配置信息
+     * 配置信息 map
      */
-    private Map<String, GeneratorConfig> configNameConfigMap;
+    private Map<String, GeneratorConfig> configNameConfigMap = new HashMap<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -89,11 +89,8 @@ public class ConfigController implements Initializable {
             configStage.initOwner(primaryStage);
             configStage.show();
 
-            //加载配置文件
+            // 加载配置文件
             List<GeneratorConfig> generatorConfigs = configService.loadConfigFromFile();
-
-            this.configNameConfigMap = generatorConfigs.stream().collect(Collectors.toMap(GeneratorConfig::getConfigName, o -> o));
-
             if (generatorConfigs.isEmpty()) {
                 FXMLLoader exportFxmlLoader = new FXMLLoader();
                 exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
@@ -101,7 +98,7 @@ public class ConfigController implements Initializable {
 
                 splitPane.getItems().add(exportFxmlLoader.load());
             } else {
-                this.configNameConfigMap.forEach((k, v) -> this.addConfigButton(v));
+                generatorConfigs.forEach(this::addConfigButton);
 
                 FXMLLoader exportFxmlLoader = new FXMLLoader();
                 exportFxmlLoader.setLocation(getClass().getResource("/fxml/export.fxml"));
@@ -109,8 +106,11 @@ public class ConfigController implements Initializable {
 
                 splitPane.getItems().add(exportFxmlLoader.load());
 
+                // 显示第一个config
                 GeneratorConfig generatorConfig = generatorConfigs.get(0);
                 exportController.showConfig(generatorConfig);
+
+                this.configNameConfigMap = generatorConfigs.stream().collect(Collectors.toMap(GeneratorConfig::getConfigName, o -> o));
             }
         } else {
             configStage.show();
@@ -174,6 +174,7 @@ public class ConfigController implements Initializable {
         MenuItem removeMenuItem = new MenuItem("删除");
         removeMenuItem.setOnAction(event -> this.deleteConfig(button, generatorConfig));
         button.setContextMenu(new ContextMenu(removeMenuItem));
+
         button.prefWidthProperty().bind(centerVBox.widthProperty());
         button.setOnAction(event -> exportController.showConfig(this.configNameConfigMap.get(generatorConfig.getConfigName())));
         centerVBox.getChildren().add(button);

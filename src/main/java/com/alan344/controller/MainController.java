@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
-import org.springframework.beans.factory.BeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -33,12 +33,14 @@ public class MainController implements Initializable {
     /**
      * 主布局控件
      */
+    @Getter
     @FXML
     private BorderPane borderPane;
 
     /**
      * 右边的 border
      */
+    @Getter
     @FXML
     private BorderPane borderPane1;
 
@@ -93,7 +95,11 @@ public class MainController implements Initializable {
     private ColumnService columnService;
 
     @Resource
-    private BeanFactory beanFactory;
+    private ApplicationContext applicationContext;
+
+    private HostServices hostServices;
+
+    private Stage primaryStage;
 
     // -------------------------init----------------------------------------------------------------------------------//
     @Resource
@@ -112,10 +118,13 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        hostServices = applicationContext.getBean(HostServices.class);
+        primaryStage = applicationContext.getBean(Stage.class);
+
         // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPane.widthProperty());
 
-        dataSourceTreeViewInit.treeViewInit(treeViewDataSource, borderPane1, borderPane, treeItemDataSourceRoot, vBoxListView);
+        dataSourceTreeViewInit.treeViewInit(treeViewDataSource);
 
         // init mapperCheckBox
         mapperCheckBoxInit.checkBoxInit(mapperCheckBoxHBox1, mapperCheckBoxHBox2);
@@ -133,7 +142,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void addSource() throws IOException {
-        dataSourceController.addDataSource((Stage) borderPane.getScene().getWindow());
+        dataSourceController.addDataSource(primaryStage);
     }
 
     /**
@@ -142,7 +151,7 @@ public class MainController implements Initializable {
     @FXML
     public void exit() {
 //        Platform.exit(); //直接退出
-        DialogUtils.closeDialog((Stage) borderPane.getScene().getWindow());
+        DialogUtils.closeDialog(primaryStage);
     }
 
     /**
@@ -150,7 +159,6 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openGithub() {
-        HostServices hostServices = beanFactory.getBean(HostServices.class);
         hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
     }
 
@@ -175,7 +183,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openConfigWindow() throws IOException {
-        configController.openConfigPane((Stage) borderPane.getScene().getWindow());
+        configController.openConfigPane(primaryStage);
     }
 
     /**
@@ -185,6 +193,6 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openAboutWindow() throws IOException {
-        aboutController.openWindow((Stage) borderPane.getScene().getWindow());
+        aboutController.openWindow(primaryStage);
     }
 }

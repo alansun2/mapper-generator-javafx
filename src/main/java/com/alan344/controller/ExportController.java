@@ -12,9 +12,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -58,19 +58,17 @@ public class ExportController implements Initializable {
     @FXML
     private CheckBox useSwaggerCheckBox;
 
-    @Autowired
+    @Resource
     private XmlGeneratorService xmlGeneratorService;
 
-    @Autowired
+    @Resource
     private TableService tableService;
 
-    @Autowired
+    @Resource
     private ColumnService columnService;
 
-    @Autowired
+    @Resource
     private ConfigController configController;
-
-    private String baseDir;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -83,7 +81,7 @@ public class ExportController implements Initializable {
     @FXML
     public void apply() throws Exception {
         Stage configStage = configController.getConfigStage();
-        if (!TextUtils.checkTexts(configStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText)) {
+        if (TextUtils.checkTextsHasEmpty(configStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText)) {
             return;
         }
         configStage.close();
@@ -106,10 +104,10 @@ public class ExportController implements Initializable {
 
         tableService.downLoadTableIfOverrideModify();
 
-        //导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
+        // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
         columnService.downLoadColumnOverride();
 
-        //调用 mybatis 生成文件
+        // 调用 mybatis generator 生成文件
         xmlGeneratorService.generatorXml(generatorConfig);
     }
 
@@ -122,6 +120,9 @@ public class ExportController implements Initializable {
     }
 
     //-------------------------文件夹浏览------------------------------------------------------------------------------//
+
+    // 选择文件夹时，记录上次记录的选择的文件夹，方便用户选择
+    private String baseDir;
 
     /**
      * bean 文件夹选择器
@@ -148,7 +149,7 @@ public class ExportController implements Initializable {
     }
 
     /**
-     * mapper 文件夹选择器
+     * mapper xml 文件夹选择器
      */
     @FXML
     public void xmlDirectoryScan() {

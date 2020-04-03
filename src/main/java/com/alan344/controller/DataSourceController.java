@@ -6,8 +6,8 @@ import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
+import com.alan344.utils.Assert;
 import com.alan344.utils.TextUtils;
-import com.alan344.utils.Toast;
 import com.alan344.utils.TreeUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,10 +24,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -61,16 +61,16 @@ public class DataSourceController implements Initializable {
     @FXML
     private Label testConnectionResultLabel;
 
-    @Autowired
+    @Resource
     private MainController mainController;
 
-    @Autowired
+    @Resource
     private ApplicationContext applicationContext;
 
-    @Autowired
+    @Resource
     private DataSourceService dataSourceService;
 
-    @Autowired
+    @Resource
     private TableService tableService;
 
     private Stage dateSourceStage;
@@ -82,25 +82,17 @@ public class DataSourceController implements Initializable {
      */
     @FXML
     public void apply() throws IOException {
+        // 点击应用后关闭添加数据源页面
         dateSourceStage.close();
 
-        if (!TextUtils.checkTexts(dateSourceStage, host, port, database, user, password)) {
+        // 包装数据源
+        final DataSource dataSource = this.packageDateSource();
+        if (dataSource == null) {
             return;
         }
-
-        DataSource dataSource = new DataSource();
-        dataSource.setHost(host.getText());
-        dataSource.setPort(port.getText());
-        dataSource.setDatabase(database.getText());
-        dataSource.setUser(user.getText());
-        dataSource.setPassword(password.getText());
-        dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
 
         //判断数据源是否存在
-        if (dataSourceService.getDataSourceSet().contains(dataSource)) {
-            Toast.makeText(dateSourceStage, "该数据源已存在", 3000, 500, 500, 15, 5);
-            return;
-        }
+        Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
 
         //添加数据源
         dataSourceService.addDataSource(dataSource);
@@ -142,17 +134,10 @@ public class DataSourceController implements Initializable {
      */
     @FXML
     public void testConnection() {
-        if (!TextUtils.checkTexts(dateSourceStage, host, port, database, user, password)) {
+        final DataSource dataSource = this.packageDateSource();
+        if (dataSource == null) {
             return;
         }
-
-        DataSource dataSource = new DataSource();
-        dataSource.setHost(host.getText());
-        dataSource.setPort(port.getText());
-        dataSource.setDatabase(database.getText());
-        dataSource.setUser(user.getText());
-        dataSource.setPassword(password.getText());
-        dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
         if (dataSourceService.testConnection(dataSource)) {
             testConnectionResultLabel.setText("成功");
             testConnectionResultLabel.setTextFill(Color.GREEN);
@@ -189,5 +174,25 @@ public class DataSourceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+    }
+
+    /**
+     * package DataSource
+     *
+     * @return {@link DataSource}
+     */
+    private DataSource packageDateSource() {
+        if (TextUtils.checkTextsHasEmpty(dateSourceStage, host, port, database, user, password)) {
+            return null;
+        }
+
+        DataSource dataSource = new DataSource();
+        dataSource.setHost(host.getText());
+        dataSource.setPort(port.getText());
+        dataSource.setDatabase(database.getText());
+        dataSource.setUser(user.getText());
+        dataSource.setPassword(password.getText());
+        dataSource.setDriveName(driveName.getSelectionModel().getSelectedItem());
+        return dataSource;
     }
 }

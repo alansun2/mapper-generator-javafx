@@ -5,16 +5,12 @@ import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.Optional;
 
 /**
  * @author AlanSun
@@ -30,17 +26,21 @@ public class MapperGenApplication extends Application {
 
     private FXMLLoader fxmlLoader;
 
+    private ConfigurableApplicationContext applicationContext;
+
     @Override
     public void init() {
-        ConfigurableApplicationContext run = SpringApplication.run(MapperGenApplication.class);
+        applicationContext = SpringApplication.run(MapperGenApplication.class);
         fxmlLoader = new FXMLLoader();
-        fxmlLoader.setControllerFactory(run::getBean);
+        fxmlLoader.setControllerFactory(applicationContext::getBean);
         HostServices hostServices = getHostServices();
-        run.getBeanFactory().registerSingleton("hostServices", hostServices);
+        applicationContext.getBeanFactory().registerSingleton("hostServices", hostServices);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
+
         fxmlLoader.setLocation(getClass().getResource("/fxml/main.fxml"));
         Parent root = fxmlLoader.load();
 

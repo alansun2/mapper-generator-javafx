@@ -20,7 +20,7 @@ public class BaseConstants {
     private static final String MG_CONFIG_FILE = MG_HOME + "/config/base-config";
 
     /**
-     * 选中的数据源
+     * 点击导出后，选中的数据源
      */
     public static DataSource selectedDateSource;
 
