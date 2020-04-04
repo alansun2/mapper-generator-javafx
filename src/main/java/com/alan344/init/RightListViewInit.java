@@ -34,11 +34,22 @@ public class RightListViewInit {
     private MainController mainController;
 
     /**
+     * 在同一个 dataSource 中用左键点击时判断是否是上一次的 dataSource。如果是的话就不重新加载 listView
+     */
+    private DataSource lastDataSource;
+
+    /**
      * 切换 ListView
      *
      * @param dataSource 数据源
      */
     public void treeViewSwitch(DataSource dataSource) {
+        if (lastDataSource == null || lastDataSource != dataSource) {
+            lastDataSource = dataSource;
+        } else {
+            return;
+        }
+
         final List<Table> tables = BaseConstants.dataSourceTableListMap.get(dataSource);
         if (tables != null) {
             this.setListView(tables, mainController.getVBoxListView());

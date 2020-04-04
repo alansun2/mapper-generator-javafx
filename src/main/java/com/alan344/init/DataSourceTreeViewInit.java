@@ -11,6 +11,7 @@ import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TreeUtils;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
@@ -76,7 +77,7 @@ public class DataSourceTreeViewInit {
                         refreshMenuItem.setOnAction(event1 -> refreshDataSource(treeViewDataSource));
                         MenuItem deleteMenuItem = new MenuItem("删除数据源");
                         deleteMenuItem.setGraphic(new ImageView("/image/delete@16.png"));
-                        deleteMenuItem.setOnAction(event1 -> deleteDataSource());
+                        deleteMenuItem.setOnAction(this::deleteDataSource);
 
                         contextMenu = new ContextMenu(exportMenuItem, refreshMenuItem, deleteMenuItem);
                     } else {
@@ -90,10 +91,16 @@ public class DataSourceTreeViewInit {
                     // 放入  contextMenu
                     treeViewDataSource.setContextMenu(contextMenu);
                 }
-            } else if (event.getButton() == MouseButton.PRIMARY && selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
-                // 左键释放时 && 选择的时数据源。切换 listView
+            } else if (event.getButton() == MouseButton.PRIMARY && treeViewDataSource.getSelectionModel().getSelectedItem() != null) {
+                // 左键释放时。切换 listView
                 final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
-                final DataSource dataSource = (DataSource) selectedDataSourceItem.getValue();
+                DataSource dataSource;
+                if (selectedItems.get(0).getValue() instanceof DataSource) {
+                    dataSource = (DataSource) selectedDataSourceItem.getValue();
+                } else {
+                    dataSource = (DataSource) selectedDataSourceItem.getParent().getValue();
+                }
+
                 rightListViewInit.treeViewSwitch(dataSource);
             }
         });
@@ -150,8 +157,10 @@ public class DataSourceTreeViewInit {
 
         // 把选中要导出的表在右边的listView展示
         rightListViewInit.setListView(tables, mainController.getVBoxListView());
+
         // 选中的表放入map
         BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
+
         // 用于当再不同的 dataSource 之间切换时，保留原来的 tables
         BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource, tables);
 
@@ -169,7 +178,7 @@ public class DataSourceTreeViewInit {
     /**
      * 删除数据源
      */
-    private void deleteDataSource() {
+    private void deleteDataSource(ActionEvent actionEvent) {
         // 选中的数据源
         TreeItem<DataItem> dataItemTreeItem = mainController.getTreeViewDataSource().getSelectionModel().getSelectedItem();
 
@@ -180,9 +189,12 @@ public class DataSourceTreeViewInit {
 
         // 关闭右边的 Border 展示
         this.rightBorderShowClose(dataSource);
-        
+
         // 删除对应的文件
         dataSourceService.deleteDataSource(dataSource);
+
+        // 删除全局的记录
+        BaseConstants.allDataSources.remove(dataItemTreeItem);
     }
 
     /**

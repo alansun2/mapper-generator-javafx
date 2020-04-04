@@ -1,7 +1,9 @@
 package com.alan344.constants;
 
+import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -22,7 +24,7 @@ public class BaseConstants {
     /**
      * all dataSource
      */
-    public static List<DataSource> allDataSources;
+    public static Map<TreeItem<DataItem>, DataSource> allDataSources = new HashMap<>(8);
 
     /**
      * 点击导出后，选中的数据源

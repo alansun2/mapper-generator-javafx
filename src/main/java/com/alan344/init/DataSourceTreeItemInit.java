@@ -18,9 +18,8 @@ import javafx.scene.input.KeyCode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -45,28 +44,13 @@ public class DataSourceTreeItemInit {
     public void initLoadData(TreeItem<DataItem> treeItemDataSourceRoot) {
         // 从文件加载 dataSource 和 table 至 pane
         List<DataSource> dataSources = dataSourceService.loadDataSourceFromFile();
-        // put dataSource into allDataSource
-        BaseConstants.allDataSources = dataSources;
+
         // 加载 数据源 和 table
-        this.loadDataSourceAndTable(dataSources, treeItemDataSourceRoot);
+        dataSources.forEach(dataSource -> this.addExpandListenerForDataSource(dataSource, treeItemDataSourceRoot));
+
         // 如果只有一个数据源，则自动展开
         if (dataSources.size() == 1) {
             treeItemDataSourceRoot.getChildren().get(0).setExpanded(true);
-        }
-    }
-
-    /**
-     * 加载 数据源 和 table
-     *
-     * @param dataSources            数据源信息
-     * @param treeItemDataSourceRoot treeView 的根节点
-     */
-    private void loadDataSourceAndTable(List<DataSource> dataSources, TreeItem<DataItem> treeItemDataSourceRoot) {
-        if (!dataSources.isEmpty()) {
-            for (DataSource dataSource : dataSources) {
-                // 把 dataSource 放入 treeItemRoot
-                this.addExpandListenerForDataSource(dataSource, treeItemDataSourceRoot);
-            }
         }
     }
 
@@ -82,9 +66,6 @@ public class DataSourceTreeItemInit {
         dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
         // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
         dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
-            // 切换 ListView 内容
-            rightListViewInit.treeViewSwitch(dataSource);
-
             if (newValue) {
                 // 设置 table 可以多选
                 mainController.getTreeViewDataSource().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -117,6 +98,8 @@ public class DataSourceTreeItemInit {
         // package Tables and inert them to the DataSourceTreeItem
         this.packageTablesAndInertDataSourceTreeItem(dataSource.getTables(), dataSourceTreeItem);
 
+        // put dataSource into allDataSource
+        BaseConstants.allDataSources.put(dataSourceTreeItem, dataSource);
         return dataSourceTreeItem;
     }
 
@@ -135,7 +118,9 @@ public class DataSourceTreeItemInit {
         }
     }
 
-    // when search table, it record the search content
+    /**
+     * when search table, it record the search content
+     */
     private StringBuilder stringBuilder = new StringBuilder();
 
     /**
@@ -150,6 +135,7 @@ public class DataSourceTreeItemInit {
                 // 字母或数字键
                 stringBuilder.append(code.getName().toLowerCase());
             } else if (KeyCombinationConstants.SHIFT_.match(event)) {
+                // 按下 shift 和 -
                 stringBuilder.append("_");
             } else if (KeyCode.BACK_SPACE.equals(code)) {
                 // 回退键
@@ -171,18 +157,7 @@ public class DataSourceTreeItemInit {
                 }
             }
         });
-
-        // treeViewDataSource 失焦后清除
-//        treeViewDataSource.focusedProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue) {
-//                tableFindLabel.setText(null);
-//                tableFindLabel.setVisible(false);
-//                stringBuilder.setLength(0);
-//            }
-//        });
     }
-
-    private Map<TreeItem<DataItem>, ObservableList<TreeItem<DataItem>>> tableTreeItems;
 
     /**
      * filter tables when type tableName in the left BorderPane
@@ -191,17 +166,27 @@ public class DataSourceTreeItemInit {
      * @param treeViewDataSourceRoot treeViewDataSourceRoot
      */
     private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot, boolean isDelete) {
-        if (tableNamePrefix.length() > 0) {
-            final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
-            for (TreeItem<DataItem> dataSourceTreeItem : children) {
-                if (dataSourceTreeItem.isExpanded()) {
+        final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
+        for (TreeItem<DataItem> dataSourceTreeItem : children) {
+            if (dataSourceTreeItem.isExpanded()) {
+                if (tableNamePrefix.length() > 0) {
                     if (isDelete) {
                         dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
-//                        BaseConstants.allDataSources.ca
+                        DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
+                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().startsWith(tableNamePrefix)).collect(Collectors.toList());
+                        for (Table filteredTable : filteredTables) {
+                            TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                        }
                     }
                     final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
-                    tableTreeItems.filtered(treeItem -> treeItem.getValue().toString().startsWith(tableNamePrefix));
-                    dataSourceTreeItem.setExpanded(true);
+                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().startsWith(tableNamePrefix));
+
+                } else {
+                    dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
+                    DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
+                    for (Table filteredTable : dataSource.getTables()) {
+                        TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                    }
                 }
             }
         }

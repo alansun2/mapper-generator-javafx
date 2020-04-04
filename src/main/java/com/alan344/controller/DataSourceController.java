@@ -2,7 +2,6 @@ package com.alan344.controller;
 
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
-import com.alan344.constants.BaseConstants;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
@@ -100,10 +99,7 @@ public class DataSourceController implements Initializable {
         tableService.loadTables(dataSource);
 
         // 把 dataSource 放入 treeItemRoot
-        dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
-
-        BaseConstants.allDataSources.add(dataSource);
-
+        TreeItem<DataItem> dataSourceTreeItem = dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
     }
 
     /**
