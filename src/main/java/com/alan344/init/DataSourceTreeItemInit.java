@@ -6,11 +6,10 @@ import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.controller.MainController;
 import com.alan344.service.DataSourceService;
-import com.alan344.utils.KeyCombinationConstants;
 import com.alan344.utils.TreeUtils;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
@@ -126,35 +125,34 @@ public class DataSourceTreeItemInit {
     /**
      * 给 DataSourceBorderPane 设置键盘监听，用于搜索 table
      */
-    public void addListenOnDataSourceBorderPane(TreeView<DataItem> treeViewDataSource, Label tableFindLabel) {
-        treeViewDataSource.setOnKeyReleased(event -> {
-            KeyCode code = event.getCode();
-            boolean match = true, isDelete = false;
-            // 字母 || 数字键 || 下划线 || 回退键
-            if (code.isLetterKey() || code.isDigitKey()) {
-                // 字母或数字键
-                stringBuilder.append(code.getName().toLowerCase());
-            } else if (KeyCombinationConstants.SHIFT_.match(event)) {
-                // 按下 shift 和 -
-                stringBuilder.append("_");
-            } else if (KeyCode.BACK_SPACE.equals(code)) {
-                // 回退键
-                if (stringBuilder.length() > 0) {
-                    stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                }
-                isDelete = true;
-            } else {
-                match = false;
+    public void addListenOnDataSourceBorderPane(TreeView<DataItem> treeViewDataSource) {
+        TextField tableFindTextField = mainController.getTableFindTextField();
+        tableFindTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue != null && newValue != null) {
+                this.filterTables(newValue, treeViewDataSource.getRoot(), oldValue.length() > newValue.length());
             }
+        });
 
-            if (match) {
-                this.filterTables(stringBuilder.toString(), treeViewDataSource.getRoot(), isDelete);
-                if (stringBuilder.length() > 0) {
-                    tableFindLabel.setVisible(true);
-                    tableFindLabel.setText("Search for: " + stringBuilder.toString());
-                } else {
-                    tableFindLabel.setVisible(false);
+        tableFindTextField.setOnKeyPressed(event -> {
+            KeyCode code = event.getCode();
+            if (KeyCode.ESCAPE.equals(code)) {
+                tableFindTextField.setText("");
+                treeViewDataSource.requestFocus();
+            }
+        });
+
+        treeViewDataSource.setOnKeyPressed(event -> {
+            KeyCode code = event.getCode();
+            // ctrl + F
+            if (KeyCode.F.equals(code)) {
+                if (event.isControlDown()) {
+                    boolean visible = tableFindTextField.isVisible();
+                    if (visible) {
+                        tableFindTextField.requestFocus();
+                    }
                 }
+            } else if (KeyCode.ESCAPE.equals(code)) {
+                tableFindTextField.setText("");
             }
         });
     }
@@ -175,7 +173,8 @@ public class DataSourceTreeItemInit {
                         DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
                         List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().startsWith(tableNamePrefix)).collect(Collectors.toList());
                         for (Table filteredTable : filteredTables) {
-                            TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                            TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                            tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                         }
                     }
                     final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
@@ -185,7 +184,8 @@ public class DataSourceTreeItemInit {
                     dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
                     DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
                     for (Table filteredTable : dataSource.getTables()) {
-                        TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                     }
                 }
             }

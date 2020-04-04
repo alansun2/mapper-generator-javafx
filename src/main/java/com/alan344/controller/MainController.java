@@ -66,10 +66,11 @@ public class MainController implements Initializable {
     private ListView<VBox> vBoxListView;
 
     /**
-     * 搜索小时用的 label
+     * 搜索小时用的 TextField
      */
+    @Getter
     @FXML
-    private Label tableFindLabel;
+    private TextField tableFindTextField;
 
     /**
      * 右边 border 固定再上面的 两个 HBox。存放 checkBox
@@ -132,7 +133,7 @@ public class MainController implements Initializable {
         // 从文件加载数据源至pane
         dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
         // 添加表搜索监听
-        dataSourceTreeItemInit.addListenOnDataSourceBorderPane(treeViewDataSource, tableFindLabel);
+        dataSourceTreeItemInit.addListenOnDataSourceBorderPane(treeViewDataSource);
     }
 
     //--------------------------------init end------------------------------------------------------------------------//

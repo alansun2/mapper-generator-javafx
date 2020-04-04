@@ -27,7 +27,7 @@
     <Label layoutX="43.0" layoutY="221.0" text="Mapper 包名：" />
     <Label layoutX="43.0" layoutY="251.0" text="Xml 地址：" />
     <Button layoutX="298.0" layoutY="410.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0" prefWidth="64.0" text="取消" />
-    <Button layoutX="389.0" layoutY="410.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="应用" />
+    <Button layoutX="389.0" layoutY="410.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="导出" />
     <Button layoutX="392.0" layoutY="131.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
     <Button layoutX="392.0" layoutY="191.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
     <Button layoutX="392.0" layoutY="251.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />

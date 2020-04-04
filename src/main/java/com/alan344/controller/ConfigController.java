@@ -157,7 +157,7 @@ public class ConfigController implements Initializable {
             if (i == 0) {
                 exportController.showConfig(configNameConfigMap.get(((Button) children.get(1)).getText()));
             } else {
-                exportController.showConfig(configNameConfigMap.get(((Button) children.get(i - 1)).getText()));
+                exportController.showConfig(configNameConfigMap.get(((Button) children.get(0)).getText()));
             }
         }
         children.remove(button);

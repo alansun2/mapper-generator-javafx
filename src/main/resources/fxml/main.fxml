@@ -44,13 +44,17 @@
     </top>
     <center>
         <SplitPane dividerPositions="0.15">
-            <StackPane maxWidth="400.0" minWidth="300" prefWidth="300.0" alignment="TOP_LEFT">
-                <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="137.0"
-                          showRoot="false">
-                    <TreeItem fx:id="treeItemDataSourceRoot"/>
-                </TreeView>
-                <Label fx:id="tableFindLabel" visible="false"/>
-            </StackPane>
+            <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
+                <top>
+                    <TextField fx:id="tableFindTextField" promptText="table filter" focusTraversable="false"/>
+                </top>
+                <center>
+                    <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="137.0"
+                              showRoot="false">
+                        <TreeItem fx:id="treeItemDataSourceRoot"/>
+                    </TreeView>
+                </center>
+            </BorderPane>
             <BorderPane fx:id="borderPane1" styleClass="borderPane1" managed="false" visible="false">
                 <center>
                     <ListView fx:id="vBoxListView" BorderPane.alignment="CENTER">

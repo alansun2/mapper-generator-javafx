@@ -81,17 +81,16 @@ public class DataSourceController implements Initializable {
      */
     @FXML
     public void apply() throws IOException {
-        // 点击应用后关闭添加数据源页面
-        dateSourceStage.close();
-
         // 包装数据源
         final DataSource dataSource = this.packageDateSource();
         if (dataSource == null) {
             return;
         }
-
         // 判断数据源是否存在
         Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
+
+        // 点击应用后关闭添加数据源页面
+        dateSourceStage.close();
 
         // 添加数据源
         dataSourceService.addDataSource(dataSource);
