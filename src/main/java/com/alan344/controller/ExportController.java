@@ -51,8 +51,11 @@ public class ExportController implements Initializable {
 
     @FXML
     private CheckBox useBigDecimalCheckBox;
-    @FXML
 
+    @FXML
+    private CheckBox useSerializableCheckBox;
+
+    @FXML
     private CheckBox useCommentCheckBox;
 
     @FXML
