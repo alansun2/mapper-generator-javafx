@@ -99,7 +99,7 @@ public class MyCommentGenerator implements CommentGenerator {
         //swagger
         String supportSwaggerString = properties.getProperty("supportSwagger");
         if (StringUtility.stringHasValue(supportSwaggerString)) {
-            this.supportSwagger = supportSwaggerString.equals("true");
+            this.supportSwagger = "true".equals(supportSwaggerString);
         }
     }
 
@@ -181,26 +181,32 @@ public class MyCommentGenerator implements CommentGenerator {
 
     }
 
+    @Override
     public void addGetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
 
     }
 
+    @Override
     public void addSetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
 
     }
 
+    @Override
     public void addGeneralMethodComment(Method method, IntrospectedTable introspectedTable) {
 
     }
 
+    @Override
     public void addJavaFileComment(CompilationUnit compilationUnit) {
 
     }
 
+    @Override
     public void addComment(XmlElement xmlElement) {
 
     }
 
+    @Override
     public void addRootComment(XmlElement xmlElement) {
 
     }

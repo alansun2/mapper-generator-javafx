@@ -157,6 +157,11 @@ public class XmlGeneratorService {
             this.checkBoxSelected("enableSelectByPrimaryKey", tableEl, table.isSelect());
             this.checkBoxSelected("enableSelectByExample", tableEl, table.isSelectExample());
 
+//            Element property = tableEl.addElement("property");
+//            property.addAttribute("name", "serializable");
+//            property.addAttribute("value", "true");
+
+
             if (generatorConfig.isUseActualColumnNames()) {
                 tableEl.addAttribute("useActualColumnNames", "true");
             }
