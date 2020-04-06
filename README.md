@@ -74,10 +74,6 @@ java8， classpath 必须要有 javafx 相关的 jar (一般如果你是安装�
 * jar 包版本：jar的同级目录`mybatis-friend.log`
 
 ### 6. 如何自定义开发自己的功能？
-如果你要在此基础上开发自己的功能，请先 pull [mybatis-generator](https://github.com/alansun2/generator)。因为 `mapper-generator-javafx` 项目依赖 `mybatis-generator`。
-
-`mybatis-generator` 是 fork 官方的一个用于生成 mapper 的插件。本人对该插件做了一定的自定义。所以如果你要自定义 `mapper-generator-javafx` 必须先 `pull mybatis-generator` 并打包，否则源码会报错。
-
 该项目大概4000多行代码，很简单的代码。但你得有`JavaFX`的基础，这里给 [B 站的可爱阿婆主《JavaFX没人看系列》](https://space.bilibili.com/5096022/video?tid=36&page=8&keyword=&order=pubdate) 做一波广告（哈哈哈）。
 
 ### 结束
