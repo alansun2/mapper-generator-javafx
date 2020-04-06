@@ -87,7 +87,7 @@ public class ExportController implements Initializable {
         if (TextUtils.checkTextsHasEmpty(configStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText)) {
             return;
         }
-        configStage.close();
+
         GeneratorConfig generatorConfig = new GeneratorConfig();
         generatorConfig.setConfigName(configNameText.getText());
         generatorConfig.setAuthor(authorText.getText());
@@ -119,9 +119,10 @@ public class ExportController implements Initializable {
             exportSuccess = false;
         }
 
-        exportSuccessAlertController.openTableAdvancedSetUP(configController.getConfigStage(), exportSuccess);
-
-
+        if (exportSuccess) {
+            configStage.close();
+        }
+        exportSuccessAlertController.openTableAdvancedSetUP(configStage, exportSuccess);
     }
 
     /**
