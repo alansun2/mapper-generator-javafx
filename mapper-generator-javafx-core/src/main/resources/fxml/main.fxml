@@ -68,6 +68,13 @@
                                             </ImageView>
                                         </graphic>
                                     </MenuItem>
+                                    <MenuItem onAction="#advancedSetUp" text="高级设置">
+                                        <graphic>
+                                            <ImageView>
+                                                <Image url="/image/advanced-set-up.png"/>
+                                            </ImageView>
+                                        </graphic>
+                                    </MenuItem>
                                 </items>
                             </ContextMenu>
                         </contextMenu>

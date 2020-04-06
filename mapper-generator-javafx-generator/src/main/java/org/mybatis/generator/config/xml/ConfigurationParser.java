@@ -31,7 +31,7 @@ public class ConfigurationParser {
     public ConfigurationParser(List<String> warnings) {
         this(null, warnings);
     }
-    
+
     public ConfigurationParser(Properties extraProperties, List<String> warnings) {
         super();
         this.extraProperties = extraProperties;
@@ -43,6 +43,11 @@ public class ConfigurationParser {
         }
 
         parseErrors = new ArrayList<>();
+    }
+
+    public Configuration parseConfiguration(Document document) throws XMLParserException {
+
+        return parseMyBatisGeneratorConfiguration(document.getDocumentElement());
     }
 
     public Configuration parseConfiguration(File inputFile) throws IOException,
@@ -69,8 +74,7 @@ public class ConfigurationParser {
         return parseConfiguration(is);
     }
 
-    private Configuration parseConfiguration(InputSource inputSource)
-            throws IOException, XMLParserException {
+    private Configuration parseConfiguration(InputSource inputSource) throws IOException, XMLParserException {
         parseErrors.clear();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(true);
@@ -80,8 +84,7 @@ public class ConfigurationParser {
             DocumentBuilder builder = factory.newDocumentBuilder();
             builder.setEntityResolver(new ParserEntityResolver());
 
-            ParserErrorHandler handler = new ParserErrorHandler(warnings,
-                    parseErrors);
+            ParserErrorHandler handler = new ParserErrorHandler(warnings, parseErrors);
             builder.setErrorHandler(handler);
 
             Document document = null;

@@ -46,8 +46,7 @@ public class PrimaryKeyGenerator extends AbstractJavaGenerator {
     @Override
     public List<CompilationUnit> getCompilationUnits() {
         FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();
-        progressCallback.startTask(getString(
-                "Progress.7", table.toString())); //$NON-NLS-1$
+        progressCallback.startTask(getString("Progress.7", table.toString())); //$NON-NLS-1$
         Plugin plugins = context.getPlugins();
         CommentGenerator commentGenerator = context.getCommentGenerator();
 
@@ -90,7 +89,7 @@ public class PrimaryKeyGenerator extends AbstractJavaGenerator {
         }
 
         List<CompilationUnit> answer = new ArrayList<>();
-        if (context.getPlugins().modelPrimaryKeyClassGenerated(
+        if (plugins.modelPrimaryKeyClassGenerated(
                 topLevelClass, introspectedTable)) {
             answer.add(topLevelClass);
         }

@@ -32,9 +32,6 @@ public class DataSourceTreeItemInit {
     private DataSourceService dataSourceService;
 
     @Resource
-    private RightListViewInit rightListViewInit;
-
-    @Resource
     private MainController mainController;
 
     /**
@@ -116,11 +113,6 @@ public class DataSourceTreeItemInit {
             });
         }
     }
-
-    /**
-     * when search table, it record the search content
-     */
-    private StringBuilder stringBuilder = new StringBuilder();
 
     /**
      * 给 DataSourceBorderPane 设置键盘监听，用于搜索 table

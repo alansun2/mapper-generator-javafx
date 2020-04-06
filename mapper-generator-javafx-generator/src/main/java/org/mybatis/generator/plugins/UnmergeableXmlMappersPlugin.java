@@ -38,8 +38,7 @@ public class UnmergeableXmlMappersPlugin extends PluginAdapter {
     }
 
     @Override
-    public boolean sqlMapGenerated(GeneratedXmlFile sqlMap,
-            IntrospectedTable introspectedTable) {
+    public boolean sqlMapGenerated(GeneratedXmlFile sqlMap, IntrospectedTable introspectedTable) {
         sqlMap.setMergeable(false);
         return true;
     }

@@ -180,8 +180,7 @@ public final class PluginAggregator implements Plugin {
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles() {
         List<GeneratedJavaFile> answer = new ArrayList<>();
         for (Plugin plugin : plugins) {
-            List<GeneratedJavaFile> temp = plugin
-                    .contextGenerateAdditionalJavaFiles();
+            List<GeneratedJavaFile> temp = plugin.contextGenerateAdditionalJavaFiles();
             if (temp != null) {
                 answer.addAll(temp);
             }
@@ -194,8 +193,7 @@ public final class PluginAggregator implements Plugin {
             IntrospectedTable introspectedTable) {
         List<GeneratedXmlFile> answer = new ArrayList<>();
         for (Plugin plugin : plugins) {
-            List<GeneratedXmlFile> temp = plugin
-                    .contextGenerateAdditionalXmlFiles(introspectedTable);
+            List<GeneratedXmlFile> temp = plugin.contextGenerateAdditionalXmlFiles(introspectedTable);
             if (temp != null) {
                 answer.addAll(temp);
             }
@@ -207,8 +205,7 @@ public final class PluginAggregator implements Plugin {
     public List<GeneratedXmlFile> contextGenerateAdditionalXmlFiles() {
         List<GeneratedXmlFile> answer = new ArrayList<>();
         for (Plugin plugin : plugins) {
-            List<GeneratedXmlFile> temp = plugin
-                    .contextGenerateAdditionalXmlFiles();
+            List<GeneratedXmlFile> temp = plugin.contextGenerateAdditionalXmlFiles();
             if (temp != null) {
                 answer.addAll(temp);
             }

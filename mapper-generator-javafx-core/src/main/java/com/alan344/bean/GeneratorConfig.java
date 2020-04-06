@@ -14,8 +14,14 @@ import java.util.Objects;
 public class GeneratorConfig {
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         GeneratorConfig that = (GeneratorConfig) o;
         return Objects.equals(configName, that.configName);
     }
@@ -48,9 +54,9 @@ public class GeneratorConfig {
      */
     private boolean useSwagger;
     /**
-     * 使用支持 swagger
+     * 使用支持 merge
      */
-    private boolean userMerge;
+    private boolean useMerge;
     /**
      * 使用注释
      */

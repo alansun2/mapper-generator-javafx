@@ -93,6 +93,9 @@ public class MainController implements Initializable {
     private AboutController aboutController;
 
     @Resource
+    private TableAdvanceSetUpController tableAdvanceSetUpController;
+
+    @Resource
     private ColumnService columnService;
 
     @Resource
@@ -175,7 +178,13 @@ public class MainController implements Initializable {
         rightListViewInit.expandTableViewColumns(selectedItemVBox);
     }
 
-    //-------------
+    /**
+     * 高级设置
+     */
+    @FXML
+    public void advancedSetUp() throws IOException {
+        tableAdvanceSetUpController.openTableAdvancedSetUP(primaryStage);
+    }
 
     /**
      * 导出窗口

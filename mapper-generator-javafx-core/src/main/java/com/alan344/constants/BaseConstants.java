@@ -42,7 +42,7 @@ public class BaseConstants {
     public static Map<DataSource, List<Table>> dataSourceTableListMap = new HashMap<>();
 
     /**
-     * 记录该该表中的字段是否有过重写，如果有会在关闭应用时替换相应的column文件
+     * 记录该该表中的字段是否有过重写，如果有会在关闭应用时替换相应的 column 文件
      */
     public static Map<String, Boolean> tableNameIsOverrideRecodeMap = new HashMap<>();
 

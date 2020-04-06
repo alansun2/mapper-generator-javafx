@@ -61,7 +61,7 @@ public class RightListViewInit {
     /*------------------------------------ListView ContextMenu--------------------------------------------------------*/
 
     /**
-     * 设置listViewy
+     * 设置listView
      *
      * @param tables 已选表
      */

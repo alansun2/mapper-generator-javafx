@@ -26,6 +26,10 @@ public class Table implements DataItem {
     private boolean updateExample = true;
     private boolean deleteExample = true;
     private boolean selectExample = true;
+    /**
+     * 是否实现 Serializable
+     */
+    private boolean jdkSerializable;
 
 
     @Override
@@ -35,8 +39,14 @@ public class Table implements DataItem {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Table table = (Table) o;
         return Objects.equals(tableName, table.tableName);
     }
