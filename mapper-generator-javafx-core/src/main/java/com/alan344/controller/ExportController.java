@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -70,6 +71,9 @@ public class ExportController implements Initializable {
     @Resource
     private ConfigController configController;
 
+    @Resource
+    private ExportSuccessAlertController exportSuccessAlertController;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
@@ -78,7 +82,7 @@ public class ExportController implements Initializable {
      * 应用生成xml,并生成bean
      */
     @FXML
-    public void apply() {
+    public void apply() throws IOException {
         Stage configStage = configController.getConfigStage();
         if (TextUtils.checkTextsHasEmpty(configStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText)) {
             return;
@@ -107,8 +111,15 @@ public class ExportController implements Initializable {
         // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
         columnService.downLoadColumnOverride();
 
+        boolean exportSuccess = true;
         // 调用 mybatis generator 生成文件
-        xmlGeneratorService.generatorXml(generatorConfig);
+        try {
+            xmlGeneratorService.generatorXml(generatorConfig);
+        } catch (Throwable t) {
+            exportSuccess = false;
+        }
+
+        exportSuccessAlertController.openTableAdvancedSetUP(configController.getConfigStage(), exportSuccess);
 
 
     }
