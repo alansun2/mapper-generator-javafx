@@ -34,7 +34,6 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
  * @date 2019/8/17 19:43
  * merge 现在不用，有点问题
  */
-@Deprecated
 @Slf4j
 public class MyShellCallback extends DefaultShellCallback {
     private boolean supportMerge;

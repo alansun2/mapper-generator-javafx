@@ -1,9 +1,4 @@
-package com.alan344.bean;/**
- * @author ：AlanSun
- * @date ：2019/8/19 22:39
- * @description ：${description}
- * @since : $version$
- */
+package com.alan344.bean;
 
 import com.alan344happyframework.util.StringUtils;
 import lombok.Getter;
@@ -39,8 +34,6 @@ public class ColumnOverride {
 
     /**
      * 判断column override是否为空
-     *
-     * @return
      */
     public boolean isNotEmpty() {
         if (StringUtils.isNotEmpty(this.property)) {
@@ -59,9 +52,6 @@ public class ColumnOverride {
             return true;
         }
 
-        if (this.delimitedColumnName) {
-            return true;
-        }
-        return false;
+        return this.delimitedColumnName;
     }
 }

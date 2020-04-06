@@ -202,6 +202,7 @@ public class XmlGeneratorService {
         xmlWriter.write(document);
         xmlWriter.close();
 
+        document.toString();
         // 判断文件夹是否存在，如果不存在则进行创建
         this.checkAndGeneratorDir(generatorConfig);
         // 执行创建
