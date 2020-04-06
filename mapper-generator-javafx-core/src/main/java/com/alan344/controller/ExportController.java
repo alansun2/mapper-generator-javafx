@@ -53,9 +53,6 @@ public class ExportController implements Initializable {
     private CheckBox useBigDecimalCheckBox;
 
     @FXML
-    private CheckBox useSerializableCheckBox;
-
-    @FXML
     private CheckBox useCommentCheckBox;
 
     @FXML
@@ -81,7 +78,7 @@ public class ExportController implements Initializable {
      * 应用生成xml,并生成bean
      */
     @FXML
-    public void apply() throws Exception {
+    public void apply() {
         Stage configStage = configController.getConfigStage();
         if (TextUtils.checkTextsHasEmpty(configStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText)) {
             return;
@@ -112,6 +109,8 @@ public class ExportController implements Initializable {
 
         // 调用 mybatis generator 生成文件
         xmlGeneratorService.generatorXml(generatorConfig);
+
+
     }
 
     /**

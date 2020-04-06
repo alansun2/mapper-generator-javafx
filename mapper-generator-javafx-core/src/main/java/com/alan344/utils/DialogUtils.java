@@ -34,28 +34,4 @@ public class DialogUtils {
             }
         });
     }
-
-    public static void successDialog(Stage primaryStage) {
-        Dialog<ButtonType> dialog = new Dialog<>();
-
-        dialog.setTitle("导出成功");
-
-        dialog.setContentText("导出成功");
-
-        dialog.initOwner(primaryStage);
-
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.APPLY);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-
-        dialog.getDialogPane().setPrefSize(350, 100);
-
-        Optional<ButtonType> s = dialog.showAndWait();
-        s.ifPresent(s1 -> {
-            if (s1.equals(ButtonType.APPLY)) {
-                primaryStage.close();
-            } else if (s1.equals(ButtonType.CLOSE)) {
-                dialog.close();
-            }
-        });
-    }
 }
