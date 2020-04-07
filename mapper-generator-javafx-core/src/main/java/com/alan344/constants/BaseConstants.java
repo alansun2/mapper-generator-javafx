@@ -3,6 +3,7 @@ package com.alan344.constants;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
 
@@ -39,7 +40,7 @@ public class BaseConstants {
     /**
      * 用于当再不同的 dataSource 之间切换时，保留原来的 tables
      */
-    public static Map<DataSource, List<Table>> dataSourceTableListMap = new HashMap<>();
+    public static Map<DataSource, ObservableList<VBox>> dataSourceTableListMap = new HashMap<>();
 
     /**
      * 记录该该表中的字段是否有过重写，如果有会在关闭应用时替换相应的 column 文件

@@ -8,6 +8,7 @@ import com.alan344.utils.Assert;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -56,7 +57,11 @@ public class RightListViewController implements Initializable {
         VBox selectedItemVBox = selectedItemVBoxs.get(0);
         String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
         columnService.reloadColumns(tableName);
-        selectedItemVBox.getChildren().remove(2);
+        // 如果 size == 2 说明是，闭合状态下点击，如果 > 2 说明是展开状态下点击，这时需要删除
+        ObservableList<Node> children = selectedItemVBox.getChildren();
+        if (children.size() > 2) {
+            selectedItemVBox.getChildren().remove(2);
+        }
         rightListViewInit.expandTableViewColumns(selectedItemVBox);
     }
 

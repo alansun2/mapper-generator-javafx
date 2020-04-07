@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -73,9 +74,15 @@ public class RightListViewInit {
             return;
         }
 
-        final List<Table> tables = BaseConstants.dataSourceTableListMap.get(dataSource);
-        if (tables != null) {
-            this.setListView(tables);
+        // 选中的 DataSource
+        BaseConstants.selectedDateSource = dataSource;
+
+        ObservableList<VBox> vBoxes = BaseConstants.dataSourceTableListMap.get(dataSource);
+
+        if (vBoxes != null) {
+            rightListViewController.getVBoxListView().setItems(vBoxes);
+            // 选中的表放入 map
+            BaseConstants.selectedTableNameTableMap = dataSource.getTables().stream().collect(Collectors.toMap(Table::getTableName, o -> o));
         } else {
             this.setListView(null);
         }
@@ -88,11 +95,11 @@ public class RightListViewInit {
      *
      * @param tables 已选表
      */
-    public void setListView(List<Table> tables) {
+    public ObservableList<VBox> setListView(List<Table> tables) {
         ListView<VBox> vBoxListView = rightListViewController.getVBoxListView();
         if (tables == null) {
             vBoxListView.setItems(null);
-            return;
+            return FXCollections.emptyObservableList();
         }
 
         ObservableList<VBox> vBoxes = FXCollections.observableArrayList();
@@ -234,6 +241,8 @@ public class RightListViewInit {
 
             vBoxes.add(vBox);
         }
+
+        return vBoxes;
     }
 
     //-----------------------------------------tableView--------------------------------------------------------------//

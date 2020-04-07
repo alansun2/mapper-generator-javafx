@@ -10,6 +10,7 @@ import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TreeUtils;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
@@ -20,6 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -114,6 +116,8 @@ public class DataSourceTreeViewInit {
     private void export(TreeView<DataItem> treeViewDataSource) {
         ObservableList<TreeItem<DataItem>> selectedItems = treeViewDataSource.getSelectionModel().getSelectedItems();
         List<Table> tables;
+        ObservableList<TreeItem<DataItem>> tableTreeItems;
+        DataSource dataSource;
         if (selectedItems.size() == 1) {
             TreeItem<DataItem> dataItemTreeItem = selectedItems.get(0);
             if (dataItemTreeItem.getValue() instanceof DataSource) {
@@ -124,17 +128,22 @@ public class DataSourceTreeViewInit {
                     children.forEach(itemTreeItem -> tables.add(((Table) itemTreeItem.getValue())));
                 }
 
-                BaseConstants.selectedDateSource = (DataSource) dataItemTreeItem.getValue();
+                tableTreeItems = children;
+
+                dataSource = (DataSource) dataItemTreeItem.getValue();
             } else {
                 //单独选中table的导出
                 Table table = (Table) dataItemTreeItem.getValue();
                 tables = Collections.singletonList(table);
 
-                BaseConstants.selectedDateSource = ((DataSource) dataItemTreeItem.getParent().getValue());
+                tableTreeItems = FXCollections.singletonObservableList(dataItemTreeItem);
+
+                dataSource = ((DataSource) dataItemTreeItem.getParent().getValue());
             }
         } else {
             //选中多个table的导出
             tables = new ArrayList<>();
+            tableTreeItems = FXCollections.observableArrayList();
             TreeItem<DataItem> lastParent = null;
             for (TreeItem<DataItem> selectedItem : selectedItems) {
                 DataItem dataItem = selectedItem.getValue();
@@ -147,22 +156,26 @@ public class DataSourceTreeViewInit {
 
                     Table table = (Table) dataItem;
                     tables.add(table);
+                    tableTreeItems.add(selectedItem);
                 }
             }
 
-            BaseConstants.selectedDateSource = ((DataSource) selectedItems.get(0).getParent().getValue());
+            dataSource = ((DataSource) selectedItems.get(0).getParent().getValue());
         }
         // 清空当前checkBoxVBox
         BaseConstants.selectedCheckBoxVBox.clear();
 
         // 把选中要导出的表在右边的listView展示
-        rightListViewInit.setListView(tables);
+        ObservableList<VBox> vBoxes = rightListViewInit.setListView(tables);
 
         // 选中的表放入map
         BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
 
+        // 选中的 dataSource
+        BaseConstants.selectedDateSource = dataSource;
+
         // 用于当再不同的 dataSource 之间切换时，保留原来的 tables
-        BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource, tables);
+        BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource, vBoxes);
 
         // 如果没有字段，则从远程加载
         tables.forEach(table -> columnService.reloadColumnsIfNotNull(table));
