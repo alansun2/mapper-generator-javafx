@@ -4,13 +4,13 @@ import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
+import com.alan344.constants.StageConstants;
 import com.alan344.controller.MainController;
 import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TreeUtils;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
@@ -22,8 +22,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -52,9 +50,6 @@ public class DataSourceTreeViewInit {
 
     @Resource
     private MainController mainController;
-
-    @Resource
-    private ApplicationContext applicationContext;
 
     /**
      * treeView init
@@ -116,8 +111,7 @@ public class DataSourceTreeViewInit {
     private void export(TreeView<DataItem> treeViewDataSource) {
         ObservableList<TreeItem<DataItem>> selectedItems = treeViewDataSource.getSelectionModel().getSelectedItems();
         List<Table> tables;
-        ObservableList<TreeItem<DataItem>> tableTreeItems;
-        DataSource dataSource;
+        DataSource dataSource = null;
         if (selectedItems.size() == 1) {
             TreeItem<DataItem> dataItemTreeItem = selectedItems.get(0);
             if (dataItemTreeItem.getValue() instanceof DataSource) {
@@ -128,39 +122,34 @@ public class DataSourceTreeViewInit {
                     children.forEach(itemTreeItem -> tables.add(((Table) itemTreeItem.getValue())));
                 }
 
-                tableTreeItems = children;
-
                 dataSource = (DataSource) dataItemTreeItem.getValue();
             } else {
                 //单独选中table的导出
                 Table table = (Table) dataItemTreeItem.getValue();
                 tables = Collections.singletonList(table);
 
-                tableTreeItems = FXCollections.singletonObservableList(dataItemTreeItem);
-
                 dataSource = ((DataSource) dataItemTreeItem.getParent().getValue());
             }
         } else {
             //选中多个table的导出
             tables = new ArrayList<>();
-            tableTreeItems = FXCollections.observableArrayList();
             TreeItem<DataItem> lastParent = null;
             for (TreeItem<DataItem> selectedItem : selectedItems) {
                 DataItem dataItem = selectedItem.getValue();
                 if (dataItem instanceof Table) {
                     if (lastParent == null) {
                         lastParent = selectedItem.getParent();
+                        dataSource = ((DataSource) selectedItem.getParent().getValue());
                     } else {
-                        Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出", applicationContext.getBean(Stage.class));
+                        Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出", StageConstants.primaryStage);
                     }
 
                     Table table = (Table) dataItem;
                     tables.add(table);
-                    tableTreeItems.add(selectedItem);
                 }
             }
 
-            dataSource = ((DataSource) selectedItems.get(0).getParent().getValue());
+            Assert.isTrue(!tables.isEmpty(), "请选择一个数据源的表导出", StageConstants.primaryStage);
         }
         // 清空当前checkBoxVBox
         BaseConstants.selectedCheckBoxVBox.clear();
