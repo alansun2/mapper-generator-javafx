@@ -8,7 +8,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.annotation.Resource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,10 +28,10 @@ import java.util.*;
 @Service
 public class DataSourceService {
 
-    @Autowired
+    @Resource
     private TableService tableService;
 
-    @Autowired
+    @Resource
     private ApplicationContext applicationContext;
 
     /**

@@ -5,7 +5,7 @@ import com.alan344.constants.StageConstants;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ColumnService;
 import com.alan344.service.TableService;
-import com.alan344.service.XmlGeneratorService;
+import com.alan344.service.MyMybatisGeneratorService;
 import com.alan344.utils.TextUtils;
 import com.alan344happyframework.util.StringUtils;
 import javafx.fxml.FXML;
@@ -14,9 +14,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -63,7 +63,7 @@ public class ExportController implements Initializable {
     private CheckBox useSwaggerCheckBox;
 
     @Resource
-    private XmlGeneratorService xmlGeneratorService;
+    private MyMybatisGeneratorService myMybatisGeneratorService;
 
     @Resource
     private TableService tableService;
@@ -117,7 +117,7 @@ public class ExportController implements Initializable {
         boolean exportSuccess = true;
         // 调用 mybatis generator 生成文件
         try {
-            xmlGeneratorService.generatorXml(generatorConfig);
+            myMybatisGeneratorService.generator(generatorConfig);
         } catch (Throwable e) {
             log.error("export fail", e);
             exportSuccess = false;
