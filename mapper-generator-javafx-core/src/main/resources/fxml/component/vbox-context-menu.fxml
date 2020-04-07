@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<ListView fx:id="vBoxListView" xmlns:fx="http://javafx.com/javafx/"
+          fx:controller="com.alan344.controller.component.RightListViewController">
+    <contextMenu>
+        <ContextMenu>
+            <items>
+                <MenuItem onAction="#refreshTableColumn" text="刷新字段">
+                    <graphic>
+                        <ImageView>
+                            <Image url="/image/refresh@16.png"/>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+                <MenuItem onAction="#advancedSetUp" text="高级设置">
+                    <graphic>
+                        <ImageView>
+                            <Image url="/image/advanced-set-up.png"/>
+                        </ImageView>
+                    </graphic>
+                </MenuItem>
+            </items>
+        </ContextMenu>
+    </contextMenu>
+</ListView>
+

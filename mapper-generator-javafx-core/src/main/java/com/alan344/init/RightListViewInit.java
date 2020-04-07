@@ -4,7 +4,7 @@ import com.alan344.bean.Column;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
-import com.alan344.controller.MainController;
+import com.alan344.controller.component.RightListViewController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,8 +16,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -27,19 +30,36 @@ import java.util.List;
  * @author AlanSun
  * @date 2020/4/2 21:56
  */
+@Slf4j
 @Service
 public class RightListViewInit {
 
     @Resource
-    private MainController mainController;
+    private RightListViewController rightListViewController;
 
     /**
      * 在同一个 dataSource 中用左键点击时判断是否是上一次的 dataSource。如果是的话就不重新加载 listView
      */
     private DataSource lastDataSource;
 
+    private ContextMenu contextMenu;
+
     @Resource
     private TableTextFieldListener tableTextFieldListener;
+
+    public void addListener(ListView<VBox> vBoxListView) {
+        contextMenu = vBoxListView.getContextMenu();
+        vBoxListView.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                ObservableList<VBox> selectedItems = vBoxListView.getSelectionModel().getSelectedItems();
+                if (selectedItems.size() != 1) {
+                    vBoxListView.setContextMenu(null);
+                } else {
+                    vBoxListView.setContextMenu(contextMenu);
+                }
+            }
+        });
+    }
 
     /**
      * 切换 ListView
@@ -55,9 +75,9 @@ public class RightListViewInit {
 
         final List<Table> tables = BaseConstants.dataSourceTableListMap.get(dataSource);
         if (tables != null) {
-            this.setListView(tables, mainController.getVBoxListView());
+            this.setListView(tables);
         } else {
-            this.setListView(null, mainController.getVBoxListView());
+            this.setListView(null);
         }
     }
 
@@ -68,7 +88,8 @@ public class RightListViewInit {
      *
      * @param tables 已选表
      */
-    public void setListView(List<Table> tables, ListView<VBox> vBoxListView) {
+    public void setListView(List<Table> tables) {
+        ListView<VBox> vBoxListView = rightListViewController.getVBoxListView();
         if (tables == null) {
             vBoxListView.setItems(null);
             return;
@@ -210,6 +231,7 @@ public class RightListViewInit {
             VBox vBox = new VBox(10, tableNameLabelHBox, hBox2);
             // 添加监听
             vBox.setOnKeyPressed(tableTextFieldListener::ctrlFListener);
+
             vBoxes.add(vBox);
         }
     }

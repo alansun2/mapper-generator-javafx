@@ -5,19 +5,19 @@ import com.alan344.constants.StageConstants;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.init.DataSourceTreeViewInit;
 import com.alan344.init.MapperCheckBoxInit;
-import com.alan344.init.RightListViewInit;
-import com.alan344.service.ColumnService;
 import com.alan344.utils.DialogUtils;
 import javafx.application.HostServices;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import lombok.Getter;
-import org.springframework.context.ApplicationContext;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -29,6 +29,7 @@ import java.util.ResourceBundle;
  * @author AlanSun
  * @date 2019/8/7 17:04
  */
+@Slf4j
 @Controller
 public class MainController implements Initializable {
     /**
@@ -62,10 +63,6 @@ public class MainController implements Initializable {
     @FXML
     private TreeItem<DataItem> treeItemDataSourceRoot;
 
-    @Getter
-    @FXML
-    private ListView<VBox> vBoxListView;
-
     /**
      * 搜索小时用的 TextField
      */
@@ -94,13 +91,7 @@ public class MainController implements Initializable {
     private AboutController aboutController;
 
     @Resource
-    private TableAdvanceSetUpController tableAdvanceSetUpController;
-
-    @Resource
-    private ColumnService columnService;
-
-    @Resource
-    private ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
 
     private HostServices hostServices;
 
@@ -112,16 +103,14 @@ public class MainController implements Initializable {
     private DataSourceTreeViewInit dataSourceTreeViewInit;
 
     @Resource
-    private RightListViewInit rightListViewInit;
-
-    @Resource
     private MapperCheckBoxInit mapperCheckBoxInit;
     //--------------------------------init start----------------------------------------------------------------------//
 
+    @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        hostServices = applicationContext.getBean(HostServices.class);
-        StageConstants.primaryStage = applicationContext.getBean(Stage.class);
+        hostServices = beanFactory.getBean(HostServices.class);
+        StageConstants.primaryStage = beanFactory.getBean(Stage.class);
 
         // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPane.widthProperty());
@@ -135,6 +124,14 @@ public class MainController implements Initializable {
         dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
         // 添加表搜索监听
         dataSourceTreeItemInit.addListenOnDataSourceBorderPane(treeViewDataSource);
+
+        FXMLLoader fxmlLoader = new FXMLLoader();
+
+        fxmlLoader.setLocation(getClass().getResource("/fxml/component/vbox-context-menu.fxml"));
+        fxmlLoader.setControllerFactory(beanFactory::getBean);
+
+        ListView<HBox> rightListViewInit = fxmlLoader.load();
+        borderPane1.setCenter(rightListViewInit);
     }
 
     //--------------------------------init end------------------------------------------------------------------------//
@@ -162,26 +159,6 @@ public class MainController implements Initializable {
     @FXML
     public void openGithub() {
         hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
-    }
-
-    /**
-     * 刷新 table 的字段信息
-     */
-    @FXML
-    private void refreshTableColumn() {
-        VBox selectedItemVBox = vBoxListView.getSelectionModel().getSelectedItem();
-        String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
-        columnService.reloadColumns(tableName);
-        selectedItemVBox.getChildren().remove(2);
-        rightListViewInit.expandTableViewColumns(selectedItemVBox);
-    }
-
-    /**
-     * 高级设置
-     */
-    @FXML
-    public void advancedSetUp() throws IOException {
-        tableAdvanceSetUpController.openTableAdvancedSetUP(StageConstants.primaryStage);
     }
 
     /**

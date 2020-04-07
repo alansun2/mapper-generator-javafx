@@ -35,10 +35,9 @@ public class TableAdvanceSetUpController implements Initializable {
     @Resource
     private BeanFactory beanFactory;
 
-    @Resource
-    private MainController mainController;
-
     private Stage tableAdvanceSetUpStage;
+
+    private Table selectedTable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,7 +49,7 @@ public class TableAdvanceSetUpController implements Initializable {
      * @param primaryStage 主窗口
      * @throws IOException e
      */
-    void openTableAdvancedSetUP(Stage primaryStage) throws IOException {
+    public void openTableAdvancedSetUP(Stage primaryStage, VBox selectedItemVBox) throws IOException {
         if (tableAdvanceSetUpStage == null) {
             FXMLLoader fxmlLoader = new FXMLLoader();
 
@@ -69,10 +68,9 @@ public class TableAdvanceSetUpController implements Initializable {
 
         tableAdvanceSetUpStage.show();
 
-        VBox selectedItemVBox = mainController.getVBoxListView().getSelectionModel().getSelectedItem();
         String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
-        final Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
-        serializableCheckBox.setSelected(table.isJdkSerializable());
+        selectedTable = BaseConstants.selectedTableNameTableMap.get(tableName);
+        serializableCheckBox.setSelected(selectedTable.isJdkSerializable());
     }
 
     @FXML
@@ -82,15 +80,12 @@ public class TableAdvanceSetUpController implements Initializable {
 
     @FXML
     public void apply() {
-        VBox selectedItemVBox = mainController.getVBoxListView().getSelectionModel().getSelectedItem();
-        String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
-        final Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
         if (serializableCheckBox.selectedProperty().get()) {
-            table.setJdkSerializable(true);
-            BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+            selectedTable.setJdkSerializable(true);
+            BaseConstants.tableNameSetUpTableRecordMap.put(selectedTable.getTableName(), true);
         } else {
-            table.setJdkSerializable(false);
-            BaseConstants.tableNameSetUpTableRecordMap.remove(tableName);
+            selectedTable.setJdkSerializable(false);
+            BaseConstants.tableNameSetUpTableRecordMap.remove(selectedTable.getTableName());
         }
         tableAdvanceSetUpStage.close();
     }

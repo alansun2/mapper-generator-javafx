@@ -91,11 +91,11 @@ public class DataSourceTreeViewInit {
                     // 放入  contextMenu
                     treeViewDataSource.setContextMenu(contextMenu);
                 }
-            } else if (event.getButton() == MouseButton.PRIMARY && treeViewDataSource.getSelectionModel().getSelectedItem() != null) {
+            } else if (event.getButton() == MouseButton.PRIMARY && treeViewDataSource.getSelectionModel().getSelectedItems() != null && treeViewDataSource.getSelectionModel().getSelectedItems().size() == 1) {
                 // 左键释放时。切换 listView
                 final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
                 DataSource dataSource;
-                if (selectedItems.get(0).getValue() instanceof DataSource) {
+                if (selectedDataSourceItem.getValue() instanceof DataSource) {
                     dataSource = (DataSource) selectedDataSourceItem.getValue();
                 } else {
                     dataSource = (DataSource) selectedDataSourceItem.getParent().getValue();
@@ -156,7 +156,7 @@ public class DataSourceTreeViewInit {
         BaseConstants.selectedCheckBoxVBox.clear();
 
         // 把选中要导出的表在右边的listView展示
-        rightListViewInit.setListView(tables, mainController.getVBoxListView());
+        rightListViewInit.setListView(tables);
 
         // 选中的表放入map
         BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
