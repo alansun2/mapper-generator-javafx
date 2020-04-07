@@ -1,8 +1,10 @@
 package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.StageConstants;
 import com.alan344.service.ConfigService;
+import com.alan344.utils.Toast;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,6 +70,11 @@ public class ConfigController implements Initializable {
      * @throws IOException e
      */
     void openConfigPane(Stage primaryStage) throws IOException {
+        if (BaseConstants.selectedTableNameTableMap == null || BaseConstants.selectedTableNameTableMap.isEmpty()) {
+            Toast.makeText(primaryStage, "没有选择的表", 3000, 500, 500, 15, 5);
+            return;
+        }
+
         if (StageConstants.configStage == null) {
             FXMLLoader fxmlLoader = new FXMLLoader();
 

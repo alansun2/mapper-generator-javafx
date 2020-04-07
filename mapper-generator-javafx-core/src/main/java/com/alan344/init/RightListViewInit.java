@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -77,12 +76,12 @@ public class RightListViewInit {
         // 选中的 DataSource
         BaseConstants.selectedDateSource = dataSource;
 
-        ObservableList<VBox> vBoxes = BaseConstants.dataSourceTableListMap.get(dataSource);
+        ObservableList<VBox> vBoxes = BaseConstants.dataSourceTableVBoxListMap.get(dataSource);
+        // 选中的表放入 map
+        BaseConstants.selectedTableNameTableMap = BaseConstants.dataSourceTableListMap.get(dataSource);
 
         if (vBoxes != null) {
             rightListViewController.getVBoxListView().setItems(vBoxes);
-            // 选中的表放入 map
-            BaseConstants.selectedTableNameTableMap = dataSource.getTables().stream().collect(Collectors.toMap(Table::getTableName, o -> o));
         } else {
             this.setListView(null);
         }

@@ -82,7 +82,7 @@ public class ExportController implements Initializable {
     }
 
     /**
-     * 应用生成xml,并生成bean
+     * 应用 生成bean
      */
     @FXML
     public void apply() throws IOException {
@@ -132,6 +132,7 @@ public class ExportController implements Initializable {
             stage = StageConstants.configStage;
         }
 
+        // 成功或失败的弹窗
         exportSuccessAlertController.openTableAdvancedSetUP(stage, exportSuccess);
     }
 

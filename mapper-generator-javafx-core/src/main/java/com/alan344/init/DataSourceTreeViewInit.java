@@ -164,7 +164,9 @@ public class DataSourceTreeViewInit {
         BaseConstants.selectedDateSource = dataSource;
 
         // 用于当再不同的 dataSource 之间切换时，保留原来的 tables
-        BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource, vBoxes);
+        BaseConstants.dataSourceTableVBoxListMap.put(BaseConstants.selectedDateSource, vBoxes);
+
+        BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource, tables.stream().collect(Collectors.toMap(Table::getTableName, table -> table)));
 
         // 如果没有字段，则从远程加载
         tables.forEach(table -> columnService.reloadColumnsIfNotNull(table));

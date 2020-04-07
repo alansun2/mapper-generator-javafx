@@ -33,25 +33,23 @@ import java.util.List;
 @Slf4j
 @Service
 public class MyMybatisGeneratorService {
-//    private DocumentBuilder documentBuilder;
-//
-//    {
-//        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-//        try {
-//            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-//        } catch (ParserConfigurationException e) {
-//            log.error("初始化错误", e);
-//        }
-//    }
+    private DocumentBuilder documentBuilder;
+
+    {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        } catch (ParserConfigurationException e) {
+            log.error("初始化错误", e);
+        }
+    }
 
     /**
      * 生成 xml 并用 mybatis-generator 生成对应的文件
      *
      * @param generatorConfig 配置文件
      */
-    public void generator(GeneratorConfig generatorConfig) throws ParserConfigurationException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+    public void generator(GeneratorConfig generatorConfig) {
         final org.w3c.dom.Document doc = documentBuilder.newDocument();
         final org.w3c.dom.Element root = doc.createElement("generatorConfiguration");
         doc.appendChild(root);
