@@ -210,6 +210,14 @@ public class XmlGeneratorService {
         this.generateMyBatis3(doc, generatorConfig);
     }
 
+    /**
+     * 添加 el
+     *
+     * @param doc       doc
+     * @param parent    父el
+     * @param childName 子el名称
+     * @return 子el
+     */
     private org.w3c.dom.Element addElement(org.w3c.dom.Document doc, org.w3c.dom.Element parent, String childName) {
         final org.w3c.dom.Element element = doc.createElement(childName);
         if (parent != null) {
@@ -219,6 +227,9 @@ public class XmlGeneratorService {
         return element;
     }
 
+    /**
+     * 设置 checkBox
+     */
     private void checkBoxSelected(String name, org.w3c.dom.Element table, boolean flag) {
         if (flag) {
             table.setAttribute(name, Boolean.TRUE.toString());
@@ -246,7 +257,6 @@ public class XmlGeneratorService {
             log.error("创建xml文件夹：{} 失败", generatorConfig.getMapperXmlLocation());
         }
     }
-
 
     /**
      * 调用 mybatis-generator

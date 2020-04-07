@@ -6,9 +6,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
@@ -18,7 +18,7 @@ import java.io.IOException;
 @Controller
 public class AboutController {
 
-    @Autowired
+    @Resource
     private BeanFactory beanFactory;
 
     private Stage aboutStage;

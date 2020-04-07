@@ -95,7 +95,6 @@ public class ConfigService {
 
         try {
             String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString());
-            log.info(s);
             List<GeneratorConfig> generatorConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), GeneratorConfig.class);
             return generatorConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
         } catch (IOException e) {

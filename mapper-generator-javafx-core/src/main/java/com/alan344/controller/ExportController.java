@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -25,6 +26,7 @@ import java.util.ResourceBundle;
  * @author AlanSun
  * @date 2019/8/12 15:33
  */
+@Slf4j
 @Controller
 public class ExportController implements Initializable {
     @FXML
@@ -116,12 +118,14 @@ public class ExportController implements Initializable {
         // 调用 mybatis generator 生成文件
         try {
             xmlGeneratorService.generatorXml(generatorConfig);
-        } catch (Throwable t) {
+        } catch (Throwable e) {
+            log.error("export fail", e);
             exportSuccess = false;
         }
 
         Stage stage;
         if (exportSuccess) {
+            // 导出成功，关闭 configStage
             configStage.close();
             stage = StageConstants.primaryStage;
         } else {

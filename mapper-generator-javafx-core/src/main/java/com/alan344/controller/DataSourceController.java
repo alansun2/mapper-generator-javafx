@@ -1,6 +1,5 @@
 package com.alan344.controller;
 
-import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.service.DataSourceService;
@@ -15,7 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -98,7 +96,7 @@ public class DataSourceController implements Initializable {
         tableService.loadTables(dataSource);
 
         // 把 dataSource 放入 treeItemRoot
-        TreeItem<DataItem> dataSourceTreeItem = dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
+        dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
     }
 
     /**
