@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
+import com.alan344.constants.StageConstants;
 import com.alan344.service.ConfigService;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,11 +18,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import lombok.Getter;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -43,17 +43,14 @@ public class ConfigController implements Initializable {
     @FXML
     private SplitPane splitPane;
 
-    @Autowired
+    @Resource
     private ConfigService configService;
 
-    @Autowired
+    @Resource
     private BeanFactory beanFactory;
 
-    @Autowired
+    @Resource
     private ExportController exportController;
-
-    @Getter
-    private Stage configStage;
 
     /**
      * 配置信息 map
@@ -71,8 +68,7 @@ public class ConfigController implements Initializable {
      * @throws IOException e
      */
     void openConfigPane(Stage primaryStage) throws IOException {
-
-        if (configStage == null) {
+        if (StageConstants.configStage == null) {
             FXMLLoader fxmlLoader = new FXMLLoader();
 
             fxmlLoader.setLocation(getClass().getResource("/fxml/config.fxml"));
@@ -80,7 +76,7 @@ public class ConfigController implements Initializable {
 
             BorderPane configBorderPane = fxmlLoader.load();
 
-            configStage = new Stage();
+            Stage configStage = new Stage();
             configStage.setScene(new Scene(configBorderPane));
             configStage.setTitle("设置导出");
             configStage.getIcons().add(new Image("/image/setting@32.png"));
@@ -111,9 +107,10 @@ public class ConfigController implements Initializable {
                 exportController.showConfig(generatorConfig);
 
                 this.configNameConfigMap = generatorConfigs.stream().collect(Collectors.toMap(GeneratorConfig::getConfigName, o -> o));
+                StageConstants.configStage = configStage;
             }
         } else {
-            configStage.show();
+            StageConstants.configStage.show();
         }
     }
 

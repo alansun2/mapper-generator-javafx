@@ -4,15 +4,14 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
-<AnchorPane prefHeight="158.0" prefWidth="300.0" stylesheets="@../css/export-success-alert.css"
+<AnchorPane prefHeight="150.0" prefWidth="300.0" stylesheets="@../css/export-success-alert.css"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.alan344.controller.ExportSuccessAlertController">
     <children>
-        <Button layoutX="150.0" layoutY="125.0" mnemonicParsing="false" text="打开文件夹" onAction="#openDir"/>
-        <Button layoutX="235.0" layoutY="125.0" mnemonicParsing="false" onAction="#close" prefHeight="23.0"
+        <Button layoutX="250.0" layoutY="130.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0"
                 prefWidth="54.0" text="关闭"/>
-        <Text id="text" fx:id="text" fill="#25ae20" layoutX="120.0" layoutY="80.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" text="successful!!!" wrappingWidth="117"/>
+        <Text id="text" fx:id="text" layoutX="120.0" layoutY="80.0" strokeType="OUTSIDE"
+              strokeWidth="0.0" wrappingWidth="220"/>
         <ImageView fx:id="image" fitHeight="36.0" fitWidth="36.0" layoutX="65.0" layoutY="55.0" pickOnBounds="true"
                    preserveRatio="true">
         </ImageView>

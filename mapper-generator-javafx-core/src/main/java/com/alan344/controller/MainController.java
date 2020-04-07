@@ -1,6 +1,8 @@
 package com.alan344.controller;
 
 import com.alan344.bean.DataItem;
+import com.alan344.constants.BaseConstants;
+import com.alan344.constants.StageConstants;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.init.DataSourceTreeViewInit;
 import com.alan344.init.MapperCheckBoxInit;
@@ -103,8 +105,6 @@ public class MainController implements Initializable {
 
     private HostServices hostServices;
 
-    private Stage primaryStage;
-
     // -------------------------init----------------------------------------------------------------------------------//
     @Resource
     private DataSourceTreeItemInit dataSourceTreeItemInit;
@@ -123,7 +123,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         hostServices = applicationContext.getBean(HostServices.class);
-        primaryStage = applicationContext.getBean(Stage.class);
+        StageConstants.primaryStage = applicationContext.getBean(Stage.class);
 
         // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPane.widthProperty());
@@ -146,7 +146,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void addSource() throws IOException {
-        dataSourceController.addDataSource(primaryStage);
+        dataSourceController.addDataSource(StageConstants.primaryStage);
     }
 
     /**
@@ -155,7 +155,7 @@ public class MainController implements Initializable {
     @FXML
     public void exit() {
 //        Platform.exit(); //直接退出
-        DialogUtils.closeDialog(primaryStage);
+        DialogUtils.closeDialog(StageConstants.primaryStage);
     }
 
     /**
@@ -183,7 +183,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void advancedSetUp() throws IOException {
-        tableAdvanceSetUpController.openTableAdvancedSetUP(primaryStage);
+        tableAdvanceSetUpController.openTableAdvancedSetUP(StageConstants.primaryStage);
     }
 
     /**
@@ -193,7 +193,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openConfigWindow() throws IOException {
-        configController.openConfigPane(primaryStage);
+        configController.openConfigPane(StageConstants.primaryStage);
     }
 
     /**
@@ -203,6 +203,6 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openAboutWindow() throws IOException {
-        aboutController.openWindow(primaryStage);
+        aboutController.openWindow(StageConstants.primaryStage);
     }
 }

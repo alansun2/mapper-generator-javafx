@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
 import com.alan344.bean.GeneratorConfig;
+import com.alan344.constants.StageConstants;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ColumnService;
 import com.alan344.service.TableService;
@@ -83,7 +84,7 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void apply() throws IOException {
-        Stage configStage = configController.getConfigStage();
+        Stage configStage = StageConstants.configStage;
         if (TextUtils.checkTextsHasEmpty(configStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText)) {
             return;
         }
@@ -119,10 +120,15 @@ public class ExportController implements Initializable {
             exportSuccess = false;
         }
 
+        Stage stage;
         if (exportSuccess) {
             configStage.close();
+            stage = StageConstants.primaryStage;
+        } else {
+            stage = StageConstants.configStage;
         }
-        exportSuccessAlertController.openTableAdvancedSetUP(configStage, exportSuccess);
+
+        exportSuccessAlertController.openTableAdvancedSetUP(stage, exportSuccess);
     }
 
     /**
@@ -130,7 +136,7 @@ public class ExportController implements Initializable {
      */
     @FXML
     public void cancel() {
-        configController.getConfigStage().close();
+        StageConstants.configStage.close();
     }
 
     //-------------------------文件夹浏览------------------------------------------------------------------------------//
