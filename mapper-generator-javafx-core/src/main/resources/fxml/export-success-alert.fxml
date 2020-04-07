@@ -8,12 +8,9 @@
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.alan344.controller.ExportSuccessAlertController">
     <children>
-        <Button layoutX="250.0" layoutY="130.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0"
-                prefWidth="54.0" text="关闭"/>
-        <Text id="text" fx:id="text" layoutX="120.0" layoutY="80.0" strokeType="OUTSIDE"
-              strokeWidth="0.0" wrappingWidth="220"/>
-        <ImageView fx:id="image" fitHeight="36.0" fitWidth="36.0" layoutX="65.0" layoutY="55.0" pickOnBounds="true"
-                   preserveRatio="true">
-        </ImageView>
+        <Button layoutX="245.0" layoutY="120.0" mnemonicParsing="false" onAction="#close" prefHeight="25.0"
+                prefWidth="50.0" text="关闭"/>
+        <Text id="text" fx:id="text" layoutX="120.0" layoutY="80.0"/>
+        <ImageView fx:id="image" fitHeight="36.0" fitWidth="36.0" layoutX="65.0" layoutY="55.0"/>
     </children>
 </AnchorPane>

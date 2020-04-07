@@ -57,16 +57,18 @@ public class ExportSuccessAlertController {
             tableAdvanceSetUpStage.initOwner(stage);
         }
 
-        if (!isExportSuccess) {
+        if (isExportSuccess) {
             tableAdvanceSetUpStage.setTitle("导出成功");
             text.setText("successful!!!");
             text.setFill(Paint.valueOf("#25ae20"));
+            text.setWrappingWidth(180);
             image.setImage(new Image("/image/export-success.png"));
         } else {
             tableAdvanceSetUpStage.setTitle("导出失败");
             text.setText("error，请查看日志文件");
             text.setFill(Paint.valueOf("#AE4F13"));
             text.setLayoutX(75);
+            text.setWrappingWidth(220);
             image.setImage(new Image("/image/export-error.png"));
             image.setLayoutX(30);
         }
