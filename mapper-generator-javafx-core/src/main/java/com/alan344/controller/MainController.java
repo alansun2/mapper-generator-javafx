@@ -116,7 +116,6 @@ public class MainController implements Initializable {
 
     @Resource
     private MapperCheckBoxInit mapperCheckBoxInit;
-
     //--------------------------------init start----------------------------------------------------------------------//
 
     @Override

@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -33,6 +32,9 @@ public class DataSourceTreeItemInit {
 
     @Resource
     private MainController mainController;
+
+    @Resource
+    private TableTextFieldListener tableTextFieldListener;
 
     /**
      * 启动时加载数据文件
@@ -55,9 +57,8 @@ public class DataSourceTreeItemInit {
      *
      * @param dataSource             dataSource
      * @param treeItemDataSourceRoot 根节点
-     * @return TreeItem 的 DataSource
      */
-    public TreeItem<DataItem> addExpandListenerForDataSource(DataSource dataSource, TreeItem<DataItem> treeItemDataSourceRoot) {
+    public void addExpandListenerForDataSource(DataSource dataSource, TreeItem<DataItem> treeItemDataSourceRoot) {
         TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemDataSourceRoot);
         dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
         // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
@@ -96,7 +97,6 @@ public class DataSourceTreeItemInit {
 
         // put dataSource into allDataSource
         BaseConstants.allDataSources.put(dataSourceTreeItem, dataSource);
-        return dataSourceTreeItem;
     }
 
     /**
@@ -125,28 +125,9 @@ public class DataSourceTreeItemInit {
             }
         });
 
-        tableFindTextField.setOnKeyPressed(event -> {
-            KeyCode code = event.getCode();
-            if (KeyCode.ESCAPE.equals(code)) {
-                tableFindTextField.setText("");
-                treeViewDataSource.requestFocus();
-            }
-        });
+        tableFindTextField.setOnKeyPressed(tableTextFieldListener::escListener);
 
-        treeViewDataSource.setOnKeyPressed(event -> {
-            KeyCode code = event.getCode();
-            // ctrl + F
-            if (KeyCode.F.equals(code)) {
-                if (event.isControlDown()) {
-                    boolean visible = tableFindTextField.isVisible();
-                    if (visible) {
-                        tableFindTextField.requestFocus();
-                    }
-                }
-            } else if (KeyCode.ESCAPE.equals(code)) {
-                tableFindTextField.setText("");
-            }
-        });
+        treeViewDataSource.setOnKeyPressed(tableTextFieldListener::ctrlFListener);
     }
 
     /**

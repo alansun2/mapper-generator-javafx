@@ -38,6 +38,9 @@ public class RightListViewInit {
      */
     private DataSource lastDataSource;
 
+    @Resource
+    private TableTextFieldListener tableTextFieldListener;
+
     /**
      * 切换 ListView
      *
@@ -205,6 +208,8 @@ public class RightListViewInit {
             hBox2.setAlignment(Pos.CENTER);
 
             VBox vBox = new VBox(10, tableNameLabelHBox, hBox2);
+            // 添加监听
+            vBox.setOnKeyPressed(tableTextFieldListener::ctrlFListener);
             vBoxes.add(vBox);
         }
     }
