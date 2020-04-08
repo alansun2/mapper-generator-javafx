@@ -82,6 +82,9 @@ java8， classpath 必须要有 javafx 相关的 jar (一般如果你是安装�
 * `mybatis-friend-executable.jar`：可执行 jar 
 
 > 本项目 github 源码地址：https://github.com/alansun2/mapper-generator-javafx
+>
 > 本项目 gitee 源码地址：https://gitee.com/alansc/mapper-generator-javafx
+>
 > 本项目git[下载地址](https://github.com/alansun2/mapper-generator-javafx/releases)
+>
 > 本项目gitee[下载地址](https://gitee.com/alansc/mapper-generator-javafx/releases)
