@@ -535,7 +535,8 @@ public class ExampleGenerator extends AbstractJavaGenerator {
             answer.addMethod(method);
         }
 
-        for (IntrospectedColumn introspectedColumn : introspectedTable.getNonBLOBColumns()) {
+        // fix mysql 数据类型是text时，生成的do对应的字段没了 #3
+        for (IntrospectedColumn introspectedColumn : introspectedTable.getAllColumns()) {
             topLevelClass.addImportedType(introspectedColumn.getFullyQualifiedJavaType());
 
             // here we need to add the individual methods for setting the

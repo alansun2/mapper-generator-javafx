@@ -525,8 +525,7 @@ public class DatabaseIntrospector {
             introspectedColumn.setJdbcType(rs.getInt("DATA_TYPE")); //$NON-NLS-1$
             introspectedColumn.setLength(rs.getInt("COLUMN_SIZE")); //$NON-NLS-1$
             introspectedColumn.setActualColumnName(rs.getString("COLUMN_NAME")); //$NON-NLS-1$
-            introspectedColumn
-                    .setNullable(rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable); //$NON-NLS-1$
+            introspectedColumn.setNullable(rs.getInt("NULLABLE") == DatabaseMetaData.columnNullable); //$NON-NLS-1$
             introspectedColumn.setScale(rs.getInt("DECIMAL_DIGITS")); //$NON-NLS-1$
             introspectedColumn.setRemarks(rs.getString("REMARKS")); //$NON-NLS-1$
             introspectedColumn.setDefaultValue(rs.getString("COLUMN_DEF")); //$NON-NLS-1$
