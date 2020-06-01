@@ -114,8 +114,8 @@ public class ConfigController implements Initializable {
                 exportController.showConfig(generatorConfig);
 
                 this.configNameConfigMap = generatorConfigs.stream().collect(Collectors.toMap(GeneratorConfig::getConfigName, o -> o));
-                StageConstants.configStage = configStage;
             }
+            StageConstants.configStage = configStage;
         } else {
             StageConstants.configStage.show();
         }
