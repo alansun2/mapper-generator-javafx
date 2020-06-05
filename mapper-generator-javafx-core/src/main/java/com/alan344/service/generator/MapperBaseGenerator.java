@@ -66,29 +66,29 @@ public class MapperBaseGenerator extends MapperGeneratorStrategyBase {
         final Element mappersProperty = this.addElement(doc, tkMybatisPlugin, "property");
         mappersProperty.setAttribute("name", "mappers");
         mappersProperty.setAttribute("value", "tk.mybatis.mapper.common.Mapper");
-        final Element useMapperCommentGeneratorProperty = this.addElement(doc, tkMybatisPlugin, "property");
-        useMapperCommentGeneratorProperty.setAttribute("name", "useMapperCommentGenerator");
-        useMapperCommentGeneratorProperty.setAttribute("value", "true");
+//        final Element useMapperCommentGeneratorProperty = this.addElement(doc, tkMybatisPlugin, "property");
+//        useMapperCommentGeneratorProperty.setAttribute("name", "useMapperCommentGenerator");
+//        useMapperCommentGeneratorProperty.setAttribute("value", "true");
 
 
         //是否成成注释
-        if (generatorConfig.isUseComment()) {
-            final Element commentGenerator = this.addElement(doc, context, "commentGenerator");
-            commentGenerator.setAttribute("type", "com.alan344.utils.MyCommentGenerator");
-            final Element suppressAllCommentsPro = this.addElement(doc, commentGenerator, "property");
-            suppressAllCommentsPro.setAttribute("name", "suppressAllComments");
-            suppressAllCommentsPro.setAttribute("value", "false");
-            final Element addRemarkCommentsPro = this.addElement(doc, commentGenerator, "property");
-            addRemarkCommentsPro.setAttribute("name", "addRemarkComments");
-            addRemarkCommentsPro.setAttribute("value", "true");
-            final Element suppressDatePro = this.addElement(doc, commentGenerator, "property");
-            suppressDatePro.setAttribute("name", "suppressDate");
-            suppressDatePro.setAttribute("value", "false");
-
-            final Element authorPro = this.addElement(doc, commentGenerator, "property");
-            authorPro.setAttribute("name", "author");
-            authorPro.setAttribute("value", generatorConfig.getAuthor());
-        }
+//        if (generatorConfig.isUseComment()) {
+//            final Element commentGenerator = this.addElement(doc, context, "commentGenerator");
+//            commentGenerator.setAttribute("type", "com.alan344.utils.MyCommentGenerator");
+//            final Element suppressAllCommentsPro = this.addElement(doc, commentGenerator, "property");
+//            suppressAllCommentsPro.setAttribute("name", "suppressAllComments");
+//            suppressAllCommentsPro.setAttribute("value", "false");
+//            final Element addRemarkCommentsPro = this.addElement(doc, commentGenerator, "property");
+//            addRemarkCommentsPro.setAttribute("name", "addRemarkComments");
+//            addRemarkCommentsPro.setAttribute("value", "true");
+//            final Element suppressDatePro = this.addElement(doc, commentGenerator, "property");
+//            suppressDatePro.setAttribute("name", "suppressDate");
+//            suppressDatePro.setAttribute("value", "false");
+//
+//            final Element authorPro = this.addElement(doc, commentGenerator, "property");
+//            authorPro.setAttribute("name", "author");
+//            authorPro.setAttribute("value", generatorConfig.getAuthor());
+//        }
 
         //jdbc 连接
         final Element jdbcConnection = this.addElement(doc, context, "jdbcConnection");
