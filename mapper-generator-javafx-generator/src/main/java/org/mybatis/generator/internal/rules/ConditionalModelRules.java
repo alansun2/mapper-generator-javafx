@@ -80,10 +80,8 @@ public class ConditionalModelRules extends BaseRules {
      */
     @Override
     public boolean generateRecordWithBLOBsClass() {
-        int otherColumnCount = introspectedTable.getPrimaryKeyColumns().size()
-                + introspectedTable.getBaseColumns().size();
+        int otherColumnCount = introspectedTable.getPrimaryKeyColumns().size() + introspectedTable.getBaseColumns().size();
 
-        return otherColumnCount > 1
-                && introspectedTable.getBLOBColumns().size() > 1;
+        return otherColumnCount > 1 && introspectedTable.getBLOBColumns().size() > 1;
     }
 }

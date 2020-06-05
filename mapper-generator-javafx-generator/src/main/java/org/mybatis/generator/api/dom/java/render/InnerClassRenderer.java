@@ -40,7 +40,7 @@ public class InnerClassRenderer {
 
         lines = RenderingUtilities.removeLastEmptyLine(lines);
 
-        lines.add("}"); //$NON-NLS-1$
+        lines.add("}");
 
         return lines;
     }
@@ -51,37 +51,37 @@ public class InnerClassRenderer {
         sb.append(innerClass.getVisibility().getValue());
 
         if (innerClass.isAbstract()) {
-            sb.append("abstract "); //$NON-NLS-1$
+            sb.append("abstract ");
         }
 
         if (innerClass.isStatic()) {
-            sb.append("static "); //$NON-NLS-1$
+            sb.append("static ");
         }
 
         if (innerClass.isFinal()) {
-            sb.append("final "); //$NON-NLS-1$
+            sb.append("final ");
         }
 
-        sb.append("class "); //$NON-NLS-1$
+        sb.append("class ");
         sb.append(innerClass.getType().getShortName());
         sb.append(RenderingUtilities.renderTypeParameters(innerClass.getTypeParameters(), compilationUnit));
         sb.append(renderSuperClass(innerClass, compilationUnit));
         sb.append(renderSuperInterfaces(innerClass, compilationUnit));
-        sb.append(" {"); //$NON-NLS-1$
+        sb.append(" {");
         
         return sb.toString();
     }
 
     private String renderSuperClass(InnerClass innerClass, CompilationUnit compilationUnit) {
         return innerClass.getSuperClass()
-                .map(sc -> " extends " + JavaDomUtils.calculateTypeName(compilationUnit, sc)) //$NON-NLS-1$
-                .orElse(""); //$NON-NLS-1$        
+                .map(sc -> " extends " + JavaDomUtils.calculateTypeName(compilationUnit, sc))
+                .orElse("");        
     }
 
     // should return an empty string if no super interfaces
     private String renderSuperInterfaces(InnerClass innerClass, CompilationUnit compilationUnit) {
         return innerClass.getSuperInterfaceTypes().stream()
                 .map(tp -> JavaDomUtils.calculateTypeName(compilationUnit, tp))
-                .collect(CustomCollectors.joining(", ", " implements ", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .collect(CustomCollectors.joining(", ", " implements ", "")); //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

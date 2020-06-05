@@ -64,7 +64,7 @@ public abstract class JavaElement {
     }
 
     public void addSuppressTypeWarningsAnnotation() {
-        addAnnotation("@SuppressWarnings(\"unchecked\")"); //$NON-NLS-1$
+        addAnnotation("@SuppressWarnings(\"unchecked\")");
     }
 
     public boolean isStatic() {

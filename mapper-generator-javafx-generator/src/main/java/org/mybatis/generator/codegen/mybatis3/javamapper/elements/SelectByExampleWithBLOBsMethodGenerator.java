@@ -59,7 +59,7 @@ public class SelectByExampleWithBLOBsMethodGenerator extends
         importedTypes.add(listType);
         returnType.addTypeArgument(listType);
         method.setReturnType(returnType);
-        method.addParameter(new Parameter(type, "example")); //$NON-NLS-1$
+        method.addParameter(new Parameter(type, "example"));
 
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);

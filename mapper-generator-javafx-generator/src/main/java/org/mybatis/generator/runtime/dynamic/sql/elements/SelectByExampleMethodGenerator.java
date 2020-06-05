@@ -41,28 +41,28 @@ public class SelectByExampleMethodGenerator extends AbstractMethodGenerator {
         
         Set<FullyQualifiedJavaType> imports = new HashSet<>();
 
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.QueryExpressionDSL"));
         imports.add(new FullyQualifiedJavaType(
-                "org.mybatis.dynamic.sql.select.MyBatis3SelectModelAdapter")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
+                "org.mybatis.dynamic.sql.select.MyBatis3SelectModelAdapter"));
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL"));
         imports.add(FullyQualifiedJavaType.getNewListInstance());
         imports.add(recordType);
         
-        Method method = new Method("selectByExample"); //$NON-NLS-1$
+        Method method = new Method("selectByExample");
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         
         FullyQualifiedJavaType returnType =
-                new FullyQualifiedJavaType("QueryExpressionDSL<MyBatis3SelectModelAdapter<List<" //$NON-NLS-1$
+                new FullyQualifiedJavaType("QueryExpressionDSL<MyBatis3SelectModelAdapter<List<"
                 + recordType.getShortNameWithoutTypeArguments()
-                + ">>>"); //$NON-NLS-1$
+                + ">>>");
         method.setReturnType(returnType);
         StringBuilder sb = new StringBuilder();
-        sb.append("return SelectDSL.selectWithMapper(this::selectMany, "); //$NON-NLS-1$
+        sb.append("return SelectDSL.selectWithMapper(this::selectMany, ");
         sb.append(fragmentGenerator.getSelectList());
         sb.append(')');
         method.addBodyLine(sb.toString());
-        method.addBodyLine("        .from(" + tableFieldName + ");"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .from(" + tableFieldName + ");"); //$NON-NLS-2$
         
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

@@ -42,23 +42,23 @@ public class UpdateByPrimaryKeyMethodGenerator extends AbstractMethodGenerator {
 
         Set<FullyQualifiedJavaType> imports = new HashSet<>();
 
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.update.UpdateDSL")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.update.UpdateDSL"));
         imports.add(recordType);
         
-        Method method = new Method("updateByPrimaryKey"); //$NON-NLS-1$
+        Method method = new Method("updateByPrimaryKey");
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(recordType, "record")); //$NON-NLS-1$
+        method.addParameter(new Parameter(recordType, "record"));
 
-        method.addBodyLine("return UpdateDSL.updateWithMapper(this::update, " //$NON-NLS-1$
-                + tableFieldName + ")"); //$NON-NLS-1$
+        method.addBodyLine("return UpdateDSL.updateWithMapper(this::update, "
+                + tableFieldName + ")");
 
         method.addBodyLines(fragmentGenerator.getSetEqualLines(introspectedTable.getNonPrimaryKeyColumns(), false));
         method.addBodyLines(fragmentGenerator.getPrimaryKeyWhereClauseForUpdate());
-        method.addBodyLine("        .build()"); //$NON-NLS-1$
-        method.addBodyLine("        .execute();"); //$NON-NLS-1$
+        method.addBodyLine("        .build()");
+        method.addBodyLine("        .execute();");
 
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

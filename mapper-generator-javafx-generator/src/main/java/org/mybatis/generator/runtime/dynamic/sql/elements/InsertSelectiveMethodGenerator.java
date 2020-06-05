@@ -43,40 +43,40 @@ public class InsertSelectiveMethodGenerator extends AbstractMethodGenerator {
 
         Set<FullyQualifiedJavaType> imports = new HashSet<>();
         
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlBuilder")); //$NON-NLS-1$
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.render.RenderingStrategy")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlBuilder"));
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.render.RenderingStrategy"));
         imports.add(recordType);
         
-        Method method = new Method("insertSelective"); //$NON-NLS-1$
+        Method method = new Method("insertSelective");
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(recordType, "record")); //$NON-NLS-1$
+        method.addParameter(new Parameter(recordType, "record"));
         
-        method.addBodyLine("return insert(SqlBuilder.insert(record)"); //$NON-NLS-1$
-        method.addBodyLine("        .into(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("return insert(SqlBuilder.insert(record)");
+        method.addBodyLine("        .into(" + tableFieldName + ")"); //$NON-NLS-2$
         
         List<IntrospectedColumn> columns = ListUtilities.removeIdentityAndGeneratedAlwaysColumns(
                 introspectedTable.getAllColumns());
         for (IntrospectedColumn column : columns) {
             String fieldName = calculateFieldName(column);
             if (column.isSequenceColumn()) {
-                method.addBodyLine("        .map(" + fieldName //$NON-NLS-1$
-                        + ").toProperty(\"" + column.getJavaProperty() //$NON-NLS-1$
-                        + "\")"); //$NON-NLS-1$
+                method.addBodyLine("        .map(" + fieldName
+                        + ").toProperty(\"" + column.getJavaProperty()
+                        + "\")");
             } else {
                 String methodName =
                         JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
                                 column.getFullyQualifiedJavaType());
-                method.addBodyLine("        .map(" + fieldName //$NON-NLS-1$
-                        + ").toPropertyWhenPresent(\"" + column.getJavaProperty() //$NON-NLS-1$
-                        + "\", record::" + methodName //$NON-NLS-1$
-                        + ")"); //$NON-NLS-1$
+                method.addBodyLine("        .map(" + fieldName
+                        + ").toPropertyWhenPresent(\"" + column.getJavaProperty()
+                        + "\", record::" + methodName
+                        + ")");
             }
         }
         
-        method.addBodyLine("        .build()"); //$NON-NLS-1$
-        method.addBodyLine("        .render(RenderingStrategy.MYBATIS3));"); //$NON-NLS-1$
+        method.addBodyLine("        .build()");
+        method.addBodyLine("        .render(RenderingStrategy.MYBATIS3));");
         
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

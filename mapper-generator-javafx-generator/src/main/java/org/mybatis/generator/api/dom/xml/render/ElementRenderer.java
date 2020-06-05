@@ -42,10 +42,10 @@ public class ElementRenderer implements ElementVisitor<Stream<String>> {
     }
 
     private Stream<String> renderWithoutChildren(XmlElement element) {
-        return Stream.of("<" //$NON-NLS-1$
+        return Stream.of("<"
                 + element.getName()
                 + renderAttributes(element)
-                + " />"); //$NON-NLS-1$
+                + " />");
     }
 
     public Stream<String> renderWithChildren(XmlElement element) {
@@ -57,14 +57,14 @@ public class ElementRenderer implements ElementVisitor<Stream<String>> {
         return element.getAttributes().stream()
                 .sorted((a1, a2) -> a1.getName().compareTo(a2.getName()))
                 .map(attributeRenderer::render)
-                .collect(CustomCollectors.joining(" ", " ", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .collect(CustomCollectors.joining(" ", " ", "")); //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     private Stream<String> renderOpen(XmlElement element) {
-        return Stream.of("<" //$NON-NLS-1$
+        return Stream.of("<"
                 + element.getName()
                 + renderAttributes(element)
-                + ">"); //$NON-NLS-1$
+                + ">");
     }
 
     private Stream<String> renderChildren(XmlElement element) {
@@ -78,12 +78,12 @@ public class ElementRenderer implements ElementVisitor<Stream<String>> {
     }
 
     private String indent(String s) {
-        return "  " + s; //$NON-NLS-1$
+        return "  " + s;
     }
 
     private Stream<String> renderClose(XmlElement element) {
-        return Stream.of("</" //$NON-NLS-1$
+        return Stream.of("</"
                 + element.getName()
-                + ">"); //$NON-NLS-1$
+                + ">");
     }
 }

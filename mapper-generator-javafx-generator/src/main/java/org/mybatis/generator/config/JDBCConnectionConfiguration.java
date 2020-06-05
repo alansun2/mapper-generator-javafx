@@ -68,11 +68,11 @@ public class JDBCConnectionConfiguration extends PropertyHolder {
 
     public void validate(List<String> errors) {
         if (!stringHasValue(driverClass)) {
-            errors.add(getString("ValidationError.4")); //$NON-NLS-1$
+            errors.add(getString("ValidationError.4"));
         }
 
         if (!stringHasValue(connectionURL)) {
-            errors.add(getString("ValidationError.5")); //$NON-NLS-1$
+            errors.add(getString("ValidationError.5"));
         }
     }
 }

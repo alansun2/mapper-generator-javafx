@@ -51,7 +51,7 @@ public class UpdateByPrimaryKeySelectiveMethodGenerator extends
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setAbstract(true);
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(parameterType, "record")); //$NON-NLS-1$
+        method.addParameter(new Parameter(parameterType, "record"));
 
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);

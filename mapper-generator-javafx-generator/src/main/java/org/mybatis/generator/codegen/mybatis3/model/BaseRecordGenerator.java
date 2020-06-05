@@ -24,7 +24,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
     @Override
     public List<CompilationUnit> getCompilationUnits() {
         FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();
-        progressCallback.startTask(getString("Progress.8", table.toString())); //$NON-NLS-1$
+        progressCallback.startTask(getString("Progress.8", table.toString()));
         CommentGenerator commentGenerator = context.getCommentGenerator();
 
         FullyQualifiedJavaType type = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
@@ -116,26 +116,26 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
         List<String> superColumns = new LinkedList<>();
         if (introspectedTable.getRules().generatePrimaryKeyClass()) {
             boolean comma = false;
-            sb.append("super("); //$NON-NLS-1$
+            sb.append("super(");
             for (IntrospectedColumn introspectedColumn : introspectedTable.getPrimaryKeyColumns()) {
                 if (comma) {
-                    sb.append(", "); //$NON-NLS-1$
+                    sb.append(", ");
                 } else {
                     comma = true;
                 }
                 sb.append(introspectedColumn.getJavaProperty());
                 superColumns.add(introspectedColumn.getActualColumnName());
             }
-            sb.append(");"); //$NON-NLS-1$
+            sb.append(");");
             method.addBodyLine(sb.toString());
         }
 
         for (IntrospectedColumn introspectedColumn : constructorColumns) {
             if (!superColumns.contains(introspectedColumn.getActualColumnName())) {
                 sb.setLength(0);
-                sb.append("this."); //$NON-NLS-1$
+                sb.append("this.");
                 sb.append(introspectedColumn.getJavaProperty());
-                sb.append(" = "); //$NON-NLS-1$
+                sb.append(" = ");
                 sb.append(introspectedColumn.getJavaProperty());
                 sb.append(';');
                 method.addBodyLine(sb.toString());

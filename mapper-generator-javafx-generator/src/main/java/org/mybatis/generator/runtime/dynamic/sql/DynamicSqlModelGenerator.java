@@ -53,12 +53,11 @@ public class DynamicSqlModelGenerator extends AbstractJavaGenerator {
     @Override
     public List<CompilationUnit> getCompilationUnits() {
         FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();
-        progressCallback.startTask(getString("Progress.8", table.toString())); //$NON-NLS-1$
+        progressCallback.startTask(getString("Progress.8", table.toString()));
         Plugin plugins = context.getPlugins();
         CommentGenerator commentGenerator = context.getCommentGenerator();
 
-        FullyQualifiedJavaType type = new FullyQualifiedJavaType(
-                introspectedTable.getBaseRecordType());
+        FullyQualifiedJavaType type = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
         TopLevelClass topLevelClass = new TopLevelClass(type);
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(topLevelClass);
@@ -83,13 +82,11 @@ public class DynamicSqlModelGenerator extends AbstractJavaGenerator {
 
         String rootClass = getRootClass();
         for (IntrospectedColumn introspectedColumn : introspectedColumns) {
-            if (RootClassInfo.getInstance(rootClass, warnings)
-                    .containsProperty(introspectedColumn)) {
+            if (RootClassInfo.getInstance(rootClass, warnings).containsProperty(introspectedColumn)) {
                 continue;
             }
 
-            Field field = getJavaBeansFieldWithGeneratedAnnotation(introspectedColumn, context, introspectedTable,
-                    topLevelClass);
+            Field field = getJavaBeansFieldWithGeneratedAnnotation(introspectedColumn, context, introspectedTable, topLevelClass);
             
             if (plugins.modelFieldGenerated(field, topLevelClass,
                     introspectedColumn, introspectedTable,
@@ -157,9 +154,9 @@ public class DynamicSqlModelGenerator extends AbstractJavaGenerator {
         List<IntrospectedColumn> introspectedColumns = introspectedTable.getAllColumns();
         for (IntrospectedColumn introspectedColumn : introspectedColumns) {
             sb.setLength(0);
-            sb.append("this."); //$NON-NLS-1$
+            sb.append("this.");
             sb.append(introspectedColumn.getJavaProperty());
-            sb.append(" = "); //$NON-NLS-1$
+            sb.append(" = ");
             sb.append(introspectedColumn.getJavaProperty());
             sb.append(';');
             method.addBodyLine(sb.toString());

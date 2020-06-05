@@ -54,7 +54,7 @@ public class IgnoredColumnPattern {
 
     public void validate(List<String> errors, String tableName) {
         if (!stringHasValue(patternRegex)) {
-            errors.add(getString("ValidationError.27", //$NON-NLS-1$
+            errors.add(getString("ValidationError.27",
                     tableName));
         }
     }

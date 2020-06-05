@@ -71,11 +71,11 @@ public class JDBCConnectionFactory implements ConnectionFactory {
         Properties props = new Properties();
 
         if (stringHasValue(userId)) {
-            props.setProperty("user", userId); //$NON-NLS-1$
+            props.setProperty("user", userId);
         }
 
         if (stringHasValue(password)) {
-            props.setProperty("password", password); //$NON-NLS-1$
+            props.setProperty("password", password);
         }
 
         props.putAll(otherProperties);
@@ -84,7 +84,7 @@ public class JDBCConnectionFactory implements ConnectionFactory {
         Connection conn = driver.connect(connectionURL, props);
 
         if (conn == null) {
-            throw new SQLException(getString("RuntimeError.7")); //$NON-NLS-1$
+            throw new SQLException(getString("RuntimeError.7"));
         }
 
         return conn;
@@ -97,7 +97,7 @@ public class JDBCConnectionFactory implements ConnectionFactory {
             Class<?> clazz = ObjectFactory.externalClassForName(driverClass);
             driver = (Driver) clazz.getConstructor().newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(getString("RuntimeError.8"), e); //$NON-NLS-1$
+            throw new RuntimeException(getString("RuntimeError.8"), e);
         }
 
         return driver;
@@ -107,18 +107,18 @@ public class JDBCConnectionFactory implements ConnectionFactory {
     public void addConfigurationProperties(Properties properties) {
         // this should only be called when this connection factory is
         // specified in a ConnectionFactory configuration
-        userId = properties.getProperty("userId"); //$NON-NLS-1$
-        password = properties.getProperty("password"); //$NON-NLS-1$
-        connectionURL = properties.getProperty("connectionURL"); //$NON-NLS-1$
-        driverClass = properties.getProperty("driverClass"); //$NON-NLS-1$
+        userId = properties.getProperty("userId");
+        password = properties.getProperty("password");
+        connectionURL = properties.getProperty("connectionURL");
+        driverClass = properties.getProperty("driverClass");
 
         otherProperties = new Properties();
         otherProperties.putAll(properties);
 
         // remove all the properties that we have specific attributes for
-        otherProperties.remove("userId"); //$NON-NLS-1$
-        otherProperties.remove("password"); //$NON-NLS-1$
-        otherProperties.remove("connectionURL"); //$NON-NLS-1$
-        otherProperties.remove("driverClass"); //$NON-NLS-1$
+        otherProperties.remove("userId");
+        otherProperties.remove("password");
+        otherProperties.remove("connectionURL");
+        otherProperties.remove("driverClass");
     }
 }

@@ -35,10 +35,10 @@ public class XMLMapperGenerator extends AbstractXmlGenerator {
     protected XmlElement getSqlMapElement() {
         FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();
         progressCallback.startTask(getString(
-                "Progress.12", table.toString())); //$NON-NLS-1$
-        XmlElement answer = new XmlElement("mapper"); //$NON-NLS-1$
+                "Progress.12", table.toString()));
+        XmlElement answer = new XmlElement("mapper");
         String namespace = introspectedTable.getMyBatis3SqlMapNamespace();
-        answer.addAttribute(new Attribute("namespace", //$NON-NLS-1$
+        answer.addAttribute(new Attribute("namespace",
                 namespace));
 
         context.getCommentGenerator().addRootComment(answer);

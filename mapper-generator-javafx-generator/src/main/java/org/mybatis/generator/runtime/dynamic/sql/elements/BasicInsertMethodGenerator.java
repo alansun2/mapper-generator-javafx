@@ -45,27 +45,27 @@ public class BasicInsertMethodGenerator extends AbstractMethodGenerator {
         Set<FullyQualifiedJavaType> imports = new HashSet<>();
         
         FullyQualifiedJavaType adapter =
-                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter");
         FullyQualifiedJavaType annotation =
-                new FullyQualifiedJavaType("org.apache.ibatis.annotations.InsertProvider"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.InsertProvider");
         
         imports.add(new FullyQualifiedJavaType(
-                "org.mybatis.dynamic.sql.insert.render.InsertStatementProvider")); //$NON-NLS-1$
+                "org.mybatis.dynamic.sql.insert.render.InsertStatementProvider"));
         imports.add(adapter);
         imports.add(annotation);
         
         FullyQualifiedJavaType parameterType =
                 new FullyQualifiedJavaType(
-                        "org.mybatis.dynamic.sql.insert.render.InsertStatementProvider"); //$NON-NLS-1$
+                        "org.mybatis.dynamic.sql.insert.render.InsertStatementProvider");
         imports.add(recordType);
         parameterType.addTypeArgument(recordType);
         
-        Method method = new Method("insert"); //$NON-NLS-1$
+        Method method = new Method("insert");
         method.setAbstract(true);
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(parameterType, "insertStatement")); //$NON-NLS-1$
+        method.addParameter(new Parameter(parameterType, "insertStatement"));
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
-        method.addAnnotation("@InsertProvider(type=SqlProviderAdapter.class, method=\"insert\")"); //$NON-NLS-1$
+        method.addAnnotation("@InsertProvider(type=SqlProviderAdapter.class, method=\"insert\")");
 
         MethodAndImports.Builder builder = MethodAndImports.withMethod(method)
                 .withImports(imports);

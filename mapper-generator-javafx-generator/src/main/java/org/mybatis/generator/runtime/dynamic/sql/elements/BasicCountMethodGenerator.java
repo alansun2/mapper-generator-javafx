@@ -39,22 +39,22 @@ public class BasicCountMethodGenerator extends AbstractMethodGenerator {
         
         FullyQualifiedJavaType parameterType =
                 new FullyQualifiedJavaType(
-                        "org.mybatis.dynamic.sql.select.render.SelectStatementProvider"); //$NON-NLS-1$
+                        "org.mybatis.dynamic.sql.select.render.SelectStatementProvider");
         FullyQualifiedJavaType adapter =
-                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter");
         FullyQualifiedJavaType annotation =
-                new FullyQualifiedJavaType("org.apache.ibatis.annotations.SelectProvider"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.SelectProvider");
         
         imports.add(parameterType);
         imports.add(adapter);
         imports.add(annotation);
         
-        Method method = new Method("count"); //$NON-NLS-1$
+        Method method = new Method("count");
         method.setAbstract(true);
-        method.setReturnType(new FullyQualifiedJavaType("long")); //$NON-NLS-1$
-        method.addParameter(new Parameter(parameterType, "selectStatement")); //$NON-NLS-1$
+        method.setReturnType(new FullyQualifiedJavaType("long"));
+        method.addParameter(new Parameter(parameterType, "selectStatement"));
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
-        method.addAnnotation("@SelectProvider(type=SqlProviderAdapter.class, method=\"select\")"); //$NON-NLS-1$
+        method.addAnnotation("@SelectProvider(type=SqlProviderAdapter.class, method=\"select\")");
 
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

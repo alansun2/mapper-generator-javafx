@@ -48,12 +48,11 @@ public class JavaModelGeneratorConfiguration extends PropertyHolder {
 
     public void validate(List<String> errors, String contextId) {
         if (!stringHasValue(targetProject)) {
-            errors.add(getString("ValidationError.0", contextId)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.0", contextId));
         }
 
         if (!stringHasValue(targetPackage)) {
-            errors.add(getString("ValidationError.12", //$NON-NLS-1$
-                    "JavaModelGenerator", contextId)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.12", "JavaModelGenerator", contextId));
         }
     }
 }

@@ -36,20 +36,20 @@ public class DeleteByExampleMethodGenerator extends AbstractMethodGenerator {
         
         Set<FullyQualifiedJavaType> imports = new HashSet<>();
 
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.delete.DeleteDSL")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.delete.DeleteDSL"));
         imports.add(new FullyQualifiedJavaType(
-                "org.mybatis.dynamic.sql.delete.MyBatis3DeleteModelAdapter")); //$NON-NLS-1$
+                "org.mybatis.dynamic.sql.delete.MyBatis3DeleteModelAdapter"));
         
-        Method method = new Method("deleteByExample"); //$NON-NLS-1$
+        Method method = new Method("deleteByExample");
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         
         FullyQualifiedJavaType returnType =
-                new FullyQualifiedJavaType("DeleteDSL<MyBatis3DeleteModelAdapter<Integer>>"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("DeleteDSL<MyBatis3DeleteModelAdapter<Integer>>");
         method.setReturnType(returnType);
         method.addBodyLine(
-                "return DeleteDSL.deleteFromWithMapper(this::delete, " //$NON-NLS-1$
-                        + tableFieldName + ");"); //$NON-NLS-1$
+                "return DeleteDSL.deleteFromWithMapper(this::delete, "
+                        + tableFieldName + ");");
         
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

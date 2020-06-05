@@ -140,7 +140,7 @@ public class MyShellCallback extends DefaultShellCallback {
                     new InputSource(new InputStreamReader(new FileInputStream(targetFile), StandardCharsets.UTF_8)),
                     targetFile.getName());
         } catch (IOException | SAXException | ParserConfigurationException e) {
-            throw new ShellException(getString("Warning.13", //$NON-NLS-1$
+            throw new ShellException(getString("Warning.13",
                     targetFile.getName()), e);
         }
     }
@@ -163,7 +163,7 @@ public class MyShellCallback extends DefaultShellCallback {
         DocumentType existingDocType = existingDocument.getDoctype();
 
         if (!newDocType.getName().equals(existingDocType.getName())) {
-            throw new ShellException(getString("Warning.12", //$NON-NLS-1$
+            throw new ShellException(getString("Warning.12",
                     existingFileName));
         }
 
@@ -265,7 +265,7 @@ public class MyShellCallback extends DefaultShellCallback {
         public InputSource resolveEntity(String publicId, String systemId)
                 throws SAXException, IOException {
 
-            StringReader sr = new StringReader(""); //$NON-NLS-1$
+            StringReader sr = new StringReader("");
 
             return new InputSource(sr);
         }

@@ -40,22 +40,22 @@ public class BasicDeleteMethodGenerator extends AbstractMethodGenerator {
         
         FullyQualifiedJavaType parameterType =
                 new FullyQualifiedJavaType(
-                        "org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider"); //$NON-NLS-1$
+                        "org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider");
         FullyQualifiedJavaType adapter =
-                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter");
         FullyQualifiedJavaType annotation =
-                new FullyQualifiedJavaType("org.apache.ibatis.annotations.DeleteProvider"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.DeleteProvider");
 
         imports.add(parameterType);
         imports.add(adapter);
         imports.add(annotation);
         
-        Method method = new Method("delete"); //$NON-NLS-1$
+        Method method = new Method("delete");
         method.setAbstract(true);
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(parameterType, "deleteStatement")); //$NON-NLS-1$
+        method.addParameter(new Parameter(parameterType, "deleteStatement"));
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
-        method.addAnnotation("@DeleteProvider(type=SqlProviderAdapter.class, method=\"delete\")"); //$NON-NLS-1$
+        method.addAnnotation("@DeleteProvider(type=SqlProviderAdapter.class, method=\"delete\")");
 
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

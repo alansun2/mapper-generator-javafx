@@ -32,7 +32,7 @@ public class BodyLineRenderer {
         while (listIter.hasNext()) {
             sb.setLength(0);
             String line = listIter.next();
-            if (line.startsWith("}")) { //$NON-NLS-1$
+            if (line.startsWith("}")) {
                 indentLevel--;
             }
 
@@ -40,15 +40,15 @@ public class BodyLineRenderer {
             sb.append(line);
             lines.add(sb.toString());
 
-            if (isCodeBlockStartExceptSwitchStatement(line) || line.endsWith(":")) { //$NON-NLS-1$
+            if (isCodeBlockStartExceptSwitchStatement(line) || line.endsWith(":")) {
                 indentLevel++;
             }
 
-            if (line.startsWith("break")) { //$NON-NLS-1$
+            if (line.startsWith("break")) {
                 // if the next line is '}', then don't outdent
                 if (listIter.hasNext()) {
                     String nextLine = listIter.next();
-                    if (nextLine.startsWith("}")) { //$NON-NLS-1$
+                    if (nextLine.startsWith("}")) {
                         indentLevel++;
                     }
 
@@ -63,6 +63,6 @@ public class BodyLineRenderer {
     }
     
     private boolean isCodeBlockStartExceptSwitchStatement(String line) {
-        return line.endsWith("{") && !line.startsWith("switch"); //$NON-NLS-1$ //$NON-NLS-2$
+        return line.endsWith("{") && !line.startsWith("switch"); //$NON-NLS-2$
     }
 }

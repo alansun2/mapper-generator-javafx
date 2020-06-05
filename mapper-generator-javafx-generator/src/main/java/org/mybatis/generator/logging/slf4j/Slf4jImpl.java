@@ -31,7 +31,7 @@ public class Slf4jImpl implements Log {
         if (logger instanceof LocationAwareLogger) {
             try {
                 // check for slf4j >= 1.6 method signature
-                logger.getClass().getMethod("log", Marker.class, String.class, int.class, //$NON-NLS-1$
+                logger.getClass().getMethod("log", Marker.class, String.class, int.class,
                         String.class, Object[].class, Throwable.class);
                 log = new Slf4jLocationAwareLoggerImpl((LocationAwareLogger) logger);
                 return;

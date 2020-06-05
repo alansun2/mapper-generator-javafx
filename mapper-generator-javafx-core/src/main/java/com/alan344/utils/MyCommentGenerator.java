@@ -62,7 +62,7 @@ public class MyCommentGenerator implements CommentGenerator {
     /**
      * 添加作者配置
      */
-    private static final String COMMENT_GENERATOR_AUTHOR = "author"; //$NON-NLS-1$
+    private static final String COMMENT_GENERATOR_AUTHOR = "author";
 
     /**
      * Instantiates a new default comment generator.

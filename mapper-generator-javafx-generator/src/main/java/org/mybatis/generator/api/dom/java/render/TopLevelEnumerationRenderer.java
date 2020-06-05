@@ -38,6 +38,6 @@ public class TopLevelEnumerationRenderer {
         lines.addAll(renderInnerEnumNoIndent(topLevelEnumeration, topLevelEnumeration));
         
         return lines.stream()
-                .collect(Collectors.joining(System.getProperty("line.separator"))); //$NON-NLS-1$
+                .collect(Collectors.joining(System.getProperty("line.separator")));
     }    
 }

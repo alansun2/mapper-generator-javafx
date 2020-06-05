@@ -23,9 +23,9 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
  * @author Jeff Butler
  */
 public enum ModelType {
-    HIERARCHICAL("hierarchical"), //$NON-NLS-1$
-    FLAT("flat"), //$NON-NLS-1$
-    CONDITIONAL("conditional"); //$NON-NLS-1$
+    HIERARCHICAL("hierarchical"),
+    FLAT("flat"),
+    CONDITIONAL("conditional");
 
     private final String type;
 
@@ -42,7 +42,7 @@ public enum ModelType {
             return CONDITIONAL;
         } else {
             throw new RuntimeException(getString(
-                    "RuntimeError.13", type)); //$NON-NLS-1$
+                    "RuntimeError.13", type));
         }
     }
 }

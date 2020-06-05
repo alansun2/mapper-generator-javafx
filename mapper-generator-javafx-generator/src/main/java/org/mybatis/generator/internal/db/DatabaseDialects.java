@@ -22,15 +22,15 @@ package org.mybatis.generator.internal.db;
  */
 public enum DatabaseDialects {
 
-    DB2("VALUES IDENTITY_VAL_LOCAL()"), //$NON-NLS-1$
-    MYSQL("SELECT LAST_INSERT_ID()"), //$NON-NLS-1$
-    SQLSERVER("SELECT SCOPE_IDENTITY()"), //$NON-NLS-1$
-    CLOUDSCAPE("VALUES IDENTITY_VAL_LOCAL()"), //$NON-NLS-1$
-    DERBY("VALUES IDENTITY_VAL_LOCAL()"), //$NON-NLS-1$
-    HSQLDB("CALL IDENTITY()"), //$NON-NLS-1$
-    SYBASE("SELECT @@IDENTITY"), //$NON-NLS-1$
-    DB2_MF("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1"), //$NON-NLS-1$
-    INFORMIX("select dbinfo('sqlca.sqlerrd1') from systables where tabid=1"); //$NON-NLS-1$
+    DB2("VALUES IDENTITY_VAL_LOCAL()"),
+    MYSQL("SELECT LAST_INSERT_ID()"),
+    SQLSERVER("SELECT SCOPE_IDENTITY()"),
+    CLOUDSCAPE("VALUES IDENTITY_VAL_LOCAL()"),
+    DERBY("VALUES IDENTITY_VAL_LOCAL()"),
+    HSQLDB("CALL IDENTITY()"),
+    SYBASE("SELECT @@IDENTITY"),
+    DB2_MF("SELECT IDENTITY_VAL_LOCAL() FROM SYSIBM.SYSDUMMY1"),
+    INFORMIX("select dbinfo('sqlca.sqlerrd1') from systables where tabid=1");
 
     private String identityRetrievalStatement;
 
@@ -53,23 +53,23 @@ public enum DatabaseDialects {
     public static DatabaseDialects getDatabaseDialect(String database) {
         DatabaseDialects returnValue = null;
 
-        if ("DB2".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        if ("DB2".equalsIgnoreCase(database)) {
             returnValue = DB2;
-        } else if ("MySQL".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("MySQL".equalsIgnoreCase(database)) {
             returnValue = MYSQL;
-        } else if ("SqlServer".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("SqlServer".equalsIgnoreCase(database)) {
             returnValue = SQLSERVER;
-        } else if ("Cloudscape".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("Cloudscape".equalsIgnoreCase(database)) {
             returnValue = CLOUDSCAPE;
-        } else if ("Derby".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("Derby".equalsIgnoreCase(database)) {
             returnValue = DERBY;
-        } else if ("HSQLDB".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("HSQLDB".equalsIgnoreCase(database)) {
             returnValue = HSQLDB;
-        } else if ("SYBASE".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("SYBASE".equalsIgnoreCase(database)) {
             returnValue = SYBASE;
-        } else if ("DB2_MF".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("DB2_MF".equalsIgnoreCase(database)) {
             returnValue = DB2_MF;
-        } else if ("Informix".equalsIgnoreCase(database)) { //$NON-NLS-1$
+        } else if ("Informix".equalsIgnoreCase(database)) {
             returnValue = INFORMIX;
         }
 

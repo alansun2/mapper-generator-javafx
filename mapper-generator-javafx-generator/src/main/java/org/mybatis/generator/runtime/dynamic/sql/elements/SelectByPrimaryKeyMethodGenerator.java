@@ -40,31 +40,31 @@ public class SelectByPrimaryKeyMethodGenerator extends AbstractMethodGenerator {
         
         Set<FullyQualifiedJavaType> imports = new HashSet<>();
         
-        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL")); //$NON-NLS-1$
+        imports.add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.select.SelectDSL"));
         imports.add(recordType);
         
-        Method method = new Method("selectByPrimaryKey"); //$NON-NLS-1$
+        Method method = new Method("selectByPrimaryKey");
         method.setDefault(true);
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
         method.setReturnType(recordType);
         
         StringBuilder sb = new StringBuilder();
-        sb.append("return SelectDSL.selectWithMapper(this::selectOne, "); //$NON-NLS-1$
+        sb.append("return SelectDSL.selectWithMapper(this::selectOne, ");
         sb.append(fragmentGenerator.getSelectList());
         sb.append(')');
         method.addBodyLine(sb.toString());
         
-        method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+        method.addBodyLine("        .from(" + tableFieldName + ")"); //$NON-NLS-2$
         
         MethodAndImports.Builder builder = MethodAndImports.withMethod(method)
-                .withStaticImport("org.mybatis.dynamic.sql.SqlBuilder.*") //$NON-NLS-1$
+                .withStaticImport("org.mybatis.dynamic.sql.SqlBuilder.*")
                 .withImports(imports);
         
         MethodParts methodParts = fragmentGenerator.getPrimaryKeyWhereClauseAndParameters();
         acceptParts(builder, method, methodParts);
         
-        method.addBodyLine("        .build()"); //$NON-NLS-1$
-        method.addBodyLine("        .execute();"); //$NON-NLS-1$
+        method.addBodyLine("        .build()");
+        method.addBodyLine("        .execute();");
         
         return builder.build();
     }

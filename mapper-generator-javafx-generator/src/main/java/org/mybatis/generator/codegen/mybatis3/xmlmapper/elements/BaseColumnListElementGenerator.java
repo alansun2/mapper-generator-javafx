@@ -31,9 +31,9 @@ public class BaseColumnListElementGenerator extends AbstractXmlElementGenerator 
 
     @Override
     public void addElements(XmlElement parentElement) {
-        XmlElement answer = new XmlElement("sql"); //$NON-NLS-1$
+        XmlElement answer = new XmlElement("sql");
 
-        answer.addAttribute(new Attribute("id", //$NON-NLS-1$
+        answer.addAttribute(new Attribute("id",
                 introspectedTable.getBaseColumnListId()));
 
         context.getCommentGenerator().addComment(answer);
@@ -46,7 +46,7 @@ public class BaseColumnListElementGenerator extends AbstractXmlElementGenerator 
                     .next()));
 
             if (iter.hasNext()) {
-                sb.append(", "); //$NON-NLS-1$
+                sb.append(", ");
             }
 
             if (sb.length() > 80) {

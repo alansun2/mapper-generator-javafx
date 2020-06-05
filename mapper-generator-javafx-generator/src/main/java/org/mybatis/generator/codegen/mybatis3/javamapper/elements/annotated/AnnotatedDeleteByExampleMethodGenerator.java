@@ -31,11 +31,11 @@ public class AnnotatedDeleteByExampleMethodGenerator extends
     public void addMapperAnnotations(Method method) {
         FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(introspectedTable.getMyBatis3SqlProviderType());
         StringBuilder sb = new StringBuilder();
-        sb.append("@DeleteProvider(type="); //$NON-NLS-1$
+        sb.append("@DeleteProvider(type=");
         sb.append(fqjt.getShortName());
-        sb.append(".class, method=\""); //$NON-NLS-1$
+        sb.append(".class, method=\"");
         sb.append(introspectedTable.getDeleteByExampleStatementId());
-        sb.append("\")"); //$NON-NLS-1$
+        sb.append("\")");
 
         method.addAnnotation(sb.toString());
     }
@@ -43,6 +43,6 @@ public class AnnotatedDeleteByExampleMethodGenerator extends
     @Override
     public void addExtraImports(Interface interfaze) {
         interfaze.addImportedType(
-                new FullyQualifiedJavaType("org.apache.ibatis.annotations.DeleteProvider")); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.DeleteProvider"));
     }
 }

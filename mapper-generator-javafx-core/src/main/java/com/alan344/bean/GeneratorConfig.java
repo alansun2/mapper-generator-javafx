@@ -85,4 +85,12 @@ public class GeneratorConfig {
      * 使用原来的字段名
      */
     private boolean useActualColumnNames;
+    /**
+     * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
+     */
+    private String targetName;
+    /**
+     * 是否使用tk.Mybatis生成代码
+     */
+    private boolean useTkMybatis;
 }

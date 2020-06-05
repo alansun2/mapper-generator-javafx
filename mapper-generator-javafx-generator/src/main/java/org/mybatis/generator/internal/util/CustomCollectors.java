@@ -36,7 +36,7 @@ public interface CustomCollectors {
             CharSequence suffix) {
         return Collector.of(() -> {
             StringJoiner sj = new StringJoiner(delimiter, prefix, suffix);
-            sj.setEmptyValue(""); //$NON-NLS-1$
+            sj.setEmptyValue("");
             return sj;
         }, StringJoiner::add, StringJoiner::merge, StringJoiner::toString);
     }

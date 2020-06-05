@@ -384,7 +384,7 @@ public class TableConfiguration extends PropertyHolder {
     public void validate(List<String> errors, int listPosition) {
         if (!stringHasValue(tableName)) {
             errors.add(Messages.getString(
-                    "ValidationError.6", Integer.toString(listPosition))); //$NON-NLS-1$
+                    "ValidationError.6", Integer.toString(listPosition)));
         }
 
         String fqTableName = composeFullyQualifiedTableName(
@@ -403,7 +403,7 @@ public class TableConfiguration extends PropertyHolder {
             boolean queryId2Set = stringHasValue(selectByPrimaryKeyQueryId);
 
             if (queryId1Set != queryId2Set) {
-                errors.add(Messages.getString("ValidationError.13", //$NON-NLS-1$
+                errors.add(Messages.getString("ValidationError.13",
                         fqTableName));
             }
         }

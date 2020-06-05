@@ -73,7 +73,7 @@ public class ColumnRenamingRule {
 
     public void validate(List<String> errors, String tableName) {
         if (!stringHasValue(searchString)) {
-            errors.add(getString("ValidationError.14", tableName)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.14", tableName));
         }
     }
 }

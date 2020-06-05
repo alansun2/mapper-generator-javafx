@@ -41,12 +41,12 @@ public class InsertBatchElementGenerator extends AbstractXmlElementGenerator {
 
     @Override
     public void addElements(XmlElement parentElement) {
-        XmlElement answer = new XmlElement("insert"); //$NON-NLS-1$
+        XmlElement answer = new XmlElement("insert");
 
         answer.addAttribute(new Attribute(
-                "id", introspectedTable.getInsertBatchStatementId())); //$NON-NLS-1$
+                "id", introspectedTable.getInsertBatchStatementId()));
 
-        answer.addAttribute(new Attribute("parameterType", //$NON-NLS-1$
+        answer.addAttribute(new Attribute("parameterType",
                 FullyQualifiedJavaType.getNewListInstance().getFullyQualifiedName()));
 
         context.getCommentGenerator().addComment(answer);
@@ -68,8 +68,8 @@ public class InsertBatchElementGenerator extends AbstractXmlElementGenerator {
             insertClause.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
             valuesClause.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn, "item."));
             if (i + 1 < columns.size()) {
-                insertClause.append(", "); //$NON-NLS-1$
-                valuesClause.append(", "); //$NON-NLS-1$
+                insertClause.append(", ");
+                valuesClause.append(", ");
             }
 
             answer.addElement(new TextElement(insertClause.toString()));

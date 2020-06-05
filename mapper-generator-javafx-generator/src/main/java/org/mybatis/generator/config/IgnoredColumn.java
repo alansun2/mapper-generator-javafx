@@ -61,7 +61,7 @@ public class IgnoredColumn {
 
     public void validate(List<String> errors, String tableName) {
         if (!stringHasValue(columnName)) {
-            errors.add(getString("ValidationError.21", //$NON-NLS-1$
+            errors.add(getString("ValidationError.21",
                     tableName));
         }
     }

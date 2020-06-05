@@ -39,19 +39,19 @@ public class FieldRenderer {
         sb.append(field.getVisibility().getValue());
 
         if (field.isStatic()) {
-            sb.append("static "); //$NON-NLS-1$
+            sb.append("static ");
         }
 
         if (field.isFinal()) {
-            sb.append("final "); //$NON-NLS-1$
+            sb.append("final ");
         }
 
         if (field.isTransient()) {
-            sb.append("transient "); //$NON-NLS-1$
+            sb.append("transient ");
         }
 
         if (field.isVolatile()) {
-            sb.append("volatile "); //$NON-NLS-1$
+            sb.append("volatile ");
         }
 
         sb.append(JavaDomUtils.calculateTypeName(compilationUnit, field.getType()));
@@ -65,7 +65,7 @@ public class FieldRenderer {
     
     private String renderInitializationString(Field field) {
         return field.getInitializationString()
-                .map(is -> " = " + is) //$NON-NLS-1$
-                .orElse(""); //$NON-NLS-1$
+                .map(is -> " = " + is)
+                .orElse("");
     }
 }

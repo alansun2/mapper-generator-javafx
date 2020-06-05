@@ -5,18 +5,18 @@ import com.alan344.constants.StageConstants;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ColumnService;
 import com.alan344.service.TableService;
-import com.alan344.service.MyMybatisGeneratorService;
+import com.alan344.service.generator.MapperGeneratorStrategyContext;
 import com.alan344.utils.TextUtils;
 import com.alan344happyframework.util.StringUtils;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import javax.annotation.Resource;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -51,6 +51,9 @@ public class ExportController implements Initializable {
     private TextField configNameText;
 
     @FXML
+    private ToggleGroup targetName;
+
+    @FXML
     private CheckBox userJava8CheckBox;
 
     @FXML
@@ -62,8 +65,11 @@ public class ExportController implements Initializable {
     @FXML
     private CheckBox useSwaggerCheckBox;
 
+    @FXML
+    private CheckBox useTkMybatis;
+
     @Resource
-    private MyMybatisGeneratorService myMybatisGeneratorService;
+    private MapperGeneratorStrategyContext mapperGeneratorStrategyContext;
 
     @Resource
     private TableService tableService;
@@ -99,11 +105,13 @@ public class ExportController implements Initializable {
         generatorConfig.setMapperLocation(mapperLocationText.getText());
         generatorConfig.setMapperPackage(mapperPackageText.getText());
         generatorConfig.setMapperXmlLocation(xmlLocationText.getText());
+        generatorConfig.setTargetName(((RadioButton) targetName.getSelectedToggle()).getText());
 
         generatorConfig.setUserJava8(userJava8CheckBox.isSelected());
         generatorConfig.setUseBigDecimal(useBigDecimalCheckBox.isSelected());
         generatorConfig.setUseComment(useCommentCheckBox.isSelected());
         generatorConfig.setUseSwagger(useSwaggerCheckBox.isSelected());
+        generatorConfig.setUseTkMybatis(useTkMybatis.isSelected());
 //        generatorConfig.setUserMerge(useMergeCheckBox.isSelected());
 
         configController.addConfig(generatorConfig);
@@ -117,7 +125,7 @@ public class ExportController implements Initializable {
         boolean exportSuccess = true;
         // 调用 mybatis generator 生成文件
         try {
-            myMybatisGeneratorService.generator(generatorConfig);
+            mapperGeneratorStrategyContext.getMapperGeneratorStrategy(generatorConfig).generator(generatorConfig);
         } catch (Throwable e) {
             log.error("export fail", e);
             exportSuccess = false;
@@ -142,6 +150,28 @@ public class ExportController implements Initializable {
     @FXML
     public void cancel() {
         StageConstants.configStage.close();
+    }
+
+    @FXML
+    public void useTkMybatis() {
+        final boolean selected = useTkMybatis.isSelected();
+        final ObservableList<Toggle> toggles = targetName.getToggles();
+        if (selected) {
+            toggles.forEach(toggle -> {
+                if ("MyBatis3Simple".equals(((RadioButton) toggle).getText())) {
+                    toggle.setSelected(true);
+                }
+                ((RadioButton) toggle).setDisable(true);
+            });
+        } else {
+            toggles.forEach(toggle -> {
+                if ("Mybatis3".equals(((RadioButton) toggle).getText())) {
+                    toggle.setSelected(true);
+                }
+                ((RadioButton) toggle).setDisable(false);
+            });
+        }
+
     }
 
     //-------------------------文件夹浏览------------------------------------------------------------------------------//
@@ -225,3 +255,4 @@ public class ExportController implements Initializable {
 //        useMergeCheckBox.setSelected(false);
     }
 }
+

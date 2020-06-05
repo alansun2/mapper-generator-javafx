@@ -53,7 +53,7 @@ public class JavaDomUtils {
 
         return fqjt.getTypeArguments().stream()
                 .map(t -> calculateTypeName(compilationUnit, t))
-                .collect(Collectors.joining(", ", baseTypeName + "<", ">")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .collect(Collectors.joining(", ", baseTypeName + "<", ">")); //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     private static boolean typeDoesNotRequireImport(FullyQualifiedJavaType fullyQualifiedJavaType) {

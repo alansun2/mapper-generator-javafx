@@ -36,7 +36,7 @@ public class ToStringPlugin extends PluginAdapter {
     @Override
     public void setProperties(Properties properties) {
         super.setProperties(properties);
-        useToStringFromRoot = isTrue(properties.getProperty("useToStringFromRoot")); //$NON-NLS-1$
+        useToStringFromRoot = isTrue(properties.getProperty("useToStringFromRoot"));
     }
 
     @Override
@@ -67,10 +67,10 @@ public class ToStringPlugin extends PluginAdapter {
 
     private void generateToString(IntrospectedTable introspectedTable,
             TopLevelClass topLevelClass) {
-        Method method = new Method("toString"); //$NON-NLS-1$
+        Method method = new Method("toString");
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setReturnType(FullyQualifiedJavaType.getStringInstance());
-        method.addAnnotation("@Override"); //$NON-NLS-1$
+        method.addAnnotation("@Override");
 
         if (introspectedTable.getTargetRuntime() == TargetRuntime.MYBATIS3_DSQL) {
             context.getCommentGenerator().addGeneralMethodAnnotation(method,
@@ -80,26 +80,26 @@ public class ToStringPlugin extends PluginAdapter {
                     introspectedTable);
         }
 
-        method.addBodyLine("StringBuilder sb = new StringBuilder();"); //$NON-NLS-1$
-        method.addBodyLine("sb.append(getClass().getSimpleName());"); //$NON-NLS-1$
-        method.addBodyLine("sb.append(\" [\");"); //$NON-NLS-1$
-        method.addBodyLine("sb.append(\"Hash = \").append(hashCode());"); //$NON-NLS-1$
+        method.addBodyLine("StringBuilder sb = new StringBuilder();");
+        method.addBodyLine("sb.append(getClass().getSimpleName());");
+        method.addBodyLine("sb.append(\" [\");");
+        method.addBodyLine("sb.append(\"Hash = \").append(hashCode());");
         StringBuilder sb = new StringBuilder();
         for (Field field : topLevelClass.getFields()) {
             String property = field.getName();
             sb.setLength(0);
-            sb.append("sb.append(\"").append(", ").append(property) //$NON-NLS-1$ //$NON-NLS-2$
-                    .append("=\")").append(".append(").append(property) //$NON-NLS-1$ //$NON-NLS-2$
-                    .append(");"); //$NON-NLS-1$
+            sb.append("sb.append(\"").append(", ").append(property) //$NON-NLS-2$
+                    .append("=\")").append(".append(").append(property) //$NON-NLS-2$
+                    .append(");");
             method.addBodyLine(sb.toString());
         }
 
-        method.addBodyLine("sb.append(\"]\");"); //$NON-NLS-1$
+        method.addBodyLine("sb.append(\"]\");");
         if (useToStringFromRoot && topLevelClass.getSuperClass().isPresent()) {
-            method.addBodyLine("sb.append(\", from super class \");"); //$NON-NLS-1$
-            method.addBodyLine("sb.append(super.toString());"); //$NON-NLS-1$
+            method.addBodyLine("sb.append(\", from super class \");");
+            method.addBodyLine("sb.append(super.toString());");
         }
-        method.addBodyLine("return sb.toString();"); //$NON-NLS-1$
+        method.addBodyLine("return sb.toString();");
 
         topLevelClass.addMethod(method);
     }

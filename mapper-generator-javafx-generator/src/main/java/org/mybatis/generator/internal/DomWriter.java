@@ -137,7 +137,7 @@ public class DomWriter {
                 && ((c >= 0x01 && c <= 0x1F && c != 0x09 && c != 0x0A)
                         || (c >= 0x7F && c <= 0x9F) || c == 0x2028)
                 || isAttValue && (c == 0x09 || c == 0x0A)) {
-            printWriter.print("&#x"); //$NON-NLS-1$
+            printWriter.print("&#x");
             printWriter.print(Integer.toHexString(c).toUpperCase());
             printWriter.print(';');
         } else {
@@ -151,7 +151,7 @@ public class DomWriter {
         // line separator.  XML parsing forces \n only after a parse,
         // but we should write it out as it was to avoid whitespace
         // commits on some version control systems.
-        printWriter.print(System.getProperty("line.separator")); //$NON-NLS-1$
+        printWriter.print(System.getProperty("line.separator"));
     }
 
     private void handleCarriageReturn() {
@@ -159,29 +159,29 @@ public class DomWriter {
         // must be printed as a literal otherwise
         // it would be normalized to LF when the document
         // is reparsed.
-        printWriter.print("&#xD;"); //$NON-NLS-1$
+        printWriter.print("&#xD;");
     }
 
     private void handleDoubleQuote(boolean isAttValue) {
         // A '"' that appears in character data
         // does not need to be escaped.
         if (isAttValue) {
-            printWriter.print("&quot;"); //$NON-NLS-1$
+            printWriter.print("&quot;");
         } else {
             printWriter.print('"');
         }
     }
 
     private void handleAmpersand() {
-        printWriter.print("&amp;"); //$NON-NLS-1$
+        printWriter.print("&amp;");
     }
 
     private void handleGreaterThan() {
-        printWriter.print("&gt;"); //$NON-NLS-1$
+        printWriter.print("&gt;");
     }
 
     private void handleLessThan() {
-        printWriter.print("&lt;"); //$NON-NLS-1$
+        printWriter.print("&lt;");
     }
 
     /**
@@ -241,16 +241,16 @@ public class DomWriter {
 
         default:
             throw new ShellException(getString(
-                    "RuntimeError.18", Short.toString(type))); //$NON-NLS-1$
+                    "RuntimeError.18", Short.toString(type)));
         }
     }
 
     protected void write(Document node) throws ShellException {
-        isXML11 = "1.1".equals(getVersion(node)); //$NON-NLS-1$
+        isXML11 = "1.1".equals(getVersion(node));
         if (isXML11) {
-            printWriter.println("<?xml version=\"1.1\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+            printWriter.println("<?xml version=\"1.1\" encoding=\"UTF-8\"?>");
         } else {
-            printWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"); //$NON-NLS-1$
+            printWriter.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         }
         printWriter.flush();
         write(node.getDoctype());
@@ -258,25 +258,25 @@ public class DomWriter {
     }
 
     protected void write(DocumentType node) {
-        printWriter.print("<!DOCTYPE "); //$NON-NLS-1$
+        printWriter.print("<!DOCTYPE ");
         printWriter.print(node.getName());
         String publicId = node.getPublicId();
         String systemId = node.getSystemId();
         if (publicId != null) {
-            printWriter.print(" PUBLIC \""); //$NON-NLS-1$
+            printWriter.print(" PUBLIC \"");
             printWriter.print(publicId);
-            printWriter.print("\" \""); //$NON-NLS-1$
+            printWriter.print("\" \"");
             printWriter.print(systemId);
             printWriter.print('\"');
         } else if (systemId != null) {
-            printWriter.print(" SYSTEM \""); //$NON-NLS-1$
+            printWriter.print(" SYSTEM \"");
             printWriter.print(systemId);
             printWriter.print('"');
         }
 
         String internalSubset = node.getInternalSubset();
         if (internalSubset != null) {
-            printWriter.println(" ["); //$NON-NLS-1$
+            printWriter.println(" [");
             printWriter.print(internalSubset);
             printWriter.print(']');
         }
@@ -290,13 +290,13 @@ public class DomWriter {
         for (Attr attr : attrs) {
             printWriter.print(' ');
             printWriter.print(attr.getNodeName());
-            printWriter.print("=\""); //$NON-NLS-1$
+            printWriter.print("=\"");
             normalizeAndPrint(attr.getNodeValue(), true);
             printWriter.print('"');
         }
 
         if (node.getChildNodes().getLength() == 0) {
-            printWriter.print(" />"); //$NON-NLS-1$
+            printWriter.print(" />");
             printWriter.flush();
         } else {
             printWriter.print('>');
@@ -308,7 +308,7 @@ public class DomWriter {
                 child = child.getNextSibling();
             }
 
-            printWriter.print("</"); //$NON-NLS-1$
+            printWriter.print("</");
             printWriter.print(node.getNodeName());
             printWriter.print('>');
             printWriter.flush();
@@ -323,7 +323,7 @@ public class DomWriter {
     }
 
     protected void write(CDATASection node) {
-        printWriter.print("<![CDATA["); //$NON-NLS-1$
+        printWriter.print("<![CDATA[");
         String data = node.getNodeValue();
         // XML parsers normalize line endings to '\n'.  We should write
         // it out as it was in the original to avoid whitespace commits
@@ -337,7 +337,7 @@ public class DomWriter {
                 printWriter.print(c);
             }
         }
-        printWriter.print("]]>"); //$NON-NLS-1$
+        printWriter.print("]]>");
         printWriter.flush();
     }
 
@@ -347,24 +347,24 @@ public class DomWriter {
     }
 
     protected void write(ProcessingInstruction node) {
-        printWriter.print("<?"); //$NON-NLS-1$
+        printWriter.print("<?");
         printWriter.print(node.getNodeName());
         String data = node.getNodeValue();
         if (data != null && data.length() > 0) {
             printWriter.print(' ');
             printWriter.print(data);
         }
-        printWriter.print("?>"); //$NON-NLS-1$
+        printWriter.print("?>");
         printWriter.flush();
     }
 
     protected void write(Comment node) {
-        printWriter.print("<!--"); //$NON-NLS-1$
+        printWriter.print("<!--");
         String comment = node.getNodeValue();
         if (comment != null && comment.length() > 0) {
             normalizeAndPrint(comment, false);
         }
-        printWriter.print("-->"); //$NON-NLS-1$
+        printWriter.print("-->");
         printWriter.flush();
     }
 }

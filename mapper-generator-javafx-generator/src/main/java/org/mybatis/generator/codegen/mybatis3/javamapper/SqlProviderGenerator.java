@@ -49,7 +49,7 @@ public class SqlProviderGenerator extends AbstractJavaGenerator {
 
     @Override
     public List<CompilationUnit> getCompilationUnits() {
-        progressCallback.startTask(getString("Progress.18", //$NON-NLS-1$
+        progressCallback.startTask(getString("Progress.18",
                 introspectedTable.getFullyQualifiedTable().toString()));
         CommentGenerator commentGenerator = context.getCommentGenerator();
 

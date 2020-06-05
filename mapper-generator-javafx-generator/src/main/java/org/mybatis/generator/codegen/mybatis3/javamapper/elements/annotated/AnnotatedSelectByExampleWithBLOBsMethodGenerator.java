@@ -36,18 +36,18 @@ public class AnnotatedSelectByExampleWithBLOBsMethodGenerator extends SelectByEx
         FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(introspectedTable.getMyBatis3SqlProviderType());
 
         StringBuilder sb = new StringBuilder();
-        sb.append("@SelectProvider(type="); //$NON-NLS-1$
+        sb.append("@SelectProvider(type=");
         sb.append(fqjt.getShortName());
-        sb.append(".class, method=\""); //$NON-NLS-1$
+        sb.append(".class, method=\"");
         sb.append(introspectedTable.getSelectByExampleWithBLOBsStatementId());
-        sb.append("\")"); //$NON-NLS-1$
+        sb.append("\")");
 
         method.addAnnotation(sb.toString());
 
         if (introspectedTable.isConstructorBased()) {
-            method.addAnnotation("@ConstructorArgs({"); //$NON-NLS-1$
+            method.addAnnotation("@ConstructorArgs({");
         } else {
-            method.addAnnotation("@Results({"); //$NON-NLS-1$
+            method.addAnnotation("@Results({");
         }
 
         Iterator<IntrospectedColumn> iterPk = introspectedTable.getPrimaryKeyColumns().iterator();
@@ -80,24 +80,24 @@ public class AnnotatedSelectByExampleWithBLOBsMethodGenerator extends SelectByEx
             method.addAnnotation(sb.toString());
         }
 
-        method.addAnnotation("})"); //$NON-NLS-1$
+        method.addAnnotation("})");
     }
 
     @Override
     public void addExtraImports(Interface interfaze) {
         interfaze.addImportedType(
-                new FullyQualifiedJavaType("org.apache.ibatis.annotations.SelectProvider")); //$NON-NLS-1$
-        interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.type.JdbcType")); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.SelectProvider"));
+        interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.type.JdbcType"));
 
         if (introspectedTable.isConstructorBased()) {
-            interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Arg")); //$NON-NLS-1$
+            interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Arg"));
             interfaze.addImportedType(
-                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.ConstructorArgs")); //$NON-NLS-1$
+                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.ConstructorArgs"));
         } else {
             interfaze.addImportedType(
-                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Result")); //$NON-NLS-1$
+                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Result"));
             interfaze.addImportedType(
-                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Results")); //$NON-NLS-1$
+                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Results"));
         }
     }
 }

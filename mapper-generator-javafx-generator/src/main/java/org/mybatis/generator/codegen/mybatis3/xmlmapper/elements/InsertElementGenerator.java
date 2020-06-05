@@ -38,10 +38,10 @@ public class InsertElementGenerator extends AbstractXmlElementGenerator {
 
     @Override
     public void addElements(XmlElement parentElement) {
-        XmlElement answer = new XmlElement("insert"); //$NON-NLS-1$
+        XmlElement answer = new XmlElement("insert");
 
         answer.addAttribute(new Attribute(
-                "id", introspectedTable.getInsertStatementId())); //$NON-NLS-1$
+                "id", introspectedTable.getInsertStatementId()));
 
         FullyQualifiedJavaType parameterType;
         if (isSimple) {
@@ -52,7 +52,7 @@ public class InsertElementGenerator extends AbstractXmlElementGenerator {
                     .calculateAllFieldsClass();
         }
 
-        answer.addAttribute(new Attribute("parameterType", //$NON-NLS-1$
+        answer.addAttribute(new Attribute("parameterType",
                 parameterType.getFullyQualifiedName()));
 
         context.getCommentGenerator().addComment(answer);
@@ -61,13 +61,13 @@ public class InsertElementGenerator extends AbstractXmlElementGenerator {
 
         StringBuilder insertClause = new StringBuilder();
 
-        insertClause.append("insert into "); //$NON-NLS-1$
+        insertClause.append("insert into ");
         insertClause.append(introspectedTable
                 .getFullyQualifiedTableNameAtRuntime());
-        insertClause.append(" ("); //$NON-NLS-1$
+        insertClause.append(" (");
 
         StringBuilder valuesClause = new StringBuilder();
-        valuesClause.append("values ("); //$NON-NLS-1$
+        valuesClause.append("values (");
 
         List<String> valuesClauses = new ArrayList<>();
         List<IntrospectedColumn> columns =
@@ -80,8 +80,8 @@ public class InsertElementGenerator extends AbstractXmlElementGenerator {
             valuesClause.append(MyBatis3FormattingUtilities
                     .getParameterClause(introspectedColumn));
             if (i + 1 < columns.size()) {
-                insertClause.append(", "); //$NON-NLS-1$
-                valuesClause.append(", "); //$NON-NLS-1$
+                insertClause.append(", ");
+                valuesClause.append(", ");
             }
 
             if (valuesClause.length() > 80) {

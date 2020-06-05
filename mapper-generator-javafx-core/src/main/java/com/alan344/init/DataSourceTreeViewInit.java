@@ -177,6 +177,9 @@ public class DataSourceTreeViewInit {
             borderPane1.setVisible(true);
             borderPane1.setManaged(true);
         }
+
+        // 清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
+        BaseConstants.tableNameSetUpTableRecordMap.clear();
     }
 
     /**

@@ -42,7 +42,7 @@ public class DeleteByExampleMethodGenerator extends
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setAbstract(true);
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(type, "example")); //$NON-NLS-1$
+        method.addParameter(new Parameter(type, "example"));
 
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);

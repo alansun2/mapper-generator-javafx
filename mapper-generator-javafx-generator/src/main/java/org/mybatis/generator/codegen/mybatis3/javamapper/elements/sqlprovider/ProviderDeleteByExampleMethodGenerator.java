@@ -38,9 +38,9 @@ public class ProviderDeleteByExampleMethodGenerator extends AbstractJavaProvider
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
 
         if (useLegacyBuilder) {
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.BEGIN"); //$NON-NLS-1$
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.DELETE_FROM"); //$NON-NLS-1$
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.SQL"); //$NON-NLS-1$
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.BEGIN");
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.DELETE_FROM");
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.SQL");
         } else {
             importedTypes.add(NEW_BUILDER_IMPORT);
         }
@@ -52,23 +52,23 @@ public class ProviderDeleteByExampleMethodGenerator extends AbstractJavaProvider
                 introspectedTable.getDeleteByExampleStatementId());
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setReturnType(FullyQualifiedJavaType.getStringInstance());
-        method.addParameter(new Parameter(fqjt, "example")); //$NON-NLS-1$
+        method.addParameter(new Parameter(fqjt, "example"));
         
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);
 
         if (useLegacyBuilder) {
-            method.addBodyLine("BEGIN();"); //$NON-NLS-1$
-            method.addBodyLine(String.format("DELETE_FROM(\"%s\");", //$NON-NLS-1$
+            method.addBodyLine("BEGIN();");
+            method.addBodyLine(String.format("DELETE_FROM(\"%s\");",
                     escapeStringForJava(introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime())));
-            method.addBodyLine("applyWhere(example, false);"); //$NON-NLS-1$
-            method.addBodyLine("return SQL();"); //$NON-NLS-1$
+            method.addBodyLine("applyWhere(example, false);");
+            method.addBodyLine("return SQL();");
         } else {
-            method.addBodyLine("SQL sql = new SQL();"); //$NON-NLS-1$
-            method.addBodyLine(String.format("sql.DELETE_FROM(\"%s\");", //$NON-NLS-1$
+            method.addBodyLine("SQL sql = new SQL();");
+            method.addBodyLine(String.format("sql.DELETE_FROM(\"%s\");",
                     escapeStringForJava(introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime())));
-            method.addBodyLine("applyWhere(sql, example, false);"); //$NON-NLS-1$
-            method.addBodyLine("return sql.toString();"); //$NON-NLS-1$
+            method.addBodyLine("applyWhere(sql, example, false);");
+            method.addBodyLine("return sql.toString();");
         }
         
         if (context.getPlugins().providerDeleteByExampleMethodGenerated(method, topLevelClass,

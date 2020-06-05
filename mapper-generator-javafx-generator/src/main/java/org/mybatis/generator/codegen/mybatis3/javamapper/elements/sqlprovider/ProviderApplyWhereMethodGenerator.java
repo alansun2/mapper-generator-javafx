@@ -28,105 +28,105 @@ public class ProviderApplyWhereMethodGenerator extends
         AbstractJavaProviderMethodGenerator {
 
     private static final String[] BEGINNING_METHOD_LINES = {
-        "if (example == null) {", //$NON-NLS-1$
-        "return;", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "", //$NON-NLS-1$
-        "String parmPhrase1;", //$NON-NLS-1$
-        "String parmPhrase1_th;", //$NON-NLS-1$
-        "String parmPhrase2;", //$NON-NLS-1$
-        "String parmPhrase2_th;", //$NON-NLS-1$
-        "String parmPhrase3;", //$NON-NLS-1$
-        "String parmPhrase3_th;", //$NON-NLS-1$
-        "if (includeExamplePhrase) {", //$NON-NLS-1$
-        "parmPhrase1 = \"%s #{example.oredCriteria[%d].allCriteria[%d].value}\";", //$NON-NLS-1$
-        "parmPhrase1_th = \"%s #{example.oredCriteria[%d].allCriteria[%d].value,typeHandler=%s}\";", //$NON-NLS-1$
-        "parmPhrase2 = \"%s #{example.oredCriteria[%d].allCriteria[%d].value} and #{example.oredCriteria[%d].criteria[%d].secondValue}\";", //$NON-NLS-1$
-        "parmPhrase2_th = \"%s #{example.oredCriteria[%d].allCriteria[%d].value,typeHandler=%s} and #{example.oredCriteria[%d].criteria[%d].secondValue,typeHandler=%s}\";", //$NON-NLS-1$
-        "parmPhrase3 = \"#{example.oredCriteria[%d].allCriteria[%d].value[%d]}\";", //$NON-NLS-1$
-        "parmPhrase3_th = \"#{example.oredCriteria[%d].allCriteria[%d].value[%d],typeHandler=%s}\";", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "parmPhrase1 = \"%s #{oredCriteria[%d].allCriteria[%d].value}\";", //$NON-NLS-1$
-        "parmPhrase1_th = \"%s #{oredCriteria[%d].allCriteria[%d].value,typeHandler=%s}\";", //$NON-NLS-1$
-        "parmPhrase2 = \"%s #{oredCriteria[%d].allCriteria[%d].value} and #{oredCriteria[%d].criteria[%d].secondValue}\";", //$NON-NLS-1$
-        "parmPhrase2_th = \"%s #{oredCriteria[%d].allCriteria[%d].value,typeHandler=%s} and #{oredCriteria[%d].criteria[%d].secondValue,typeHandler=%s}\";", //$NON-NLS-1$
-        "parmPhrase3 = \"#{oredCriteria[%d].allCriteria[%d].value[%d]}\";", //$NON-NLS-1$
-        "parmPhrase3_th = \"#{oredCriteria[%d].allCriteria[%d].value[%d],typeHandler=%s}\";", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "", //$NON-NLS-1$
-        "StringBuilder sb = new StringBuilder();", //$NON-NLS-1$
-        "List<Criteria> oredCriteria = example.getOredCriteria();", //$NON-NLS-1$
-        "boolean firstCriteria = true;", //$NON-NLS-1$
-        "for (int i = 0; i < oredCriteria.size(); i++) {", //$NON-NLS-1$
-        "Criteria criteria = oredCriteria.get(i);", //$NON-NLS-1$
-        "if (criteria.isValid()) {", //$NON-NLS-1$
-        "if (firstCriteria) {", //$NON-NLS-1$
-        "firstCriteria = false;", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "sb.append(\" or \");", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "", //$NON-NLS-1$        
-        "sb.append('(');", //$NON-NLS-1$
-        "List<Criterion> criterions = criteria.getAllCriteria();", //$NON-NLS-1$
-        "boolean firstCriterion = true;", //$NON-NLS-1$
-        "for (int j = 0; j < criterions.size(); j++) {", //$NON-NLS-1$
-        "Criterion criterion = criterions.get(j);", //$NON-NLS-1$
-        "if (firstCriterion) {", //$NON-NLS-1$
-        "firstCriterion = false;", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "sb.append(\" and \");", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "", //$NON-NLS-1$
-        "if (criterion.isNoValue()) {", //$NON-NLS-1$
-        "sb.append(criterion.getCondition());", //$NON-NLS-1$
-        "} else if (criterion.isSingleValue()) {", //$NON-NLS-1$
-        "if (criterion.getTypeHandler() == null) {", //$NON-NLS-1$
-        "sb.append(String.format(parmPhrase1, criterion.getCondition(), i, j));", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "sb.append(String.format(parmPhrase1_th, criterion.getCondition(), i, j,criterion.getTypeHandler()));", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "} else if (criterion.isBetweenValue()) {", //$NON-NLS-1$
-        "if (criterion.getTypeHandler() == null) {", //$NON-NLS-1$
-        "sb.append(String.format(parmPhrase2, criterion.getCondition(), i, j, i, j));", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "sb.append(String.format(parmPhrase2_th, criterion.getCondition(), i, j, criterion.getTypeHandler(), i, j, criterion.getTypeHandler()));", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "} else if (criterion.isListValue()) {", //$NON-NLS-1$
-        "sb.append(criterion.getCondition());", //$NON-NLS-1$
-        "sb.append(\" (\");", //$NON-NLS-1$
-        "List<?> listItems = (List<?>) criterion.getValue();", //$NON-NLS-1$
-        "boolean comma = false;", //$NON-NLS-1$
-        "for (int k = 0; k < listItems.size(); k++) {", //$NON-NLS-1$
-        "if (comma) {", //$NON-NLS-1$
-        "sb.append(\", \");", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "comma = true;", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "if (criterion.getTypeHandler() == null) {", //$NON-NLS-1$
-        "sb.append(String.format(parmPhrase3, i, j, k));", //$NON-NLS-1$
-        "} else {", //$NON-NLS-1$
-        "sb.append(String.format(parmPhrase3_th, i, j, k, criterion.getTypeHandler()));", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "sb.append(')');", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "sb.append(')');", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "}", //$NON-NLS-1$
-        "" //$NON-NLS-1$
+        "if (example == null) {",
+        "return;",
+        "}",
+        "",
+        "String parmPhrase1;",
+        "String parmPhrase1_th;",
+        "String parmPhrase2;",
+        "String parmPhrase2_th;",
+        "String parmPhrase3;",
+        "String parmPhrase3_th;",
+        "if (includeExamplePhrase) {",
+        "parmPhrase1 = \"%s #{example.oredCriteria[%d].allCriteria[%d].value}\";",
+        "parmPhrase1_th = \"%s #{example.oredCriteria[%d].allCriteria[%d].value,typeHandler=%s}\";",
+        "parmPhrase2 = \"%s #{example.oredCriteria[%d].allCriteria[%d].value} and #{example.oredCriteria[%d].criteria[%d].secondValue}\";",
+        "parmPhrase2_th = \"%s #{example.oredCriteria[%d].allCriteria[%d].value,typeHandler=%s} and #{example.oredCriteria[%d].criteria[%d].secondValue,typeHandler=%s}\";",
+        "parmPhrase3 = \"#{example.oredCriteria[%d].allCriteria[%d].value[%d]}\";",
+        "parmPhrase3_th = \"#{example.oredCriteria[%d].allCriteria[%d].value[%d],typeHandler=%s}\";",
+        "} else {",
+        "parmPhrase1 = \"%s #{oredCriteria[%d].allCriteria[%d].value}\";",
+        "parmPhrase1_th = \"%s #{oredCriteria[%d].allCriteria[%d].value,typeHandler=%s}\";",
+        "parmPhrase2 = \"%s #{oredCriteria[%d].allCriteria[%d].value} and #{oredCriteria[%d].criteria[%d].secondValue}\";",
+        "parmPhrase2_th = \"%s #{oredCriteria[%d].allCriteria[%d].value,typeHandler=%s} and #{oredCriteria[%d].criteria[%d].secondValue,typeHandler=%s}\";",
+        "parmPhrase3 = \"#{oredCriteria[%d].allCriteria[%d].value[%d]}\";",
+        "parmPhrase3_th = \"#{oredCriteria[%d].allCriteria[%d].value[%d],typeHandler=%s}\";",
+        "}",
+        "",
+        "StringBuilder sb = new StringBuilder();",
+        "List<Criteria> oredCriteria = example.getOredCriteria();",
+        "boolean firstCriteria = true;",
+        "for (int i = 0; i < oredCriteria.size(); i++) {",
+        "Criteria criteria = oredCriteria.get(i);",
+        "if (criteria.isValid()) {",
+        "if (firstCriteria) {",
+        "firstCriteria = false;",
+        "} else {",
+        "sb.append(\" or \");",
+        "}",
+        "",
+        "sb.append('(');",
+        "List<Criterion> criterions = criteria.getAllCriteria();",
+        "boolean firstCriterion = true;",
+        "for (int j = 0; j < criterions.size(); j++) {",
+        "Criterion criterion = criterions.get(j);",
+        "if (firstCriterion) {",
+        "firstCriterion = false;",
+        "} else {",
+        "sb.append(\" and \");",
+        "}",
+        "",
+        "if (criterion.isNoValue()) {",
+        "sb.append(criterion.getCondition());",
+        "} else if (criterion.isSingleValue()) {",
+        "if (criterion.getTypeHandler() == null) {",
+        "sb.append(String.format(parmPhrase1, criterion.getCondition(), i, j));",
+        "} else {",
+        "sb.append(String.format(parmPhrase1_th, criterion.getCondition(), i, j,criterion.getTypeHandler()));",
+        "}",
+        "} else if (criterion.isBetweenValue()) {",
+        "if (criterion.getTypeHandler() == null) {",
+        "sb.append(String.format(parmPhrase2, criterion.getCondition(), i, j, i, j));",
+        "} else {",
+        "sb.append(String.format(parmPhrase2_th, criterion.getCondition(), i, j, criterion.getTypeHandler(), i, j, criterion.getTypeHandler()));",
+        "}",
+        "} else if (criterion.isListValue()) {",
+        "sb.append(criterion.getCondition());",
+        "sb.append(\" (\");",
+        "List<?> listItems = (List<?>) criterion.getValue();",
+        "boolean comma = false;",
+        "for (int k = 0; k < listItems.size(); k++) {",
+        "if (comma) {",
+        "sb.append(\", \");",
+        "} else {",
+        "comma = true;",
+        "}",
+        "if (criterion.getTypeHandler() == null) {",
+        "sb.append(String.format(parmPhrase3, i, j, k));",
+        "} else {",
+        "sb.append(String.format(parmPhrase3_th, i, j, k, criterion.getTypeHandler()));",
+        "}",
+        "}",
+        "sb.append(')');",
+        "}",
+        "}",
+        "sb.append(')');",
+        "}",
+        "}",
+        ""
     };
 
     private static final String[] LEGACY_ENDING_METHOD_LINES = {
-        "if (sb.length() > 0) {", //$NON-NLS-1$
-        "WHERE(sb.toString());", //$NON-NLS-1$
-        "}" //$NON-NLS-1$
+        "if (sb.length() > 0) {",
+        "WHERE(sb.toString());",
+        "}"
     };
 
     private static final String[] ENDING_METHOD_LINES = {
-        "if (sb.length() > 0) {", //$NON-NLS-1$
-        "sql.WHERE(sb.toString());", //$NON-NLS-1$
-        "}" //$NON-NLS-1$
+        "if (sb.length() > 0) {",
+        "sql.WHERE(sb.toString());",
+        "}"
     };
     
     public ProviderApplyWhereMethodGenerator(boolean useLegacyBuilder) {
@@ -139,29 +139,29 @@ public class ProviderApplyWhereMethodGenerator extends
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
 
         if (useLegacyBuilder) {
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.WHERE"); //$NON-NLS-1$
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.WHERE");
         } else {
             importedTypes.add(NEW_BUILDER_IMPORT);
         }
         
         importedTypes.add(new FullyQualifiedJavaType(
-                "java.util.List")); //$NON-NLS-1$
+                "java.util.List"));
         
         FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(introspectedTable.getExampleType());
         importedTypes.add(fqjt);
         importedTypes.add(new FullyQualifiedJavaType(
-                String.format("%s.Criteria", fqjt.getFullyQualifiedName()))); //$NON-NLS-1$
+                String.format("%s.Criteria", fqjt.getFullyQualifiedName())));
         importedTypes.add(new FullyQualifiedJavaType(
-                String.format("%s.Criterion", fqjt.getFullyQualifiedName()))); //$NON-NLS-1$
+                String.format("%s.Criterion", fqjt.getFullyQualifiedName())));
 
-        Method method = new Method("applyWhere"); //$NON-NLS-1$
+        Method method = new Method("applyWhere");
         method.setVisibility(JavaVisibility.PROTECTED);
         if (!useLegacyBuilder) {
-            method.addParameter(new Parameter(NEW_BUILDER_IMPORT, "sql")); //$NON-NLS-1$
+            method.addParameter(new Parameter(NEW_BUILDER_IMPORT, "sql"));
         }
-        method.addParameter(new Parameter(fqjt, "example")); //$NON-NLS-1$
+        method.addParameter(new Parameter(fqjt, "example"));
         method.addParameter(new Parameter(FullyQualifiedJavaType.getBooleanPrimitiveInstance(),
-                "includeExamplePhrase")); //$NON-NLS-1$
+                "includeExamplePhrase"));
         
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);

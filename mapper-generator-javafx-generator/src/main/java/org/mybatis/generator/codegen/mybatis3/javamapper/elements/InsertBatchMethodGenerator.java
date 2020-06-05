@@ -52,12 +52,12 @@ public class InsertBatchMethodGenerator extends
             listType = new FullyQualifiedJavaType(introspectedTable
                     .getPrimaryKeyType());
         } else {
-            throw new RuntimeException(getString("RuntimeError.12")); //$NON-NLS-1$
+            throw new RuntimeException(getString("RuntimeError.12"));
         }
 
         importedTypes.add(parameterType);
         parameterType.addTypeArgument(listType);
-        method.addParameter(new Parameter(parameterType, "records")); //$NON-NLS-1$
+        method.addParameter(new Parameter(parameterType, "records"));
 
         context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);
 

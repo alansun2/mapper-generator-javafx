@@ -33,10 +33,10 @@ public class DeleteByPrimaryKeyElementGenerator extends
 
     @Override
     public void addElements(XmlElement parentElement) {
-        XmlElement answer = new XmlElement("delete"); //$NON-NLS-1$
+        XmlElement answer = new XmlElement("delete");
 
         answer.addAttribute(new Attribute(
-                "id", introspectedTable.getDeleteByPrimaryKeyStatementId())); //$NON-NLS-1$
+                "id", introspectedTable.getDeleteByPrimaryKeyStatementId()));
         String parameterClass;
         if (!isSimple && introspectedTable.getRules().generatePrimaryKeyClass()) {
             parameterClass = introspectedTable.getPrimaryKeyType();
@@ -44,19 +44,19 @@ public class DeleteByPrimaryKeyElementGenerator extends
             // PK fields are in the base class. If more than on PK
             // field, then they are coming in a map.
             if (introspectedTable.getPrimaryKeyColumns().size() > 1) {
-                parameterClass = "map"; //$NON-NLS-1$
+                parameterClass = "map";
             } else {
                 parameterClass = introspectedTable.getPrimaryKeyColumns()
                         .get(0).getFullyQualifiedJavaType().toString();
             }
         }
-        answer.addAttribute(new Attribute("parameterType", //$NON-NLS-1$
+        answer.addAttribute(new Attribute("parameterType",
                 parameterClass));
 
         context.getCommentGenerator().addComment(answer);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("delete from "); //$NON-NLS-1$
+        sb.append("delete from ");
         sb.append(introspectedTable.getFullyQualifiedTableNameAtRuntime());
         answer.addElement(new TextElement(sb.toString()));
 
@@ -65,15 +65,15 @@ public class DeleteByPrimaryKeyElementGenerator extends
                 .getPrimaryKeyColumns()) {
             sb.setLength(0);
             if (and) {
-                sb.append("  and "); //$NON-NLS-1$
+                sb.append("  and ");
             } else {
-                sb.append("where "); //$NON-NLS-1$
+                sb.append("where ");
                 and = true;
             }
 
             sb.append(MyBatis3FormattingUtilities
                     .getEscapedColumnName(introspectedColumn));
-            sb.append(" = "); //$NON-NLS-1$
+            sb.append(" = ");
             sb.append(MyBatis3FormattingUtilities
                     .getParameterClause(introspectedColumn));
             answer.addElement(new TextElement(sb.toString()));

@@ -30,16 +30,16 @@ public class InitializationBlockRenderer {
         lines.addAll(initializationBlock.getJavaDocLines());
         lines.add(renderFirstLine(initializationBlock));
         lines.addAll(bodyLineRenderer.render(initializationBlock.getBodyLines()));
-        lines.add("}"); //$NON-NLS-1$
+        lines.add("}");
         
         return lines;
     }
     
     private String renderFirstLine(InitializationBlock initializationBlock) {
         if (initializationBlock.isStatic()) {
-            return "static {"; //$NON-NLS-1$
+            return "static {";
         } else {
-            return "{"; //$NON-NLS-1$
+            return "{";
         }
     }
 }

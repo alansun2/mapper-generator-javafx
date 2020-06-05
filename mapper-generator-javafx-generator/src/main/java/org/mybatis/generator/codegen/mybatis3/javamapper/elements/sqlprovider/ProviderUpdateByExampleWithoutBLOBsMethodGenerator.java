@@ -44,62 +44,62 @@ public class ProviderUpdateByExampleWithoutBLOBsMethodGenerator extends
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
 
         if (useLegacyBuilder) {
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.BEGIN"); //$NON-NLS-1$
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.UPDATE"); //$NON-NLS-1$
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.SET"); //$NON-NLS-1$
-            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.SQL"); //$NON-NLS-1$
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.BEGIN");
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.UPDATE");
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.SET");
+            staticImports.add("org.apache.ibatis.jdbc.SqlBuilder.SQL");
         } else {
             importedTypes.add(NEW_BUILDER_IMPORT);
         }
 
-        importedTypes.add(new FullyQualifiedJavaType("java.util.Map")); //$NON-NLS-1$
+        importedTypes.add(new FullyQualifiedJavaType("java.util.Map"));
 
         Method method = new Method(getMethodName());
         method.setReturnType(FullyQualifiedJavaType.getStringInstance());
         method.setVisibility(JavaVisibility.PUBLIC);
         method.addParameter(new Parameter(
-                new FullyQualifiedJavaType("java.util.Map<java.lang.String, java.lang.Object>"), //$NON-NLS-1$
-                "parameter")); //$NON-NLS-1$
+                new FullyQualifiedJavaType("java.util.Map<java.lang.String, java.lang.Object>"),
+                "parameter"));
         
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);
 
         if (useLegacyBuilder) {
-            method.addBodyLine("BEGIN();"); //$NON-NLS-1$
+            method.addBodyLine("BEGIN();");
         } else {
-            method.addBodyLine("SQL sql = new SQL();"); //$NON-NLS-1$
+            method.addBodyLine("SQL sql = new SQL();");
         }
 
-        method.addBodyLine(String.format("%sUPDATE(\"%s\");", //$NON-NLS-1$
+        method.addBodyLine(String.format("%sUPDATE(\"%s\");",
                 builderPrefix,
                 escapeStringForJava(introspectedTable.getAliasedFullyQualifiedTableNameAtRuntime())));
-        method.addBodyLine(""); //$NON-NLS-1$
+        method.addBodyLine("");
 
         for (IntrospectedColumn introspectedColumn : ListUtilities.removeGeneratedAlwaysColumns(getColumns())) {
             StringBuilder sb = new StringBuilder();
             sb.append(getParameterClause(introspectedColumn));
-            sb.insert(2, "record."); //$NON-NLS-1$
+            sb.insert(2, "record.");
 
-            method.addBodyLine(String.format("%sSET(\"%s = %s\");", //$NON-NLS-1$
+            method.addBodyLine(String.format("%sSET(\"%s = %s\");",
                     builderPrefix,
                     escapeStringForJava(getAliasedEscapedColumnName(introspectedColumn)),
                     sb.toString()));
         }
 
-        method.addBodyLine(""); //$NON-NLS-1$
+        method.addBodyLine("");
         
         FullyQualifiedJavaType example =
                 new FullyQualifiedJavaType(introspectedTable.getExampleType());
         importedTypes.add(example);
-        method.addBodyLine(String.format("%s example = (%s) parameter.get(\"example\");", //$NON-NLS-1$
+        method.addBodyLine(String.format("%s example = (%s) parameter.get(\"example\");",
                 example.getShortName(), example.getShortName()));
 
         if (useLegacyBuilder) {
-            method.addBodyLine("applyWhere(example, true);"); //$NON-NLS-1$
-            method.addBodyLine("return SQL();"); //$NON-NLS-1$
+            method.addBodyLine("applyWhere(example, true);");
+            method.addBodyLine("return SQL();");
         } else {
-            method.addBodyLine("applyWhere(sql, example, true);"); //$NON-NLS-1$
-            method.addBodyLine("return sql.toString();"); //$NON-NLS-1$
+            method.addBodyLine("applyWhere(sql, example, true);");
+            method.addBodyLine("return sql.toString();");
         }
 
         if (callPlugins(method, topLevelClass)) {

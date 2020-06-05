@@ -47,12 +47,12 @@ public class SqlMapGeneratorConfiguration extends PropertyHolder {
 
     public void validate(List<String> errors, String contextId) {
         if (!stringHasValue(targetProject)) {
-            errors.add(getString("ValidationError.1", contextId)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.1", contextId));
         }
 
         if (!stringHasValue(targetPackage)) {
-            errors.add(getString("ValidationError.12", //$NON-NLS-1$
-                    "SQLMapGenerator", contextId)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.12",
+                    "SQLMapGenerator", contextId));
         }
     }
 }

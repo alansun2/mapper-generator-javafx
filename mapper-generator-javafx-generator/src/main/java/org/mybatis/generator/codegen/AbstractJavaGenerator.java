@@ -46,7 +46,7 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator {
         method.setReturnType(field.getType());
         method.setVisibility(JavaVisibility.PUBLIC);
         StringBuilder sb = new StringBuilder();
-        sb.append("return "); //$NON-NLS-1$
+        sb.append("return ");
         sb.append(field.getName());
         sb.append(';');
         method.addBodyLine(sb.toString());
@@ -89,7 +89,7 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator {
         Method method = new Method(topLevelClass.getType().getShortName());
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setConstructor(true);
-        method.addBodyLine("super();"); //$NON-NLS-1$
+        method.addBodyLine("super();");
         return method;
     }
     
@@ -98,7 +98,6 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator {
     }
 
     private void addGeneratedAnnotation(Method method, TopLevelClass topLevelClass) {
-        context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable,
-                topLevelClass.getImportedTypes());
+        context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, topLevelClass.getImportedTypes());
     }
 }

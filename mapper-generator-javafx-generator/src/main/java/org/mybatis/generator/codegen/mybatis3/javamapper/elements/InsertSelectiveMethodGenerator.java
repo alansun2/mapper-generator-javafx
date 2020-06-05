@@ -44,7 +44,7 @@ public class InsertSelectiveMethodGenerator extends
 
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
         importedTypes.add(parameterType);
-        method.addParameter(new Parameter(parameterType, "record")); //$NON-NLS-1$
+        method.addParameter(new Parameter(parameterType, "record"));
 
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);

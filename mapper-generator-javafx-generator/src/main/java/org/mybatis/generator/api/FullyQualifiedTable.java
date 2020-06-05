@@ -122,9 +122,9 @@ public class FullyQualifiedTable {
         }
 
         beginningDelimiter = delimitIdentifiers ? context
-                .getBeginningDelimiter() : ""; //$NON-NLS-1$
+                .getBeginningDelimiter() : "";
         endingDelimiter = delimitIdentifiers ? context.getEndingDelimiter()
-                : ""; //$NON-NLS-1$
+                : "";
     }
 
     public String getIntrospectedCatalog() {
@@ -205,7 +205,7 @@ public class FullyQualifiedTable {
         if (domainObjectRenamingRule != null) {
             Pattern pattern = Pattern.compile(domainObjectRenamingRule.getSearchString());
             String replaceString = domainObjectRenamingRule.getReplaceString();
-            replaceString = replaceString == null ? "" : replaceString; //$NON-NLS-1$
+            replaceString = replaceString == null ? "" : replaceString;
             Matcher matcher = pattern.matcher(finalDomainObjectName);
             finalDomainObjectName = JavaBeansUtil.getFirstCharacterUppercase(matcher.replaceAll(replaceString));
         }

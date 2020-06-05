@@ -35,13 +35,13 @@ public class MyBatis3FormattingUtilities {
             IntrospectedColumn introspectedColumn, String prefix) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("#{"); //$NON-NLS-1$
+        sb.append("#{");
         sb.append(introspectedColumn.getJavaProperty(prefix));
-        sb.append(",jdbcType="); //$NON-NLS-1$
+        sb.append(",jdbcType=");
         sb.append(introspectedColumn.getJdbcTypeName());
 
         if (stringHasValue(introspectedColumn.getTypeHandler())) {
-            sb.append(",typeHandler="); //$NON-NLS-1$
+            sb.append(",typeHandler=");
             sb.append(introspectedColumn.getTypeHandler());
         }
 
@@ -64,7 +64,7 @@ public class MyBatis3FormattingUtilities {
             StringBuilder sb = new StringBuilder();
 
             sb.append(getAliasedEscapedColumnName(introspectedColumn));
-            sb.append(" as "); //$NON-NLS-1$
+            sb.append(" as ");
             if (introspectedColumn.isColumnNameDelimited()) {
                 sb.append(introspectedColumn.getContext()
                         .getBeginningDelimiter());

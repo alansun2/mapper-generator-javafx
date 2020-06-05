@@ -38,7 +38,7 @@ public class UpdateByExampleSelectiveMethodGenerator extends
         FullyQualifiedJavaType parameterType =
                 introspectedTable.getRules().calculateAllFieldsClass();
         method.addParameter(new Parameter(parameterType,
-                "record", "@Param(\"record\")")); //$NON-NLS-1$ //$NON-NLS-2$
+                "record", "@Param(\"record\")")); //$NON-NLS-2$
 
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
         importedTypes.add(parameterType);
@@ -46,11 +46,11 @@ public class UpdateByExampleSelectiveMethodGenerator extends
         FullyQualifiedJavaType exampleType = new FullyQualifiedJavaType(
                 introspectedTable.getExampleType());
         method.addParameter(new Parameter(exampleType,
-                "example", "@Param(\"example\")")); //$NON-NLS-1$ //$NON-NLS-2$
+                "example", "@Param(\"example\")")); //$NON-NLS-2$
         importedTypes.add(exampleType);
 
         importedTypes.add(new FullyQualifiedJavaType(
-                "org.apache.ibatis.annotations.Param")); //$NON-NLS-1$
+                "org.apache.ibatis.annotations.Param"));
 
         context.getCommentGenerator().addGeneralMethodComment(method,
                 introspectedTable);

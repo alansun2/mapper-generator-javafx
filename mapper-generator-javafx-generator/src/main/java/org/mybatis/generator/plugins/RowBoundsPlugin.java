@@ -44,7 +44,7 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
 public class RowBoundsPlugin extends PluginAdapter {
 
     private FullyQualifiedJavaType rowBounds =
-            new FullyQualifiedJavaType("org.apache.ibatis.session.RowBounds"); //$NON-NLS-1$
+            new FullyQualifiedJavaType("org.apache.ibatis.session.RowBounds");
     private Map<FullyQualifiedTable, List<XmlElement>> elementsToAdd = new HashMap<>();
 
     @Override
@@ -124,18 +124,18 @@ public class RowBoundsPlugin extends PluginAdapter {
             return;
         }
         
-        interfaze.addImportedType(new FullyQualifiedJavaType("java.util.function.Function")); //$NON-NLS-1$
+        interfaze.addImportedType(new FullyQualifiedJavaType("java.util.function.Function"));
         
         FullyQualifiedJavaType returnType =
-                new FullyQualifiedJavaType("Function<SelectStatementProvider, " //$NON-NLS-1$
-                        + baseMethodReturnType.get().getShortName() + ">"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("Function<SelectStatementProvider, "
+                        + baseMethodReturnType.get().getShortName() + ">");
         
-        Method method = new Method("selectManyWithRowbounds"); //$NON-NLS-1$
+        Method method = new Method("selectManyWithRowbounds");
         method.setDefault(true);
         method.setReturnType(returnType);
-        method.addParameter(new Parameter(rowBounds, "rowBounds")); //$NON-NLS-1$
+        method.addParameter(new Parameter(rowBounds, "rowBounds"));
         method.addBodyLine(
-                "return selectStatement -> selectManyWithRowbounds(selectStatement, rowBounds);"); //$NON-NLS-1$
+                "return selectStatement -> selectManyWithRowbounds(selectStatement, rowBounds);");
         context.getCommentGenerator().addGeneralMethodAnnotation(
                 method, introspectedTable, interfaze.getImportedTypes());
         interfaze.addMethod(method);
@@ -150,8 +150,8 @@ public class RowBoundsPlugin extends PluginAdapter {
      */
     private void copyAndAddMethod(Method method, Interface interfaze) {
         Method newMethod = new Method(method);
-        newMethod.setName(method.getName() + "WithRowbounds"); //$NON-NLS-1$
-        newMethod.addParameter(new Parameter(rowBounds, "rowBounds")); //$NON-NLS-1$
+        newMethod.setName(method.getName() + "WithRowbounds");
+        newMethod.addParameter(new Parameter(rowBounds, "rowBounds"));
         interfaze.addMethod(newMethod);
         interfaze.addImportedType(rowBounds);
     }
@@ -167,26 +167,26 @@ public class RowBoundsPlugin extends PluginAdapter {
             String annotation = iter.next();
 
             if (inResultsAnnotation) {
-                if (annotation.equals("})")) { //$NON-NLS-1$
+                if (annotation.equals("})")) {
                     inResultsAnnotation = false;
                 }
                 iter.remove();
-            } else if (annotation.startsWith("@Results(")) { //$NON-NLS-1$
+            } else if (annotation.startsWith("@Results(")) {
                 inResultsAnnotation = true;
                 iter.remove();
                 
                 // now find the ID
-                int index = annotation.indexOf("id=\""); //$NON-NLS-1$
-                int startIndex = index + "id=\"".length(); //$NON-NLS-1$
-                int endIndex = annotation.indexOf('\"', startIndex + 1); //$NON-NLS-1$
+                int index = annotation.indexOf("id=\"");
+                int startIndex = index + "id=\"".length();
+                int endIndex = annotation.indexOf('\"', startIndex + 1);
                 resultMapId = annotation.substring(startIndex, endIndex);
             }
         }
         
         if (resultMapId != null) {
             interfaze.addImportedType(
-                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.ResultMap")); //$NON-NLS-1$
-            annotations.add("@ResultMap(\"" + resultMapId + "\")"); //$NON-NLS-1$ //$NON-NLS-2$
+                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.ResultMap"));
+            annotations.add("@ResultMap(\"" + resultMapId + "\")"); //$NON-NLS-2$
         }
         
         Method newMethod = new Method(method);
@@ -195,15 +195,15 @@ public class RowBoundsPlugin extends PluginAdapter {
             newMethod.addAnnotation(annotation);
         }
         
-        newMethod.setName(method.getName() + "WithRowbounds"); //$NON-NLS-1$
-        newMethod.addParameter(new Parameter(rowBounds, "rowBounds")); //$NON-NLS-1$
+        newMethod.setName(method.getName() + "WithRowbounds");
+        newMethod.addParameter(new Parameter(rowBounds, "rowBounds"));
         interfaze.addMethod(newMethod);
         interfaze.addImportedType(rowBounds);
     }
     
     private void copyAndAddSelectByExampleMethodForDSQL(Method method, Interface interfaze) {
         Method newMethod = new Method(method);
-        newMethod.addParameter(new Parameter(rowBounds, "rowBounds")); //$NON-NLS-1$
+        newMethod.addParameter(new Parameter(rowBounds, "rowBounds"));
         interfaze.addMethod(newMethod);
         interfaze.addImportedType(rowBounds);
         
@@ -211,9 +211,9 @@ public class RowBoundsPlugin extends PluginAdapter {
         for (int i = 0; i < newMethod.getBodyLines().size(); i++) {
             String bodyLine = newMethod.getBodyLines().get(i);
             
-            if (bodyLine.contains("this::selectMany")) { //$NON-NLS-1$
-                bodyLine = bodyLine.replace("this::selectMany", //$NON-NLS-1$
-                        "selectManyWithRowbounds(rowBounds)"); //$NON-NLS-1$
+            if (bodyLine.contains("this::selectMany")) {
+                bodyLine = bodyLine.replace("this::selectMany",
+                        "selectManyWithRowbounds(rowBounds)");
                 newMethod.getBodyLines().set(i, bodyLine);
                 break;
             }
@@ -232,10 +232,10 @@ public class RowBoundsPlugin extends PluginAdapter {
         // remove old id attribute and add a new one with the new name
         for (Iterator<Attribute> iterator = newElement.getAttributes().iterator(); iterator.hasNext();) {
             Attribute attribute = iterator.next();
-            if ("id".equals(attribute.getName())) { //$NON-NLS-1$
+            if ("id".equals(attribute.getName())) {
                 iterator.remove();
                 Attribute newAttribute =
-                        new Attribute("id", attribute.getValue() + "WithRowbounds"); //$NON-NLS-1$ //$NON-NLS-2$
+                        new Attribute("id", attribute.getValue() + "WithRowbounds"); //$NON-NLS-2$
                 newElement.addAttribute(newAttribute);
                 break;
             }

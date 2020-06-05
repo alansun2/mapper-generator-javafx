@@ -48,11 +48,11 @@ import org.mybatis.generator.internal.util.StringUtility;
  */
 public class CachePlugin extends PluginAdapter {
     public enum CacheProperty {
-        EVICTION("cache_eviction", "eviction"), //$NON-NLS-1$ //$NON-NLS-2$
-        FLUSH_INTERVAL("cache_flushInterval", "flushInterval"), //$NON-NLS-1$ //$NON-NLS-2$
-        READ_ONLY("cache_readOnly", "readOnly"), //$NON-NLS-1$ //$NON-NLS-2$
-        SIZE("cache_size", "size"), //$NON-NLS-1$ //$NON-NLS-2$
-        TYPE("cache_type", "type"); //$NON-NLS-1$ //$NON-NLS-2$
+        EVICTION("cache_eviction", "eviction"), //$NON-NLS-2$
+        FLUSH_INTERVAL("cache_flushInterval", "flushInterval"), //$NON-NLS-2$
+        READ_ONLY("cache_readOnly", "readOnly"), //$NON-NLS-2$
+        SIZE("cache_size", "size"), //$NON-NLS-2$
+        TYPE("cache_type", "type"); //$NON-NLS-2$
 
         private String propertyName;
         private String attributeName;
@@ -83,7 +83,7 @@ public class CachePlugin extends PluginAdapter {
     @Override
     public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
 
-        XmlElement element = new XmlElement("cache"); //$NON-NLS-1$
+        XmlElement element = new XmlElement("cache");
         context.getCommentGenerator().addComment(element);
 
         for (CacheProperty cacheProperty : CacheProperty.values()) {

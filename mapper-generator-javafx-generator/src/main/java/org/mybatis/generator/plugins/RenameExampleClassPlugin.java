@@ -59,8 +59,8 @@ public class RenameExampleClassPlugin extends PluginAdapter {
     @Override
     public boolean validate(List<String> warnings) {
 
-        String searchString = properties.getProperty("searchString"); //$NON-NLS-1$
-        replaceString = properties.getProperty("replaceString"); //$NON-NLS-1$
+        String searchString = properties.getProperty("searchString");
+        replaceString = properties.getProperty("replaceString");
 
         boolean valid = stringHasValue(searchString)
                 && stringHasValue(replaceString);
@@ -69,14 +69,14 @@ public class RenameExampleClassPlugin extends PluginAdapter {
             pattern = Pattern.compile(searchString);
         } else {
             if (!stringHasValue(searchString)) {
-                warnings.add(getString("ValidationError.18", //$NON-NLS-1$
-                        "RenameExampleClassPlugin", //$NON-NLS-1$
-                        "searchString")); //$NON-NLS-1$
+                warnings.add(getString("ValidationError.18",
+                        "RenameExampleClassPlugin",
+                        "searchString"));
             }
             if (!stringHasValue(replaceString)) {
-                warnings.add(getString("ValidationError.18", //$NON-NLS-1$
-                        "RenameExampleClassPlugin", //$NON-NLS-1$
-                        "replaceString")); //$NON-NLS-1$
+                warnings.add(getString("ValidationError.18",
+                        "RenameExampleClassPlugin",
+                        "replaceString"));
             }
         }
 

@@ -41,7 +41,7 @@ public abstract class AbstractMethodGenerator {
         String fieldName = column.getJavaProperty();
         if (fieldName.equals(tableFieldName)) {
             // name collision, no shortcut generated
-            fieldName = tableFieldName + "." + fieldName; //$NON-NLS-1$
+            fieldName = tableFieldName + "." + fieldName;
         }
         return fieldName;
     }

@@ -50,7 +50,7 @@ public class FluentBuilderMethodsPlugin extends PluginAdapter {
             IntrospectedTable introspectedTable,
             ModelClassType modelClassType) {
         
-        Method fluentMethod = new Method("with" + method.getName().substring(3)); //$NON-NLS-1$
+        Method fluentMethod = new Method("with" + method.getName().substring(3));
         fluentMethod.setVisibility(JavaVisibility.PUBLIC);
         fluentMethod.setReturnType(topLevelClass.getType());
         fluentMethod.getParameters().addAll(method.getParameters());
@@ -64,13 +64,13 @@ public class FluentBuilderMethodsPlugin extends PluginAdapter {
         }
         
         StringBuilder sb = new StringBuilder()
-                .append("this.") //$NON-NLS-1$
+                .append("this.")
                 .append(method.getName())
                 .append('(')
                 .append(introspectedColumn.getJavaProperty())
-                .append(");"); //$NON-NLS-1$
-        fluentMethod.addBodyLine(sb.toString()); //$NON-NLS-1$
-        fluentMethod.addBodyLine("return this;"); //$NON-NLS-1$
+                .append(");");
+        fluentMethod.addBodyLine(sb.toString());
+        fluentMethod.addBodyLine("return this;");
 
         topLevelClass.addMethod(fluentMethod);
 

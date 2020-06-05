@@ -44,22 +44,22 @@ public class BasicUpdateMethodGenerator extends AbstractMethodGenerator {
         
         FullyQualifiedJavaType parameterType =
                 new FullyQualifiedJavaType(
-                        "org.mybatis.dynamic.sql.update.render.UpdateStatementProvider"); //$NON-NLS-1$
+                        "org.mybatis.dynamic.sql.update.render.UpdateStatementProvider");
         FullyQualifiedJavaType adapter =
-                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.mybatis.dynamic.sql.util.SqlProviderAdapter");
         FullyQualifiedJavaType annotation =
-                new FullyQualifiedJavaType("org.apache.ibatis.annotations.UpdateProvider"); //$NON-NLS-1$
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.UpdateProvider");
         
         imports.add(parameterType);
         imports.add(adapter);
         imports.add(annotation);
         
-        Method method = new Method("update"); //$NON-NLS-1$
+        Method method = new Method("update");
         method.setAbstract(true);
         method.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        method.addParameter(new Parameter(parameterType, "updateStatement")); //$NON-NLS-1$
+        method.addParameter(new Parameter(parameterType, "updateStatement"));
         context.getCommentGenerator().addGeneralMethodAnnotation(method, introspectedTable, imports);
-        method.addAnnotation("@UpdateProvider(type=SqlProviderAdapter.class, method=\"update\")"); //$NON-NLS-1$
+        method.addAnnotation("@UpdateProvider(type=SqlProviderAdapter.class, method=\"update\")");
 
         return MethodAndImports.withMethod(method)
                 .withImports(imports)

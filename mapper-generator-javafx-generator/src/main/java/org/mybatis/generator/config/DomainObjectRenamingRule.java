@@ -72,7 +72,7 @@ public class DomainObjectRenamingRule {
 
     public void validate(List<String> errors, String tableName) {
         if (!stringHasValue(searchString)) {
-            errors.add(getString("ValidationError.28", tableName)); //$NON-NLS-1$
+            errors.add(getString("ValidationError.28", tableName));
         }
     }
 }

@@ -23,7 +23,7 @@ public abstract class AbstractJavaProviderMethodGenerator extends
         AbstractGenerator {
 
     protected static final FullyQualifiedJavaType NEW_BUILDER_IMPORT =
-            new FullyQualifiedJavaType("org.apache.ibatis.jdbc.SQL"); //$NON-NLS-1$
+            new FullyQualifiedJavaType("org.apache.ibatis.jdbc.SQL");
     protected boolean useLegacyBuilder;
     protected final String builderPrefix;
 
@@ -31,9 +31,9 @@ public abstract class AbstractJavaProviderMethodGenerator extends
         super();
         this.useLegacyBuilder = useLegacyBuilder;
         if (useLegacyBuilder) {
-            builderPrefix = ""; //$NON-NLS-1$
+            builderPrefix = "";
         } else {
-            builderPrefix = "sql."; //$NON-NLS-1$
+            builderPrefix = "sql.";
         }
     }
 

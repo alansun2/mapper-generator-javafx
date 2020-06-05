@@ -34,24 +34,24 @@ public class UpdateByExampleWithoutBLOBsElementGenerator extends
 
     @Override
     public void addElements(XmlElement parentElement) {
-        XmlElement answer = new XmlElement("update"); //$NON-NLS-1$
+        XmlElement answer = new XmlElement("update");
 
-        answer.addAttribute(new Attribute("id", //$NON-NLS-1$
+        answer.addAttribute(new Attribute("id",
                 introspectedTable.getUpdateByExampleStatementId()));
 
-        answer.addAttribute(new Attribute("parameterType", "map")); //$NON-NLS-1$ //$NON-NLS-2$
+        answer.addAttribute(new Attribute("parameterType", "map")); //$NON-NLS-2$
 
         context.getCommentGenerator().addComment(answer);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("update "); //$NON-NLS-1$
+        sb.append("update ");
         sb.append(introspectedTable
                 .getAliasedFullyQualifiedTableNameAtRuntime());
         answer.addElement(new TextElement(sb.toString()));
 
         // set up for first column
         sb.setLength(0);
-        sb.append("set "); //$NON-NLS-1$
+        sb.append("set ");
 
         Iterator<IntrospectedColumn> iter =
                 ListUtilities.removeGeneratedAlwaysColumns(introspectedTable.getNonBLOBColumns()).iterator();
@@ -60,9 +60,9 @@ public class UpdateByExampleWithoutBLOBsElementGenerator extends
 
             sb.append(MyBatis3FormattingUtilities
                     .getAliasedEscapedColumnName(introspectedColumn));
-            sb.append(" = "); //$NON-NLS-1$
+            sb.append(" = ");
             sb.append(MyBatis3FormattingUtilities.getParameterClause(
-                    introspectedColumn, "record.")); //$NON-NLS-1$
+                    introspectedColumn, "record."));
 
             if (iter.hasNext()) {
                 sb.append(',');

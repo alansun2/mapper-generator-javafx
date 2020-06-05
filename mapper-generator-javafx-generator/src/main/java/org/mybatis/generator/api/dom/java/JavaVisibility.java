@@ -21,10 +21,10 @@ package org.mybatis.generator.api.dom.java;
  * @author Jeff Butler
  */
 public enum JavaVisibility {
-    PUBLIC("public "), //$NON-NLS-1$
-    PRIVATE("private "), //$NON-NLS-1$
-    PROTECTED("protected "), //$NON-NLS-1$
-    DEFAULT(""); //$NON-NLS-1$
+    PUBLIC("public "),
+    PRIVATE("private "),
+    PROTECTED("protected "),
+    DEFAULT("");
 
     private String value;
 
