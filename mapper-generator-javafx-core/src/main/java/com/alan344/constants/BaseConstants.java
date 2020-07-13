@@ -77,6 +77,11 @@ public class BaseConstants {
         return new File(MG_DATA_HOME + dataSource.toString() + "_datasource");
     }
 
+    /**
+     * 获取配置信息目录
+     *
+     * @return 配置信息目录
+     */
     public static File getConfigFile() {
         return new File(MG_CONFIG_FILE);
     }

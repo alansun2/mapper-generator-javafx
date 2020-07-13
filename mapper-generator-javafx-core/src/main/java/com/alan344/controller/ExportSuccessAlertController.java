@@ -1,8 +1,11 @@
 package com.alan344.controller;
 
+import com.alan344.bean.GeneratorConfig;
+import com.alan344.utils.FileUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -29,10 +32,20 @@ public class ExportSuccessAlertController {
     @FXML
     private ImageView image;
 
+    @FXML
+    private Button openFileButton;
+
     @Resource
     private BeanFactory beanFactory;
 
     private Stage tableAdvanceSetUpStage;
+
+    private GeneratorConfig generatorConfig;
+
+    /**
+     * 成功导出后的 button 按钮显示文字
+     */
+    private static final String OPEN_FILE_TEXT_SUCCESS = "打开文件夹";
 
     /**
      * 打开表高级设置
@@ -40,11 +53,11 @@ public class ExportSuccessAlertController {
      * @param stage 主窗口
      * @throws IOException e
      */
-    void openTableAdvancedSetUP(Stage stage, boolean isExportSuccess) throws IOException {
+    void openTableAdvancedSetup(Stage stage, boolean isExportSuccess, GeneratorConfig generatorConfig) throws IOException {
         if (tableAdvanceSetUpStage == null) {
             FXMLLoader fxmlLoader = new FXMLLoader();
 
-            fxmlLoader.setLocation(getClass().getResource("/fxml/export-success-alert.fxml"));
+            fxmlLoader.setLocation(getClass().getResource("/fxml/export-alert.fxml"));
             fxmlLoader.setControllerFactory(beanFactory::getBean);
 
             AnchorPane tableAdvanceSetUpPane = fxmlLoader.load();
@@ -57,12 +70,15 @@ public class ExportSuccessAlertController {
             tableAdvanceSetUpStage.initOwner(stage);
         }
 
+        this.generatorConfig = generatorConfig;
+
         if (isExportSuccess) {
             tableAdvanceSetUpStage.setTitle("导出成功");
             text.setText("successful!!!");
             text.setFill(Paint.valueOf("#25ae20"));
             text.setWrappingWidth(180);
             image.setImage(new Image("/image/export-success.png"));
+            openFileButton.setText(OPEN_FILE_TEXT_SUCCESS);
         } else {
             tableAdvanceSetUpStage.setTitle("导出失败");
             text.setText("error，请查看日志文件");
@@ -71,6 +87,7 @@ public class ExportSuccessAlertController {
             text.setWrappingWidth(220);
             image.setImage(new Image("/image/export-error.png"));
             image.setLayoutX(30);
+            openFileButton.setVisible(false);
         }
 
         tableAdvanceSetUpStage.show();
@@ -82,5 +99,14 @@ public class ExportSuccessAlertController {
     @FXML
     public void close() {
         tableAdvanceSetUpStage.close();
+    }
+
+    @FXML
+    public void openFileAfterExport() {
+        if (OPEN_FILE_TEXT_SUCCESS.equals(openFileButton.getText())) {
+            FileUtils.open(generatorConfig.getBeanLocation());
+        }
+
+        this.close();
     }
 }

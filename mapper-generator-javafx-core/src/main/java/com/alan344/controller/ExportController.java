@@ -112,7 +112,6 @@ public class ExportController implements Initializable {
         generatorConfig.setUseComment(useCommentCheckBox.isSelected());
         generatorConfig.setUseSwagger(useSwaggerCheckBox.isSelected());
         generatorConfig.setUseTkMybatis(useTkMybatis.isSelected());
-//        generatorConfig.setUserMerge(useMergeCheckBox.isSelected());
 
         configController.addConfig(generatorConfig);
 
@@ -140,8 +139,8 @@ public class ExportController implements Initializable {
             stage = StageConstants.configStage;
         }
 
-        // 成功或失败的弹窗
-        exportSuccessAlertController.openTableAdvancedSetUP(stage, exportSuccess);
+        // 成功或失败后的弹窗
+        exportSuccessAlertController.openTableAdvancedSetup(stage, exportSuccess, generatorConfig);
     }
 
     /**
