@@ -1,12 +1,10 @@
 package org.mybatis.generator.codegen.mybatis3.model;
 
-import org.mybatis.generator.api.CommentGenerator;
-import org.mybatis.generator.api.FullyQualifiedTable;
-import org.mybatis.generator.api.IntrospectedColumn;
-import org.mybatis.generator.api.Plugin;
+import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.codegen.AbstractJavaGenerator;
 import org.mybatis.generator.codegen.RootClassInfo;
+import org.mybatis.generator.config.GeneratedKey;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -53,6 +51,9 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             }
         }
 
+        // 生成主键策略
+        this.generateKey(introspectedTable, topLevelClass);
+
         Plugin plugins = context.getPlugins();
         String rootClass = getRootClass();
         for (IntrospectedColumn introspectedColumn : introspectedColumns) {
@@ -60,7 +61,9 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
                 continue;
             }
 
+            // 添加成员变量注释
             Field field = getJavaBeansField(introspectedColumn, context, introspectedTable);
+            // 插件执行
             if (plugins.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable, Plugin.ModelClassType.BASE_RECORD)) {
                 topLevelClass.addField(field);
                 topLevelClass.addImportedType(field.getType());
@@ -72,6 +75,28 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             answer.add(topLevelClass);
         }
         return answer;
+    }
+
+    /**
+     * -----
+     * 插入时返回生成主键
+     *
+     * @param introspectedTable introspectedTable
+     * @param topLevelClass     topLevelClass
+     */
+    protected void generateKey(IntrospectedTable introspectedTable, TopLevelClass topLevelClass) {
+        GeneratedKey gk = introspectedTable.getGeneratedKey();
+        if (gk != null) {
+            introspectedTable.getColumn(gk.getColumn()).ifPresent(introspectedColumn -> {
+                // if the column is null, then it's a configuration error. The
+                // warning has already been reported
+                if (gk.isJdbcStandard()) {
+                    topLevelClass.addFileCommentLine("@KeySql(useGeneratedKeys = true)");
+                } else {
+                    topLevelClass.addFileCommentLine("@KeySql(dialect = IdentityDialect." + gk.getRuntimeSqlStatement().toUpperCase() + ")");
+                }
+            });
+        }
     }
 
     private FullyQualifiedJavaType getSuperClass() {
@@ -155,8 +180,7 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             }
         } else {
             if (includeBLOBColumns()) {
-                introspectedColumns = introspectedTable
-                        .getNonPrimaryKeyColumns();
+                introspectedColumns = introspectedTable.getNonPrimaryKeyColumns();
             } else {
                 introspectedColumns = introspectedTable.getBaseColumns();
             }

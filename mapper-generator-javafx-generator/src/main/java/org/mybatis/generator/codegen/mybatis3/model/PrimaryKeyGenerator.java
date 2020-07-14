@@ -50,8 +50,7 @@ public class PrimaryKeyGenerator extends AbstractJavaGenerator {
         Plugin plugins = context.getPlugins();
         CommentGenerator commentGenerator = context.getCommentGenerator();
 
-        TopLevelClass topLevelClass = new TopLevelClass(introspectedTable
-                .getPrimaryKeyType());
+        TopLevelClass topLevelClass = new TopLevelClass(introspectedTable.getPrimaryKeyType());
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(topLevelClass);
 
@@ -72,10 +71,8 @@ public class PrimaryKeyGenerator extends AbstractJavaGenerator {
 
         commentGenerator.addModelClassComment(topLevelClass, introspectedTable);
 
-        for (IntrospectedColumn introspectedColumn : introspectedTable
-                .getPrimaryKeyColumns()) {
-            if (RootClassInfo.getInstance(rootClass, warnings)
-                    .containsProperty(introspectedColumn)) {
+        for (IntrospectedColumn introspectedColumn : introspectedTable.getPrimaryKeyColumns()) {
+            if (RootClassInfo.getInstance(rootClass, warnings).containsProperty(introspectedColumn)) {
                 continue;
             }
 

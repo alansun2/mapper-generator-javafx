@@ -57,7 +57,7 @@ public abstract class IntrospectedTable {
     public enum TargetRuntime {
         MYBATIS3,
         MYBATIS3_DSQL,
-        MYBATIS3_MY
+        MYBATIS3_TK
     }
 
     protected enum InternalAttribute {

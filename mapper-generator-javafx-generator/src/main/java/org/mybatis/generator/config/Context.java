@@ -427,8 +427,7 @@ public class Context extends PropertyHolder {
             if (plugin.validate(warnings)) {
                 pluginAggregator.addPlugin(plugin);
             } else {
-                warnings.add(getString("Warning.24",
-                        pluginConfiguration.getConfigurationType(), id));
+                warnings.add(getString("Warning.24", pluginConfiguration.getConfigurationType(), id));
             }
         }
 

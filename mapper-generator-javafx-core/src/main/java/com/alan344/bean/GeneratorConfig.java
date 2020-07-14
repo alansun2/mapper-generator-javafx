@@ -12,25 +12,6 @@ import java.util.Objects;
 @Getter
 @Setter
 public class GeneratorConfig {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        GeneratorConfig that = (GeneratorConfig) o;
-        return Objects.equals(configName, that.configName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(configName);
-    }
-
     /**
      * 配置的名称
      */
@@ -40,27 +21,9 @@ public class GeneratorConfig {
      */
     private String author;
     /**
-     * 是否使用java8
-     */
-    private boolean userJava8 = true;
-    /**
-     * 是否支持 BigDecimal
-     * <p>
-     * 所有 number 都是用 BigDecimal
-     */
-    private boolean useBigDecimal;
-    /**
-     * 使用支持 swagger
-     */
-    private boolean useSwagger;
-    /**
      * 使用支持 merge
      */
     private boolean useMerge;
-    /**
-     * 使用注释
-     */
-    private boolean useComment = true;
     /**
      * bean 的导出地址
      */
@@ -86,11 +49,125 @@ public class GeneratorConfig {
      */
     private boolean useActualColumnNames;
     /**
-     * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
+     * mapper 的统一接口
      */
-    private String targetName;
+    private String mapperRootInterface;
     /**
-     * 是否使用tk.Mybatis生成代码
+     * 选择的哪个tab
      */
-    private boolean useTkMybatis;
+    private int selectTab;
+    /**
+     * Mybatis-generator 原生配置
+     */
+    private MybatisExportConfig mybatisExportConfig = new MybatisExportConfig();
+    /**
+     * tk.mybatis
+     */
+    private TkMybatisExportConfig tkMybatisExportConfig = new TkMybatisExportConfig();
+    /**
+     * mybatis-plus
+     */
+    private MybatisPlusExportConfig mybatisPlusExportConfig = new MybatisPlusExportConfig();
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        GeneratorConfig that = (GeneratorConfig) o;
+        return Objects.equals(configName, that.configName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(configName);
+    }
+
+    /**
+     * Mybatis-generator 原生
+     */
+    @Getter
+    @Setter
+    public static class MybatisExportConfig {
+        /**
+         * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
+         */
+        private String targetName;
+        /**
+         * 是否使用java8
+         */
+        private boolean userJava8 = true;
+        /**
+         * 是否支持 BigDecimal
+         * <p>
+         * 所有 number 都是用 BigDecimal
+         */
+        private boolean useBigDecimal;
+        /**
+         * 使用支持 swagger
+         */
+        private boolean useSwagger;
+        /**
+         * 使用注释
+         */
+        private boolean useComment = true;
+    }
+
+    /**
+     * tj.mybatis 的导出配置
+     * https://github.com/abel533/Mapper
+     */
+    @Getter
+    @Setter
+    public static class TkMybatisExportConfig {
+        /**
+         * 是否使用java8
+         */
+        private boolean userJava8 = true;
+        /**
+         * 是否支持 BigDecimal
+         * <p>
+         * 所有 number 都是用 BigDecimal
+         */
+        private boolean useBigDecimal;
+        /**
+         * 使用支持 swagger
+         */
+        private boolean useSwagger;
+        /**
+         * 使用注释
+         */
+        private boolean useComment = true;
+    }
+
+    /**
+     * mybatis-plus 的导出配置
+     */
+    @Getter
+    @Setter
+    public static class MybatisPlusExportConfig {
+        /**
+         * 是否使用java8
+         */
+        private boolean userJava8 = true;
+        /**
+         * 是否支持 BigDecimal
+         * <p>
+         * 所有 number 都是用 BigDecimal
+         */
+        private boolean useBigDecimal;
+        /**
+         * 使用支持 swagger
+         */
+        private boolean useSwagger;
+        /**
+         * 使用注释
+         */
+        private boolean useComment = true;
+    }
 }

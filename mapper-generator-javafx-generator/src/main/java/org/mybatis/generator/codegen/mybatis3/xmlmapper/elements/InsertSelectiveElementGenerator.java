@@ -35,14 +35,11 @@ public class InsertSelectiveElementGenerator extends
     public void addElements(XmlElement parentElement) {
         XmlElement answer = new XmlElement("insert");
 
-        answer.addAttribute(new Attribute(
-                "id", introspectedTable.getInsertSelectiveStatementId()));
+        answer.addAttribute(new Attribute("id", introspectedTable.getInsertSelectiveStatementId()));
 
-        FullyQualifiedJavaType parameterType = introspectedTable.getRules()
-                .calculateAllFieldsClass();
+        FullyQualifiedJavaType parameterType = introspectedTable.getRules().calculateAllFieldsClass();
 
-        answer.addAttribute(new Attribute("parameterType",
-                parameterType.getFullyQualifiedName()));
+        answer.addAttribute(new Attribute("parameterType", parameterType.getFullyQualifiedName()));
 
         context.getCommentGenerator().addComment(answer);
 
@@ -77,14 +74,12 @@ public class InsertSelectiveElementGenerator extends
 
                 // if it is primitive, we cannot do a null check
                 sb.setLength(0);
-                sb.append(MyBatis3FormattingUtilities
-                        .getEscapedColumnName(introspectedColumn));
+                sb.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
                 sb.append(',');
                 insertTrimElement.addElement(new TextElement(sb.toString()));
 
                 sb.setLength(0);
-                sb.append(MyBatis3FormattingUtilities
-                        .getParameterClause(introspectedColumn));
+                sb.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn));
                 sb.append(',');
                 valuesTrimElement.addElement(new TextElement(sb.toString()));
 
@@ -95,12 +90,10 @@ public class InsertSelectiveElementGenerator extends
             sb.append(introspectedColumn.getJavaProperty());
             sb.append(" != null");
             XmlElement insertNotNullElement = new XmlElement("if");
-            insertNotNullElement.addAttribute(new Attribute(
-                    "test", sb.toString()));
+            insertNotNullElement.addAttribute(new Attribute("test", sb.toString()));
 
             sb.setLength(0);
-            sb.append(MyBatis3FormattingUtilities
-                    .getEscapedColumnName(introspectedColumn));
+            sb.append(MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn));
             sb.append(',');
             insertNotNullElement.addElement(new TextElement(sb.toString()));
             insertTrimElement.addElement(insertNotNullElement);
@@ -109,19 +102,16 @@ public class InsertSelectiveElementGenerator extends
             sb.append(introspectedColumn.getJavaProperty());
             sb.append(" != null");
             XmlElement valuesNotNullElement = new XmlElement("if");
-            valuesNotNullElement.addAttribute(new Attribute(
-                    "test", sb.toString()));
+            valuesNotNullElement.addAttribute(new Attribute("test", sb.toString()));
 
             sb.setLength(0);
-            sb.append(MyBatis3FormattingUtilities
-                    .getParameterClause(introspectedColumn));
+            sb.append(MyBatis3FormattingUtilities.getParameterClause(introspectedColumn));
             sb.append(',');
             valuesNotNullElement.addElement(new TextElement(sb.toString()));
             valuesTrimElement.addElement(valuesNotNullElement);
         }
 
-        if (context.getPlugins().sqlMapInsertSelectiveElementGenerated(
-                answer, introspectedTable)) {
+        if (context.getPlugins().sqlMapInsertSelectiveElementGenerated(answer, introspectedTable)) {
             parentElement.addElement(answer);
         }
     }

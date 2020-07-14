@@ -3,44 +3,97 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="460.0" prefWidth="500.0" styleClass="anchorPane" stylesheets="@../css/export.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ExportController">
-   <TextField fx:id="configNameText" layoutX="163.0" layoutY="39.0" prefHeight="23.0" prefWidth="209.0" promptText="配置名称" />
-   <TextField fx:id="authorText" layoutX="163.0" layoutY="104.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称" />
-   <TextField fx:id="beanLocationText" layoutX="163.0" layoutY="134.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 地址" />
-   <TextField fx:id="beanPackageText" layoutX="163.0" layoutY="164.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名" />
-   <TextField fx:id="mapperLocationText" layoutX="163.0" layoutY="194.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 地址" />
-   <TextField fx:id="mapperPackageText" layoutX="163.0" layoutY="224.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名" />
-   <TextField layoutX="163.0" layoutY="254.0" prefHeight="23.0" prefWidth="209.0" promptText="xml 地址" fx:id="xmlLocationText" />
-   <CheckBox fx:id="userJava8CheckBox" layoutX="43.0" layoutY="294.0" mnemonicParsing="false" selected="true" text="支持 java8" />
-   <CheckBox fx:id="useBigDecimalCheckBox" layoutX="43.0" layoutY="324.0" mnemonicParsing="false" selected="true" text="使用 BigDecimal" />
-   <CheckBox fx:id="useCommentCheckBox" layoutX="43.0" layoutY="354.0" mnemonicParsing="false" selected="true" text="启用注释" />
-   <CheckBox fx:id="useSwaggerCheckBox" layoutX="43.0" layoutY="384.0" mnemonicParsing="false" text="启用 swagger 注解" />
-   <!--<CheckBox fx:id="useMergeCheckBox" layoutX="43.0" layoutY="381.0" mnemonicParsing="false" text="是否使用 merge (默认生成新文件)" />-->
-   <Label layoutX="43.0" layoutY="43.0" text="配置名称：" />
-   <Label layoutX="43.0" layoutY="104.0" text="作者名称：" />
-   <Label layoutX="43.0" layoutY="134.0" text="Bean 地址：" />
-   <Label layoutX="43.0" layoutY="164.0" text="Bean 包名：" />
-   <Label layoutX="43.0" layoutY="194.0" text="Mapper 地址：" />
-   <Label layoutX="43.0" layoutY="224.0" text="Mapper 包名：" />
-   <Label layoutX="43.0" layoutY="254.0" text="Xml 地址：" />
-   <Button layoutX="298.0" layoutY="410.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0" prefWidth="64.0" text="取消" />
-   <Button layoutX="389.0" layoutY="410.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="导出" />
-   <Button layoutX="392.0" layoutY="134.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-   <Button layoutX="392.0" layoutY="194.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-   <Button layoutX="392.0" layoutY="254.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-   <RadioButton layoutX="126.0" layoutY="74.0" mnemonicParsing="false" selected="true" text="Mybatis3">
-      <toggleGroup>
-         <ToggleGroup fx:id="targetName" />
-      </toggleGroup>
-   </RadioButton>
-   <RadioButton layoutX="341.0" layoutY="74.0" mnemonicParsing="false" text="MyBatis3DynamicSql" toggleGroup="$targetName" />
-   <RadioButton layoutX="214.0" layoutY="74.0" mnemonicParsing="false" text="MyBatis3Simple" toggleGroup="$targetName" />
-   <Label layoutX="43.0" layoutY="75.0" text="targetName：" />
-   <CheckBox fx:id="useTkMybatis" layoutX="263.0" layoutY="294.0" mnemonicParsing="false" onAction="#useTkMybatis" text="使用 tk.mybatis" />
-   <Label layoutX="263.0" layoutY="317.0" prefHeight="15.0" prefWidth="192.0" text="（启用后，targetName 将无效）" />
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<AnchorPane prefHeight="510.0" prefWidth="500.0" styleClass="anchorPane" stylesheets="@../css/export.css"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.alan344.controller.ExportController">
+    <TextField fx:id="configNameText" layoutX="163.0" layoutY="39.0" prefHeight="23.0" prefWidth="209.0"
+               promptText="配置名称"/>
+    <TextField fx:id="authorText" layoutX="163.0" layoutY="78.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称"/>
+    <TextField fx:id="beanLocationText" layoutX="163.0" layoutY="108.0" prefHeight="23.0" prefWidth="209.0"
+               promptText="bean 地址"/>
+    <TextField fx:id="beanPackageText" layoutX="163.0" layoutY="138.0" prefHeight="23.0" prefWidth="209.0"
+               promptText="bean 包名"/>
+    <TextField fx:id="mapperLocationText" layoutX="163.0" layoutY="168.0" prefHeight="23.0" prefWidth="209.0"
+               promptText="mapper 地址"/>
+    <TextField fx:id="mapperPackageText" layoutX="163.0" layoutY="198.0" prefHeight="23.0" prefWidth="209.0"
+               promptText="mapper 包名"/>
+    <TextField layoutX="163.0" layoutY="228.0" prefHeight="23.0" prefWidth="209.0" promptText="xml 地址"
+               fx:id="xmlLocationText"/>
+    <Label layoutX="43.0" layoutY="43.0" text="配置名称："/>
+    <Label layoutX="43.0" layoutY="78.0" text="作者名称："/>
+    <Label layoutX="43.0" layoutY="108.0" text="Bean 地址："/>
+    <Label layoutX="43.0" layoutY="138.0" text="Bean 包名："/>
+    <Label layoutX="43.0" layoutY="168.0" text="Mapper 地址："/>
+    <Label layoutX="43.0" layoutY="198.0" text="Mapper 包名："/>
+    <Label layoutX="43.0" layoutY="228.0" text="Xml 地址："/>
+    <Button layoutX="298.0" layoutY="475.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0"
+            prefWidth="64.0" text="取消"/>
+    <Button layoutX="389.0" layoutY="475.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0"
+            text="导出"/>
+    <Button layoutX="392.0" layoutY="108.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0"
+            prefWidth="64.0" text="浏览"/>
+    <Button layoutX="392.0" layoutY="168.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0"
+            prefWidth="64.0" text="浏览"/>
+    <Button layoutX="392.0" layoutY="228.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0"
+            prefWidth="64.0" text="浏览"/>
+    <TabPane fx:id="tabPane" layoutY="293.0" prefHeight="170.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE">
+        <Tab text="Mybatis">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="159.0" prefWidth="500.0">
+                <CheckBox fx:id="userJava8CheckBox" layoutX="27.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="支持 java8"/>
+                <CheckBox fx:id="useBigDecimalCheckBox" layoutX="136.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="使用 BigDecimal"/>
+                <CheckBox fx:id="useCommentCheckBox" layoutX="300.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="启用注释"/>
+                <CheckBox fx:id="useSwaggerCheckBox" layoutX="27.0" layoutY="107.0" mnemonicParsing="false"
+                          text="启用 swagger 注解"/>
+                <RadioButton layoutX="115.0" layoutY="20.0" mnemonicParsing="false" selected="true"
+                             text="Mybatis3">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="targetName"/>
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton layoutX="342.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3DynamicSql"
+                             toggleGroup="$targetName">
+                </RadioButton>
+                <RadioButton layoutX="210.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3Simple"
+                             toggleGroup="$targetName">
+                </RadioButton>
+                <Label layoutX="26.0" layoutY="20.0" text="targetName："/>
+            </AnchorPane>
+        </Tab>
+        <Tab text="Mybatis-Plus">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <CheckBox fx:id="userJava8CheckBox1" layoutX="27.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="支持 java8"/>
+                <CheckBox fx:id="useBigDecimalCheckBox1" layoutX="136.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="使用 BigDecimal"/>
+                <CheckBox fx:id="useCommentCheckBox1" layoutX="300.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="启用注释"/>
+                <CheckBox fx:id="useSwaggerCheckBox1" layoutX="27.0" layoutY="107.0" mnemonicParsing="false"
+                          text="启用 swagger 注解"/>
+            </AnchorPane>
+        </Tab>
+        <Tab text="tk.mybatis">
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <CheckBox fx:id="userJava8CheckBox2" layoutX="27.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="支持 java8"/>
+                <CheckBox fx:id="useBigDecimalCheckBox2" layoutX="136.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="使用 BigDecimal"/>
+                <CheckBox fx:id="useCommentCheckBox2" layoutX="300.0" layoutY="62.0" mnemonicParsing="false"
+                          selected="true" text="启用注释"/>
+                <CheckBox fx:id="useSwaggerCheckBox2" layoutX="27.0" layoutY="107.0" mnemonicParsing="false"
+                          text="启用 swagger 注解"/>
+            </AnchorPane>
+        </Tab>
+    </TabPane>
+    <Label layoutX="43.0" layoutY="262.0" text="Mapper 的父接口："/>
+    <TextField fx:id="mapperRootInterfaceText" layoutX="164.0" layoutY="258.0" prefHeight="23.0" prefWidth="293.0" promptText="非必填，生成的 Mapper 会继承该接口"/>
 </AnchorPane>

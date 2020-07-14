@@ -54,11 +54,9 @@ public abstract class AbstractJavaGenerator extends AbstractGenerator {
     }
 
     public String getRootClass() {
-        String rootClass = introspectedTable
-                .getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_CLASS);
+        String rootClass = introspectedTable.getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_CLASS);
         if (rootClass == null) {
-            Properties properties = context
-                    .getJavaModelGeneratorConfiguration().getProperties();
+            Properties properties = context.getJavaModelGeneratorConfiguration().getProperties();
             rootClass = properties.getProperty(PropertyRegistry.ANY_ROOT_CLASS);
         }
 

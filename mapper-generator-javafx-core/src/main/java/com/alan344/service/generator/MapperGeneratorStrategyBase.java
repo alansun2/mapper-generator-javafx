@@ -7,6 +7,7 @@ import com.alan344happyframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.exception.XMLParserException;
@@ -30,6 +31,12 @@ import java.util.List;
 public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStrategy {
     protected DocumentBuilder documentBuilder;
 
+    protected Document doc;
+
+    protected static final String PROPERTY = "property";
+    protected static final String NAME = "name";
+    protected static final String VALUE = "value";
+
     {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
@@ -42,12 +49,11 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 添加 el
      *
-     * @param doc       doc
      * @param parent    父el
      * @param childName 子el名称
      * @return 子el
      */
-    protected Element addElement(Document doc, Element parent, String childName) {
+    protected Element addElement(Element parent, String childName) {
         final Element element = doc.createElement(childName);
         if (parent != null) {
             parent.appendChild(element);
@@ -115,6 +121,18 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
         if (!warnings.isEmpty()) {
             warnings.forEach(log::warn);
+        }
+    }
+
+    /**
+     * 填充 Mapper 通用接口
+     */
+    protected void addMapperRootInterfaceIfNecessary(GeneratorConfig generatorConfig, Element javaClientGenerator) {
+        final String mapperRootInterface = generatorConfig.getMapperRootInterface();
+        if(StringUtils.isNotEmpty(mapperRootInterface)){
+            final Element rootInterface = this.addElement(javaClientGenerator, PROPERTY);
+            rootInterface.setAttribute(NAME, PropertyRegistry.ANY_ROOT_INTERFACE);
+            rootInterface.setAttribute(VALUE, mapperRootInterface);
         }
     }
 }

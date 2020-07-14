@@ -38,20 +38,15 @@ public abstract class AbstractXmlElementGenerator extends AbstractGenerator {
      * @param generatedKey       the generated key for the current table
      * @return the selectKey element
      */
-    protected XmlElement getSelectKey(IntrospectedColumn introspectedColumn,
-                                      GeneratedKey generatedKey) {
-        String identityColumnType = introspectedColumn
-                .getFullyQualifiedJavaType().getFullyQualifiedName();
+    protected XmlElement getSelectKey(IntrospectedColumn introspectedColumn, GeneratedKey generatedKey) {
+        String identityColumnType = introspectedColumn.getFullyQualifiedJavaType().getFullyQualifiedName();
 
         XmlElement answer = new XmlElement("selectKey");
         answer.addAttribute(new Attribute("resultType", identityColumnType));
-        answer.addAttribute(new Attribute(
-                "keyProperty", introspectedColumn.getJavaProperty()));
-        answer.addAttribute(new Attribute("order",
-                generatedKey.getMyBatis3Order()));
+        answer.addAttribute(new Attribute("keyProperty", introspectedColumn.getJavaProperty()));
+        answer.addAttribute(new Attribute("order", generatedKey.getMyBatis3Order()));
 
-        answer.addElement(new TextElement(generatedKey
-                .getRuntimeSqlStatement()));
+        answer.addElement(new TextElement(generatedKey.getRuntimeSqlStatement()));
 
         return answer;
     }
@@ -71,10 +66,8 @@ public abstract class AbstractXmlElementGenerator extends AbstractGenerator {
                 // warning has already been reported
                 if (gk.isJdbcStandard()) {
                     answer.addAttribute(new Attribute("useGeneratedKeys", "true")); //$NON-NLS-2$
-                    answer.addAttribute(
-                            new Attribute("keyProperty", introspectedColumn.getJavaProperty()));
-                    answer.addAttribute(
-                            new Attribute("keyColumn", introspectedColumn.getActualColumnName()));
+                    answer.addAttribute(new Attribute("keyProperty", introspectedColumn.getJavaProperty()));
+                    answer.addAttribute(new Attribute("keyColumn", introspectedColumn.getActualColumnName()));
                 } else {
                     answer.addElement(getSelectKey(introspectedColumn, gk));
                 }

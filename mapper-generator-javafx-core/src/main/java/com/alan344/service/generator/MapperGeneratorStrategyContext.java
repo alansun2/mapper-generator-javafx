@@ -17,11 +17,12 @@ public class MapperGeneratorStrategyContext {
     private MyMybatisGeneratorService myMybatisGeneratorService;
 
     public MapperGeneratorStrategy getMapperGeneratorStrategy(GeneratorConfig generatorConfig) {
-        final boolean useTkMybatis = generatorConfig.isUseTkMybatis();
-        if (useTkMybatis) {
-            return mapperBaseGenerator;
-        } else {
-            return myMybatisGeneratorService;
+        final int selectTab = generatorConfig.getSelectTab();
+        switch (selectTab) {
+            case 2:
+                return mapperBaseGenerator;
+            default:
+                return myMybatisGeneratorService;
         }
     }
 }

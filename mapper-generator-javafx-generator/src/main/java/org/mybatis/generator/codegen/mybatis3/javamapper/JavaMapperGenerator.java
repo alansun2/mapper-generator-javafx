@@ -48,22 +48,18 @@ public class JavaMapperGenerator extends AbstractJavaClientGenerator {
         progressCallback.startTask(getString("Progress.17", introspectedTable.getFullyQualifiedTable().toString()));
         CommentGenerator commentGenerator = context.getCommentGenerator();
 
-        FullyQualifiedJavaType type = new FullyQualifiedJavaType(
-                introspectedTable.getMyBatis3JavaMapperType());
+        FullyQualifiedJavaType type = new FullyQualifiedJavaType(introspectedTable.getMyBatis3JavaMapperType());
         Interface interfaze = new Interface(type);
         interfaze.setVisibility(JavaVisibility.PUBLIC);
         commentGenerator.addJavaFileComment(interfaze);
 
-        String rootInterface = introspectedTable
-                .getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+        String rootInterface = introspectedTable.getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
         if (!stringHasValue(rootInterface)) {
-            rootInterface = context.getJavaClientGeneratorConfiguration()
-                    .getProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+            rootInterface = context.getJavaClientGeneratorConfiguration().getProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
         }
 
         if (stringHasValue(rootInterface)) {
-            FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(
-                    rootInterface);
+            FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(rootInterface);
             interfaze.addSuperInterface(fqjt);
             interfaze.addImportedType(fqjt);
         }

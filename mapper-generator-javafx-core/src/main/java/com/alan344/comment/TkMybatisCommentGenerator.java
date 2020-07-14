@@ -1,4 +1,4 @@
-package com.alan344.utils;
+package com.alan344.comment;
 
 import com.alan344happyframework.util.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
@@ -20,7 +20,7 @@ import static org.mybatis.generator.internal.util.StringUtility.isTrue;
  * @author Alan
  * @createtime 2017/9/27 * mybatis自定义注释
  */
-public class MyCommentGenerator implements CommentGenerator {
+public class TkMybatisCommentGenerator implements CommentGenerator {
     /**
      * The properties.
      */
@@ -67,7 +67,7 @@ public class MyCommentGenerator implements CommentGenerator {
     /**
      * Instantiates a new default comment generator.
      */
-    public MyCommentGenerator() {
+    public TkMybatisCommentGenerator() {
         super();
         properties = new Properties();
         suppressDate = false;

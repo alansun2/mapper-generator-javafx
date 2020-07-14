@@ -803,8 +803,7 @@ public final class PluginAggregator implements Plugin {
         boolean rc = true;
 
         for (Plugin plugin : plugins) {
-            if (!plugin.modelFieldGenerated(field, topLevelClass,
-                    introspectedColumn, introspectedTable, modelClassType)) {
+            if (!plugin.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable, modelClassType)) {
                 rc = false;
                 break;
             }

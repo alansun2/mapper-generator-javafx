@@ -615,14 +615,12 @@ public class MyBatisGeneratorConfigurationParser {
         String type = attributes.getProperty("type");
         String targetPackage = attributes.getProperty("targetPackage");
         String targetProject = attributes.getProperty("targetProject");
-        String implementationPackage = attributes
-                .getProperty("implementationPackage");
+        String implementationPackage = attributes.getProperty("implementationPackage");
 
         javaClientGeneratorConfiguration.setConfigurationType(type);
         javaClientGeneratorConfiguration.setTargetPackage(targetPackage);
         javaClientGeneratorConfiguration.setTargetProject(targetProject);
-        javaClientGeneratorConfiguration
-                .setImplementationPackage(implementationPackage);
+        javaClientGeneratorConfiguration.setImplementationPackage(implementationPackage);
 
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
