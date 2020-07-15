@@ -1,11 +1,11 @@
 package com.alan344.comment;
 
+import com.alan344happyframework.util.DateUtils;
 import com.alan344happyframework.util.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.*;
-import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.StringUtility;
 
@@ -18,13 +18,13 @@ import static org.mybatis.generator.internal.util.StringUtility.isTrue;
 
 /**
  * @author Alan
- * @createtime 2017/9/27 * mybatis自定义注释
+ * @date 2017/9/27 * mybatis自定义注释
  */
 public class MyCommentGenerator implements CommentGenerator {
     /**
      * The properties.
      */
-    private Properties properties;
+    private final Properties properties;
 
     /**
      * The suppress date.
@@ -68,7 +68,6 @@ public class MyCommentGenerator implements CommentGenerator {
      * Instantiates a new default comment generator.
      */
     public MyCommentGenerator() {
-        super();
         properties = new Properties();
         suppressDate = false;
         suppressAllComments = false;
@@ -91,13 +90,13 @@ public class MyCommentGenerator implements CommentGenerator {
         }
 
         //添加作者配置
-        String authorString = properties.getProperty(COMMENT_GENERATOR_AUTHOR);
+        String authorString = this.properties.getProperty(COMMENT_GENERATOR_AUTHOR);
         if (StringUtility.stringHasValue(authorString)) {
             this.author = authorString;
         }
 
         //swagger
-        String supportSwaggerString = properties.getProperty("supportSwagger");
+        String supportSwaggerString = this.properties.getProperty("supportSwagger");
         if (StringUtility.stringHasValue(supportSwaggerString)) {
             this.supportSwagger = "true".equals(supportSwaggerString);
         }
@@ -117,11 +116,6 @@ public class MyCommentGenerator implements CommentGenerator {
         if (supportSwagger) {
             field.addJavaDocLine("@ApiModelProperty(value = \"" + remarks + "\")");
         }
-    }
-
-    @Override
-    public void addFieldComment(Field field, IntrospectedTable introspectedTable) {
-
     }
 
     @Override
@@ -167,75 +161,22 @@ public class MyCommentGenerator implements CommentGenerator {
     }
 
     @Override
-    public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable) {
-
-    }
-
-    @Override
-    public void addClassComment(InnerClass innerClass, IntrospectedTable introspectedTable, boolean b) {
-
-    }
-
-    @Override
-    public void addEnumComment(InnerEnum innerEnum, IntrospectedTable introspectedTable) {
-
-    }
-
-    @Override
-    public void addGetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-
-    }
-
-    @Override
-    public void addSetterComment(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-
-    }
-
-    @Override
-    public void addGeneralMethodComment(Method method, IntrospectedTable introspectedTable) {
-
-    }
-
-    @Override
-    public void addJavaFileComment(CompilationUnit compilationUnit) {
-
-    }
-
-    @Override
-    public void addComment(XmlElement xmlElement) {
-
-    }
-
-    @Override
-    public void addRootComment(XmlElement xmlElement) {
-
-    }
-
-    @Override
-    public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> imports) {
-
-    }
-
-    @Override
-    public void addGeneralMethodAnnotation(Method method, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> imports) {
-
-    }
-
-    @Override
-    public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable, Set<FullyQualifiedJavaType> imports) {
-
-    }
-
-    @Override
-    public void addFieldAnnotation(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> imports) {
-
+    public void addMapperClassComment(Interface interfaze, IntrospectedTable introspectedTable) {
+        // 作者信息
+        interfaze.addJavaDocLine("/**");
+        interfaze.addJavaDocLine(" * 对应的表：" + introspectedTable.getFullyQualifiedTable());
+        interfaze.addJavaDocLine(" *");
+        interfaze.addJavaDocLine(" * @author " + author);
+        // 添加时间
+        interfaze.addJavaDocLine(" * @date " + getDateString());
+        interfaze.addJavaDocLine(" */");
     }
 
     private String getDateString() {
         if (this.suppressDate) {
             return null;
         } else {
-            return this.dateFormat != null ? this.dateFormat.format(new Date()) : (new Date()).toString();
+            return this.dateFormat != null ? this.dateFormat.format(new Date()) : DateUtils.getCurrentDate();
         }
     }
 
@@ -251,5 +192,4 @@ public class MyCommentGenerator implements CommentGenerator {
             innerClass.addJavaDocLine("@" + anImport.getShortName());
         }
     }
-
 }

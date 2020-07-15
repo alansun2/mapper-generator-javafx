@@ -6,6 +6,7 @@ import org.mybatis.generator.codegen.AbstractJavaGenerator;
 import org.mybatis.generator.codegen.mybatis3.IntrospectedTableMyBatis3Impl;
 import org.mybatis.generator.codegen.mybatis3.javamapper.TkMybatisJavaClientGenerator;
 import org.mybatis.generator.codegen.mybatis3.model.BaseRecordGenerator;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.SimpleXMLMapperGenerator;
 
 import java.util.List;
 
@@ -23,8 +24,13 @@ public class IntrospectedTableTkMybatisImpl extends IntrospectedTableMyBatis3Imp
     protected void calculateXmlMapperGenerator(AbstractJavaClientGenerator javaClientGenerator,
                                                List<String> warnings,
                                                ProgressCallback progressCallback) {
-        // no XML with dynamic SQL support
-        xmlMapperGenerator = null;
+        if (javaClientGenerator == null) {
+            xmlMapperGenerator = null;
+        } else {
+            xmlMapperGenerator = javaClientGenerator.getMatchedXMLGenerator();
+        }
+
+        initializeAbstractGenerator(xmlMapperGenerator, warnings, progressCallback);
     }
 
     @Override

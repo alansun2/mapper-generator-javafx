@@ -51,10 +51,8 @@ public class MapperBaseGenerator extends MapperGeneratorStrategyBase {
         final Element serializablePlugin = this.addElement(context, "plugin");
         serializablePlugin.setAttribute("type", "org.mybatis.generator.plugins.SerializablePlugin");
 
-        if (generatorConfig.isUseMerge()) {
-            final Element unmergeableXmlMappersPlugin = this.addElement(context, "plugin");
-            unmergeableXmlMappersPlugin.setAttribute("type", "org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin");
-        }
+        final Element tkKeySqlPlugin = this.addElement(context, "plugin");
+        tkKeySqlPlugin.setAttribute("type", "org.mybatis.generator.plugins.TkMybatisKeySqlPlugin");
 
         // 是否成成注释
         if (tkMybatisExportConfig.isUseComment()) {

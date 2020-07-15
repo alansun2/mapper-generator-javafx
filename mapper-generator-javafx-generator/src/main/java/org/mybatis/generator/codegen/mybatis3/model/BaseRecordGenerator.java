@@ -51,9 +51,6 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             }
         }
 
-        // 生成主键策略
-        this.generateKey(introspectedTable, topLevelClass);
-
         Plugin plugins = context.getPlugins();
         String rootClass = getRootClass();
         for (IntrospectedColumn introspectedColumn : introspectedColumns) {
@@ -75,28 +72,6 @@ public class BaseRecordGenerator extends AbstractJavaGenerator {
             answer.add(topLevelClass);
         }
         return answer;
-    }
-
-    /**
-     * -----
-     * 插入时返回生成主键
-     *
-     * @param introspectedTable introspectedTable
-     * @param topLevelClass     topLevelClass
-     */
-    protected void generateKey(IntrospectedTable introspectedTable, TopLevelClass topLevelClass) {
-        GeneratedKey gk = introspectedTable.getGeneratedKey();
-        if (gk != null) {
-            introspectedTable.getColumn(gk.getColumn()).ifPresent(introspectedColumn -> {
-                // if the column is null, then it's a configuration error. The
-                // warning has already been reported
-                if (gk.isJdbcStandard()) {
-                    topLevelClass.addFileCommentLine("@KeySql(useGeneratedKeys = true)");
-                } else {
-                    topLevelClass.addFileCommentLine("@KeySql(dialect = IdentityDialect." + gk.getRuntimeSqlStatement().toUpperCase() + ")");
-                }
-            });
-        }
     }
 
     private FullyQualifiedJavaType getSuperClass() {
