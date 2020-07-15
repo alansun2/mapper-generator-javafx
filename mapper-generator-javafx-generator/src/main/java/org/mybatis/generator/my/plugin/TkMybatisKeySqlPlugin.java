@@ -1,9 +1,12 @@
 package org.mybatis.generator.my.plugin;
 
+import com.alan344happyframework.util.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.GeneratedKey;
 
@@ -43,6 +46,46 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        this.addConstants(topLevelClass, introspectedTable);
+        return super.modelBaseRecordClassGenerated(topLevelClass, introspectedTable);
+    }
+
+    @Override
+    public boolean modelPrimaryKeyClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        this.addConstants(topLevelClass, introspectedTable);
+        return super.modelPrimaryKeyClassGenerated(topLevelClass, introspectedTable);
+    }
+
+    @Override
+    public boolean modelRecordWithBLOBsClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        this.addConstants(topLevelClass, introspectedTable);
+        return super.modelRecordWithBLOBsClassGenerated(topLevelClass, introspectedTable);
+    }
+
+    private void addConstants(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        final String generateColumnConsts = this.properties.getProperty("generateColumnConsts");
+        if (StringUtils.isNotEmpty(generateColumnConsts)) {
+            for (IntrospectedColumn introspectedColumn : introspectedTable.getAllColumns()) {
+                Field field = new Field(introspectedColumn.getActualColumnName().toUpperCase(), FullyQualifiedJavaType.getStringInstance());
+                field.setVisibility(JavaVisibility.PUBLIC);
+                field.setStatic(true);
+                field.setFinal(true);
+                field.setInitializationString("\"" + introspectedColumn.getJavaProperty() + "\"");
+                context.getCommentGenerator().addClassComment(topLevelClass, introspectedTable);
+                topLevelClass.addField(field);
+                //增加字段名常量,用于pageHelper
+                Field columnField = new Field("DB_" + introspectedColumn.getActualColumnName().toUpperCase(), FullyQualifiedJavaType.getStringInstance());
+                columnField.setVisibility(JavaVisibility.PUBLIC);
+                columnField.setStatic(true);
+                columnField.setFinal(true);
+                columnField.setInitializationString("\"" + introspectedColumn.getActualColumnName() + "\"");
+                topLevelClass.addField(columnField);
+            }
+        }
     }
 
     /**

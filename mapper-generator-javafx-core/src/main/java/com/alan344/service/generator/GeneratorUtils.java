@@ -39,9 +39,10 @@ public class GeneratorUtils {
      *
      * @param pluginName 插件类的全路径
      */
-    protected void addPlugin(String pluginName) {
+    protected Element addPlugin(String pluginName) {
         final Element plugin = this.addElement(mapperGeneratorStrategyBase.getContext(), "plugin");
         plugin.setAttribute("type", pluginName);
+        return plugin;
     }
 
     /**

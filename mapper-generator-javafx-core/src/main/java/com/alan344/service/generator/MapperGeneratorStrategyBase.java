@@ -41,7 +41,7 @@ import java.util.List;
 @Getter
 @Slf4j
 public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStrategy {
-    private DocumentBuilder documentBuilder;
+    private static DocumentBuilder documentBuilder;
 
     private final GeneratorConfig.ExportConfig exportConfig;
 
@@ -49,7 +49,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
     private Element context;
 
-    {
+    static {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();

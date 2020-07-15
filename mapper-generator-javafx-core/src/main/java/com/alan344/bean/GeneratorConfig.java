@@ -161,6 +161,10 @@ public class GeneratorConfig {
          * 使用注释
          */
         private boolean useComment = true;
+        /**
+         * 是否生成静态常量
+         */
+        private boolean generateColumnConsts;
     }
 
     /**
