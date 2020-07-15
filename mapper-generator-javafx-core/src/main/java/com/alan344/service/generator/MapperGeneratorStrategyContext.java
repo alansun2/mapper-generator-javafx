@@ -1,7 +1,6 @@
 package com.alan344.service.generator;
 
 import com.alan344.bean.GeneratorConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,19 +9,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MapperGeneratorStrategyContext {
-    @Autowired
-    private MapperBaseGenerator mapperBaseGenerator;
-
-    @Autowired
-    private MyMybatisGeneratorService myMybatisGeneratorService;
 
     public MapperGeneratorStrategy getMapperGeneratorStrategy(GeneratorConfig generatorConfig) {
         final int selectTab = generatorConfig.getSelectTab();
         switch (selectTab) {
             case 2:
-                return mapperBaseGenerator;
+                return new MapperBaseGenerator(generatorConfig.getTkMybatisExportConfig());
             default:
-                return myMybatisGeneratorService;
+                return new MyMybatisGeneratorService(generatorConfig.getMybatisExportConfig());
         }
     }
 }

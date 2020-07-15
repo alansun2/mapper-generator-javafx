@@ -13,5 +13,5 @@ public interface MapperGeneratorStrategy {
      *
      * @param generatorConfig 配置
      */
-    void generator(GeneratorConfig generatorConfig, GeneratorConfig.ExportConfig exportConfig);
+    void generator(GeneratorConfig generatorConfig);
 }

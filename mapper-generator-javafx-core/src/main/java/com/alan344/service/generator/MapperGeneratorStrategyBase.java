@@ -43,7 +43,7 @@ import java.util.List;
 public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStrategy {
     private DocumentBuilder documentBuilder;
 
-    private GeneratorConfig.ExportConfig exportConfig;
+    private final GeneratorConfig.ExportConfig exportConfig;
 
     private Document doc;
 
@@ -58,9 +58,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         }
     }
 
-    @Override
-    public void generator(GeneratorConfig generatorConfig, GeneratorConfig.ExportConfig exportConfig) {
+    public MapperGeneratorStrategyBase(GeneratorConfig.ExportConfig exportConfig) {
         this.exportConfig = exportConfig;
+    }
+
+    @Override
+    public void generator(GeneratorConfig generatorConfig) {
         doc = documentBuilder.newDocument();
         final Element root = doc.createElement("generatorConfiguration");
         doc.appendChild(root);
@@ -124,13 +127,11 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      */
     protected void addComment(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
         // 是否成成注释
-        if (exportConfig.isUseComment()) {
-            final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
-            commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
-            generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, "true");
-            generatorUtils.addProperty(true, commentGenerator, "author", generatorConfig.getAuthor());
-            generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseSwagger() + "");
-        }
+        final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
+        commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
+        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
+        generatorUtils.addProperty(true, commentGenerator, "author", generatorConfig.getAuthor());
+        generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseSwagger() + "");
     }
 
     /**

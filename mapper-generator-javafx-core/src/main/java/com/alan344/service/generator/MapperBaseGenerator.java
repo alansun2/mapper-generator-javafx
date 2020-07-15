@@ -1,16 +1,19 @@
 package com.alan344.service.generator;
 
+import com.alan344.bean.GeneratorConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.my.plugin.TkMybatisKeySqlPlugin;
-import org.springframework.stereotype.Service;
 
 /**
  * @author AlanSun
  * @date 2020/6/5 12:37
  */
 @Slf4j
-@Service
 public class MapperBaseGenerator extends MapperGeneratorStrategyBase {
+
+    public MapperBaseGenerator(GeneratorConfig.ExportConfig exportConfig) {
+        super(exportConfig);
+    }
 
     /**
      * 添加插件
