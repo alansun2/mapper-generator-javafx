@@ -2,6 +2,7 @@ package com.alan344.bean;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.mybatis.generator.api.IntrospectedTable;
 
 import java.util.Objects;
 
@@ -20,6 +21,10 @@ public class GeneratorConfig {
      * 类中的作者信息
      */
     private String author;
+    /**
+     * 是否只生成 model
+     */
+    private boolean modelOnly;
     /**
      * 使用支持 merge
      */
@@ -88,12 +93,24 @@ public class GeneratorConfig {
         return Objects.hash(configName);
     }
 
+    public interface ExportConfig {
+        boolean isUserJava8();
+
+        boolean isUseBigDecimal();
+
+        boolean isUseSwagger();
+
+        boolean isUseComment();
+
+        String getTargetName();
+    }
+
     /**
      * Mybatis-generator 原生
      */
     @Getter
     @Setter
-    public static class MybatisExportConfig {
+    public static class MybatisExportConfig implements ExportConfig {
         /**
          * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
          */
@@ -124,7 +141,8 @@ public class GeneratorConfig {
      */
     @Getter
     @Setter
-    public static class TkMybatisExportConfig {
+    public static class TkMybatisExportConfig implements ExportConfig {
+        private String targetName = IntrospectedTable.TargetRuntime.MYBATIS3_TK.toString();
         /**
          * 是否使用java8
          */
@@ -150,7 +168,8 @@ public class GeneratorConfig {
      */
     @Getter
     @Setter
-    public static class MybatisPlusExportConfig {
+    public static class MybatisPlusExportConfig implements ExportConfig {
+        private String targetName = IntrospectedTable.TargetRuntime.MYBATIS3_TK.toString();
         /**
          * 是否使用java8
          */

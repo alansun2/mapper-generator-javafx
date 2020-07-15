@@ -30,6 +30,15 @@ import java.util.ResourceBundle;
 @Controller
 public class ExportController implements Initializable {
     @FXML
+    private TextField authorText;
+
+    @FXML
+    private TextField configNameText;
+
+    @FXML
+    private CheckBox modelOnlyCheckBox;
+
+    @FXML
     private TextField beanLocationText;
 
     @FXML
@@ -43,12 +52,6 @@ public class ExportController implements Initializable {
 
     @FXML
     private TextField xmlLocationText;
-
-    @FXML
-    private TextField authorText;
-
-    @FXML
-    private TextField configNameText;
 
     @FXML
     private TextField mapperRootInterfaceText;
@@ -121,6 +124,12 @@ public class ExportController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        modelOnlyCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            mapperLocationText.setDisable(newValue);
+            mapperPackageText.setDisable(newValue);
+            xmlLocationText.setDisable(newValue);
+            mapperRootInterfaceText.setDisable(newValue);
+        });
     }
 
     /**
@@ -143,6 +152,7 @@ public class ExportController implements Initializable {
         generatorConfig.setMapperXmlLocation(xmlLocationText.getText());
         generatorConfig.setSelectTab(tabPane.getSelectionModel().getSelectedIndex());
         generatorConfig.setMapperRootInterface(mapperRootInterfaceText.getText());
+        generatorConfig.setModelOnly(modelOnlyCheckBox.isSelected());
 
         // 配置信息
         this.selectTabSetup(generatorConfig);
@@ -281,6 +291,15 @@ public class ExportController implements Initializable {
         xmlLocationText.setText(generatorConfig.getMapperXmlLocation());
         mapperRootInterfaceText.setText(generatorConfig.getMapperRootInterface());
         tabPane.getSelectionModel().select(generatorConfig.getSelectTab());
+        modelOnlyCheckBox.setSelected(generatorConfig.isModelOnly());
+
+        // 一旦选择 modelonly后这三项不用填写
+        if (generatorConfig.isModelOnly()) {
+            mapperLocationText.setDisable(false);
+            mapperPackageText.setDisable(false);
+            xmlLocationText.setDisable(false);
+            mapperRootInterfaceText.setDisable(false);
+        }
 
         final GeneratorConfig.MybatisExportConfig mybatisExportConfig = generatorConfig.getMybatisExportConfig();
         userJava8CheckBox.setSelected(mybatisExportConfig.isUserJava8());

@@ -61,4 +61,13 @@ public class Toast {
         }))).start());
         fadeInTimeline.play();
     }
+
+    /**
+     * mo
+     * @param stage
+     * @param message
+     */
+    public static void makeTextDefault(Stage stage, String message) {
+        Toast.makeText(stage, message, 3000, 500, 500, 15, 5);
+    }
 }

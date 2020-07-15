@@ -15,6 +15,7 @@
  */
 package org.mybatis.generator.internal;
 
+import org.mybatis.generator.my.table.IntrospectedTableTkMybatisImpl;
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.DefaultJavaFormatter;
 import org.mybatis.generator.api.dom.DefaultXmlFormatter;
@@ -22,7 +23,6 @@ import org.mybatis.generator.codegen.mybatis3.IntrospectedTableMyBatis3Impl;
 import org.mybatis.generator.codegen.mybatis3.IntrospectedTableMyBatis3SimpleImpl;
 import org.mybatis.generator.config.*;
 import org.mybatis.generator.internal.types.JavaTypeResolverDefaultImpl;
-import org.mybatis.generator.my.IntrospectedTableTkMybatisImpl;
 import org.mybatis.generator.runtime.dynamic.sql.IntrospectedTableMyBatis3DynamicSqlImpl;
 
 import java.net.URL;
@@ -298,7 +298,7 @@ public class ObjectFactory {
             type = IntrospectedTableMyBatis3SimpleImpl.class.getName();
         } else if ("MyBatis3DynamicSql".equalsIgnoreCase(type)) {
             type = IntrospectedTableMyBatis3DynamicSqlImpl.class.getName();
-        } else if ("MYBATIS3_TK".equalsIgnoreCase(type)) {
+        } else if (IntrospectedTable.TargetRuntime.MYBATIS3_TK.toString().equalsIgnoreCase(type)) {
             type = IntrospectedTableTkMybatisImpl.class.getName();
         }
 

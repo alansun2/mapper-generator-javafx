@@ -81,11 +81,6 @@ public class IntrospectedTableMyBatis3Impl extends IntrospectedTable {
 
     protected AbstractJavaClientGenerator calculateClientGenerators(List<String> warnings,
                                                                     ProgressCallback progressCallback) {
-        final JavaClientGeneratorConfiguration javaClientGeneratorConfiguration = context.getJavaClientGeneratorConfiguration();
-        if (javaClientGeneratorConfiguration == null) {
-            return null;
-        }
-
         if (!rules.generateJavaClient()) {
             return null;
         }

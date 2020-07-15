@@ -1,4 +1,4 @@
-package com.alan344.comment;
+package org.mybatis.generator.my.comment;
 
 import com.alan344happyframework.util.DateUtils;
 import com.alan344happyframework.util.StringUtils;
@@ -9,12 +9,8 @@ import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.StringUtility;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
-
-import static org.mybatis.generator.internal.util.StringUtility.isTrue;
 
 /**
  * @author Alan
@@ -24,30 +20,12 @@ public class MyCommentGenerator implements CommentGenerator {
     /**
      * The properties.
      */
-    private final Properties properties;
+    private final Properties properties = new Properties();
 
     /**
-     * The suppress date.
-     * 禁止日期生成·
-     */
-    private boolean suppressDate;
-
-    /**
-     * The suppress all comments.
-     * 禁止生成所有的注释
-     */
-    private boolean suppressAllComments;
-
-    /**
-     * The addition of table remark's comments.
-     * If suppressAllComments is true, this option is ignored
-     * <p>
      * 添加表格字段的注释说明
-     * 当suppressAllComments为true，这个参数的值将会被忽略
      */
     private boolean addRemarkComments;
-
-    private SimpleDateFormat dateFormat;
 
     /**
      * 添加作者配置
@@ -64,30 +42,11 @@ public class MyCommentGenerator implements CommentGenerator {
      */
     private static final String COMMENT_GENERATOR_AUTHOR = "author";
 
-    /**
-     * Instantiates a new default comment generator.
-     */
-    public MyCommentGenerator() {
-        properties = new Properties();
-        suppressDate = false;
-        suppressAllComments = false;
-        addRemarkComments = false;
-    }
-
     @Override
     public void addConfigurationProperties(Properties properties) {
         this.properties.putAll(properties);
 
-        this.suppressDate = isTrue(properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE));
-
-        this.suppressAllComments = isTrue(properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS));
-
-        this.addRemarkComments = isTrue(properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS));
-
-        String dateFormatString = properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT);
-        if (StringUtility.stringHasValue(dateFormatString)) {
-            this.dateFormat = new SimpleDateFormat(dateFormatString);
-        }
+        this.addRemarkComments = StringUtility.isTrue(this.properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS));
 
         //添加作者配置
         String authorString = this.properties.getProperty(COMMENT_GENERATOR_AUTHOR);
@@ -104,15 +63,15 @@ public class MyCommentGenerator implements CommentGenerator {
 
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        if (suppressAllComments) {
-            return;
+        String remarks = introspectedColumn.getRemarks();
+
+        if (addRemarkComments) {
+            //字段备注信息
+            field.addJavaDocLine("/**");
+            field.addJavaDocLine(" * " + remarks);
+            field.addJavaDocLine(" */");
         }
 
-        //字段备注信息
-        String remarks = introspectedColumn.getRemarks();
-        field.addJavaDocLine("/**");
-        field.addJavaDocLine(" * " + remarks);
-        field.addJavaDocLine(" */");
         if (supportSwagger) {
             field.addJavaDocLine("@ApiModelProperty(value = \"" + remarks + "\")");
         }
@@ -120,9 +79,6 @@ public class MyCommentGenerator implements CommentGenerator {
 
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-        if (suppressAllComments || !addRemarkComments) {
-            return;
-        }
         //通过这种方式不能直接获取表备注
         String remarks = introspectedTable.getRemarks();
         //获取实体类名称
@@ -138,19 +94,21 @@ public class MyCommentGenerator implements CommentGenerator {
         topLevelClass.addJavaDocLine("import lombok.Setter;");
         topLevelClass.addJavaDocLine("");
 
-        //添加类注释
-        topLevelClass.addJavaDocLine("/**");
-        topLevelClass.addJavaDocLine(" * 实体类对应的数据表为：" + introspectedTable.getFullyQualifiedTable());
-        topLevelClass.addJavaDocLine(" *");
-        if (StringUtils.isNotEmpty(remarks)) {
-            topLevelClass.addJavaDocLine(" * " + remarks);
+        if (addRemarkComments) {
+            //添加类注释
+            topLevelClass.addJavaDocLine("/**");
+            topLevelClass.addJavaDocLine(" * 实体类对应的数据表为：" + introspectedTable.getFullyQualifiedTable());
             topLevelClass.addJavaDocLine(" *");
+            if (StringUtils.isNotEmpty(remarks)) {
+                topLevelClass.addJavaDocLine(" * " + remarks);
+                topLevelClass.addJavaDocLine(" *");
+            }
+            topLevelClass.addJavaDocLine(" * @author " + author);
+            //添加时间
+            topLevelClass.addJavaDocLine(" * @date " + DateUtils.getCurrentDate());
+            topLevelClass.addJavaDocLine(" */");
         }
-        topLevelClass.addJavaDocLine(" * @author " + author);
 
-        //添加时间
-        topLevelClass.addJavaDocLine(" * @date " + getDateString());
-        topLevelClass.addJavaDocLine(" */");
         topLevelClass.addJavaDocLine("");
         topLevelClass.addJavaDocLine("@Getter");
         topLevelClass.addJavaDocLine("@Setter");
@@ -162,22 +120,17 @@ public class MyCommentGenerator implements CommentGenerator {
 
     @Override
     public void addMapperClassComment(Interface interfaze, IntrospectedTable introspectedTable) {
+        if (!addRemarkComments) {
+            return;
+        }
         // 作者信息
         interfaze.addJavaDocLine("/**");
         interfaze.addJavaDocLine(" * 对应的表：" + introspectedTable.getFullyQualifiedTable());
         interfaze.addJavaDocLine(" *");
         interfaze.addJavaDocLine(" * @author " + author);
         // 添加时间
-        interfaze.addJavaDocLine(" * @date " + getDateString());
+        interfaze.addJavaDocLine(" * @date " + DateUtils.getCurrentDate());
         interfaze.addJavaDocLine(" */");
-    }
-
-    private String getDateString() {
-        if (this.suppressDate) {
-            return null;
-        } else {
-            return this.dateFormat != null ? this.dateFormat.format(new Date()) : DateUtils.getCurrentDate();
-        }
     }
 
     @Override
