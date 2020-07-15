@@ -151,16 +151,6 @@ public class Context extends PropertyHolder {
             connectionFactoryConfiguration.validate(errors);
         }
 
-        if (javaModelGeneratorConfiguration == null) {
-            errors.add(getString("ValidationError.8", id));
-        } else {
-            javaModelGeneratorConfiguration.validate(errors, id);
-        }
-
-        if (javaClientGeneratorConfiguration != null) {
-            javaClientGeneratorConfiguration.validate(errors, id);
-        }
-
         IntrospectedTable it = null;
         try {
             it = ObjectFactory.createIntrospectedTableForValidation(this);
