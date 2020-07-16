@@ -63,6 +63,7 @@
                 <CheckBox fx:id="useBigDecimalCheckBox2" layoutX="136.0" layoutY="62.0" mnemonicParsing="false" selected="true" text="使用 BigDecimal" />
                 <CheckBox fx:id="useCommentCheckBox2" layoutX="300.0" layoutY="62.0" mnemonicParsing="false" selected="true" text="启用注释" />
                 <CheckBox fx:id="useSwaggerCheckBox2" layoutX="27.0" layoutY="107.0" mnemonicParsing="false" text="启用 swagger 注解" />
+                <CheckBox fx:id="generateColumnConstantsCheckbox" layoutX="27.0" layoutY="20.0" mnemonicParsing="false" text="generateColumnConsts" />
             </AnchorPane>
         </Tab>
     </TabPane>

@@ -105,6 +105,9 @@ public class ExportController implements Initializable {
     private CheckBox useSwaggerCheckBox2;
 
     @FXML
+    private CheckBox generateColumnConstantsCheckbox;
+
+    @FXML
     private TabPane tabPane;
 
     @Resource
@@ -218,6 +221,7 @@ public class ExportController implements Initializable {
                 tkMybatisExportConfig.setUseBigDecimal(useBigDecimalCheckBox2.isSelected());
                 tkMybatisExportConfig.setUseComment(useCommentCheckBox2.isSelected());
                 tkMybatisExportConfig.setUseSwagger(useSwaggerCheckBox2.isSelected());
+                tkMybatisExportConfig.setGenerateColumnConsts(generateColumnConstantsCheckbox.isSelected());
 
                 generatorConfig.setTkMybatisExportConfig(tkMybatisExportConfig);
                 break;
@@ -293,7 +297,7 @@ public class ExportController implements Initializable {
         tabPane.getSelectionModel().select(generatorConfig.getSelectTab());
         modelOnlyCheckBox.setSelected(generatorConfig.isModelOnly());
 
-        // 一旦选择 modelonly后这三项不用填写
+        // 一旦选择 modelOnly 后这四项不用填写
         if (generatorConfig.isModelOnly()) {
             mapperLocationText.setDisable(false);
             mapperPackageText.setDisable(false);
@@ -326,6 +330,7 @@ public class ExportController implements Initializable {
         useBigDecimalCheckBox2.setSelected(tkMybatisExportConfig.isUseBigDecimal());
         useCommentCheckBox2.setSelected(tkMybatisExportConfig.isUseComment());
         useSwaggerCheckBox2.setSelected(tkMybatisExportConfig.isUseSwagger());
+        generateColumnConstantsCheckbox.setSelected(tkMybatisExportConfig.isGenerateColumnConsts());
     }
 
     /**

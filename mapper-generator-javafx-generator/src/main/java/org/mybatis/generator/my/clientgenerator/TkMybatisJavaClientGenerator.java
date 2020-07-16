@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.mybatis.generator.codegen.mybatis3.javamapper;
+package org.mybatis.generator.my.clientgenerator;
 
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.dom.java.CompilationUnit;

@@ -167,19 +167,52 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      *
      * @param generatorConfig 配置信息
      */
-    protected void addGeneratorLocation(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    private void addGeneratorLocation(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+        // model 位置配置
+        this.addModelGenerator(generatorUtils, generatorConfig);
+
+        // xml 位置配置
+        this.addMapperGenerator(generatorUtils, generatorConfig);
+
+        // mapper （dao） 位置配置
+        this.addXmlGenerator(generatorUtils, generatorConfig);
+    }
+
+    /**
+     * 添加 model 生成配置
+     *
+     * @param generatorUtils  工具
+     * @param generatorConfig 配置信息
+     */
+    protected void addModelGenerator(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
         // model 位置配置
         final Element javaModelGenerator = generatorUtils.addElement(context, "javaModelGenerator");
         javaModelGenerator.setAttribute("targetPackage", generatorConfig.getBeanPackage());
         javaModelGenerator.setAttribute("targetProject", generatorConfig.getBeanLocation().replaceAll("\\\\", "/"));
+    }
 
+    /**
+     * 添加 Mapper 生成配置
+     *
+     * @param generatorUtils  工具
+     * @param generatorConfig 配置信息
+     */
+    protected void addMapperGenerator(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
         // xml 位置配置
         if (StringUtils.isNotEmpty(generatorConfig.getMapperXmlLocation())) {
             final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
             sqlMapGenerator.setAttribute("targetPackage", SeparatorConstants.DOT);
             sqlMapGenerator.setAttribute("targetProject", generatorConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
         }
+    }
 
+    /**
+     * 添加 XML 生成配置
+     *
+     * @param generatorUtils  工具
+     * @param generatorConfig 配置信息
+     */
+    protected void addXmlGenerator(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
         // mapper （dao） 位置配置
         if (StringUtils.isNotEmpty(generatorConfig.getMapperPackage()) && StringUtils.isNotEmpty(generatorConfig.getMapperLocation())) {
             final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
