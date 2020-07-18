@@ -22,6 +22,10 @@
   2. 重构代码
   3. 优化搜索
   4. 修改一些bug
+* v2.1.0
+  1. 增加 tk.mybatis 的生成策略
+  2. 增加 mybatis 生成策略（MyBatis3Simple，MyBatis3DynamicSql）
+  3. 优化代码
 ### 1. 使用步骤介绍
 1. 右上角菜单栏点击文件 -> 添加数据源
 
