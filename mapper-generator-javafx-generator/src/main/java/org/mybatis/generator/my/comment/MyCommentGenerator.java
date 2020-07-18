@@ -66,14 +66,16 @@ public class MyCommentGenerator implements CommentGenerator {
         String remarks = introspectedColumn.getRemarks();
 
         if (addRemarkComments) {
+            final String remark = remarks.replaceAll("\n", "\n\t * ");
             //字段备注信息
             field.addJavaDocLine("/**");
-            field.addJavaDocLine(" * " + remarks);
+            field.addJavaDocLine(" * " + remark);
             field.addJavaDocLine(" */");
         }
 
         if (supportSwagger) {
-            field.addJavaDocLine("@ApiModelProperty(value = \"" + remarks + "\")");
+            final String remark = remarks.replaceAll("\n", ",");
+            field.addJavaDocLine("@ApiModelProperty(value = \"" + remark + "\")");
         }
     }
 

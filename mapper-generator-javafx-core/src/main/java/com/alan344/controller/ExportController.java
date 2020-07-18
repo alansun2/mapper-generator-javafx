@@ -206,7 +206,7 @@ public class ExportController implements Initializable {
 
                 generatorConfig.setMybatisExportConfig(mybatisExportConfig);
                 break;
-            case 1:
+            case 2:
                 GeneratorConfig.MybatisPlusExportConfig mybatisPlusExportConfig = new GeneratorConfig.MybatisPlusExportConfig();
                 mybatisPlusExportConfig.setUserJava8(userJava8CheckBox1.isSelected());
                 mybatisPlusExportConfig.setUseBigDecimal(useBigDecimalCheckBox1.isSelected());
@@ -215,7 +215,7 @@ public class ExportController implements Initializable {
 
                 generatorConfig.setMybatisPlusExportConfig(mybatisPlusExportConfig);
                 break;
-            case 2:
+            case 1:
                 GeneratorConfig.TkMybatisExportConfig tkMybatisExportConfig = new GeneratorConfig.TkMybatisExportConfig();
                 tkMybatisExportConfig.setUserJava8(userJava8CheckBox2.isSelected());
                 tkMybatisExportConfig.setUseBigDecimal(useBigDecimalCheckBox2.isSelected());
@@ -319,11 +319,11 @@ public class ExportController implements Initializable {
             }
         }
 
-        final GeneratorConfig.MybatisPlusExportConfig mybatisPlusExportConfig = generatorConfig.getMybatisPlusExportConfig();
-        userJava8CheckBox1.setSelected(mybatisPlusExportConfig.isUserJava8());
-        useBigDecimalCheckBox1.setSelected(mybatisPlusExportConfig.isUseBigDecimal());
-        useCommentCheckBox1.setSelected(mybatisPlusExportConfig.isUseComment());
-        useSwaggerCheckBox1.setSelected(mybatisPlusExportConfig.isUseSwagger());
+//        final GeneratorConfig.MybatisPlusExportConfig mybatisPlusExportConfig = generatorConfig.getMybatisPlusExportConfig();
+//        userJava8CheckBox1.setSelected(mybatisPlusExportConfig.isUserJava8());
+//        useBigDecimalCheckBox1.setSelected(mybatisPlusExportConfig.isUseBigDecimal());
+//        useCommentCheckBox1.setSelected(mybatisPlusExportConfig.isUseComment());
+//        useSwaggerCheckBox1.setSelected(mybatisPlusExportConfig.isUseSwagger());
 
         final GeneratorConfig.TkMybatisExportConfig tkMybatisExportConfig = generatorConfig.getTkMybatisExportConfig();
         userJava8CheckBox2.setSelected(tkMybatisExportConfig.isUserJava8());

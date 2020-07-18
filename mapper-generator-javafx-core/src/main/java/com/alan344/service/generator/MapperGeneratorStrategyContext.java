@@ -13,7 +13,7 @@ public class MapperGeneratorStrategyContext {
     public MapperGeneratorStrategy getMapperGeneratorStrategy(GeneratorConfig generatorConfig) {
         final int selectTab = generatorConfig.getSelectTab();
         switch (selectTab) {
-            case 2:
+            case 1:
                 return new MapperBaseGenerator(generatorConfig.getTkMybatisExportConfig());
             default:
                 return new MyMybatisGeneratorService(generatorConfig.getMybatisExportConfig());

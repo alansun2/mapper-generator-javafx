@@ -10,9 +10,8 @@ import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.GeneratedKey;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -25,6 +24,10 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
      * 用于判断该表的主键是否已生成，加快效率
      */
     private final Set<String> checkContainSet = new HashSet<>();
+    /**
+     * 用于加快速度
+     */
+    private final Set<String> checkPrimarySet = new HashSet<>();
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -33,6 +36,18 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
 
     @Override
     public boolean modelFieldGenerated(Field field, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
+
+        // 生成 @Id 注解
+        if (!checkPrimarySet.contains(introspectedTable.getFullyQualifiedTableNameAtRuntime())) {
+            final List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
+            if (!primaryKeyColumns.isEmpty()) {
+                final boolean b = primaryKeyColumns.stream().anyMatch(introspectedColumn1 -> introspectedColumn1.getActualColumnName().equals(introspectedColumn.getActualColumnName()));
+                if(b){
+                    field.addAnnotation("@Id");
+                    topLevelClass.addImportedType("javax.persistence.Id");
+                }
+            }
+        }
 
         if (checkContainSet.contains(introspectedTable.getFullyQualifiedTableNameAtRuntime())) {
             return true;
@@ -102,7 +117,8 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
                 // if the column is null, then it's a configuration error. The
                 // warning has already been reported
                 if (gk.isJdbcStandard()) {
-                    field.addJavaDocLine("@KeySql(useGeneratedKeys = true)");
+                    topLevelClass.addImportedType("tk.mybatis.mapper.annotation.KeySql");
+                    field.addAnnotation("@KeySql(useGeneratedKeys = true)");
                 } else {
                     field.addJavaDocLine("@KeySql(dialect = IdentityDialect." + gk.getRuntimeSqlStatement().toUpperCase() + ")");
                 }
