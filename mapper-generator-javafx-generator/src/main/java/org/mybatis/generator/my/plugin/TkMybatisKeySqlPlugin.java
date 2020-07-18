@@ -25,10 +25,6 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
      * 用于判断该表的主键是否已生成，加快效率
      */
     private final Set<String> checkContainSet = new HashSet<>();
-    /**
-     * 用于加快速度
-     */
-    private final Set<String> checkPrimarySet = new HashSet<>();
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -39,14 +35,12 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
     public boolean modelFieldGenerated(Field field, TopLevelClass topLevelClass, IntrospectedColumn introspectedColumn, IntrospectedTable introspectedTable, ModelClassType modelClassType) {
 
         // 生成 @Id 注解
-        if (!checkPrimarySet.contains(introspectedTable.getFullyQualifiedTableNameAtRuntime())) {
-            final List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
-            if (!primaryKeyColumns.isEmpty()) {
-                final boolean b = primaryKeyColumns.stream().anyMatch(introspectedColumn1 -> introspectedColumn1.getActualColumnName().equals(introspectedColumn.getActualColumnName()));
-                if (b) {
-                    field.addAnnotation("@Id");
-                    topLevelClass.addImportedType("javax.persistence.Id");
-                }
+        final List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
+        if (!primaryKeyColumns.isEmpty()) {
+            final boolean b = primaryKeyColumns.stream().anyMatch(introspectedColumn1 -> introspectedColumn1.getActualColumnName().equals(introspectedColumn.getActualColumnName()));
+            if (b) {
+                field.addAnnotation("@Id");
+                topLevelClass.addImportedType("javax.persistence.Id");
             }
         }
 
