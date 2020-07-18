@@ -4,14 +4,15 @@ import com.alan344happyframework.util.StringUtils;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
-import org.mybatis.generator.api.dom.java.Field;
-import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
-import org.mybatis.generator.api.dom.java.JavaVisibility;
-import org.mybatis.generator.api.dom.java.TopLevelClass;
+import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.config.GeneratedKey;
+import org.mybatis.generator.config.PropertyRegistry;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 
 /**
  * @author AlanSun
@@ -42,7 +43,7 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
             final List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
             if (!primaryKeyColumns.isEmpty()) {
                 final boolean b = primaryKeyColumns.stream().anyMatch(introspectedColumn1 -> introspectedColumn1.getActualColumnName().equals(introspectedColumn.getActualColumnName()));
-                if(b){
+                if (b) {
                     field.addAnnotation("@Id");
                     topLevelClass.addImportedType("javax.persistence.Id");
                 }
@@ -127,5 +128,27 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean clientGenerated(Interface interfaze, IntrospectedTable introspectedTable) {
+        String rootInterface = introspectedTable.getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+        if (!stringHasValue(rootInterface)) {
+            rootInterface = context.getJavaClientGeneratorConfiguration().getProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+        }
+
+        if (stringHasValue(rootInterface)) {
+            FullyQualifiedJavaType fqjtOld = new FullyQualifiedJavaType(rootInterface);
+            final Set<FullyQualifiedJavaType> superInterfaceTypes = interfaze.getSuperInterfaceTypes();
+            superInterfaceTypes.remove(fqjtOld);
+            final Set<FullyQualifiedJavaType> importedTypes = interfaze.getImportedTypes();
+            importedTypes.remove(fqjtOld);
+
+            rootInterface = rootInterface + "<" + introspectedTable.getFullyQualifiedTable().getDomainObjectName() + ">";
+            FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(rootInterface);
+            interfaze.addSuperInterface(fqjt);
+            interfaze.addImportedType(fqjt);
+        }
+        return true;
     }
 }
