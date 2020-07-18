@@ -10,27 +10,27 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="540.0" prefWidth="500.0" styleClass="anchorPane" stylesheets="@../css/export.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ExportController">
-    <TextField fx:id="configNameText" layoutX="163.0" layoutY="39.0" prefHeight="23.0" prefWidth="209.0" promptText="配置名称" />
-    <TextField fx:id="authorText" layoutX="163.0" layoutY="94.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称" />
-    <TextField fx:id="beanLocationText" layoutX="163.0" layoutY="124.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 地址" />
-    <TextField fx:id="beanPackageText" layoutX="163.0" layoutY="154.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名" />
-    <TextField fx:id="mapperLocationText" layoutX="163.0" layoutY="184.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 地址" />
-    <TextField fx:id="mapperPackageText" layoutX="163.0" layoutY="214.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名" />
-    <TextField layoutX="163.0" layoutY="244.0" prefHeight="23.0" prefWidth="209.0" promptText="xml 地址" fx:id="xmlLocationText" />
-    <Label layoutX="43.0" layoutY="43.0" text="配置名称：" />
-    <Label layoutX="43.0" layoutY="94.0" text="作者名称：" />
-    <Label layoutX="43.0" layoutY="124.0" text="Bean 地址：" />
-    <Label layoutX="43.0" layoutY="154.0" text="Bean 包名：" />
-    <Label layoutX="43.0" layoutY="184.0" text="Mapper 地址：" />
-    <Label layoutX="43.0" layoutY="214.0" text="Mapper 包名：" />
-    <Label layoutX="43.0" layoutY="244.0" text="Xml 地址：" />
-    <Button layoutX="298.0" layoutY="502.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0" prefWidth="64.0" text="取消" />
-    <Button layoutX="389.0" layoutY="502.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="导出" />
-    <Button layoutX="392.0" layoutY="124.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-    <Button layoutX="392.0" layoutY="184.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-    <Button layoutX="392.0" layoutY="244.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
-    <TabPane fx:id="tabPane" layoutY="320.0" prefHeight="170.0" prefWidth="500.0" tabClosingPolicy="UNAVAILABLE">
+<AnchorPane prefHeight="540.0" prefWidth="530.0" styleClass="anchorPane" stylesheets="@../css/export.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.ExportController">
+    <TextField fx:id="configNameText" layoutX="174.0" layoutY="26.0" prefHeight="23.0" prefWidth="209.0" promptText="配置名称" />
+    <TextField fx:id="authorText" layoutX="174.0" layoutY="87.0" prefHeight="23.0" prefWidth="209.0" promptText="作者名称" />
+    <TextField fx:id="beanLocationText" layoutX="174.0" layoutY="121.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 地址" />
+    <TextField fx:id="beanPackageText" layoutX="174.0" layoutY="155.0" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名" />
+    <TextField fx:id="mapperLocationText" layoutX="174.0" layoutY="188.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 地址" />
+    <TextField fx:id="mapperPackageText" layoutX="174.0" layoutY="220.0" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名" />
+    <TextField layoutX="174.0" layoutY="255.0" prefHeight="23.0" prefWidth="209.0" promptText="xml 地址" fx:id="xmlLocationText" />
+    <Label layoutX="46.0" layoutY="30.0" text="配置名称：" />
+    <Label layoutX="46.0" layoutY="87.0" text="作者名称：" />
+    <Label layoutX="46.0" layoutY="121.0" text="Bean 地址：" />
+    <Label layoutX="46.0" layoutY="155.0" text="Bean 包名：" />
+    <Label layoutX="46.0" layoutY="188.0" text="Mapper 地址：" />
+    <Label layoutX="46.0" layoutY="220.0" text="Mapper 包名：" />
+    <Label layoutX="46.0" layoutY="255.0" text="Xml 地址：" />
+    <Button layoutX="341.0" layoutY="504.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0" prefWidth="64.0" text="取消" />
+    <Button layoutX="432.0" layoutY="504.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="64.0" text="导出" />
+    <Button layoutX="403.0" layoutY="121.0" mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
+    <Button layoutX="403.0" layoutY="188.0" mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
+    <Button layoutX="403.0" layoutY="255.0" mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0" text="浏览" />
+    <TabPane fx:id="tabPane" layoutY="326.0" prefHeight="170.0" prefWidth="530.0" tabClosingPolicy="UNAVAILABLE">
         <Tab text="Mybatis">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="159.0" prefWidth="500.0">
                 <CheckBox fx:id="userJava8CheckBox" layoutX="27.0" layoutY="62.0" mnemonicParsing="false" selected="true" text="支持 java8" />
@@ -42,9 +42,9 @@
                         <ToggleGroup fx:id="targetName" />
                     </toggleGroup>
                 </RadioButton>
-                <RadioButton layoutX="342.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3DynamicSql" toggleGroup="$targetName">
+                <RadioButton layoutX="364.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3DynamicSql" toggleGroup="$targetName">
                 </RadioButton>
-                <RadioButton layoutX="210.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3Simple" toggleGroup="$targetName">
+                <RadioButton layoutX="224.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3Simple" toggleGroup="$targetName">
                 </RadioButton>
                 <Label layoutX="26.0" layoutY="20.0" text="targetName：" />
             </AnchorPane>
@@ -67,7 +67,7 @@
             </AnchorPane>
         </Tab>
     </TabPane>
-    <Label layoutX="43.0" layoutY="278.0" text="Mapper 的父接口：" />
-    <TextField fx:id="mapperRootInterfaceText" layoutX="164.0" layoutY="274.0" prefHeight="23.0" prefWidth="293.0" promptText="非必填，生成的 Mapper 会继承该接口" />
-   <CheckBox fx:id="modelOnlyCheckBox" layoutX="164.0" layoutY="71.0" mnemonicParsing="false" text="只生成model" />
+    <Label layoutX="46.0" layoutY="292.0" text="Mapper 的父接口：" />
+    <TextField fx:id="mapperRootInterfaceText" layoutX="175.0" layoutY="288.0" prefHeight="23.0" prefWidth="293.0" promptText="非必填，生成的 Mapper 会继承该接口" />
+   <CheckBox fx:id="modelOnlyCheckBox" layoutX="175.0" layoutY="60.0" mnemonicParsing="false" text="只生成model" />
 </AnchorPane>
