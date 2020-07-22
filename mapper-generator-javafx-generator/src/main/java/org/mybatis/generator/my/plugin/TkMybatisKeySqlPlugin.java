@@ -142,6 +142,7 @@ public class TkMybatisKeySqlPlugin extends PluginAdapter {
             FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(rootInterface);
             interfaze.addSuperInterface(fqjt);
             interfaze.addImportedType(fqjt);
+            interfaze.addImportedType(new FullyQualifiedJavaType(introspectedTable.getBaseRecordType()));
         }
         return true;
     }
