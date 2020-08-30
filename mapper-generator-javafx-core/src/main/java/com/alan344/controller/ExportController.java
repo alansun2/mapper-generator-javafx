@@ -136,7 +136,7 @@ public class ExportController implements Initializable {
     }
 
     /**
-     * 应用 生成bean
+     * 导出
      */
     @FXML
     public void apply() throws IOException {
@@ -157,7 +157,7 @@ public class ExportController implements Initializable {
         generatorConfig.setMapperRootInterface(mapperRootInterfaceText.getText());
         generatorConfig.setModelOnly(modelOnlyCheckBox.isSelected());
 
-        // 配置信息
+        // tab 配置信息
         this.selectTabSetup(generatorConfig);
 
         configController.addConfig(generatorConfig);
