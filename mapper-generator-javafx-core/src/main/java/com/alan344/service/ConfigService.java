@@ -44,9 +44,9 @@ public class ConfigService {
             GeneratorConfig olderConfig = existConfigLinkedList.getFirst();
             boolean isSame = BeanUtils.checkPropertyOfBean(generatorConfig, olderConfig);
             if (!isSame) {
-                existConfigLinkedList.remove(olderConfig);
-                existConfigLinkedList.addFirst(generatorConfig);
-                this.downLoadConfigToFile(existConfigLinkedList);
+                generatorConfigs.remove(olderConfig);
+                generatorConfigs.addFirst(generatorConfig);
+                this.downLoadConfigToFile(generatorConfigs);
                 return 1;
             } else {
                 return 2;
