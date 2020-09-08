@@ -290,12 +290,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 // 添加属性
                 generatorUtils.addProperty(table.isJdkSerializable(), tableEl, "jdkSerializable", "true");
                 generatorUtils.addProperty(generatorConfig.isModelOnly(), tableEl, PropertyRegistry.TABLE_MODEL_ONLY, "true");
-                this.addTableProperty();
+                this.addTableProperty(generatorUtils, generatorConfig);
             }
         }
     }
 
-    protected void addTableProperty() {
+    protected void addTableProperty(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
     }
 
     /**

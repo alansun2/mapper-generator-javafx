@@ -1,10 +1,7 @@
 package com.alan344.service.generator;
 
 import com.alan344.bean.GeneratorConfig;
-import com.alan344happyframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.generator.config.PropertyRegistry;
-import org.mybatis.generator.my.clientgenerator.TkMybatisJavaClientGenerator;
 import org.mybatis.generator.my.plugin.TkMybatisKeySqlPlugin;
 import org.w3c.dom.Element;
 
