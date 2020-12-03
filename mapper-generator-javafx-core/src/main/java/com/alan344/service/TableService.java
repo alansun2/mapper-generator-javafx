@@ -3,16 +3,15 @@ package com.alan344.service;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
+import com.alan344.service.driveservice.DriveFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.BeanFactory;
-import javax.annotation.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,10 +28,10 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
     @Resource
-    private BeanFactory beanFactory;
+    private ColumnService columnService;
 
     @Resource
-    private ColumnService columnService;
+    private DriveFactory driveFactory;
 
     /**
      * 当展开datasource时加载tableItem，并将table写入文件
@@ -93,19 +92,7 @@ public class TableService {
      * @return {@link Table}
      */
     private List<Table> pullTablesFromRemote(DataSource dataSource) {
-        JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
-        List<Table> tables = new ArrayList<>();
-        List<String> tableNames = jdbcTemplate.query("SHOW TABLES", (rs, i) -> rs.getString(1));
-        if (!tableNames.isEmpty()) {
-            //把table填入dataSourceTreeItem
-            tableNames.forEach(tableName -> {
-                Table table = new Table();
-                table.setTableName(tableName);
-                tables.add(table);
-            });
-        }
-
-        return tables;
+        return driveFactory.getDrive(dataSource.getDriveType()).getTables(dataSource);
     }
 
     /**

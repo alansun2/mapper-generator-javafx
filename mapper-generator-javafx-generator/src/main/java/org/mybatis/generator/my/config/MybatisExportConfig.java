@@ -1,8 +1,7 @@
-package com.alan344.bean;
+package org.mybatis.generator.my.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.mybatis.generator.api.IntrospectedTable;
 
 import java.util.Objects;
 
@@ -12,7 +11,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class GeneratorConfig {
+public class MybatisExportConfig {
     /**
      * 配置的名称
      */
@@ -58,21 +57,25 @@ public class GeneratorConfig {
      */
     private String mapperRootInterface;
     /**
+     * 全局的忽略字段
+     */
+    private String globalIgnoreField;
+    /**
      * 选择的哪个tab
      */
     private int selectTab;
     /**
      * Mybatis-generator 原生配置
      */
-    private MybatisExportConfig mybatisExportConfig = new MybatisExportConfig();
+    private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
     /**
      * tk.mybatis
      */
     private TkMybatisExportConfig tkMybatisExportConfig = new TkMybatisExportConfig();
     /**
-     * mybatis-plus
+     * model 的父类
      */
-    private MybatisPlusExportConfig mybatisPlusExportConfig = new MybatisPlusExportConfig();
+    private String modelRootClass;
 
     @Override
     public boolean equals(Object o) {
@@ -84,7 +87,7 @@ public class GeneratorConfig {
             return false;
         }
 
-        GeneratorConfig that = (GeneratorConfig) o;
+        MybatisExportConfig that = (MybatisExportConfig) o;
         return Objects.equals(configName, that.configName);
     }
 
@@ -110,7 +113,7 @@ public class GeneratorConfig {
      */
     @Getter
     @Setter
-    public static class MybatisExportConfig implements ExportConfig {
+    public static class MybatisOfficialExportConfig implements ExportConfig {
         /**
          * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
          */
@@ -142,7 +145,7 @@ public class GeneratorConfig {
     @Getter
     @Setter
     public static class TkMybatisExportConfig implements ExportConfig {
-        private String targetName = IntrospectedTable.TargetRuntime.MYBATIS3_TK.toString();
+        private String targetName = "MYBATIS3_TK";
         /**
          * 是否使用java8
          */
@@ -165,32 +168,5 @@ public class GeneratorConfig {
          * 是否生成静态常量
          */
         private boolean generateColumnConsts;
-    }
-
-    /**
-     * mybatis-plus 的导出配置
-     */
-    @Getter
-    @Setter
-    public static class MybatisPlusExportConfig implements ExportConfig {
-        private String targetName = IntrospectedTable.TargetRuntime.MYBATIS3_TK.toString();
-        /**
-         * 是否使用java8
-         */
-        private boolean userJava8 = true;
-        /**
-         * 是否支持 BigDecimal
-         * <p>
-         * 所有 number 都是用 BigDecimal
-         */
-        private boolean useBigDecimal;
-        /**
-         * 使用支持 swagger
-         */
-        private boolean useSwagger;
-        /**
-         * 使用注释
-         */
-        private boolean useComment = true;
     }
 }

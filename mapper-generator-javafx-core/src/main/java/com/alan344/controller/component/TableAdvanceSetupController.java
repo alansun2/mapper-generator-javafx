@@ -1,15 +1,14 @@
-package com.alan344.controller;
+package com.alan344.controller.component;
 
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
+import com.alan344.factory.FxmlLoadFactory;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -18,16 +17,17 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
  * @author AlanSun
  * @date 2020/4/6 16:21
+ * <p>
+ * 表格高级设置
  */
 @Controller
-public class TableAdvanceSetUpController implements Initializable {
+public class TableAdvanceSetupController implements Initializable {
 
     @FXML
     private CheckBox serializableCheckBox;
@@ -47,18 +47,11 @@ public class TableAdvanceSetUpController implements Initializable {
      * 打开表高级设置
      *
      * @param primaryStage 主窗口
-     * @throws IOException e
      */
-    public void openTableAdvancedSetUP(Stage primaryStage, VBox selectedItemVBox) throws IOException {
+    public void openTableAdvancedSetUP(Stage primaryStage, VBox selectedItemVBox) {
         if (tableAdvanceSetUpStage == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-
-            fxmlLoader.setLocation(getClass().getResource("/fxml/table-advanced-set-up.fxml"));
-            fxmlLoader.setControllerFactory(beanFactory::getBean);
-
-            AnchorPane tableAdvanceSetUpPane = fxmlLoader.load();
             tableAdvanceSetUpStage = new Stage();
-            tableAdvanceSetUpStage.setScene(new Scene(tableAdvanceSetUpPane));
+            tableAdvanceSetUpStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/table-advanced-set-up.fxml", beanFactory)));
             tableAdvanceSetUpStage.setTitle("高级设置");
             tableAdvanceSetUpStage.getIcons().add(new Image("/image/advanced-set-up.png"));
             tableAdvanceSetUpStage.setResizable(false);

@@ -1,6 +1,5 @@
 package com.alan344.service.generator;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -35,6 +34,20 @@ public class GeneratorUtils {
     }
 
     /**
+     * 添加 attribute
+     *
+     * @param condition 条件
+     * @param el        el
+     * @param name      name
+     * @param value     value
+     */
+    protected void setAttribute(boolean condition, Element el, String name, String value) {
+        if (condition) {
+            el.setAttribute(name, value);
+        }
+    }
+
+    /**
      * 添加插件
      *
      * @param pluginName 插件类的全路径
@@ -56,6 +69,21 @@ public class GeneratorUtils {
     protected void addProperty(boolean condition, Element parentEl, String name, String value) {
         if (condition) {
             final Element property = this.addElement(parentEl, PROPERTY);
+            property.setAttribute(NAME, name);
+            property.setAttribute(VALUE, value);
+        }
+    }
+
+    /**
+     * 添加属性
+     *
+     * @param condition 用于判断是否添加属性
+     * @param name      属性名
+     * @param value     属性值
+     */
+    protected void addContextProperty(boolean condition, String name, String value) {
+        if (condition) {
+            final Element property = this.addElement(mapperGeneratorStrategyBase.getContext(), PROPERTY);
             property.setAttribute(NAME, name);
             property.setAttribute(VALUE, value);
         }

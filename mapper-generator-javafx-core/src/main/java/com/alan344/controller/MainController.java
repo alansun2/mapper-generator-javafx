@@ -1,19 +1,19 @@
 package com.alan344.controller;
 
 import com.alan344.bean.DataItem;
-import com.alan344.constants.StageConstants;
+import com.alan344.constants.NodeConstants;
+import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.init.DataSourceTreeViewInit;
-import com.alan344.init.MapperCheckBoxInit;
+import com.alan344.init.FindTableInit;
 import com.alan344.utils.DialogUtils;
-import javafx.application.HostServices;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -37,14 +36,13 @@ public class MainController implements Initializable {
      */
     @Getter
     @FXML
-    private BorderPane borderPane;
+    private BorderPane borderPaneMain;
 
     /**
-     * 右边的 border
+     * 右边的父 border
      */
-    @Getter
     @FXML
-    private BorderPane borderPane1;
+    private BorderPane borderPaneWrap;
 
     @FXML
     private MenuBar menuBar;
@@ -64,20 +62,11 @@ public class MainController implements Initializable {
     private TreeItem<DataItem> treeItemDataSourceRoot;
 
     /**
-     * 搜索小时用的 TextField
+     * 搜索表时用的 TextField
      */
     @Getter
     @FXML
     private TextField tableFindTextField;
-
-    /**
-     * 右边 border 固定再上面的 两个 HBox。存放 checkBox
-     */
-    @FXML
-    private HBox mapperCheckBoxHBox1;
-
-    @FXML
-    private HBox mapperCheckBoxHBox2;
 
     //-------------------------------service----------------------------------------------------------------------------
 
@@ -85,15 +74,10 @@ public class MainController implements Initializable {
     private DataSourceController dataSourceController;
 
     @Resource
-    private ConfigController configController;
-
-    @Resource
     private AboutController aboutController;
 
     @Resource
     private BeanFactory beanFactory;
-
-    private HostServices hostServices;
 
     // -------------------------init----------------------------------------------------------------------------------//
     @Resource
@@ -103,35 +87,27 @@ public class MainController implements Initializable {
     private DataSourceTreeViewInit dataSourceTreeViewInit;
 
     @Resource
-    private MapperCheckBoxInit mapperCheckBoxInit;
-    //--------------------------------init start----------------------------------------------------------------------//
+    private FindTableInit findTableInit;
+
+    //--------------------------------init----------------------------------------------------------------------//
 
     @SneakyThrows
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        hostServices = beanFactory.getBean(HostServices.class);
-        StageConstants.primaryStage = beanFactory.getBean(Stage.class);
-
+        NodeConstants.borderPaneWrap = borderPaneWrap;
         // 把菜单的长度和主布局控件绑定
-        menuBar.prefWidthProperty().bind(borderPane.widthProperty());
+        menuBar.prefWidthProperty().bind(borderPaneMain.widthProperty());
 
         dataSourceTreeViewInit.treeViewInit(treeViewDataSource);
 
-        // init mapperCheckBox
-        mapperCheckBoxInit.checkBoxInit(mapperCheckBoxHBox1, mapperCheckBoxHBox2);
-
         // 从文件加载数据源至pane
         dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
+
         // 添加表搜索监听
-        dataSourceTreeItemInit.addListenOnDataSourceBorderPane(treeViewDataSource);
+        findTableInit.addListener(treeViewDataSource, tableFindTextField, borderPaneWrap);
 
-        FXMLLoader fxmlLoader = new FXMLLoader();
-
-        fxmlLoader.setLocation(getClass().getResource("/fxml/component/vbox-context-menu.fxml"));
-        fxmlLoader.setControllerFactory(beanFactory::getBean);
-
-        ListView<HBox> rightListViewInit = fxmlLoader.load();
-        borderPane1.setCenter(rightListViewInit);
+        // 加载右边中间的 borderPane
+        FxmlLoadFactory.create("/fxml/mybatis-list-view.fxml", beanFactory);
     }
 
     //--------------------------------init end------------------------------------------------------------------------//
@@ -140,8 +116,8 @@ public class MainController implements Initializable {
      * 添加数据源
      */
     @FXML
-    public void addSource() throws IOException {
-        dataSourceController.addDataSource(StageConstants.primaryStage);
+    public void addSource() {
+        dataSourceController.addDataSource(NodeConstants.primaryStage);
     }
 
     /**
@@ -149,8 +125,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void exit() {
-//        Platform.exit(); //直接退出
-        DialogUtils.closeDialog(StageConstants.primaryStage);
+        DialogUtils.closeDialog(NodeConstants.primaryStage);
     }
 
     /**
@@ -158,26 +133,14 @@ public class MainController implements Initializable {
      */
     @FXML
     public void openGithub() {
-        hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
-    }
-
-    /**
-     * 导出窗口
-     *
-     * @throws IOException e
-     */
-    @FXML
-    public void openConfigWindow() throws IOException {
-        configController.openConfigPane(StageConstants.primaryStage);
+        NodeConstants.hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
     }
 
     /**
      * 关于窗口
-     *
-     * @throws IOException e
      */
     @FXML
-    public void openAboutWindow() throws IOException {
-        aboutController.openWindow(StageConstants.primaryStage);
+    public void openAboutWindow() {
+        aboutController.openWindow(NodeConstants.primaryStage);
     }
 }

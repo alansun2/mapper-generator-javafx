@@ -26,7 +26,7 @@ public class Toast {
         Text text = new Text(message);
         text.setFont(Font.font("Verdana", size));
         text.setFill(Color.RED);
-        StackPane root = new StackPane((Node) text);
+        StackPane root = new StackPane(text);
         root.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(0, 0, 0, 0.2); -fx-padding: 50px;");
         root.setOpacity(opacity);
         Scene scene = new Scene(root);
@@ -34,7 +34,7 @@ public class Toast {
         toastStage.setScene(scene);
         toastStage.show();
         Timeline fadeInTimeline = new Timeline();
-        Duration var10002 = Duration.millis((double) fadeInDelay);
+        Duration var10002 = Duration.millis(fadeInDelay);
         KeyValue[] var10003 = new KeyValue[1];
         Scene var10008 = toastStage.getScene();
         var10003[0] = new KeyValue(var10008.getRoot().opacityProperty(), 1);
@@ -42,13 +42,13 @@ public class Toast {
         fadeInTimeline.getKeyFrames().add(fadeInKey1);
         fadeInTimeline.setOnFinished(event -> (new Thread((() -> {
             try {
-                Thread.sleep((long) displayTime);
+                Thread.sleep(displayTime);
             } catch (InterruptedException var3) {
                 var3.printStackTrace();
             }
 
             Timeline fadeOutTimeline = new Timeline();
-            Duration var100021 = Duration.millis((double) fadeOutDelay);
+            Duration var100021 = Duration.millis(fadeOutDelay);
             KeyValue[] var100031 = new KeyValue[1];
             Scene var100081 = toastStage.getScene();
             var100031[0] = new KeyValue(var100081.getRoot().opacityProperty(), 0);
@@ -62,11 +62,6 @@ public class Toast {
         fadeInTimeline.play();
     }
 
-    /**
-     * mo
-     * @param stage
-     * @param message
-     */
     public static void makeTextDefault(Stage stage, String message) {
         Toast.makeText(stage, message, 3000, 500, 500, 15, 5);
     }

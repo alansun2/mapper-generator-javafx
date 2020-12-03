@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-
-<AnchorPane prefHeight="320.0" prefWidth="550.0" stylesheets="@../css/datasource.css" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.DataSourceController">
+<?import java.lang.String?>
+<AnchorPane prefHeight="320.0" prefWidth="550.0" stylesheets="@../css/datasource.css"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.alan344.controller.DataSourceController">
     <children>
-        <Label layoutX="50.0" layoutY="35.0" text="Host：" />
-        <Label layoutX="50.0" layoutY="80.0" text="Database:" />
-        <Label layoutX="50.0" layoutY="125.0" text="User:" />
-        <Label layoutX="50.0" layoutY="170.0" text="Password：" />
-        <Label layoutX="410.0" layoutY="35.0" text="Port:" />
-        <Label layoutX="50.0" layoutY="215.0" text="DriveName：" />
-        <TextField fx:id="host" layoutX="140.0" layoutY="35.0" prefHeight="23.0" prefWidth="241.0" promptText="host" />
-        <TextField fx:id="database" layoutX="140.0" layoutY="80.0" prefHeight="23.0" prefWidth="241.0" promptText="database" />
-        <TextField fx:id="user" layoutX="140.0" layoutY="125.0" prefHeight="23.0" prefWidth="241.0" promptText="user" />
-        <PasswordField fx:id="password" layoutX="140.0" layoutY="170.0" prefHeight="23.0" prefWidth="241.0" promptText="password" />
-        <TextField fx:id="port" layoutX="450.0" layoutY="35.0" prefHeight="23.0" prefWidth="55.0" promptText="port" text="3306" />
-        <Button layoutX="375.0" layoutY="265.0" prefWidth="64.0" mnemonicParsing="false" onAction="#close" text="取消" />
-        <Button layoutX="450.0" layoutY="265.0" prefWidth="64.0" mnemonicParsing="false" onAction="#apply" text="应用" />
-        <ComboBox fx:id="driveName" layoutX="140.0" layoutY="215.0" prefHeight="23.0" prefWidth="241.0" value="com.mysql.cj.jdbc.Driver">
+        <Label layoutX="50.0" layoutY="27.0" text="DriveName："/>
+        <Label layoutX="50.0" layoutY="67.0" text="Host："/>
+        <Label layoutX="50.0" layoutY="109.0" text="User:"/>
+        <Label layoutX="50.0" layoutY="154.0" text="Password："/>
+        <Label layoutX="410.0" layoutY="67.0" text="Port:"/>
+        <Label fx:id="dataBaseLabel" layoutX="50.0" layoutY="195.0" text="Database:"/>
+        <Label fx:id="serviceNameLabel" layoutX="50.0" layoutY="195.0" text="ServiceName" visible="false"/>
+        <ComboBox fx:id="driveName" layoutX="140.0" layoutY="27.0" prefHeight="23.0" prefWidth="241.0"
+                  value="MYSQL_8_0_16">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="com.mysql.cj.jdbc.Driver" />
+                    <String fx:value="MYSQL_8_0_16"/>
+                    <String fx:value="ORACLE_11"/>
                 </FXCollections>
             </items>
         </ComboBox>
-        <Button layoutX="140.0" layoutY="265.0" mnemonicParsing="false" onAction="#testConnection" prefHeight="23.0" prefWidth="130.0" text="Test Connection"/>
-        <Label fx:id="testConnectionResultLabel" layoutX="270.0" layoutY="264.0" prefHeight="31.0" prefWidth="75.0" visible="false" managed="false" />
+
+        <TextField fx:id="host" layoutX="140.0" layoutY="67.0" prefHeight="23.0" prefWidth="241.0" promptText="host"/>
+        <TextField fx:id="user" layoutX="140.0" layoutY="109.0" prefHeight="23.0" prefWidth="241.0" promptText="user"/>
+        <PasswordField fx:id="password" layoutX="140.0" layoutY="154.0" prefHeight="23.0" prefWidth="241.0"
+                       promptText="password"/>
+        <TextField fx:id="port" layoutX="450.0" layoutY="67.0" prefHeight="23.0" prefWidth="55.0" promptText="port"
+                   text="3306"/>
+        <TextField fx:id="database" layoutX="140.0" layoutY="195.0" prefHeight="23.0" prefWidth="241.0"
+                   promptText="database"/>
+        <TextField fx:id="serviceName" layoutX="140.0" layoutY="195.0" prefHeight="23.0" prefWidth="241.0"
+                   promptText="serviceName" visible="false"/>
+
+        <Button layoutX="375.0" layoutY="283.0" mnemonicParsing="false" onAction="#close" prefWidth="64.0" text="取消"/>
+        <Button layoutX="450.0" layoutY="283.0" mnemonicParsing="false" onAction="#apply" prefWidth="64.0" text="应用"/>
+
+        <Button layoutX="261.0" layoutY="283.0" mnemonicParsing="false" onAction="#testConnection" prefHeight="23.0"
+                prefWidth="115.0" text="Test Connection"/>
+        <Label fx:id="testConnectionResultLabel" layoutX="270.0" layoutY="264.0" managed="false" prefHeight="31.0"
+               prefWidth="75.0" visible="false"/>
+
     </children>
 </AnchorPane>

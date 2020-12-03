@@ -1,6 +1,6 @@
 package com.alan344.service;
 
-import com.alan344.bean.GeneratorConfig;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344happyframework.util.BeanUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -25,35 +25,35 @@ public class ConfigService {
     /**
      * 添加配置
      *
-     * @param generatorConfig 配置信息
+     * @param mybatisExportConfig 配置信息
      * @return 1:原来文件被修改；2：已存在配置且和原来配置相同；3：新配置
      */
-    public int addConfig(GeneratorConfig generatorConfig) {
+    public int addConfig(MybatisExportConfig mybatisExportConfig) {
         File configFile = BaseConstants.getConfigFile();
-        LinkedList<GeneratorConfig> generatorConfigs;
+        LinkedList<MybatisExportConfig> mybatisExportConfigs;
         if (configFile.exists()) {
-            generatorConfigs = this.loadConfigFromFile();
+            mybatisExportConfigs = this.loadConfigFromFile();
         } else {
-            generatorConfigs = new LinkedList<>();
+            mybatisExportConfigs = new LinkedList<>();
         }
 
-        LinkedList<GeneratorConfig> existConfigLinkedList = generatorConfigs.stream().filter(generatorConfig1 -> generatorConfig.getConfigName().equals(generatorConfig1.getConfigName())).collect(Lists::newLinkedList, LinkedList::add, List::addAll);
+        LinkedList<MybatisExportConfig> existConfigLinkedList = mybatisExportConfigs.stream().filter(generatorConfig1 -> mybatisExportConfig.getConfigName().equals(generatorConfig1.getConfigName())).collect(Lists::newLinkedList, LinkedList::add, List::addAll);
 
         //配置已存在，如果内容修改，则修改
         if (!existConfigLinkedList.isEmpty()) {
-            GeneratorConfig olderConfig = existConfigLinkedList.getFirst();
-            boolean isSame = BeanUtils.checkPropertyOfBean(generatorConfig, olderConfig);
+            MybatisExportConfig olderConfig = existConfigLinkedList.getFirst();
+            boolean isSame = BeanUtils.checkPropertyOfBean(mybatisExportConfig, olderConfig);
             if (!isSame) {
-                generatorConfigs.remove(olderConfig);
-                generatorConfigs.addFirst(generatorConfig);
-                this.downLoadConfigToFile(generatorConfigs);
+                mybatisExportConfigs.remove(olderConfig);
+                mybatisExportConfigs.addFirst(mybatisExportConfig);
+                this.downLoadConfigToFile(mybatisExportConfigs);
                 return 1;
             } else {
                 return 2;
             }
         } else {
-            generatorConfigs.addFirst(generatorConfig);
-            this.downLoadConfigToFile(generatorConfigs);
+            mybatisExportConfigs.addFirst(mybatisExportConfig);
+            this.downLoadConfigToFile(mybatisExportConfigs);
             return 3;
         }
     }
@@ -61,21 +61,21 @@ public class ConfigService {
     /**
      * 删除配置
      *
-     * @param generatorConfig 配置信息
+     * @param mybatisExportConfig 配置信息
      */
-    public void deleteConfig(GeneratorConfig generatorConfig) {
-        List<GeneratorConfig> generatorConfigs = loadConfigFromFile();
-        generatorConfigs.remove(generatorConfig);
-        this.downLoadConfigToFile(generatorConfigs);
+    public void deleteConfig(MybatisExportConfig mybatisExportConfig) {
+        List<MybatisExportConfig> mybatisExportConfigs = loadConfigFromFile();
+        mybatisExportConfigs.remove(mybatisExportConfig);
+        this.downLoadConfigToFile(mybatisExportConfigs);
     }
 
     /**
      * 把配置写入文件
      *
-     * @param generatorConfigs 配置信息
+     * @param mybatisExportConfigs 配置信息
      */
-    private void downLoadConfigToFile(List<GeneratorConfig> generatorConfigs) {
-        String configsStr = JSONArray.toJSONString(generatorConfigs, true);
+    private void downLoadConfigToFile(List<MybatisExportConfig> mybatisExportConfigs) {
+        String configsStr = JSONArray.toJSONString(mybatisExportConfigs, true);
         try {
             FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
@@ -87,7 +87,7 @@ public class ConfigService {
     /**
      * 从文件加载配置至pane
      */
-    public LinkedList<GeneratorConfig> loadConfigFromFile() {
+    public LinkedList<MybatisExportConfig> loadConfigFromFile() {
         File file = BaseConstants.getConfigFile();
         if (!file.exists()) {
             return Lists.newLinkedList();
@@ -95,8 +95,8 @@ public class ConfigService {
 
         try {
             String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString());
-            List<GeneratorConfig> generatorConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), GeneratorConfig.class);
-            return generatorConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
+            List<MybatisExportConfig> mybatisExportConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), MybatisExportConfig.class);
+            return mybatisExportConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
             return Lists.newLinkedList();

@@ -56,6 +56,18 @@ public interface CommentGenerator {
     }
 
     /**
+     * 为 request 添加注释
+     *
+     * @param field
+     * @param introspectedTable
+     * @param introspectedColumn
+     */
+    default void addRequestFieldComment(Field field,
+                                        IntrospectedTable introspectedTable,
+                                        IntrospectedColumn introspectedColumn) {
+    }
+
+    /**
      * Adds the field comment.
      *
      * @param field             the field

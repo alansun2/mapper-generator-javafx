@@ -1,6 +1,6 @@
 package com.alan344.service.generator;
 
-import com.alan344.bean.GeneratorConfig;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 
 /**
  * @author Alan
@@ -11,7 +11,7 @@ public interface MapperGeneratorStrategy {
     /**
      * 生成 mapper
      *
-     * @param generatorConfig 配置
+     * @param mybatisExportConfig 配置
      */
-    void generator(GeneratorConfig generatorConfig);
+    void generator(MybatisExportConfig mybatisExportConfig);
 }
