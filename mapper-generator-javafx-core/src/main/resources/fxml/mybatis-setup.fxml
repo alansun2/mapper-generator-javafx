@@ -25,8 +25,6 @@
     <bottom>
         <HBox prefHeight="40.0" styleClass="bottomHBox" alignment="CENTER_RIGHT" spacing="10">
             <Button mnemonicParsing="false" prefWidth="70" text="导出" onAction="#export"/>
-            <Button mnemonicParsing="false" prefWidth="70" text="pre" onAction="#pre"/>
-            <Button mnemonicParsing="false" prefWidth="70" text="next" onAction="#next"/>
         </HBox>
     </bottom>
 </BorderPane>
