@@ -2,9 +2,9 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<BorderPane fx:id="borderPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
-            xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.layout.BorderPane?>
+<BorderPane fx:id="borderPaneMain" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
+            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.alan344.controller.MainController">
     <top>
         <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
@@ -46,52 +46,16 @@
         <SplitPane dividerPositions="0.15">
             <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
                 <top>
-                    <TextField fx:id="tableFindTextField" promptText="table filter" focusTraversable="false"/>
+                    <TextField fx:id="tableFindTextField" focusTraversable="false" promptText="table filter"/>
                 </top>
                 <center>
-                    <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="373.0" prefWidth="137.0"
+                    <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="350.0" prefWidth="224.0"
                               showRoot="false">
                         <TreeItem fx:id="treeItemDataSourceRoot"/>
                     </TreeView>
                 </center>
             </BorderPane>
-            <BorderPane fx:id="borderPane1" styleClass="borderPane1" managed="false" visible="false">
-                <top>
-                    <HBox styleClass="topHBox" alignment="CENTER" spacing="20">
-                        <VBox spacing="15">
-                            <HBox fx:id="mapperCheckBoxHBox1" alignment="CENTER" spacing="15">
-                                <CheckBox mnemonicParsing="false"
-                                          text="updateExample" selected="true"/>
-                                <CheckBox mnemonicParsing="false"
-                                          text="deleteExample" selected="true"/>
-                                <CheckBox mnemonicParsing="false"
-                                          text="selectExample" selected="true"/>
-                            </HBox>
-                            <HBox fx:id="mapperCheckBoxHBox2" alignment="CENTER" spacing="15">
-                                <CheckBox mnemonicParsing="false"
-                                          text="insert返回id"/>
-                                <CheckBox mnemonicParsing="false" text="insert"
-                                          selected="true"/>
-                                <CheckBox mnemonicParsing="false" text="count"
-                                          selected="true"/>
-                                <CheckBox mnemonicParsing="false" text="update"
-                                          selected="true"/>
-                                <CheckBox mnemonicParsing="false" text="delete"
-                                          selected="true"/>
-                                <CheckBox mnemonicParsing="false" text="select"
-                                          selected="true"/>
-                            </HBox>
-                        </VBox>
-                        <Button styleClass="exportButton" mnemonicParsing="false" prefWidth="80" text="导出"
-                                onAction="#openConfigWindow">
-                            <graphic>
-                                <ImageView>
-                                    <Image url="/image/export.png"/>
-                                </ImageView>
-                            </graphic>
-                        </Button>
-                    </HBox>
-                </top>
+            <BorderPane fx:id="borderPaneWrap">
             </BorderPane>
         </SplitPane>
     </center>

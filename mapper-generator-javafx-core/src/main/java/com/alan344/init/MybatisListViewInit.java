@@ -4,7 +4,7 @@ import com.alan344.bean.Column;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
-import com.alan344.controller.component.RightListViewController;
+import com.alan344.constants.NodeConstants;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -23,7 +23,6 @@ import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -32,23 +31,18 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class RightListViewInit {
-
-    @Resource
-    private RightListViewController rightListViewController;
+public class MybatisListViewInit {
 
     /**
      * 在同一个 dataSource 中用左键点击时判断是否是上一次的 dataSource。如果是的话就不重新加载 listView
      */
     private DataSource lastDataSource;
 
-    private ContextMenu contextMenu;
-
-    @Resource
-    private TableTextFieldListener tableTextFieldListener;
-
+    /**
+     * 设置右键监听
+     */
     public void addListener(ListView<VBox> vBoxListView) {
-        contextMenu = vBoxListView.getContextMenu();
+        ContextMenu contextMenu = vBoxListView.getContextMenu();
         vBoxListView.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 ObservableList<VBox> selectedItems = vBoxListView.getSelectionModel().getSelectedItems();
@@ -81,7 +75,7 @@ public class RightListViewInit {
         BaseConstants.selectedTableNameTableMap = BaseConstants.dataSourceTableListMap.get(dataSource);
 
         if (vBoxes != null) {
-            rightListViewController.getVBoxListView().setItems(vBoxes);
+            NodeConstants.mybatisListView.setItems(vBoxes);
         } else {
             this.setListView(null);
         }
@@ -95,7 +89,7 @@ public class RightListViewInit {
      * @param tables 已选表
      */
     public ObservableList<VBox> setListView(List<Table> tables) {
-        ListView<VBox> vBoxListView = rightListViewController.getVBoxListView();
+        ListView<VBox> vBoxListView = NodeConstants.mybatisListView;
         if (tables == null) {
             vBoxListView.setItems(null);
             return FXCollections.emptyObservableList();
@@ -205,6 +199,7 @@ public class RightListViewInit {
 
             BaseConstants.selectedCheckBoxVBox.add(checkBoxVBox);
 
+            // 展开按钮
             Button expand = new Button();
             expand.setGraphic(new ImageView("/image/expand.png"));
             expand.setStyle("-fx-background-color: transparent");
@@ -215,9 +210,11 @@ public class RightListViewInit {
 
                 ObservableList<Node> children = selectedVBox.getChildren();
                 if (children.size() == 2) {
+                    // 展开状态
                     expand.setGraphic(new ImageView("/image/close.png"));
                     this.expandTableViewColumns(selectedVBox);
                 } else {
+                    // 展开状态时，tableView 就是第三个
                     HBox tableView = (HBox) children.get(2);
                     if (tableView.isVisible()) {
                         expand.setGraphic(new ImageView("/image/expand.png"));
@@ -234,11 +231,7 @@ public class RightListViewInit {
             HBox hBox2 = new HBox(20, checkBoxVBox, expand);
             hBox2.setAlignment(Pos.CENTER);
 
-            VBox vBox = new VBox(10, tableNameLabelHBox, hBox2);
-            // 添加监听
-            vBox.setOnKeyPressed(tableTextFieldListener::ctrlFListener);
-
-            vBoxes.add(vBox);
+            vBoxes.add(new VBox(10, tableNameLabelHBox, hBox2));
         }
 
         return vBoxes;

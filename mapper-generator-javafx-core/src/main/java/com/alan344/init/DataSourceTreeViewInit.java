@@ -4,7 +4,7 @@ import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
-import com.alan344.constants.StageConstants;
+import com.alan344.constants.NodeConstants;
 import com.alan344.controller.MainController;
 import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
@@ -46,7 +46,7 @@ public class DataSourceTreeViewInit {
     private TableService tableService;
 
     @Resource
-    private RightListViewInit rightListViewInit;
+    private MybatisListViewInit mybatisListViewInit;
 
     @Resource
     private MainController mainController;
@@ -98,7 +98,9 @@ public class DataSourceTreeViewInit {
                     dataSource = (DataSource) selectedDataSourceItem.getParent().getValue();
                 }
 
-                rightListViewInit.treeViewSwitch(dataSource);
+                mybatisListViewInit.treeViewSwitch(dataSource);
+                // 清除原来的数据
+                BaseConstants.tableNameSetUpTableRecordMap.clear();
             }
         });
     }
@@ -106,7 +108,7 @@ public class DataSourceTreeViewInit {
     /*------------------------------------TreeView ContextMenu--------------------------------------------------------*/
 
     /**
-     * 全部导出
+     * 导出
      */
     private void export(TreeView<DataItem> treeViewDataSource) {
         ObservableList<TreeItem<DataItem>> selectedItems = treeViewDataSource.getSelectionModel().getSelectedItems();
@@ -141,7 +143,7 @@ public class DataSourceTreeViewInit {
                         lastParent = selectedItem.getParent();
                         dataSource = ((DataSource) selectedItem.getParent().getValue());
                     } else {
-                        Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出", StageConstants.primaryStage);
+                        Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出", NodeConstants.primaryStage);
                     }
 
                     Table table = (Table) dataItem;
@@ -149,13 +151,13 @@ public class DataSourceTreeViewInit {
                 }
             }
 
-            Assert.isTrue(!tables.isEmpty(), "请选择一个数据源的表导出", StageConstants.primaryStage);
+            Assert.isTrue(!tables.isEmpty(), "请选择一个数据源的表导出", NodeConstants.primaryStage);
         }
         // 清空当前checkBoxVBox
         BaseConstants.selectedCheckBoxVBox.clear();
 
         // 把选中要导出的表在右边的listView展示
-        ObservableList<VBox> vBoxes = rightListViewInit.setListView(tables);
+        ObservableList<VBox> vBoxes = mybatisListViewInit.setListView(tables);
 
         // 选中的表放入map
         BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
@@ -172,7 +174,7 @@ public class DataSourceTreeViewInit {
         tables.forEach(table -> columnService.reloadColumnsIfNotNull(table));
 
         //show rightBorderTopHBox
-        final BorderPane borderPane1 = mainController.getBorderPane1();
+        final BorderPane borderPane1 = NodeConstants.borderPane1;
         if (!borderPane1.isVisible() && !borderPane1.isManaged()) {
             borderPane1.setVisible(true);
             borderPane1.setManaged(true);
@@ -233,7 +235,7 @@ public class DataSourceTreeViewInit {
      */
     private void rightBorderShowClose(DataSource dataSource) {
         if (BaseConstants.selectedDateSource == null || BaseConstants.selectedDateSource == dataSource) {
-            final BorderPane borderPane1 = mainController.getBorderPane1();
+            final BorderPane borderPane1 = NodeConstants.borderPane1;
             borderPane1.setVisible(false);
             borderPane1.setManaged(false);
         }

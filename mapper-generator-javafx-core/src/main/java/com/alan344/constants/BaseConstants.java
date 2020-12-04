@@ -3,6 +3,7 @@ package com.alan344.constants;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
@@ -87,4 +88,6 @@ public class BaseConstants {
     }
 
     public static List<VBox> selectedCheckBoxVBox = new ArrayList<>();
+
+    public static MybatisExportConfig curMybatisExportConfig;
 }

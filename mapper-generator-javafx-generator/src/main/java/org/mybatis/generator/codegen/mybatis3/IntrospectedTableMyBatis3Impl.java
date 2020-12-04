@@ -167,7 +167,7 @@ public class IntrospectedTableMyBatis3Impl extends IntrospectedTable {
             for (CompilationUnit compilationUnit : compilationUnits) {
                 GeneratedJavaFile gjf = new GeneratedJavaFile(compilationUnit,
                         javaGenerator.getProject(),
-                        context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING),
+
                         context.getJavaFormatter());
                 answer.add(gjf);
             }

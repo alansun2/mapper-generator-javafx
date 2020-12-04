@@ -1,3 +1,5 @@
+@import "common.css";
+
 .addConfigButton {
     -fx-background-color: #F4F4F4;
     -fx-background-radius: 0em;
@@ -8,23 +10,6 @@
 }
 
 .addConfigButton:pressed {
-    -fx-background-color: #BFBFBF;
-}
-
-.button {
-    -fx-background-color: #F4F4F4;
-    -fx-background-radius: 0em;
-}
-
-.button:hover {
-    -fx-background-color: #BFBFBF;
-}
-
-.button:pressed {
-    -fx-background-color: #BFBFBF;
-}
-
-.button:focused {
     -fx-background-color: #BFBFBF;
 }
 

@@ -2,10 +2,12 @@ package com.alan344.service.generator;
 
 import com.alan344.bean.Column;
 import com.alan344.bean.ColumnOverride;
-import com.alan344.bean.GeneratorConfig;
+import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
-import com.alan344.constants.StageConstants;
+import com.alan344.constants.NodeConstants;
+import com.alan344.service.datasourcedriver.DatasourceDriverContext;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.Toast;
 import com.alan344happyframework.constants.SeparatorConstants;
@@ -43,7 +45,7 @@ import java.util.List;
 public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStrategy {
     private static DocumentBuilder documentBuilder;
 
-    private final GeneratorConfig.ExportConfig exportConfig;
+    private final MybatisExportConfig.ExportConfig exportConfig;
 
     private Document doc;
 
@@ -58,12 +60,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         }
     }
 
-    public MapperGeneratorStrategyBase(GeneratorConfig.ExportConfig exportConfig) {
+    public MapperGeneratorStrategyBase(MybatisExportConfig.ExportConfig exportConfig) {
         this.exportConfig = exportConfig;
     }
 
     @Override
-    public void generator(GeneratorConfig generatorConfig) {
+    public void generator(MybatisExportConfig mybatisExportConfig) {
         doc = documentBuilder.newDocument();
         final Element root = doc.createElement("generatorConfiguration");
         doc.appendChild(root);
@@ -78,10 +80,10 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         this.addContextProperty(generatorUtils);
 
         //添加插件
-        this.addPlugin(generatorUtils);
+        this.addPlugin(generatorUtils, mybatisExportConfig);
 
         // 注释
-        this.addComment(generatorUtils, generatorConfig);
+        this.addComment(generatorUtils, mybatisExportConfig);
 
         // jdbc 连接
         this.addJdbcConfig(generatorUtils);
@@ -90,15 +92,15 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         this.addResolver(generatorUtils);
 
         // 添加 model，mapper,xml 地址
-        this.addGeneratorLocation(generatorUtils, generatorConfig);
+        this.addGeneratorLocation(generatorUtils, mybatisExportConfig);
 
         // 添加 table 配置
-        this.addTableConfig(generatorUtils, generatorConfig);
+        this.addTableConfig(generatorUtils, mybatisExportConfig);
 
         // 判断文件夹是否存在，如果不存在则进行创建
-        this.checkAndGeneratorDir(generatorConfig);
+        this.checkAndGeneratorDir(mybatisExportConfig);
         // 执行创建
-        this.generateMyBatis3(doc, generatorConfig);
+        this.generateMyBatis3(doc, mybatisExportConfig);
     }
 
     /**
@@ -115,7 +117,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 添加插件
      */
-    protected void addPlugin(GeneratorUtils generatorUtils) {
+    protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 序列化插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
     }
@@ -123,14 +125,14 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 添加注释
      *
-     * @param generatorConfig 配置信息
+     * @param mybatisExportConfig 配置信息
      */
-    protected void addComment(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    protected void addComment(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
         commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
-        generatorUtils.addProperty(true, commentGenerator, "author", generatorConfig.getAuthor());
+        generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
         generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseSwagger() + "");
     }
 
@@ -138,11 +140,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * 添加 jdbc 连接信息
      */
     private void addJdbcConfig(GeneratorUtils generatorUtils) {
+        final DataSource selectedDateSource = BaseConstants.selectedDateSource;
         final Element jdbcConnection = generatorUtils.addElement(context, "jdbcConnection");
-        jdbcConnection.setAttribute("driverClass", "com.mysql.cj.jdbc.Driver");
-        jdbcConnection.setAttribute("connectionURL", "jdbc:mysql://" + BaseConstants.selectedDateSource.getHost() + "/" + BaseConstants.selectedDateSource.getDatabase() + "?nullCatalogMeansCurrent=true");
-        jdbcConnection.setAttribute("userId", BaseConstants.selectedDateSource.getUser());
-        jdbcConnection.setAttribute("password", BaseConstants.selectedDateSource.getPassword());
+        jdbcConnection.setAttribute("driverClass", selectedDateSource.getDriveName());
+        jdbcConnection.setAttribute("connectionURL", new DatasourceDriverContext(selectedDateSource.getDriveType()).getDrive(selectedDateSource));
+        jdbcConnection.setAttribute("userId", selectedDateSource.getUser());
+        jdbcConnection.setAttribute("password", selectedDateSource.getPassword());
     }
 
     /**
@@ -165,62 +168,62 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 添加 model，mapper,xml 地址
      *
-     * @param generatorConfig 配置信息
+     * @param mybatisExportConfig 配置信息
      */
-    private void addGeneratorLocation(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    private void addGeneratorLocation(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // model 位置配置
-        this.addModelGenerator(generatorUtils, generatorConfig);
+        this.addModelGenerator(generatorUtils, mybatisExportConfig);
 
         // xml 位置配置
-        this.addMapperGenerator(generatorUtils, generatorConfig);
+        this.addMapperGenerator(generatorUtils, mybatisExportConfig);
 
         // mapper （dao） 位置配置
-        this.addXmlGenerator(generatorUtils, generatorConfig);
+        this.addXmlGenerator(generatorUtils, mybatisExportConfig);
     }
 
     /**
      * 添加 model 生成配置
      *
-     * @param generatorUtils  工具
-     * @param generatorConfig 配置信息
+     * @param generatorUtils      工具
+     * @param mybatisExportConfig 配置信息
      */
-    protected void addModelGenerator(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    protected void addModelGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // model 位置配置
         final Element javaModelGenerator = generatorUtils.addElement(context, "javaModelGenerator");
-        javaModelGenerator.setAttribute("targetPackage", generatorConfig.getBeanPackage());
-        javaModelGenerator.setAttribute("targetProject", generatorConfig.getBeanLocation().replaceAll("\\\\", "/"));
+        javaModelGenerator.setAttribute("targetPackage", mybatisExportConfig.getBeanPackage());
+        javaModelGenerator.setAttribute("targetProject", mybatisExportConfig.getBeanLocation().replaceAll("\\\\", "/"));
     }
 
     /**
      * 添加 Mapper 生成配置
      *
-     * @param generatorUtils  工具
-     * @param generatorConfig 配置信息
+     * @param generatorUtils      工具
+     * @param mybatisExportConfig 配置信息
      */
-    protected void addMapperGenerator(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    protected void addMapperGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // xml 位置配置
-        if (StringUtils.isNotEmpty(generatorConfig.getMapperXmlLocation())) {
+        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
             final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
             sqlMapGenerator.setAttribute("targetPackage", SeparatorConstants.DOT);
-            sqlMapGenerator.setAttribute("targetProject", generatorConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
+            sqlMapGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
         }
     }
 
     /**
      * 添加 XML 生成配置
      *
-     * @param generatorUtils  工具
-     * @param generatorConfig 配置信息
+     * @param generatorUtils      工具
+     * @param mybatisExportConfig 配置信息
      */
-    protected void addXmlGenerator(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    protected void addXmlGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // mapper （dao） 位置配置
-        if (StringUtils.isNotEmpty(generatorConfig.getMapperPackage()) && StringUtils.isNotEmpty(generatorConfig.getMapperLocation())) {
+        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperPackage()) && StringUtils.isNotEmpty(mybatisExportConfig.getMapperLocation())) {
             final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
-            javaClientGenerator.setAttribute("targetPackage", generatorConfig.getMapperPackage());
-            javaClientGenerator.setAttribute("targetProject", generatorConfig.getMapperLocation().replaceAll("\\\\", "/"));
+            javaClientGenerator.setAttribute("targetPackage", mybatisExportConfig.getMapperPackage());
+            javaClientGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperLocation().replaceAll("\\\\", "/"));
             javaClientGenerator.setAttribute("type", "XMLMAPPER");
             // Mapper 接口
-            final String mapperRootInterface = generatorConfig.getMapperRootInterface();
+            final String mapperRootInterface = mybatisExportConfig.getMapperRootInterface();
             generatorUtils.addProperty(StringUtils.isNotEmpty(mapperRootInterface), javaClientGenerator, PropertyRegistry.ANY_ROOT_INTERFACE, mapperRootInterface);
         }
     }
@@ -228,22 +231,16 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 添加 table 配置信息
      *
-     * @param generatorConfig 配置信息
+     * @param mybatisExportConfig 配置信息
      */
-    protected void addTableConfig(GeneratorUtils generatorUtils, GeneratorConfig generatorConfig) {
+    protected void addTableConfig(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         Collection<Table> tables = BaseConstants.selectedTableNameTableMap.values();
         for (Table table : tables) {
 
             final Element tableEl = generatorUtils.addElement(context, "table");
             tableEl.setAttribute("tableName", table.getTableName());
 
-            List<Column> columns = table.getColumns();
-
-            if (table.isReturnInsertId()) {
-                final Element generatedKey = generatorUtils.addElement(tableEl, "generatedKey");
-                generatedKey.setAttribute("column", columns.get(0).getColumnName());
-                generatedKey.setAttribute("sqlStatement", "JDBC");
-            }
+            tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getDatabase());
 
             this.checkBoxSelected("enableInsert", tableEl, table.isInsert());
             this.checkBoxSelected("enableCountByExample", tableEl, table.isCount());
@@ -255,10 +252,24 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             this.checkBoxSelected("enableSelectByExample", tableEl, table.isSelectExample());
 
             // 是否使用原来的字段名
-            if (generatorConfig.isUseActualColumnNames()) {
-                tableEl.setAttribute("useActualColumnNames", "true");
+            generatorUtils.setAttribute(mybatisExportConfig.isUseActualColumnNames(), tableEl, "useActualColumnNames", "true");
+
+            List<Column> columns = table.getColumns();
+
+            if (table.isReturnInsertId()) {
+                final Element generatedKey = generatorUtils.addElement(tableEl, "generatedKey");
+                generatedKey.setAttribute("column", columns.get(0).getColumnName());
+                generatedKey.setAttribute("sqlStatement", "JDBC");
             }
 
+            final String globalIgnoreField = mybatisExportConfig.getGlobalIgnoreField();
+            if (StringUtils.isNotEmpty(globalIgnoreField)) {
+                final String[] globalIgnoreArr = globalIgnoreField.split(SeparatorConstants.COMMA);
+                for (String globalIgnore : globalIgnoreArr) {
+                    final Element ignoreColumn = generatorUtils.addElement(tableEl, "ignoreColumn");
+                    ignoreColumn.setAttribute("column", globalIgnore);
+                }
+            }
             for (Column column : columns) {
                 if (column.isIgnore()) {
                     final Element ignoreColumn = generatorUtils.addElement(tableEl, "ignoreColumn");
@@ -270,32 +281,24 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 if (columnOverride.isNotEmpty()) {
                     final Element columnOverrideEl = generatorUtils.addElement(tableEl, "columnOverride");
                     columnOverrideEl.setAttribute("column", column.getColumnName());
-                    if (StringUtils.isNotEmpty(columnOverride.getProperty())) {
-                        columnOverrideEl.setAttribute(GeneratorUtils.PROPERTY, columnOverride.getProperty());
-                    }
-                    if (StringUtils.isNotEmpty(columnOverride.getJavaType())) {
-                        columnOverrideEl.setAttribute("javaType", columnOverride.getJavaType());
-                    }
-                    if (StringUtils.isNotEmpty(columnOverride.getTypeHandler())) {
-                        columnOverrideEl.setAttribute("typeHandler", columnOverride.getTypeHandler());
-                    }
-                    if (columnOverride.isGeneratedAlways()) {
-                        columnOverrideEl.setAttribute("isGeneratedAlways", String.valueOf(columnOverride.isGeneratedAlways()));
-                    }
-                    if (columnOverride.isDelimitedColumnName()) {
-                        columnOverrideEl.setAttribute("delimitedColumnName", String.valueOf(columnOverride.isDelimitedColumnName()));
-                    }
+
+                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getProperty()), columnOverrideEl, GeneratorUtils.PROPERTY, columnOverride.getProperty());
+                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getJavaType()), columnOverrideEl, "javaType", columnOverride.getJavaType());
+                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getTypeHandler()), columnOverrideEl, "typeHandler", columnOverride.getTypeHandler());
+                    generatorUtils.setAttribute(columnOverride.isGeneratedAlways(), columnOverrideEl, "isGeneratedAlways", String.valueOf(columnOverride.isGeneratedAlways()));
+                    generatorUtils.setAttribute(columnOverride.isDelimitedColumnName(), columnOverrideEl, "delimitedColumnName", String.valueOf(columnOverride.isDelimitedColumnName()));
                 }
 
-                // 添加属性
+                // 添加默认属性
                 generatorUtils.addProperty(table.isJdkSerializable(), tableEl, "jdkSerializable", "true");
-                generatorUtils.addProperty(generatorConfig.isModelOnly(), tableEl, PropertyRegistry.TABLE_MODEL_ONLY, "true");
-                this.addTableProperty(generatorUtils);
+                generatorUtils.addProperty(mybatisExportConfig.isModelOnly(), tableEl, PropertyRegistry.TABLE_MODEL_ONLY, "true");
+                generatorUtils.addProperty(StringUtils.isNotEmpty(mybatisExportConfig.getModelRootClass()), tableEl, PropertyRegistry.ANY_ROOT_CLASS, mybatisExportConfig.getModelRootClass());
+                this.addTableProperty(tableEl, generatorUtils);
             }
         }
     }
 
-    protected void addTableProperty(GeneratorUtils generatorUtils) {
+    protected void addTableProperty(Element tableEl, GeneratorUtils generatorUtils) {
     }
 
     /**
@@ -312,25 +315,25 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 判断文件夹是否存在，如果不存在则进行创建
      */
-    private void checkAndGeneratorDir(GeneratorConfig generatorConfig) {
-        if (StringUtils.isNotEmpty(generatorConfig.getBeanLocation())) {
-            File beanFile = new File(generatorConfig.getBeanLocation());
+    private void checkAndGeneratorDir(MybatisExportConfig mybatisExportConfig) {
+        if (StringUtils.isNotEmpty(mybatisExportConfig.getBeanLocation())) {
+            File beanFile = new File(mybatisExportConfig.getBeanLocation());
             if (!beanFile.exists() && !beanFile.mkdirs()) {
-                log.error("创建bean文件夹：{} 失败", generatorConfig.getBeanLocation());
+                log.error("创建bean文件夹：{} 失败", mybatisExportConfig.getBeanLocation());
             }
         }
 
-        if (StringUtils.isNotEmpty(generatorConfig.getMapperLocation())) {
-            File mapperFile = new File(generatorConfig.getMapperLocation());
+        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperLocation())) {
+            File mapperFile = new File(mybatisExportConfig.getMapperLocation());
             if (!mapperFile.exists() && !mapperFile.mkdirs()) {
-                log.error("创建mapper文件夹：{} 失败", generatorConfig.getMapperLocation());
+                log.error("创建mapper文件夹：{} 失败", mybatisExportConfig.getMapperLocation());
             }
         }
 
-        if (StringUtils.isNotEmpty(generatorConfig.getMapperXmlLocation())) {
-            File xmlFile = new File(generatorConfig.getMapperXmlLocation());
+        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
+            File xmlFile = new File(mybatisExportConfig.getMapperXmlLocation());
             if (!xmlFile.exists() && !xmlFile.mkdirs()) {
-                log.error("创建xml文件夹：{} 失败", generatorConfig.getMapperXmlLocation());
+                log.error("创建xml文件夹：{} 失败", mybatisExportConfig.getMapperXmlLocation());
             }
         }
     }
@@ -340,13 +343,13 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      *
      * @param document xml
      */
-    private void generateMyBatis3(Document document, GeneratorConfig generatorConfig) {
+    private void generateMyBatis3(Document document, MybatisExportConfig mybatisExportConfig) {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
         try {
             Configuration config = cp.parseConfiguration(document);
 
-            MyShellCallback shellCallback = new MyShellCallback(true, generatorConfig.isUseMerge());
+            MyShellCallback shellCallback = new MyShellCallback(true, mybatisExportConfig.isUseMerge());
 
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
             myBatisGenerator.generate(null, null, null);
@@ -355,7 +358,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             if (e instanceof InvalidConfigurationException) {
                 final InvalidConfigurationException invalidConfigurationException = (InvalidConfigurationException) e;
                 final List<String> errors = invalidConfigurationException.getErrors();
-                Toast.makeTextDefault(StageConstants.configStage, errors.get(0));
+                Toast.makeTextDefault(NodeConstants.primaryStage, errors.get(0));
                 return;
             }
             throw new BizException("导出失败");

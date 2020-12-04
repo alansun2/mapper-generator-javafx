@@ -21,6 +21,11 @@ public class Column {
 
     private ColumnOverride columnOverride = new ColumnOverride();
 
+    /**
+     * 用于业务的分页查询
+     */
+    private String condition;
+
     public boolean isIgnore() {
         return ignore.get();
     }

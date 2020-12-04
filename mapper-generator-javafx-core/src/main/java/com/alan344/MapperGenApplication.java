@@ -1,9 +1,8 @@
 package com.alan344;
 
+import com.alan344.constants.NodeConstants;
+import com.alan344.factory.FxmlLoadFactory;
 import javafx.application.Application;
-import javafx.application.HostServices;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -24,36 +23,23 @@ public class MapperGenApplication extends Application {
         launch(args);
     }
 
-    private FXMLLoader fxmlLoader;
-
     private ConfigurableApplicationContext applicationContext;
 
     @Override
     public void init() {
         applicationContext = SpringApplication.run(MapperGenApplication.class);
-        fxmlLoader = new FXMLLoader();
-        fxmlLoader.setControllerFactory(applicationContext::getBean);
-        HostServices hostServices = getHostServices();
-        applicationContext.getBeanFactory().registerSingleton("hostServices", hostServices);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        applicationContext.getBeanFactory().registerSingleton("primaryStage", primaryStage);
-
-        fxmlLoader.setLocation(getClass().getResource("/fxml/main.fxml"));
-        Parent root = fxmlLoader.load();
-
-//        primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setScene(new Scene(root));
+    public void start(Stage primaryStage) {
+        NodeConstants.primaryStage = primaryStage;
+        NodeConstants.hostServices = getHostServices();
+        primaryStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/main.fxml", applicationContext)));
         //图标
         primaryStage.getIcons().add(new Image("/image/icon.png"));
         primaryStage.setWidth(1200);
         primaryStage.setHeight(700);
         primaryStage.setTitle("mapper 生成小工具");
-//        primaryStage.setOnCloseRequest(event -> {
-//            closeDialog(primaryStage);
-//        });
         primaryStage.show();
     }
 }

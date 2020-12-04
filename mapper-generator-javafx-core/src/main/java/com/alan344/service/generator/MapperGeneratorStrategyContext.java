@@ -1,6 +1,7 @@
 package com.alan344.service.generator;
 
-import com.alan344.bean.GeneratorConfig;
+import org.mybatis.generator.my.config.MybatisExportConfig;
+import org.mybatis.generator.my.config.ServiceConfigThreadLocal;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,13 +11,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class MapperGeneratorStrategyContext {
 
-    public MapperGeneratorStrategy getMapperGeneratorStrategy(GeneratorConfig generatorConfig) {
-        final int selectTab = generatorConfig.getSelectTab();
-        switch (selectTab) {
-            case 1:
-                return new MapperBaseGenerator(generatorConfig.getTkMybatisExportConfig());
-            default:
-                return new MyMybatisGeneratorService(generatorConfig.getMybatisExportConfig());
+    public MapperGeneratorStrategy getMapperGeneratorStrategy(MybatisExportConfig mybatisExportConfig) {
+        final int selectTab = mybatisExportConfig.getSelectTab();
+        if (ServiceConfigThreadLocal.getServiceConfig().isNotSkipService()) {
+            switch (selectTab) {
+                case 1:
+                    return new MapperBaseWithServiceGenerator(mybatisExportConfig.getTkMybatisExportConfig());
+                default:
+                    return new MyMybatisWithServiceGeneratorService(mybatisExportConfig.getMybatisOfficialExportConfig());
+            }
+        } else {
+            switch (selectTab) {
+                case 1:
+                    return new MapperBaseGenerator(mybatisExportConfig.getTkMybatisExportConfig());
+                default:
+                    return new MyMybatisGeneratorService(mybatisExportConfig.getMybatisOfficialExportConfig());
+            }
         }
     }
 }

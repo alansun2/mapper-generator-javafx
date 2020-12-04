@@ -9,15 +9,12 @@ import com.alan344.service.DataSourceService;
 import com.alan344.utils.TreeUtils;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.image.ImageView;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -32,9 +29,6 @@ public class DataSourceTreeItemInit {
 
     @Resource
     private MainController mainController;
-
-    @Resource
-    private TableTextFieldListener tableTextFieldListener;
 
     /**
      * 启动时加载数据文件
@@ -111,57 +105,6 @@ public class DataSourceTreeItemInit {
                 TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
                 tableTreeItem.setGraphic(new ImageView("/image/table.png"));
             });
-        }
-    }
-
-    /**
-     * 给 DataSourceBorderPane 设置键盘监听，用于搜索 table
-     */
-    public void addListenOnDataSourceBorderPane(TreeView<DataItem> treeViewDataSource) {
-        TextField tableFindTextField = mainController.getTableFindTextField();
-        tableFindTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null && newValue != null) {
-                this.filterTables(newValue, treeViewDataSource.getRoot(), oldValue.length() > newValue.length());
-            }
-        });
-
-        tableFindTextField.setOnKeyPressed(tableTextFieldListener::escListener);
-
-        treeViewDataSource.setOnKeyPressed(tableTextFieldListener::ctrlFListener);
-    }
-
-    /**
-     * filter tables when type tableName in the left BorderPane
-     *
-     * @param tableNamePrefix        tableNamePrefix
-     * @param treeViewDataSourceRoot treeViewDataSourceRoot
-     */
-    private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot, boolean isDelete) {
-        final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
-        for (TreeItem<DataItem> dataSourceTreeItem : children) {
-            if (dataSourceTreeItem.isExpanded()) {
-                if (tableNamePrefix.length() > 0) {
-                    if (isDelete) {
-                        dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
-                        DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
-                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().startsWith(tableNamePrefix)).collect(Collectors.toList());
-                        for (Table filteredTable : filteredTables) {
-                            TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
-                            tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-                        }
-                    }
-                    final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
-                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().startsWith(tableNamePrefix));
-
-                } else {
-                    dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
-                    DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
-                    for (Table filteredTable : dataSource.getTables()) {
-                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
-                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-                    }
-                }
-            }
         }
     }
 }

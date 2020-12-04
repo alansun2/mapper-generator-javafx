@@ -1,0 +1,25 @@
+.button {
+    -fx-background-color: #F4F4F4;
+    -fx-background-radius: 0em;
+}
+
+.button:hover {
+    -fx-background-color: #BFBFBF;
+}
+
+.button:pressed {
+    -fx-background-color: #BFBFBF;
+}
+
+.button:focused {
+    -fx-background-color: #BFBFBF;
+}
+
+.bottomHBox {
+    -fx-padding: 0 20;
+}
+
+.mainVBox {
+    -fx-background-color: #E8E8E8;
+    -fx-padding: 30;
+}

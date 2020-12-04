@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 public class MapperCheckBoxInit {
 
     /**
-     * checkbox init
+     * 初始化头的 hbox，设置监听
+     *
+     * @param mapperCheckBoxHBox1 第一行的 hbox
+     * @param mapperCheckBoxHBox2 第二行的 hbox
      */
     public void checkBoxInit(HBox mapperCheckBoxHBox1, HBox mapperCheckBoxHBox2) {
         final ObservableList<Node> checkBoxChildren1 = mapperCheckBoxHBox1.getChildren();

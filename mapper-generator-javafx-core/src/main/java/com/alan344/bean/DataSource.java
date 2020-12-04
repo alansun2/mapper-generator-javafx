@@ -1,5 +1,6 @@
 package com.alan344.bean;
 
+import com.alan344.constants.DriveEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,17 +15,32 @@ import java.util.Objects;
 @Setter
 public class DataSource implements DataItem {
 
+    private DriveEnum driveType = DriveEnum.MYSQL_8_0_16;
+
     private String host;
 
     private String port;
-
-    private String database;
 
     private String user;
 
     private String password;
 
     private String driveName;
+
+    /**
+     * mysql 必填
+     */
+    private String database;
+
+    /**
+     * oracle 必填
+     */
+    private String serviceName;
+
+    /**
+     * sid
+     */
+    private String sid;
 
     private transient List<Table> tables;
 

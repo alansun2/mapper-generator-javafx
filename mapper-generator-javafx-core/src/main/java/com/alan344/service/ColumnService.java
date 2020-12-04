@@ -4,18 +4,17 @@ import com.alan344.bean.Column;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
+import com.alan344.service.driveservice.DriveFactory;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.BeanFactory;
-import javax.annotation.Resource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,9 @@ import java.util.stream.Collectors;
 public class ColumnService {
     @Resource
     private BeanFactory beanFactory;
+
+    @Resource
+    private DriveFactory driveFactory;
 
     /**
      * 加载columns
@@ -104,17 +106,7 @@ public class ColumnService {
      * @return 字段数组
      */
     private List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
-        JdbcTemplate jdbcTemplate = beanFactory.getBean(dataSource.toString(), JdbcTemplate.class);
-        List<Column> columns = new ArrayList<>();
-        jdbcTemplate.query("DESC " + tableName, (rs, rowNum) -> {
-            Column column = new Column();
-            column.setColumnName(rs.getString(1));
-            column.setType(rs.getString(2));
-            columns.add(column);
-            return column;
-        });
-
-        return columns;
+        return driveFactory.getDrive(dataSource.getDriveType()).getColumn(dataSource, tableName);
     }
 
     /**

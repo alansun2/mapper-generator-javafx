@@ -1,6 +1,6 @@
 package com.alan344.service.generator;
 
-import com.alan344.bean.GeneratorConfig;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.my.plugin.TkMybatisKeySqlPlugin;
 import org.w3c.dom.Element;
@@ -12,11 +12,11 @@ import org.w3c.dom.Element;
 @Slf4j
 public class MapperBaseGenerator extends MapperGeneratorStrategyBase {
 
-    private final GeneratorConfig.TkMybatisExportConfig tkMybatisExportConfig;
+    private final MybatisExportConfig.TkMybatisExportConfig tkMybatisExportConfig;
 
-    public MapperBaseGenerator(GeneratorConfig.ExportConfig exportConfig) {
+    public MapperBaseGenerator(MybatisExportConfig.ExportConfig exportConfig) {
         super(exportConfig);
-        this.tkMybatisExportConfig = ((GeneratorConfig.TkMybatisExportConfig) exportConfig);
+        this.tkMybatisExportConfig = ((MybatisExportConfig.TkMybatisExportConfig) exportConfig);
     }
 
     /**
@@ -25,8 +25,8 @@ public class MapperBaseGenerator extends MapperGeneratorStrategyBase {
      * @param generatorUtils 工具
      */
     @Override
-    protected void addPlugin(GeneratorUtils generatorUtils) {
-        super.addPlugin(generatorUtils);
+    protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
+        super.addPlugin(generatorUtils, mybatisExportConfig);
         final Element tkMybatisPlugin = generatorUtils.addPlugin(TkMybatisKeySqlPlugin.class.getName());
         generatorUtils.addProperty(tkMybatisExportConfig.isGenerateColumnConsts(), tkMybatisPlugin, "generateColumnConsts", tkMybatisExportConfig.isGenerateColumnConsts() + "");
     }

@@ -1,9 +1,9 @@
 package com.alan344.controller;
 
-import com.alan344.bean.GeneratorConfig;
+import org.mybatis.generator.my.config.MybatisExportConfig;
+import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.utils.FileUtils;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -13,16 +13,17 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 /**
  * @author AlanSun
  * @date 2020/4/6 18:29
  */
+@Slf4j
 @Controller
 public class ExportSuccessAlertController {
 
@@ -40,7 +41,7 @@ public class ExportSuccessAlertController {
 
     private Stage tableAdvanceSetUpStage;
 
-    private GeneratorConfig generatorConfig;
+    private MybatisExportConfig mybatisExportConfig;
 
     /**
      * 成功导出后的 button 按钮显示文字
@@ -51,16 +52,10 @@ public class ExportSuccessAlertController {
      * 打开表高级设置
      *
      * @param stage 主窗口
-     * @throws IOException e
      */
-    void openTableAdvancedSetup(Stage stage, boolean isExportSuccess, GeneratorConfig generatorConfig) throws IOException {
+    public void openTableAdvancedSetup(Stage stage, boolean isExportSuccess, MybatisExportConfig mybatisExportConfig) {
         if (tableAdvanceSetUpStage == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-
-            fxmlLoader.setLocation(getClass().getResource("/fxml/export-alert.fxml"));
-            fxmlLoader.setControllerFactory(beanFactory::getBean);
-
-            AnchorPane tableAdvanceSetUpPane = fxmlLoader.load();
+            AnchorPane tableAdvanceSetUpPane = FxmlLoadFactory.create("/fxml/component/export-alert.fxml", beanFactory);
             tableAdvanceSetUpStage = new Stage();
             tableAdvanceSetUpStage.setScene(new Scene(tableAdvanceSetUpPane));
             tableAdvanceSetUpStage.setTitle("导出成功");
@@ -70,7 +65,7 @@ public class ExportSuccessAlertController {
             tableAdvanceSetUpStage.initOwner(stage);
         }
 
-        this.generatorConfig = generatorConfig;
+        this.mybatisExportConfig = mybatisExportConfig;
 
         if (isExportSuccess) {
             tableAdvanceSetUpStage.setTitle("导出成功");
@@ -104,7 +99,7 @@ public class ExportSuccessAlertController {
     @FXML
     public void openFileAfterExport() {
         if (OPEN_FILE_TEXT_SUCCESS.equals(openFileButton.getText())) {
-            FileUtils.open(generatorConfig.getBeanLocation());
+            FileUtils.open(mybatisExportConfig.getBeanLocation());
         }
 
         this.close();

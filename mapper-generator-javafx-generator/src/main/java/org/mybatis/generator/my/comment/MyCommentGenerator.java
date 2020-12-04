@@ -65,7 +65,7 @@ public class MyCommentGenerator implements CommentGenerator {
     public void addFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
         String remarks = introspectedColumn.getRemarks();
 
-        if (addRemarkComments) {
+        if (addRemarkComments && StringUtils.isNotEmpty(remarks)) {
             final String remark = remarks.replaceAll("\n", "\n\t * ");
             //字段备注信息
             field.addJavaDocLine("/**");
@@ -73,7 +73,32 @@ public class MyCommentGenerator implements CommentGenerator {
             field.addJavaDocLine(" */");
         }
 
-        if (supportSwagger) {
+        if (supportSwagger && StringUtils.isNotEmpty(remarks)) {
+            final String remark = remarks.replaceAll("\n", ",");
+            field.addJavaDocLine("@ApiModelProperty(value = \"" + remark + "\")");
+        }
+    }
+
+    /**
+     * 为 request 添加注释
+     *
+     * @param field
+     * @param introspectedTable
+     * @param introspectedColumn
+     */
+    @Override
+    public void addRequestFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
+        String remarks = introspectedColumn.getRemarks();
+
+        if (addRemarkComments && StringUtils.isNotEmpty(remarks)) {
+            // 为字符串添加字符长度
+            if (field.getType().compareTo(FullyQualifiedJavaType.getStringInstance()) == 0) {
+                field.getJavaDocLines().remove(field.getJavaDocLines().size() - 1);
+                field.addJavaDocLine(" * length: " + introspectedColumn.getLength());
+            }
+        }
+
+        if (supportSwagger && StringUtils.isNotEmpty(remarks)) {
             final String remark = remarks.replaceAll("\n", ",");
             field.addJavaDocLine("@ApiModelProperty(value = \"" + remark + "\")");
         }

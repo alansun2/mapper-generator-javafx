@@ -1,23 +1,4 @@
-.button {
-    -fx-background-color: #BFBFBF;
-    -fx-background-radius: 0em;
-}
-
-.button:hover {
-    -fx-background-color: #fff;
-}
-
-.button:pressed {
-    -fx-background-color: #fff;
-}
-
-.exportButton {
-    -fx-text-fill: #1296db;
-}
-
-/*.button:focused {*/
-/*-fx-background-color: #fff;*/
-/*}*/
+@import "common.css";
 
 .anchorPane {
     -fx-background-color: #BFBFBF;
@@ -46,4 +27,8 @@
 .split-pane:horizontal > .split-pane-divider {
     -fx-padding: 0 0 0 0;
     /*-fx-background-color: #E8E8E8;*/
+}
+
+ButtonBar {
+    -fx-padding: 5 20;
 }

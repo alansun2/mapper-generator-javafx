@@ -1,6 +1,6 @@
 package com.alan344.controller;
 
-import javafx.fxml.FXMLLoader;
+import com.alan344.factory.FxmlLoadFactory;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 /**
  * @author AlanSun
@@ -28,15 +27,10 @@ public class AboutController {
      *
      * @param primaryStage 主窗口
      */
-    void openWindow(Stage primaryStage) throws IOException {
+    void openWindow(Stage primaryStage) {
         if (aboutStage == null) {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-
-            fxmlLoader.setLocation(getClass().getResource("/fxml/about.fxml"));
-            fxmlLoader.setControllerFactory(beanFactory::getBean);
-
             aboutStage = new Stage();
-            aboutStage.setScene(new Scene(fxmlLoader.load()));
+            aboutStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/about.fxml", beanFactory)));
             aboutStage.setTitle("设置导出");
             aboutStage.getIcons().add(new Image("/image/setting@32.png"));
             aboutStage.setResizable(false);
