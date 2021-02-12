@@ -16,11 +16,6 @@ public class ServiceConfig {
     private String controllerPackage;
 
     /**
-     * 是否执行 service 导出；true:导出
-     */
-    private boolean isNotSkipService;
-
-    /**
      * 是否生成 validation 注解，例如 @Length
      */
     private boolean isGenerateValidationAnnotation = true;
@@ -63,14 +58,6 @@ public class ServiceConfig {
 
     public void setControllerPackage(String controllerPackage) {
         this.controllerPackage = controllerPackage;
-    }
-
-    public boolean isNotSkipService() {
-        return isNotSkipService;
-    }
-
-    public void setNotSkipService(boolean notSkipService) {
-        isNotSkipService = notSkipService;
     }
 
     public String getRequestGlobalIgnoreColumns() {

@@ -13,7 +13,7 @@ public class MapperGeneratorStrategyContext {
 
     public MapperGeneratorStrategy getMapperGeneratorStrategy(MybatisExportConfig mybatisExportConfig) {
         final int selectTab = mybatisExportConfig.getSelectTab();
-        if (ServiceConfigThreadLocal.getServiceConfig().isNotSkipService()) {
+        if (ServiceConfigThreadLocal.getServiceConfig() != null) {
             switch (selectTab) {
                 case 1:
                     return new MapperBaseWithServiceGenerator(mybatisExportConfig.getTkMybatisExportConfig());

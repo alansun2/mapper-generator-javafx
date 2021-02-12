@@ -91,7 +91,6 @@ public class ServiceSetupController implements Initializable {
         serviceConfig.setServicePackage(servicePackageText.getText());
         serviceConfig.setControllerPackage(controllerPackageText.getText());
         serviceConfig.setRequestGlobalIgnoreColumns(requestIgnoreColumnText.getText());
-        serviceConfig.setNotSkipService(true);
         ServiceConfigThreadLocal.setServiceConfig(serviceConfig);
         exportService.export();
     }
