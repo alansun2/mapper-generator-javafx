@@ -3,6 +3,7 @@ package com.alan344.bean;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +15,14 @@ import java.util.Objects;
 @Setter
 public class Table implements DataItem {
     private String tableName;
+    /**
+     * 备注
+     */
+    private String remark;
+    /**
+     * 主键
+     */
+    private List<String> primaryKey = new ArrayList<>();
 
     private transient List<Column> columns;
 
@@ -30,7 +39,6 @@ public class Table implements DataItem {
      * 是否实现 Serializable
      */
     private boolean jdkSerializable;
-
 
     @Override
     public String toString() {

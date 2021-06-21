@@ -4,10 +4,8 @@ import com.alan344.bean.Column;
 import com.alan344.bean.ColumnOverride;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
-import org.mybatis.generator.my.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.service.datasourcedriver.DatasourceDriverContext;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.Toast;
 import com.alan344happyframework.constants.SeparatorConstants;
@@ -22,6 +20,7 @@ import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.exception.XMLParserException;
 import org.mybatis.generator.my.comment.MyCommentGenerator;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 import org.mybatis.generator.plugins.SerializablePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -143,7 +142,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         final DataSource selectedDateSource = BaseConstants.selectedDateSource;
         final Element jdbcConnection = generatorUtils.addElement(context, "jdbcConnection");
         jdbcConnection.setAttribute("driverClass", selectedDateSource.getDriveName());
-        jdbcConnection.setAttribute("connectionURL", new DatasourceDriverContext(selectedDateSource.getDriveType()).getDrive(selectedDateSource));
+        jdbcConnection.setAttribute("connectionURL", selectedDateSource.getUrl());
         jdbcConnection.setAttribute("userId", selectedDateSource.getUser());
         jdbcConnection.setAttribute("password", selectedDateSource.getPassword());
     }

@@ -1,17 +1,17 @@
 package com.alan344.controller;
 
 import com.alan344.bean.DataSource;
-import com.alan344.constants.DriveEnum;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TextUtils;
+import com.alan344.utils.Toast;
+import com.alan344happyframework.constants.SeparatorConstants;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -33,18 +33,9 @@ import java.util.ResourceBundle;
  */
 @Component
 public class DataSourceController implements Initializable {
+
     @FXML
-    private Label dataBaseLabel;
-    @FXML
-    private Label serviceNameLabel;
-    @FXML
-    private TextField host;
-    @Getter
-    @FXML
-    private TextField port;
-    @Getter
-    @FXML
-    private TextField database;
+    private TextField url;
     @Getter
     @FXML
     private TextField user;
@@ -53,9 +44,7 @@ public class DataSourceController implements Initializable {
     private TextField password;
     @Getter
     @FXML
-    private ComboBox<String> driveName;
-    @FXML
-    private TextField serviceName;
+    private TextField driveName;
 
     @FXML
     private Label testConnectionResultLabel;
@@ -79,21 +68,6 @@ public class DataSourceController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        driveName.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (DriveEnum.valueOf(newValue).equals(DriveEnum.MYSQL_8_0_16)) {
-                serviceName.setVisible(false);
-                database.setVisible(true);
-                dataBaseLabel.setVisible(true);
-                serviceNameLabel.setVisible(false);
-                port.setText(DriveEnum.MYSQL_8_0_16.getDefaultPort());
-            } else {
-                serviceName.setVisible(true);
-                database.setVisible(false);
-                dataBaseLabel.setVisible(false);
-                serviceNameLabel.setVisible(true);
-                port.setText(DriveEnum.ORACLE_11.getDefaultPort());
-            }
-        });
     }
 
     /**
@@ -170,26 +144,24 @@ public class DataSourceController implements Initializable {
      * @return {@link DataSource}
      */
     private DataSource packageDateSource() {
+        TextUtils.checkTextsHasEmpty(dateSourceStage, url, user, password);
+        // jdbc:mysql://ip:port/home_school?
         DataSource dataSource = new DataSource();
+        try {
+            final String[] split = url.getText().split(SeparatorConstants.COLON);
+            dataSource.setHost(split[2].substring(2));
+            String url3 = split[3];
+            dataSource.setPort(url3.substring(0, url3.indexOf("/")));
+            dataSource.setDatabase(url3.substring(url3.indexOf("/") + 1, url3.indexOf("?")));
+            dataSource.setDriveType1(split[1]);
+        } catch (Exception e) {
+            Toast.makeText(dateSourceStage, "url 格式错误", 3000, 500, 500, 15, 5);
+        }
 
-        final DriveEnum driveEnum = DriveEnum.valueOf(driveName.getSelectionModel().getSelectedItem());
-        TextUtils.checkTextsHasEmpty(dateSourceStage, host, port, user, password);
-
-        dataSource.setHost(host.getText());
-        dataSource.setPort(port.getText());
-        dataSource.setDatabase(database.getText());
+        dataSource.setUrl(url.getText());
+        dataSource.setDriveName(driveName.getText());
         dataSource.setUser(user.getText());
         dataSource.setPassword(password.getText());
-        dataSource.setDriveName(driveEnum.getDrive());
-        dataSource.setDriveType(driveEnum);
-
-        if (driveEnum.equals(DriveEnum.MYSQL_8_0_16)) {
-            TextUtils.checkTextsHasEmpty(dateSourceStage, database);
-        } else {
-            TextUtils.checkTextsHasEmpty(dateSourceStage, serviceName);
-            dataSource.setServiceName(serviceName.getText());
-            dataSource.setDatabase(user.getText());
-        }
         return dataSource;
     }
 }
