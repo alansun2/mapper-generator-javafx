@@ -2,7 +2,6 @@ package com.alan344.service;
 
 import com.alan344.bean.DataSource;
 import com.alan344.constants.BaseConstants;
-import com.alan344.service.datasourcedriver.DatasourceDriverContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
@@ -129,11 +128,8 @@ public class DataSourceService {
      * @param dataSource 数据源信息
      */
     private void addDataSourceToSpring(DataSource dataSource) {
-        DatasourceDriverContext datasourceDriverContext = new DatasourceDriverContext(dataSource.getDriveType());
-        final javax.sql.DataSource dataSource1 = datasourceDriverContext.createDataSource(dataSource);
-
         ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) this.applicationContext;
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource1);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource.createDataSource());
         if (!applicationContext.containsBean(dataSource.toString())) {
             applicationContext.getBeanFactory().registerSingleton(dataSource.toString(), jdbcTemplate);
         }
@@ -146,8 +142,9 @@ public class DataSourceService {
      * @return true 成功 false 失败
      */
     public boolean testConnection(DataSource dataSource) {
-        jdbcTemplate.setDataSource(new DatasourceDriverContext(dataSource.getDriveType()).createDataSource(dataSource));
+        jdbcTemplate.setDataSource(dataSource.createDataSource());
 
+        // TODO
         try {
             jdbcTemplate.query("SELECT 1 FROM dual", (rs, rowNum) -> rs.getString(1));
         } catch (Exception e) {

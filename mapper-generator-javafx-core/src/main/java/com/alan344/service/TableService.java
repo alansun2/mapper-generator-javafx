@@ -3,7 +3,7 @@ package com.alan344.service;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
-import com.alan344.service.driveservice.DriveFactory;
+import com.alan344.utils.DataSourceUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +29,6 @@ import java.util.stream.Collectors;
 public class TableService {
     @Resource
     private ColumnService columnService;
-
-    @Resource
-    private DriveFactory driveFactory;
 
     /**
      * 当展开datasource时加载tableItem，并将table写入文件
@@ -92,7 +89,7 @@ public class TableService {
      * @return {@link Table}
      */
     private List<Table> pullTablesFromRemote(DataSource dataSource) {
-        return driveFactory.getDrive(dataSource.getDriveType()).getTables(dataSource);
+        return DataSourceUtils.getTables(dataSource);
     }
 
     /**

@@ -16,6 +16,11 @@ import lombok.Setter;
 public class Column {
     private String columnName;
     private String type;
+    private Integer size;
+    private String remark;
+    private boolean nullable;
+    private boolean isAutoIncr;
+
     @JSONField(serializeUsing = BooleanPropertySerializer.class)
     private BooleanProperty ignore = new SimpleBooleanProperty(false);
 

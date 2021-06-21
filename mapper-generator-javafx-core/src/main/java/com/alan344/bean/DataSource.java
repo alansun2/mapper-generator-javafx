@@ -1,11 +1,12 @@
 package com.alan344.bean;
 
-import com.alan344.constants.DriveEnum;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 /**
  * @author ：AlanSun
@@ -14,35 +15,40 @@ import java.util.Objects;
 @Getter
 @Setter
 public class DataSource implements DataItem {
+    private String url;
 
-    private DriveEnum driveType = DriveEnum.MYSQL_8_0_16;
-
-    private String host;
-
-    private String port;
+    private String driveName;
 
     private String user;
 
     private String password;
 
-    private String driveName;
+    private String driveType1;
 
+    private String host;
+
+    private String port;
     /**
-     * mysql 必填
+     * 数据库名称
      */
     private String database;
 
-    /**
-     * oracle 必填
-     */
-    private String serviceName;
-
-    /**
-     * sid
-     */
-    private String sid;
-
     private transient List<Table> tables;
+
+    public javax.sql.DataSource createDataSource() {
+        HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setUsername(this.user);
+        hikariDataSource.setPassword(this.password);
+        hikariDataSource.setJdbcUrl(this.url);
+        hikariDataSource.setDriverClassName(this.driveName);
+        Properties props = new Properties();
+        // 设置可以获取remarks信息
+        props.setProperty("remarks", "true");
+        // 设置可以获取tables remarks信息
+        props.setProperty("useInformationSchema", "true");
+        hikariDataSource.setDataSourceProperties(props);
+        return hikariDataSource;
+    }
 
     @Override
     public String toString() {

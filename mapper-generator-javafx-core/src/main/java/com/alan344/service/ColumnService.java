@@ -4,15 +4,13 @@ import com.alan344.bean.Column;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
-import com.alan344.service.driveservice.DriveFactory;
+import com.alan344.utils.DataSourceUtils;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,11 +25,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class ColumnService {
-    @Resource
-    private BeanFactory beanFactory;
-
-    @Resource
-    private DriveFactory driveFactory;
 
     /**
      * 加载columns
@@ -106,7 +99,7 @@ public class ColumnService {
      * @return 字段数组
      */
     private List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
-        return driveFactory.getDrive(dataSource.getDriveType()).getColumn(dataSource, tableName);
+        return DataSourceUtils.getColumns(dataSource, tableName);
     }
 
     /**
