@@ -7,8 +7,6 @@ import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TextUtils;
-import com.alan344.utils.Toast;
-import com.alan344happyframework.constants.SeparatorConstants;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -33,7 +31,8 @@ import java.util.ResourceBundle;
  */
 @Component
 public class DataSourceController implements Initializable {
-
+    @FXML
+    private TextField configName;
     @FXML
     private TextField url;
     @Getter
@@ -45,6 +44,8 @@ public class DataSourceController implements Initializable {
     @Getter
     @FXML
     private TextField driveName;
+
+    //-----------------------------------------
 
     @FXML
     private Label testConnectionResultLabel;
@@ -147,17 +148,7 @@ public class DataSourceController implements Initializable {
         TextUtils.checkTextsHasEmpty(dateSourceStage, url, user, password);
         // jdbc:mysql://ip:port/home_school?
         DataSource dataSource = new DataSource();
-        try {
-            final String[] split = url.getText().split(SeparatorConstants.COLON);
-            dataSource.setHost(split[2].substring(2));
-            String url3 = split[3];
-            dataSource.setPort(url3.substring(0, url3.indexOf("/")));
-            dataSource.setDatabase(url3.substring(url3.indexOf("/") + 1, url3.indexOf("?")));
-            dataSource.setDriveType1(split[1]);
-        } catch (Exception e) {
-            Toast.makeText(dateSourceStage, "url 格式错误", 3000, 500, 500, 15, 5);
-        }
-
+        dataSource.setConfigName(configName.getText());
         dataSource.setUrl(url.getText());
         dataSource.setDriveName(driveName.getText());
         dataSource.setUser(user.getText());

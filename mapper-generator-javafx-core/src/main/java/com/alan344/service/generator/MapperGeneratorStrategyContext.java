@@ -15,15 +15,11 @@ public class MapperGeneratorStrategyContext {
         final int selectTab = mybatisExportConfig.getSelectTab();
         if (ServiceConfigThreadLocal.getServiceConfig() != null) {
             switch (selectTab) {
-                case 1:
-                    return new MapperBaseWithServiceGenerator(mybatisExportConfig.getTkMybatisExportConfig());
                 default:
                     return new MyMybatisWithServiceGeneratorService(mybatisExportConfig.getMybatisOfficialExportConfig());
             }
         } else {
             switch (selectTab) {
-                case 1:
-                    return new MapperBaseGenerator(mybatisExportConfig.getTkMybatisExportConfig());
                 default:
                     return new MyMybatisGeneratorService(mybatisExportConfig.getMybatisOfficialExportConfig());
             }

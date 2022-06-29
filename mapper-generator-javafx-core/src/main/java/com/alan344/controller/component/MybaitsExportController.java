@@ -202,14 +202,6 @@ public class MybaitsExportController implements Initializable {
                 break;
             }
         }
-
-        // ti.mybatis
-        final MybatisExportConfig.TkMybatisExportConfig tkMybatisExportConfig = mybatisExportConfig.getTkMybatisExportConfig();
-        userJava8CheckBox1.setSelected(tkMybatisExportConfig.isUserJava8());
-        useBigDecimalCheckBox1.setSelected(tkMybatisExportConfig.isUseBigDecimal());
-        useCommentCheckBox1.setSelected(tkMybatisExportConfig.isUseComment());
-        useSwaggerCheckBox1.setSelected(tkMybatisExportConfig.isUseSwagger());
-        generateColumnConstantsCheckbox.setSelected(tkMybatisExportConfig.isGenerateColumnConsts());
     }
 
     /**
@@ -241,16 +233,6 @@ public class MybaitsExportController implements Initializable {
                 mybatisOfficialExportConfig.setUseSwagger(useSwaggerCheckBox.isSelected());
 
                 mybatisExportConfig.setMybatisOfficialExportConfig(mybatisOfficialExportConfig);
-                break;
-            case 1:
-                MybatisExportConfig.TkMybatisExportConfig tkMybatisExportConfig = new MybatisExportConfig.TkMybatisExportConfig();
-                tkMybatisExportConfig.setUserJava8(userJava8CheckBox1.isSelected());
-                tkMybatisExportConfig.setUseBigDecimal(useBigDecimalCheckBox1.isSelected());
-                tkMybatisExportConfig.setUseComment(useCommentCheckBox1.isSelected());
-                tkMybatisExportConfig.setUseSwagger(useSwaggerCheckBox1.isSelected());
-                tkMybatisExportConfig.setGenerateColumnConsts(generateColumnConstantsCheckbox.isSelected());
-
-                mybatisExportConfig.setTkMybatisExportConfig(tkMybatisExportConfig);
                 break;
             default:
         }

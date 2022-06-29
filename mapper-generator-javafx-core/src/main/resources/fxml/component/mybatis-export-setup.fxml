@@ -116,20 +116,6 @@
                             <Label layoutX="26.0" layoutY="20.0" text="targetName："/>
                         </AnchorPane>
                     </Tab>
-                    <Tab text="tk.mybatis">
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                            <CheckBox fx:id="userJava8CheckBox1" layoutX="27.0" layoutY="62.0" mnemonicParsing="false"
-                                      selected="true" text="支持 java8"/>
-                            <CheckBox fx:id="useBigDecimalCheckBox1" layoutX="136.0" layoutY="62.0"
-                                      mnemonicParsing="false" selected="true" text="使用 BigDecimal"/>
-                            <CheckBox fx:id="useCommentCheckBox1" layoutX="300.0" layoutY="62.0" mnemonicParsing="false"
-                                      selected="true" text="启用注释"/>
-                            <CheckBox fx:id="useSwaggerCheckBox1" layoutX="27.0" layoutY="107.0" mnemonicParsing="false"
-                                      text="启用 swagger 注解"/>
-                            <CheckBox fx:id="generateColumnConstantsCheckbox" layoutX="27.0" layoutY="20.0"
-                                      mnemonicParsing="false" text="generateColumnConsts"/>
-                        </AnchorPane>
-                    </Tab>
                 </TabPane>
             </children>
         </HBox>

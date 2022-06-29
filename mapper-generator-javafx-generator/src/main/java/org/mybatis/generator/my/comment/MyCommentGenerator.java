@@ -5,7 +5,10 @@ import com.alan344happyframework.util.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.InnerClass;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.StringUtility;
 
@@ -79,31 +82,6 @@ public class MyCommentGenerator implements CommentGenerator {
         }
     }
 
-    /**
-     * 为 request 添加注释
-     *
-     * @param field
-     * @param introspectedTable
-     * @param introspectedColumn
-     */
-    @Override
-    public void addRequestFieldComment(Field field, IntrospectedTable introspectedTable, IntrospectedColumn introspectedColumn) {
-        String remarks = introspectedColumn.getRemarks();
-
-        if (addRemarkComments && StringUtils.isNotEmpty(remarks)) {
-            // 为字符串添加字符长度
-            if (field.getType().compareTo(FullyQualifiedJavaType.getStringInstance()) == 0) {
-                field.getJavaDocLines().remove(field.getJavaDocLines().size() - 1);
-                field.addJavaDocLine(" * length: " + introspectedColumn.getLength());
-            }
-        }
-
-        if (supportSwagger && StringUtils.isNotEmpty(remarks)) {
-            final String remark = remarks.replaceAll("\n", ",");
-            field.addJavaDocLine("@ApiModelProperty(value = \"" + remark + "\")");
-        }
-    }
-
     @Override
     public void addModelClassComment(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         //通过这种方式不能直接获取表备注
@@ -143,21 +121,6 @@ public class MyCommentGenerator implements CommentGenerator {
         if (supportSwagger) {
             topLevelClass.addJavaDocLine("@ApiModel(value =\"" + entityName + "\")");
         }
-    }
-
-    @Override
-    public void addMapperClassComment(Interface interfaze, IntrospectedTable introspectedTable) {
-        if (!addRemarkComments) {
-            return;
-        }
-        // 作者信息
-        interfaze.addJavaDocLine("/**");
-        interfaze.addJavaDocLine(" * 对应的表：" + introspectedTable.getFullyQualifiedTable());
-        interfaze.addJavaDocLine(" *");
-        interfaze.addJavaDocLine(" * @author " + author);
-        // 添加时间
-        interfaze.addJavaDocLine(" * @date " + DateUtils.getCurrentDate());
-        interfaze.addJavaDocLine(" */");
     }
 
     @Override

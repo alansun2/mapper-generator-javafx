@@ -3,6 +3,7 @@ package com.alan344.bean;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,23 +16,11 @@ import java.util.Properties;
 @Getter
 @Setter
 public class DataSource implements DataItem {
+    private String configName;
     private String url;
-
     private String driveName;
-
     private String user;
-
     private String password;
-
-    private String driveType1;
-
-    private String host;
-
-    private String port;
-    /**
-     * 数据库名称
-     */
-    private String database;
 
     private transient List<Table> tables;
 
@@ -52,24 +41,25 @@ public class DataSource implements DataItem {
 
     @Override
     public String toString() {
-        if (this.host == null) {
-            return "空";
-        } else {
-            return this.host + "@" + this.database;
+        if (StringUtils.isNotEmpty(configName)) {
+            return configName;
         }
+
+        return "空";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         DataSource that = (DataSource) o;
-        return Objects.equals(host, that.host) &&
-                Objects.equals(database, that.database);
+
+        return Objects.equals(configName, that.configName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(host, database);
+        return configName != null ? configName.hashCode() : 0;
     }
 }

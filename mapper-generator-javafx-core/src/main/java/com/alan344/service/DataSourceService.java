@@ -143,8 +143,7 @@ public class DataSourceService {
      */
     public boolean testConnection(DataSource dataSource) {
         jdbcTemplate.setDataSource(dataSource.createDataSource());
-
-        // TODO
+        jdbcTemplate.setQueryTimeout(3);
         try {
             jdbcTemplate.query("SELECT 1 FROM dual", (rs, rowNum) -> rs.getString(1));
         } catch (Exception e) {

@@ -69,10 +69,6 @@ public class MybatisExportConfig {
      */
     private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
     /**
-     * tk.mybatis
-     */
-    private TkMybatisExportConfig tkMybatisExportConfig = new TkMybatisExportConfig();
-    /**
      * model 的父类
      */
     private String modelRootClass;
@@ -136,37 +132,5 @@ public class MybatisExportConfig {
          * 使用注释
          */
         private boolean useComment = true;
-    }
-
-    /**
-     * tj.mybatis 的导出配置
-     * https://github.com/abel533/Mapper
-     */
-    @Getter
-    @Setter
-    public static class TkMybatisExportConfig implements ExportConfig {
-        private String targetName = "MYBATIS3_TK";
-        /**
-         * 是否使用java8
-         */
-        private boolean userJava8 = true;
-        /**
-         * 是否支持 BigDecimal
-         * <p>
-         * 所有 number 都是用 BigDecimal
-         */
-        private boolean useBigDecimal;
-        /**
-         * 使用支持 swagger
-         */
-        private boolean useSwagger;
-        /**
-         * 使用注释
-         */
-        private boolean useComment = true;
-        /**
-         * 是否生成静态常量
-         */
-        private boolean generateColumnConsts;
     }
 }

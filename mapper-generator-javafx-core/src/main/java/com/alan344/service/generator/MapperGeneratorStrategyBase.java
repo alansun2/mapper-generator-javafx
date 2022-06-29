@@ -18,7 +18,6 @@ import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
-import org.mybatis.generator.exception.XMLParserException;
 import org.mybatis.generator.my.comment.MyCommentGenerator;
 import org.mybatis.generator.my.config.MybatisExportConfig;
 import org.mybatis.generator.plugins.SerializablePlugin;
@@ -30,6 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -108,9 +108,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addContextProperty(GeneratorUtils generatorUtils) {
         // 指定编码
         generatorUtils.addProperty(true, context, PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING, "UTF-8");
-
-        // 使用java8 (默认是使用java8)
-        generatorUtils.addProperty(true, context, PropertyRegistry.CONTEXT_TARGET_JAVA8, exportConfig.isUserJava8() + "");
     }
 
     /**
@@ -239,7 +236,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             final Element tableEl = generatorUtils.addElement(context, "table");
             tableEl.setAttribute("tableName", table.getTableName());
 
-            tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getDatabase());
+//            tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getDatabase());
 
             this.checkBoxSelected("enableInsert", tableEl, table.isInsert());
             this.checkBoxSelected("enableCountByExample", tableEl, table.isCount());
@@ -345,14 +342,21 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     private void generateMyBatis3(Document document, MybatisExportConfig mybatisExportConfig) {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
+        Configuration config = null;
         try {
-            Configuration config = cp.parseConfiguration(document);
+            try {
+                final Method parseMyBatisGeneratorConfiguration = ConfigurationParser.class.getDeclaredMethod("parseMyBatisGeneratorConfiguration", Element.class);
+                config = ((Configuration) parseMyBatisGeneratorConfiguration.invoke(cp, document.getDocumentElement()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
             MyShellCallback shellCallback = new MyShellCallback(true, mybatisExportConfig.isUseMerge());
 
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
             myBatisGenerator.generate(null, null, null);
-        } catch (InvalidConfigurationException | XMLParserException | InterruptedException | IOException | SQLException e) {
+        } catch (InvalidConfigurationException | InterruptedException | IOException |
+                 SQLException e) {
             log.error("生成mapper error", e);
             if (e instanceof InvalidConfigurationException) {
                 final InvalidConfigurationException invalidConfigurationException = (InvalidConfigurationException) e;
