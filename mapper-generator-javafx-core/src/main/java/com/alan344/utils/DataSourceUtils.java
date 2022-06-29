@@ -61,8 +61,7 @@ public class DataSourceUtils {
     public static List<Column> getColumns(DataSource dataSource, String tableName) {
         try (final Connection connection = getConnection(dataSource)) {
             final DatabaseMetaData metaData = connection.getMetaData();
-            List<Column> columns = getColumns(metaData, connection.getCatalog(), connection.getSchema(), tableName);
-            return columns;
+            return getColumns(metaData, connection.getCatalog(), connection.getSchema(), tableName);
         } catch (Exception e) {
             log.error("error", e);
             throw new BizException("获取数据库字段异常");

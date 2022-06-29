@@ -1,6 +1,5 @@
 package com.alan344.controller;
 
-import org.mybatis.generator.my.config.MybatisExportConfig;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.component.MybaitsExportController;
 import com.alan344.factory.FxmlLoadFactory;
@@ -16,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.generator.my.config.MybatisExportConfig;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
@@ -34,28 +34,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller
 public class MybatisSetupController implements Initializable {
-
     @FXML
     private BorderPane mybatisSetupBorderPane;
-
     @FXML
-    private VBox centerVBox;
-
+    private ListView<Button> setUpListView;
+    @FXML
+    private Button addBtn;
+    @FXML
+    private BorderPane setUpListBoardPane;
     @FXML
     private SplitPane splitPane;
-
     @Resource
     private ConfigService configService;
-
     @Resource
     private BeanFactory beanFactory;
-
     @Resource
     private MybaitsExportController mybaitsExportController;
-
     @Resource
     private ExportService exportService;
-
     @Resource
     private NodeHandler nodeHandler;
 
@@ -66,6 +62,7 @@ public class MybatisSetupController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        addBtn.prefWidthProperty().bind(setUpListBoardPane.widthProperty());
         VBox exportVBox = FxmlLoadFactory.create("/fxml/component/mybatis-export-setup.fxml", beanFactory);
         splitPane.getItems().add(exportVBox);
 
@@ -125,19 +122,15 @@ public class MybatisSetupController implements Initializable {
      * @param mybatisExportConfig 配置信息
      */
     private void deleteConfig(Button button, MybatisExportConfig mybatisExportConfig) {
-        ObservableList<Node> children = centerVBox.getChildren();
-        int size = children.size();
+        final ObservableList<Button> items = setUpListView.getItems();
+        int size = items.size();
+        items.remove(button);
         if (size == 1) {
             mybaitsExportController.clearPane();
         } else {
-            int i = children.indexOf(button);
-            if (i == 0) {
-                mybaitsExportController.showConfig(configNameConfigMap.get(((Button) children.get(1)).getText()));
-            } else {
-                mybaitsExportController.showConfig(configNameConfigMap.get(((Button) children.get(0)).getText()));
-            }
+            mybaitsExportController.showConfig(configNameConfigMap.get(items.get(0).getText()));
         }
-        children.remove(button);
+
         configService.deleteConfig(mybatisExportConfig);
     }
 
@@ -152,9 +145,9 @@ public class MybatisSetupController implements Initializable {
         removeMenuItem.setOnAction(event -> this.deleteConfig(button, mybatisExportConfig));
         button.setContextMenu(new ContextMenu(removeMenuItem));
 
-        button.prefWidthProperty().bind(centerVBox.widthProperty());
+        button.prefWidthProperty().bind(setUpListView.widthProperty());
         button.setOnAction(event -> mybaitsExportController.showConfig(this.configNameConfigMap.get(mybatisExportConfig.getConfigName())));
-        centerVBox.getChildren().add(button);
+        setUpListView.getItems().add(button);
     }
 
     /**

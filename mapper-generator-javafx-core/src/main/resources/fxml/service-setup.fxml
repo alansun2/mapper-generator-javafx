@@ -15,10 +15,8 @@
                     </VBox>
                 </center>
                 <top>
-                    <AnchorPane prefHeight="35.0" BorderPane.alignment="CENTER">
-                        <Button focusTraversable="false" layoutX="6.0" layoutY="3.0" mnemonicParsing="false"
-                                styleClass="addConfigButton" text="+添加"/>
-                    </AnchorPane>
+                    <Button fx:id = "addBtn" focusTraversable="false" layoutX="6.0" layoutY="3.0" mnemonicParsing="false"
+                            styleClass="addConfigButton" text="+添加"/>
                 </top>
             </BorderPane>
             <VBox fx:id="vBox" spacing="5" styleClass="mainVBox">

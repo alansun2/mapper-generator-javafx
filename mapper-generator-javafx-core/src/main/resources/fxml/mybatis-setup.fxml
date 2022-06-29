@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <BorderPane fx:id="mybatisSetupBorderPane" stylesheets="@../css/mybatis-setup.css"
             xmlns="http://javafx.com/javafx/8.0.171"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.MybatisSetupController">
     <center>
         <SplitPane fx:id="splitPane" dividerPositions="0.2">
-            <BorderPane maxWidth="300.0">
+            <BorderPane fx:id="setUpListBoardPane">
                 <center>
-                    <VBox fx:id="centerVBox" prefHeight="50.0" spacing="10.0">
+                    <ListView fx:id="setUpListView">
 
-                    </VBox>
+                    </ListView>
                 </center>
                 <top>
-                    <AnchorPane prefHeight="35.0" BorderPane.alignment="CENTER">
-                        <Button focusTraversable="false" layoutX="6.0" layoutY="3.0" mnemonicParsing="false"
-                                onAction="#addEmptyExportPane" styleClass="addConfigButton" text="+添加"/>
-                    </AnchorPane>
+                    <Button fx:id="addBtn" focusTraversable="false" layoutX="6.0" layoutY="3.0" mnemonicParsing="false"
+                            onAction="#addEmptyExportPane" styleClass="addConfigButton" text="+添加"/>
                 </top>
             </BorderPane>
         </SplitPane>
