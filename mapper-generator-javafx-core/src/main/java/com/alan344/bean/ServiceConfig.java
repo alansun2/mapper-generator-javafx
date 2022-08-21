@@ -1,4 +1,4 @@
-package org.mybatis.generator.my.config;
+package com.alan344.bean;
 
 
 /**

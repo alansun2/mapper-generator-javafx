@@ -24,12 +24,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>icu.alan344</groupId>
             <artifactId>happyframework-core</artifactId>
         </dependency>
@@ -60,8 +54,16 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>mapper-generator-javafx-generator</artifactId>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+        <!--mybatis-extension-plugin-->
+        <dependency>
+            <groupId>com.github.uinio</groupId>
+            <artifactId>mybatis-extension-plugin</artifactId>
+            <version>2.0.1</version>
         </dependency>
     </dependencies>
 

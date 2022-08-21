@@ -15,7 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.generator.my.config.MybatisExportConfig;
+import com.alan344.bean.MybatisExportConfig;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
@@ -145,7 +145,7 @@ public class MybatisSetupController implements Initializable {
         removeMenuItem.setOnAction(event -> this.deleteConfig(button, mybatisExportConfig));
         button.setContextMenu(new ContextMenu(removeMenuItem));
 
-        button.prefWidthProperty().bind(setUpListView.widthProperty());
+        button.prefWidthProperty().bind(setUpListView.widthProperty().multiply(0.8));
         button.setOnAction(event -> mybaitsExportController.showConfig(this.configNameConfigMap.get(mybatisExportConfig.getConfigName())));
         setUpListView.getItems().add(button);
     }

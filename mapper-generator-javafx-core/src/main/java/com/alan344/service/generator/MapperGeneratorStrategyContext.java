@@ -1,7 +1,7 @@
 package com.alan344.service.generator;
 
-import org.mybatis.generator.my.config.MybatisExportConfig;
-import org.mybatis.generator.my.config.ServiceConfigThreadLocal;
+import com.alan344.bean.MybatisExportConfig;
+import com.alan344.bean.ServiceConfigThreadLocal;
 import org.springframework.stereotype.Component;
 
 /**

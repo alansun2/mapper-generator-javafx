@@ -23,6 +23,6 @@
         <Button layoutX="637.0" layoutY="259.0" mnemonicParsing="false" onAction="#apply" prefWidth="64.0" text="应用" />
 
         <Button layoutX="18.0" layoutY="259.0" mnemonicParsing="false" onAction="#testConnection" prefHeight="30.0" prefWidth="160.0" text="Test Connection" />
-        <Label fx:id="testConnectionResultLabel" layoutX="270.0" layoutY="259.0" managed="false" prefHeight="60.0" prefWidth="30" visible="false" />
+        <Label fx:id="testConnectionResultLabel" layoutX="270.0" layoutY="259.0" managed="false" prefHeight="30.0" prefWidth="160" visible="false" />
     </children>
 </AnchorPane>

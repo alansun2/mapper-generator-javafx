@@ -1,4 +1,4 @@
-package org.mybatis.generator.my.config;
+package com.alan344.bean;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -128,6 +128,14 @@ public class MybatisExportConfig {
          * 使用支持 swagger
          */
         private boolean useSwagger;
+        /**
+         * 是否使用 lombok get set
+         */
+        private boolean useLombokGetSet;
+        /**
+         * 是否使用 lombok builder
+         */
+        private boolean useLombokBuilder;
         /**
          * 使用注释
          */

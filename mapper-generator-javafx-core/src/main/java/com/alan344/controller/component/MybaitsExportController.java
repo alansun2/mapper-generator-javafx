@@ -10,8 +10,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import lombok.extern.slf4j.Slf4j;
-import org.mybatis.generator.my.config.MybatisConfigThreadLocal;
-import org.mybatis.generator.my.config.MybatisExportConfig;
+import com.alan344.bean.MybatisConfigThreadLocal;
+import com.alan344.bean.MybatisExportConfig;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;

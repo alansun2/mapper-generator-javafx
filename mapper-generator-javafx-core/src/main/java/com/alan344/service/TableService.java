@@ -4,6 +4,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.DataSourceUtils;
+import com.alan344happyframework.exception.BizException;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +91,15 @@ public class TableService {
      * @return {@link Table}
      */
     private List<Table> pullTablesFromRemote(DataSource dataSource) {
-        return DataSourceUtils.getTables(dataSource);
+        final List<Table> tables;
+        try {
+            tables = DataSourceUtils.getTables(dataSource.createDataSource().getConnection());
+        } catch (SQLException e) {
+            log.error("获取连接异常", e);
+            throw new BizException("获取数据库连接异常");
+        }
+        dataSource.setTables(tables);
+        return tables;
     }
 
     /**

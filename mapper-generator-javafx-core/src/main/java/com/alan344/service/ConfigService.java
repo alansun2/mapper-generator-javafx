@@ -1,6 +1,6 @@
 package com.alan344.service;
 
-import org.mybatis.generator.my.config.MybatisExportConfig;
+import com.alan344.bean.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344happyframework.util.BeanUtils;
 import com.alibaba.fastjson.JSONArray;

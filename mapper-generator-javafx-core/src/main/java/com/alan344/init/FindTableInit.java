@@ -62,14 +62,14 @@ public class FindTableInit {
                     if (isDelete) {
                         dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
                         DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
-                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().startsWith(tableNamePrefix)).collect(Collectors.toList());
+                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().contains(tableNamePrefix)).collect(Collectors.toList());
                         for (Table filteredTable : filteredTables) {
                             TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
                             tableTreeItem.setGraphic(new ImageView("/image/table.png"));
                         }
                     }
                     final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
-                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().startsWith(tableNamePrefix));
+                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().contains(tableNamePrefix));
 
                 } else {
                     dataSourceTreeItem.getChildren().removeIf(treeItem -> true);

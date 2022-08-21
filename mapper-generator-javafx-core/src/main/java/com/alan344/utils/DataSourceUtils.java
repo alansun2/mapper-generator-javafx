@@ -1,7 +1,6 @@
 package com.alan344.utils;
 
 import com.alan344.bean.Column;
-import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344happyframework.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +25,8 @@ public class DataSourceUtils {
     private static final String POSTGRESQL = "POSTGRESQL";
     private static final String ZENITH = "ZENITH";
 
-    public static List<Table> getTables(DataSource dataSource) {
-        try (Connection connection = getConnection(dataSource)) {
+    public static List<Table> getTables(Connection connection) {
+        try {
             DatabaseMetaData metaData = connection.getMetaData();
             if (metaData == null) {
                 return Collections.emptyList();
@@ -58,8 +57,8 @@ public class DataSourceUtils {
         return list;
     }
 
-    public static List<Column> getColumns(DataSource dataSource, String tableName) {
-        try (final Connection connection = getConnection(dataSource)) {
+    public static List<Column> getColumns(Connection connection, String tableName) {
+        try {
             final DatabaseMetaData metaData = connection.getMetaData();
             return getColumns(metaData, connection.getCatalog(), connection.getSchema(), tableName);
         } catch (Exception e) {
@@ -101,9 +100,5 @@ public class DataSourceUtils {
             log.error("error", e);
             throw new BizException("获取数据库字段异常");
         }
-    }
-
-    public static Connection getConnection(DataSource dataSource) throws SQLException {
-        return dataSource.createDataSource().getConnection();
     }
 }

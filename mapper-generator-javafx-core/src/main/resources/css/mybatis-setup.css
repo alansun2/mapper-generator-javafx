@@ -13,7 +13,7 @@
     -fx-background-color: #BFBFBF;
 }
 
-.anchorPane{
+.anchorPane {
     -fx-background-color: #E8E8E8;
 }
 
@@ -21,4 +21,25 @@
 .split-pane:horizontal > .split-pane-divider {
     -fx-background-color: #E8E8E8;
     /*-fx-padding: 10 0 10 0;*/
+}
+
+/* 去除垂直滚动条 */
+/*.list-view .scroll-bar:vertical,*/
+/*.list-view .scroll-bar:horizontal {*/
+/*    -fx-pref-width: 0;*/
+/*}*/
+
+
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+
+.list-view {
+    -fx-border-width: 0;
+    -fx-padding: 0 0 0 0;
 }

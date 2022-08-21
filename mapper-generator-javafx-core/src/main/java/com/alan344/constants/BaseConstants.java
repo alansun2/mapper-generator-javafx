@@ -3,7 +3,7 @@ package com.alan344.constants;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
-import org.mybatis.generator.my.config.MybatisExportConfig;
+import com.alan344.bean.MybatisExportConfig;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
@@ -19,7 +19,7 @@ import java.util.Map;
  * @date ：2019/8/8 21:43
  */
 public class BaseConstants {
-    private static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGenerator";
+    private static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGeneratorV2";
     public static final String MG_DATA_HOME = MG_HOME + "/data/";
     private static final String MG_CONFIG_FILE = MG_HOME + "/config/base-config";
 

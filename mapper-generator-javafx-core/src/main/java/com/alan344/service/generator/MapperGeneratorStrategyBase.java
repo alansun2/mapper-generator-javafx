@@ -1,9 +1,6 @@
 package com.alan344.service.generator;
 
-import com.alan344.bean.Column;
-import com.alan344.bean.ColumnOverride;
-import com.alan344.bean.DataSource;
-import com.alan344.bean.Table;
+import com.alan344.bean.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.utils.MyShellCallback;
@@ -11,6 +8,7 @@ import com.alan344.utils.Toast;
 import com.alan344happyframework.constants.SeparatorConstants;
 import com.alan344happyframework.exception.BizException;
 import com.alan344happyframework.util.StringUtils;
+import com.github.uinio.mybatis.LombokPlugin;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.api.MyBatisGenerator;
@@ -18,8 +16,6 @@ import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
-import org.mybatis.generator.my.comment.MyCommentGenerator;
-import org.mybatis.generator.my.config.MybatisExportConfig;
 import org.mybatis.generator.plugins.SerializablePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -116,6 +112,13 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 序列化插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
+
+        final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
+        final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig = mybatisExportConfig.getMybatisOfficialExportConfig();
+        generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "getter", "true");
+        generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "setter", "true");
+        generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokBuilder(), lombok, "builder", "true");
+
     }
 
     /**
@@ -126,7 +129,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addComment(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
-        commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
+//        commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
         generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseSwagger() + "");
@@ -342,10 +345,11 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     private void generateMyBatis3(Document document, MybatisExportConfig mybatisExportConfig) {
         List<String> warnings = new ArrayList<>();
         ConfigurationParser cp = new ConfigurationParser(warnings);
-        Configuration config = null;
+        Configuration config;
         try {
             try {
                 final Method parseMyBatisGeneratorConfiguration = ConfigurationParser.class.getDeclaredMethod("parseMyBatisGeneratorConfiguration", Element.class);
+                parseMyBatisGeneratorConfiguration.setAccessible(true);
                 config = ((Configuration) parseMyBatisGeneratorConfiguration.invoke(cp, document.getDocumentElement()));
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -355,8 +359,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
             myBatisGenerator.generate(null, null, null);
-        } catch (InvalidConfigurationException | InterruptedException | IOException |
-                 SQLException e) {
+        } catch (InvalidConfigurationException | InterruptedException | IOException | SQLException e) {
             log.error("生成mapper error", e);
             if (e instanceof InvalidConfigurationException) {
                 final InvalidConfigurationException invalidConfigurationException = (InvalidConfigurationException) e;

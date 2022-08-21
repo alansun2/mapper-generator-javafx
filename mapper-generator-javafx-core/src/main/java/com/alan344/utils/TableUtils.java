@@ -1,12 +1,12 @@
-package org.mybatis.generator.my.utils;
+package com.alan344.utils;
 
+import com.alan344.bean.ServiceConfig;
 import com.alan344happyframework.constants.SeparatorConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.PropertyRegistry;
-import org.mybatis.generator.my.config.ServiceConfig;
 
 import java.util.Properties;
 

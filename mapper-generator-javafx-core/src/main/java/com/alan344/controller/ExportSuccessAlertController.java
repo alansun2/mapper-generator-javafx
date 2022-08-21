@@ -1,6 +1,6 @@
 package com.alan344.controller;
 
-import org.mybatis.generator.my.config.MybatisExportConfig;
+import com.alan344.bean.MybatisExportConfig;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.utils.FileUtils;
 import javafx.fxml.FXML;

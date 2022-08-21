@@ -5,6 +5,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.DataSourceUtils;
+import com.alan344happyframework.exception.BizException;
 import com.alibaba.fastjson.JSONArray;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +101,12 @@ public class ColumnService {
      * @return 字段数组
      */
     private List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
-        return DataSourceUtils.getColumns(dataSource, tableName);
+        try {
+            return DataSourceUtils.getColumns(dataSource.getDataSource().getConnection(), tableName);
+        } catch (SQLException e) {
+            log.error("获取连接异常", e);
+            throw new BizException("获取数据库连接异常");
+        }
     }
 
     /**

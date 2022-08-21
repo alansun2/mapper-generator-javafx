@@ -24,7 +24,12 @@ public class DataSource implements DataItem {
 
     private transient List<Table> tables;
 
+    private javax.sql.DataSource dataSource;
+
     public javax.sql.DataSource createDataSource() {
+        if (dataSource != null) {
+            return dataSource;
+        }
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setUsername(this.user);
         hikariDataSource.setPassword(this.password);
@@ -36,6 +41,7 @@ public class DataSource implements DataItem {
         // 设置可以获取tables remarks信息
         props.setProperty("useInformationSchema", "true");
         hikariDataSource.setDataSourceProperties(props);
+        dataSource = hikariDataSource;
         return hikariDataSource;
     }
 
