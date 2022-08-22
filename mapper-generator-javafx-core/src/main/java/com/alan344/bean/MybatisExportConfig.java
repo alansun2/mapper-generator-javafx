@@ -97,7 +97,7 @@ public class MybatisExportConfig {
 
         boolean isUseBigDecimal();
 
-        boolean isUseSwagger();
+        boolean isUseLombokGetSet();
 
         boolean isUseComment();
 
@@ -125,11 +125,7 @@ public class MybatisExportConfig {
          */
         private boolean useBigDecimal;
         /**
-         * 使用支持 swagger
-         */
-        private boolean useSwagger;
-        /**
-         * 是否使用 lombok get set
+         * 使用支持 lombok
          */
         private boolean useLombokGetSet;
         /**

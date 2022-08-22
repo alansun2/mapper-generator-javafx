@@ -132,7 +132,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 //        commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
-        generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseSwagger() + "");
+        generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseLombokGetSet() + "");
     }
 
     /**

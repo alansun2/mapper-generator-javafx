@@ -64,6 +64,8 @@ public class MybatisSetupController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         addBtn.prefWidthProperty().bind(setUpListBoardPane.widthProperty());
         VBox exportVBox = FxmlLoadFactory.create("/fxml/component/mybatis-export-setup.fxml", beanFactory);
+        exportVBox.setId("main-set-up");
+
         splitPane.getItems().add(exportVBox);
 
         // 绑定文本框和tab的宽度

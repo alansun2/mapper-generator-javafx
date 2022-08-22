@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox spacing="5" styleClass="mainVBox" stylesheets="@../../css/export.css" xmlns="http://javafx.com/javafx/8.0.171"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.component.MybaitsExportController">
+<VBox prefHeight="576.0" prefWidth="584.0" spacing="5" styleClass="mainVBox" stylesheets="@../../css/export.css"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.alan344.controller.component.MybaitsExportController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
@@ -11,12 +13,18 @@
                 <TextField fx:id="configNameText" alignment="CENTER" prefHeight="23.0" prefWidth="209.0"
                            promptText="配置名称"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <CheckBox fx:id="modelOnlyCheckBox" mnemonicParsing="false" text="只生成model"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -24,6 +32,9 @@
                 <Label prefHeight="15.0" prefWidth="120.0" text="作者名称："/>
                 <TextField fx:id="authorText" prefHeight="23.0" prefWidth="209.0" promptText="作者名称"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -33,6 +44,9 @@
                 <Button mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0"
                         text="浏览"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" layoutX="40.0" layoutY="145.0" spacing="10">
@@ -40,6 +54,9 @@
                 <Label prefHeight="15.0" prefWidth="120.0" text="Bean 包名："/>
                 <TextField fx:id="beanPackageText" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -47,6 +64,9 @@
                 <Label prefHeight="15.0" prefWidth="120.0" text="Bean 父类："/>
                 <TextField fx:id="beanRootClassText" prefHeight="23.0" prefWidth="294.0" promptText="bean 父类"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -56,6 +76,9 @@
                 <Button mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0"
                         text="浏览"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -63,6 +86,9 @@
                 <Label prefHeight="15.0" prefWidth="120.0" text="Mapper 包名："/>
                 <TextField fx:id="mapperPackageText" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -71,6 +97,9 @@
                 <TextField fx:id="mapperRootInterfaceText" prefHeight="23.0" prefWidth="293.0"
                            promptText="非必填，生成的 Mapper 会继承该接口"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
@@ -80,42 +109,56 @@
                 <Button mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0"
                         text="浏览"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <Label prefHeight="15.0" prefWidth="120.0" text="全局忽略字段："/>
                 <TextField fx:id="globalIgnoreFieldText" prefHeight="23.0" prefWidth="294.0" promptText="逗号隔开"/>
             </children>
+            <padding>
+                <Insets left="30.0"/>
+            </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
-                    <Tab text="Mybatis">
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="141.0" prefWidth="580.0">
-                            <CheckBox fx:id="userJava8CheckBox" layoutX="27.0" layoutY="62.0" mnemonicParsing="false"
-                                      selected="true" text="支持 java8"/>
-                            <CheckBox fx:id="useBigDecimalCheckBox" layoutX="136.0" layoutY="62.0"
-                                      mnemonicParsing="false" selected="true" text="使用 BigDecimal"/>
-                            <CheckBox fx:id="useCommentCheckBox" layoutX="300.0" layoutY="62.0" mnemonicParsing="false"
-                                      selected="true" text="启用注释"/>
-                            <CheckBox fx:id="useSwaggerCheckBox" layoutX="27.0" layoutY="107.0" mnemonicParsing="false"
-                                      text="启用 swagger 注解"/>
-                            <RadioButton layoutX="115.0" layoutY="20.0" mnemonicParsing="false" selected="true"
-                                         text="Mybatis3">
-                                <toggleGroup>
-                                    <ToggleGroup fx:id="targetName"/>
-                                </toggleGroup>
-                            </RadioButton>
-                            <RadioButton layoutX="364.0" layoutY="20.0" mnemonicParsing="false"
-                                         text="MyBatis3DynamicSql" toggleGroup="$targetName">
-                            </RadioButton>
-                            <RadioButton layoutX="224.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3Simple"
-                                         toggleGroup="$targetName">
-                            </RadioButton>
-                            <Label layoutX="26.0" layoutY="20.0" text="targetName："/>
-                        </AnchorPane>
-                    </Tab>
+                    <tabs>
+                        <Tab text="Mybatis">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="226.0" prefWidth="580.0">
+                                    <children>
+                                        <CheckBox fx:id="userJava8CheckBox" layoutX="27.0" layoutY="56.0"
+                                                  mnemonicParsing="false" selected="true" text="支持 java8"/>
+                                        <CheckBox fx:id="useBigDecimalCheckBox" layoutX="262.0" layoutY="93.0"
+                                                  mnemonicParsing="false" selected="true" text="使用 BigDecimal"/>
+                                        <CheckBox fx:id="useCommentCheckBox" layoutX="262.0" layoutY="56.0"
+                                                  mnemonicParsing="false" selected="true" text="启用注释"/>
+                                        <CheckBox fx:id="useLombokGetSetCheckBox" layoutX="27.0" layoutY="93.0"
+                                                  mnemonicParsing="false" text="启用 lombokGetSet 注解"/>
+                                        <RadioButton layoutX="125.0" layoutY="20.0" mnemonicParsing="false"
+                                                     selected="true" text="Mybatis3">
+                                            <toggleGroup>
+                                                <ToggleGroup fx:id="targetName"/>
+                                            </toggleGroup>
+                                        </RadioButton>
+                                        <RadioButton layoutX="373.0" layoutY="20.0" mnemonicParsing="false"
+                                                     text="MyBatis3DynamicSql" toggleGroup="$targetName">
+                                        </RadioButton>
+                                        <RadioButton layoutX="225.0" layoutY="20.0" mnemonicParsing="false"
+                                                     text="MyBatis3Simple" toggleGroup="$targetName">
+                                        </RadioButton>
+                                        <Label layoutX="26.0" layoutY="20.0" text="targetName："/>
+                                        <CheckBox fx:id="useLombokBuilderCheckBox" layoutX="27.0" layoutY="128.0"
+                                                  mnemonicParsing="false" text="启用 lombokBuilder 注解"/>
+                                    </children>
+                                </AnchorPane>
+                            </content>
+                        </Tab>
+                    </tabs>
                 </TabPane>
             </children>
         </HBox>

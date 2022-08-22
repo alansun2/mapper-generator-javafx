@@ -1,5 +1,9 @@
 @import "common.css";
 
+#main-set-up {
+    -fx-padding: 0
+}
+
 .addConfigButton {
     -fx-background-color: #F4F4F4;
     -fx-background-radius: 0em;
@@ -34,6 +38,7 @@
     -fx-background-color: transparent;
     -fx-border-width: 0;
 }
+
 .scroll-bar:vertical {
     -fx-background-color: transparent;
     -fx-border-width: 0;

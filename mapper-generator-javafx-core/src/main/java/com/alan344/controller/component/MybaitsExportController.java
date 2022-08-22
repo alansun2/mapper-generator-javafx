@@ -1,5 +1,7 @@
 package com.alan344.controller.component;
 
+import com.alan344.bean.MybatisConfigThreadLocal;
+import com.alan344.bean.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
@@ -10,8 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import lombok.extern.slf4j.Slf4j;
-import com.alan344.bean.MybatisConfigThreadLocal;
-import com.alan344.bean.MybatisExportConfig;
 import org.springframework.stereotype.Controller;
 
 import java.io.File;
@@ -27,73 +27,42 @@ import java.util.ResourceBundle;
 public class MybaitsExportController implements Initializable {
     @FXML
     private TextField authorText;
-
     @FXML
     private TextField configNameText;
-
     @FXML
     private CheckBox modelOnlyCheckBox;
-
     @FXML
     private TextField beanLocationText;
-
     @FXML
     private TextField beanPackageText;
-
     @FXML
     private TextField beanRootClassText;
-
     @FXML
     private TextField mapperLocationText;
-
     @FXML
     private TextField mapperPackageText;
-
     @FXML
     private TextField xmlLocationText;
-
     @FXML
     private TextField mapperRootInterfaceText;
-
     @FXML
     private TextField globalIgnoreFieldText;
-
     /**
      * 官方的 mybatis-generator
      */
     @FXML
     private ToggleGroup targetName;
-
     @FXML
     private CheckBox userJava8CheckBox;
-
     @FXML
     private CheckBox useBigDecimalCheckBox;
-
     @FXML
     private CheckBox useCommentCheckBox;
+    @FXML
+    private CheckBox useLombokGetSetCheckBox;
 
     @FXML
-    private CheckBox useSwaggerCheckBox;
-
-    /**
-     * tk.mybatis
-     */
-    @FXML
-    private CheckBox userJava8CheckBox1;
-
-    @FXML
-    private CheckBox useBigDecimalCheckBox1;
-
-    @FXML
-    private CheckBox useCommentCheckBox1;
-
-    @FXML
-    private CheckBox useSwaggerCheckBox1;
-
-    @FXML
-    private CheckBox generateColumnConstantsCheckbox;
-
+    private CheckBox useLombokBuilderCheckBox;
     /**
      * tab
      */
@@ -193,7 +162,8 @@ public class MybaitsExportController implements Initializable {
         userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
         useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
         useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseComment());
-        useSwaggerCheckBox.setSelected(mybatisOfficialExportConfig.isUseSwagger());
+        useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
+        useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
         final ObservableList<Toggle> toggles = targetName.getToggles();
         for (Toggle toggle : toggles) {
             final RadioButton radioButton = (RadioButton) toggle;
@@ -230,7 +200,8 @@ public class MybaitsExportController implements Initializable {
                 mybatisOfficialExportConfig.setUserJava8(userJava8CheckBox.isSelected());
                 mybatisOfficialExportConfig.setUseBigDecimal(useBigDecimalCheckBox.isSelected());
                 mybatisOfficialExportConfig.setUseComment(useCommentCheckBox.isSelected());
-                mybatisOfficialExportConfig.setUseSwagger(useSwaggerCheckBox.isSelected());
+                mybatisOfficialExportConfig.setUseLombokGetSet(useLombokGetSetCheckBox.isSelected());
+                mybatisOfficialExportConfig.setUseLombokBuilder(useLombokBuilderCheckBox.isSelected());
 
                 mybatisExportConfig.setMybatisOfficialExportConfig(mybatisOfficialExportConfig);
                 break;
@@ -265,14 +236,8 @@ public class MybaitsExportController implements Initializable {
         userJava8CheckBox.setSelected(true);
         useBigDecimalCheckBox.setSelected(false);
         useCommentCheckBox.setSelected(true);
-        useSwaggerCheckBox.setSelected(false);
-
-        // tk.mybatis
-        userJava8CheckBox1.setSelected(true);
-        useBigDecimalCheckBox1.setSelected(true);
-        useCommentCheckBox1.setSelected(true);
-        useSwaggerCheckBox1.setSelected(true);
-        generateColumnConstantsCheckbox.setSelected(true);
+        useLombokGetSetCheckBox.setSelected(true);
+        useLombokBuilderCheckBox.setSelected(false);
     }
 }
 
