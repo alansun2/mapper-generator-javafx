@@ -4,7 +4,7 @@ import com.alan344.bean.MybatisExportConfig;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.ExportSuccessAlertController;
 import com.alan344.controller.MybatisSetupController;
-import com.alan344.controller.component.MybaitsExportController;
+import com.alan344.controller.component.MybatisExportController;
 import com.alan344.service.generator.MapperGeneratorStrategyContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class ExportService {
     private MybatisSetupController mybatisSetUpController;
 
     @Resource
-    private MybaitsExportController mybaitsExportController;
+    private MybatisExportController mybatisExportController;
 
     @Resource
     private ExportSuccessAlertController exportSuccessAlertController;
@@ -41,7 +41,7 @@ public class ExportService {
      * 导出
      */
     public void export() {
-        final MybatisExportConfig mybatisExportConfig = mybaitsExportController.getConfig();
+        final MybatisExportConfig mybatisExportConfig = mybatisExportController.getConfig();
         // 保存配置
         mybatisSetUpController.addConfig(mybatisExportConfig);
 

@@ -5,12 +5,16 @@ import com.alan344.bean.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
+import com.alan344.service.node.FileSelectText;
 import com.alan344.utils.TextUtils;
 import com.alan344happyframework.util.StringUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
@@ -24,7 +28,9 @@ import java.util.ResourceBundle;
  */
 @Slf4j
 @Controller
-public class MybaitsExportController implements Initializable {
+public class MybatisExportController implements Initializable {
+    @FXML
+    private VBox mainVBox;
     @FXML
     private TextField authorText;
     @FXML
@@ -32,17 +38,17 @@ public class MybaitsExportController implements Initializable {
     @FXML
     private CheckBox modelOnlyCheckBox;
     @FXML
-    private TextField beanLocationText;
+    private FileSelectText beanLocationText;
     @FXML
     private TextField beanPackageText;
     @FXML
     private TextField beanRootClassText;
     @FXML
-    private TextField mapperLocationText;
+    private FileSelectText mapperLocationText;
     @FXML
     private TextField mapperPackageText;
     @FXML
-    private TextField xmlLocationText;
+    private FileSelectText xmlLocationText;
     @FXML
     private TextField mapperRootInterfaceText;
     @FXML
@@ -78,18 +84,42 @@ public class MybaitsExportController implements Initializable {
             mapperRootInterfaceText.setDisable(newValue);
         });
 
+        // 绑定文本框和tab的宽度
+        final ObservableList<Node> hBoxs = mainVBox.getChildren();
+        hBoxs.forEach(node -> {
+            final HBox hBox = (HBox) node;
+            final ObservableList<Node> children = hBox.getChildren();
+            if (children.size() > 1) {
+                final Node node1 = children.get(1);
+                if (node1 instanceof TextField) {
+                    ((TextField) node1).prefWidthProperty().bind(mainVBox.widthProperty().subtract(190));
+                } else if (node1 instanceof FileSelectText) {
+                    ((FileSelectText) node1).prefWidthProperty().bind(mainVBox.widthProperty().subtract(190));
+                }
+            } else if (children.size() == 1) {
+                final Node node1 = children.get(0);
+                if (node1 instanceof TabPane) {
+                    ((TabPane) node1).prefWidthProperty().bind(mainVBox.widthProperty());
+                }
+            }
+        });
+
         tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             if (BaseConstants.curMybatisExportConfig != null) {
                 BaseConstants.curMybatisExportConfig.setSelectTab(newValue.byteValue());
             }
         });
+
+        mapperLocationText.onAction(actionEvent -> this.mapperDirectoryScan());
+        beanLocationText.onAction(actionEvent -> this.beanDirectoryScan());
+        xmlLocationText.onAction(actionEvent -> this.xmlDirectoryScan());
     }
 
     /**
      * 校验配置是否符合要求
      */
     public void validExport() {
-        TextUtils.checkTextsHasEmpty(NodeConstants.primaryStage, configNameText, authorText, beanLocationText, beanPackageText, mapperLocationText, mapperPackageText, xmlLocationText);
+        TextUtils.checkTextsHasEmpty(NodeConstants.primaryStage, configNameText, authorText, beanLocationText.getTextField(), beanPackageText, mapperLocationText.getTextField(), mapperPackageText, xmlLocationText.getTextField());
     }
 
     //-------------------------文件夹浏览------------------------------------------------------------------------------//

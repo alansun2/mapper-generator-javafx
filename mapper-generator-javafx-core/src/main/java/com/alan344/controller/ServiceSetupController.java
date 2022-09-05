@@ -1,7 +1,7 @@
 package com.alan344.controller;
 
 import com.alan344.constants.NodeConstants;
-import com.alan344.controller.component.MybaitsExportController;
+import com.alan344.controller.component.MybatisExportController;
 import com.alan344.service.ExportService;
 import com.alan344.service.node.NodeHandler;
 import com.alan344.utils.TextUtils;
@@ -46,7 +46,7 @@ public class ServiceSetupController implements Initializable {
     private TextField controllerPackageText;
 
     @Resource
-    private MybaitsExportController mybaitsExportController;
+    private MybatisExportController mybatisExportController;
 
     @Resource
     private ExportService exportService;
@@ -104,7 +104,7 @@ public class ServiceSetupController implements Initializable {
      * 校验配置是否符合要求
      */
     public void validExport() {
-        mybaitsExportController.validExport();
+        mybatisExportController.validExport();
         TextUtils.checkTextsHasEmpty(NodeConstants.primaryStage, configNameText);
     }
 }

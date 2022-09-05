@@ -23,3 +23,8 @@
     -fx-background-color: #E8E8E8;
     -fx-padding: 30;
 }
+
+.text-field {
+    -fx-background-radius: 0em;
+}
+

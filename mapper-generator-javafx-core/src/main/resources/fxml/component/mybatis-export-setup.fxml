@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.alan344.service.node.FileSelectText?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<VBox prefHeight="576.0" prefWidth="584.0" spacing="5" styleClass="mainVBox" stylesheets="@../../css/export.css"
+<VBox fx:id="mainVBox" prefHeight="576.0" prefWidth="584.0" spacing="5" styleClass="mainVBox"
+      stylesheets="@../../css/export.css"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.alan344.controller.component.MybaitsExportController">
+      fx:controller="com.alan344.controller.component.MybatisExportController">
     <children>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="配置名称："/>
-                <TextField fx:id="configNameText" alignment="CENTER" prefHeight="23.0" prefWidth="209.0"
+                <Label prefHeight="15.0" prefWidth="130.0" text="配置名称："/>
+                <TextField fx:id="configNameText" alignment="CENTER" prefHeight="23.0" prefWidth="5009.0"
                            promptText="配置名称"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
@@ -23,103 +25,97 @@
                 <CheckBox fx:id="modelOnlyCheckBox" mnemonicParsing="false" text="只生成model"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="作者名称："/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="作者名称："/>
                 <TextField fx:id="authorText" prefHeight="23.0" prefWidth="209.0" promptText="作者名称"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Bean 地址："/>
-                <TextField fx:id="beanLocationText" prefHeight="23.0" prefWidth="209.0" promptText="bean 地址"/>
-                <Button mnemonicParsing="false" onAction="#beanDirectoryScan" prefHeight="23.0" prefWidth="64.0"
-                        text="浏览"/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Bean 地址："/>
+                <FileSelectText fx:id="beanLocationText" promptText="bean 地址" prefWidth="509.0"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" layoutX="40.0" layoutY="145.0" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Bean 包名："/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Bean 包名："/>
                 <TextField fx:id="beanPackageText" prefHeight="23.0" prefWidth="209.0" promptText="bean 包名"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Bean 父类："/>
-                <TextField fx:id="beanRootClassText" prefHeight="23.0" prefWidth="294.0" promptText="bean 父类"/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Bean 父类："/>
+                <TextField fx:id="beanRootClassText" prefHeight="23.0" prefWidth="209.0" promptText="bean 父类"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Mapper 地址："/>
-                <TextField fx:id="mapperLocationText" prefHeight="23.0" prefWidth="209.0" promptText="mapper 地址"/>
-                <Button mnemonicParsing="false" onAction="#mapperDirectoryScan" prefHeight="23.0" prefWidth="64.0"
-                        text="浏览"/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Mapper 地址："/>
+                <FileSelectText fx:id="mapperLocationText" promptText="mapper 地址" prefWidth="509.0"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Mapper 包名："/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Mapper 包名："/>
                 <TextField fx:id="mapperPackageText" prefHeight="23.0" prefWidth="209.0" promptText="mapper 包名"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Mapper 父接口："/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Mapper 父接口："/>
                 <TextField fx:id="mapperRootInterfaceText" prefHeight="23.0" prefWidth="293.0"
                            promptText="非必填，生成的 Mapper 会继承该接口"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="Xml 地址："/>
-                <TextField prefHeight="23.0" prefWidth="209.0" promptText="xml 地址" fx:id="xmlLocationText"/>
-                <Button mnemonicParsing="false" onAction="#xmlDirectoryScan" prefHeight="23.0" prefWidth="64.0"
-                        text="浏览"/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="Xml 地址："/>
+                <FileSelectText fx:id="xmlLocationText" promptText="xml 地址" prefWidth="509.0"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
-                <Label prefHeight="15.0" prefWidth="120.0" text="全局忽略字段："/>
+                <Label prefHeight="15.0" prefWidth="130.0" text="全局忽略字段："/>
                 <TextField fx:id="globalIgnoreFieldText" prefHeight="23.0" prefWidth="294.0" promptText="逗号隔开"/>
             </children>
             <padding>
-                <Insets left="30.0"/>
+                <Insets left="30.0" right="30"/>
             </padding>
         </HBox>
 
