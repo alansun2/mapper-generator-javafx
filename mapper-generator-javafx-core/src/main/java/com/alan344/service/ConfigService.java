@@ -94,7 +94,6 @@ public class ConfigService {
         }
 
         try {
-            String s = FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString());
             List<MybatisExportConfig> mybatisExportConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), MybatisExportConfig.class);
             return mybatisExportConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
         } catch (IOException e) {

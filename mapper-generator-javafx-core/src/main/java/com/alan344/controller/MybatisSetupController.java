@@ -12,8 +12,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
@@ -37,7 +37,7 @@ public class MybatisSetupController implements Initializable {
     @FXML
     private BorderPane mybatisSetupBorderPane;
     @FXML
-    private ListView<Button> setUpListView;
+    private ListView<String> setUpListView;
     @FXML
     private Button addBtn;
     @FXML
@@ -79,6 +79,23 @@ public class MybatisSetupController implements Initializable {
             this.configNameConfigMap = mybatisExportConfigs.stream().collect(Collectors.toMap(MybatisExportConfig::getConfigName, o -> o));
         }
 
+        // 设置 listview 单选
+        setUpListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        // 设置点击时间
+        setUpListView.setOnMouseClicked(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                mybatisExportController.showConfig(this.configNameConfigMap.get(((ListView<String>) event.getSource()).getSelectionModel().getSelectedItem()));
+            }
+        });
+
+        // 添加右键功能
+        MenuItem removeMenuItem = new MenuItem("删除");
+        removeMenuItem.setOnAction(event -> {
+            final String selectedItem = setUpListView.getSelectionModel().getSelectedItem();
+            this.deleteConfig(selectedItem, this.configNameConfigMap.get(selectedItem));
+        });
+        setUpListView.setContextMenu(new ContextMenu(removeMenuItem));
+
         // 入栈
         nodeHandler.addNode(mybatisSetupBorderPane);
     }
@@ -105,33 +122,26 @@ public class MybatisSetupController implements Initializable {
      *
      * @param mybatisExportConfig 配置信息
      */
-    private void deleteConfig(Button button, MybatisExportConfig mybatisExportConfig) {
-        final ObservableList<Button> items = setUpListView.getItems();
+    private void deleteConfig(String configName, MybatisExportConfig mybatisExportConfig) {
+        final ObservableList<String> items = setUpListView.getItems();
         int size = items.size();
-        items.remove(button);
+        items.remove(configName);
         if (size == 1) {
             mybatisExportController.clearPane();
         } else {
-            mybatisExportController.showConfig(configNameConfigMap.get(items.get(0).getText()));
+            mybatisExportController.showConfig(configNameConfigMap.get(items.get(0)));
         }
 
         configService.deleteConfig(mybatisExportConfig);
     }
 
     /**
-     * 添加配置文件有左边的button
+     * 添加配置文件有到左边的 listview
      *
      * @param mybatisExportConfig 配置信息
      */
     private void addConfigButton(MybatisExportConfig mybatisExportConfig) {
-        Button button = new Button(mybatisExportConfig.getConfigName());
-        MenuItem removeMenuItem = new MenuItem("删除");
-        removeMenuItem.setOnAction(event -> this.deleteConfig(button, mybatisExportConfig));
-        button.setContextMenu(new ContextMenu(removeMenuItem));
-
-        button.prefWidthProperty().bind(setUpListView.widthProperty().multiply(0.8));
-        button.setOnAction(event -> mybatisExportController.showConfig(this.configNameConfigMap.get(mybatisExportConfig.getConfigName())));
-        setUpListView.getItems().add(button);
+        setUpListView.getItems().add(mybatisExportConfig.getConfigName());
     }
 
     /**
