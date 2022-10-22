@@ -7,8 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -31,9 +29,6 @@ public class DataSourceService {
     private TableService tableService;
 
     @Resource
-    private ApplicationContext applicationContext;
-
-    @Resource
     private JdbcTemplate jdbcTemplate;
 
     /**
@@ -51,8 +46,6 @@ public class DataSourceService {
     public void addDataSource(DataSource dataSource) throws IOException {
         this.downLoadToFile(dataSource);
 
-        this.addDataSourceToSpring(dataSource);
-
         dataSourceSet.add(dataSource);
     }
 
@@ -65,7 +58,6 @@ public class DataSourceService {
     public void updateDataSource(DataSource dataSource) throws IOException {
         this.downLoadToFile(dataSource);
 
-        this.addDataSourceToSpring(dataSource);
     }
 
 
@@ -125,27 +117,12 @@ public class DataSourceService {
                     tableService.loadTablesFromFile(dataSource);
 
                     dataSourceSet.add(dataSource);
-                    //向Spring注册dataSource
-                    this.addDataSourceToSpring(dataSource);
                 }
             }
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
         }
         return new ArrayList<>(dataSourceSet);
-    }
-
-    /**
-     * 注册dataSource至Spring
-     *
-     * @param dataSource 数据源信息
-     */
-    private void addDataSourceToSpring(DataSource dataSource) {
-        ConfigurableApplicationContext applicationContext = (ConfigurableApplicationContext) this.applicationContext;
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource.createDataSource());
-        if (!applicationContext.containsBean(dataSource.toString())) {
-            applicationContext.getBeanFactory().registerSingleton(dataSource.toString(), jdbcTemplate);
-        }
     }
 
     /**
