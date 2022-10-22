@@ -5,6 +5,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.controller.DataSourceController;
 import com.alan344.controller.MainController;
 import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
@@ -38,18 +39,16 @@ import java.util.stream.Collectors;
 public class DataSourceTreeViewInit {
     @Resource
     private ColumnService columnService;
-
     @Resource
     private DataSourceService dataSourceService;
-
     @Resource
     private TableService tableService;
-
     @Resource
     private MybatisListViewInit mybatisListViewInit;
-
     @Resource
     private MainController mainController;
+    @Resource
+    private DataSourceController dataSourceController;
 
     /**
      * treeView init
@@ -66,6 +65,9 @@ public class DataSourceTreeViewInit {
                     //open context menu on current screen position
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
 
+                        MenuItem updateMenuItem = new MenuItem("编辑");
+                        updateMenuItem.setGraphic(new ImageView("/image/refresh@16.png"));
+                        updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
                         MenuItem exportMenuItem = new MenuItem("导出");
                         exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
                         exportMenuItem.setOnAction(event1 -> export(treeViewDataSource));
@@ -76,7 +78,7 @@ public class DataSourceTreeViewInit {
                         deleteMenuItem.setGraphic(new ImageView("/image/delete@16.png"));
                         deleteMenuItem.setOnAction(this::deleteDataSource);
 
-                        contextMenu = new ContextMenu(exportMenuItem, refreshMenuItem, deleteMenuItem);
+                        contextMenu = new ContextMenu(updateMenuItem, exportMenuItem, refreshMenuItem, deleteMenuItem);
                     } else {
                         // 只有一个到处按钮
                         MenuItem exportMenuItem = new MenuItem("导出");
@@ -229,6 +231,18 @@ public class DataSourceTreeViewInit {
 
         // 关闭右边的 Border 展示
         this.rightBorderShowClose(dataSource);
+    }
+
+    /**
+     * 跟新数据源
+     *
+     * @param treeViewDataSource 被选中的数据源
+     */
+    private void updateDataSource(TreeView<DataItem> treeViewDataSource) {
+        TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+        dataSourceTreeItem.setExpanded(false);
+        DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+        dataSourceController.openDataSourceSetUp(NodeConstants.primaryStage, dataSource);
     }
 
     /**

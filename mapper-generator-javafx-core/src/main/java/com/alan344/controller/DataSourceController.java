@@ -67,6 +67,8 @@ public class DataSourceController implements Initializable {
 
     private Stage dateSourceStage;
 
+    private boolean isAdd = true;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
@@ -81,8 +83,10 @@ public class DataSourceController implements Initializable {
         // 包装数据源
         final DataSource dataSource = this.packageDateSource();
 
-        // 判断数据源是否存在
-        Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
+        if (isAdd) {
+            // 判断数据源是否存在
+            Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
+        }
 
         // 点击应用后关闭添加数据源页面
         dateSourceStage.close();
@@ -128,7 +132,7 @@ public class DataSourceController implements Initializable {
      *
      * @param primaryStage 主窗口
      */
-    void addDataSource(Stage primaryStage) {
+    public void openDataSourceSetUp(Stage primaryStage, DataSource dataSource) {
         dateSourceStage = new Stage();
         dateSourceStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/datasource-setting.fxml", applicationContext)));
         dateSourceStage.setResizable(false);
@@ -136,6 +140,14 @@ public class DataSourceController implements Initializable {
         dateSourceStage.setTitle("设置数据源");
         dateSourceStage.initModality(Modality.WINDOW_MODAL);
         dateSourceStage.initOwner(primaryStage);
+        if (null != dataSource) {
+            configName.setText(dataSource.getConfigName());
+            url.setText(dataSource.getUrl());
+            user.setText(dataSource.getUser());
+            password.setText(dataSource.getPassword());
+            driveName.setText(dataSource.getDriveName());
+            isAdd = false;
+        }
         dateSourceStage.show();
     }
 

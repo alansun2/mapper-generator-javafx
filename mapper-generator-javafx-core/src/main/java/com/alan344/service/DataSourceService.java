@@ -57,6 +57,19 @@ public class DataSourceService {
     }
 
     /**
+     * 修改数据源
+     *
+     * @param dataSource 数据源信息
+     * @throws IOException e
+     */
+    public void updateDataSource(DataSource dataSource) throws IOException {
+        this.downLoadToFile(dataSource);
+
+        this.addDataSourceToSpring(dataSource);
+    }
+
+
+    /**
      * 删除数据源
      *
      * @param dataSource 数据源信息

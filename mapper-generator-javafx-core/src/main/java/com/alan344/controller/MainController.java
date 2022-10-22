@@ -117,7 +117,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void addSource() {
-        dataSourceController.addDataSource(NodeConstants.primaryStage);
+        dataSourceController.openDataSourceSetUp(NodeConstants.primaryStage, null);
     }
 
     /**
