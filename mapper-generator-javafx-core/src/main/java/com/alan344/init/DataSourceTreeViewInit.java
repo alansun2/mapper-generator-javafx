@@ -23,6 +23,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.collections4.CollectionUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -66,7 +68,7 @@ public class DataSourceTreeViewInit {
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
 
                         MenuItem updateMenuItem = new MenuItem("编辑");
-                        updateMenuItem.setGraphic(new ImageView("/image/refresh@16.png"));
+                        updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
                         updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
                         MenuItem exportMenuItem = new MenuItem("导出");
                         exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
@@ -90,7 +92,9 @@ public class DataSourceTreeViewInit {
                     // 放入  contextMenu
                     treeViewDataSource.setContextMenu(contextMenu);
                 }
-            } else if (event.getButton() == MouseButton.PRIMARY && treeViewDataSource.getSelectionModel().getSelectedItems() != null && treeViewDataSource.getSelectionModel().getSelectedItems().size() == 1) {
+            } else if (event.getButton() == MouseButton.PRIMARY
+                    && event.getClickCount() == 1
+                    && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
                 // 左键释放时。切换 listView
                 final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
                 DataSource dataSource;
@@ -103,8 +107,44 @@ public class DataSourceTreeViewInit {
                 mybatisListViewInit.treeViewSwitch(dataSource);
                 // 清除原来的数据
                 BaseConstants.tableNameSetUpTableRecordMap.clear();
+            } else if (event.getButton() == MouseButton.PRIMARY
+                    && event.getClickCount() == 2
+                    && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
+                // 双击数据源展开
+                final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+                final DataItem value = selectedDataSourceItem.getValue();
+                if (value instanceof DataSource dataSource && selectedDataSourceItem.getChildren().isEmpty()) {
+                    if (!selectedDataSourceItem.isExpanded()) {
+                        tableService.loadTables(dataSource);
+                        final List<Table> tables = dataSource.getTables();
+                        if (CollectionUtils.isEmpty(tables)) {
+                            final Table table = new Table();
+                            table.setTableName("(empty)");
+                            tables.add(table);
+                        } else {
+                            // package Tables and inert them to the DataSourceTreeItem
+                            this.packageTablesAndInertDataSourceTreeItem(dataSource.getTables(), selectedDataSourceItem);
+                        }
+                        selectedDataSourceItem.setExpanded(true);
+                    }
+                }
             }
         });
+    }
+
+    /**
+     * package Tables and inert them to the DataSourceTreeItem
+     *
+     * @param tables             tables
+     * @param dataSourceTreeItem dataSourceTreeItem
+     */
+    private void packageTablesAndInertDataSourceTreeItem(List<Table> tables, TreeItem<DataItem> dataSourceTreeItem) {
+        if (tables != null && !tables.isEmpty()) {
+            tables.forEach(table -> {
+                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+            });
+        }
     }
 
     /*------------------------------------TreeView ContextMenu--------------------------------------------------------*/
@@ -140,7 +180,7 @@ public class DataSourceTreeViewInit {
             TreeItem<DataItem> lastParent = null;
             for (TreeItem<DataItem> selectedItem : selectedItems) {
                 DataItem dataItem = selectedItem.getValue();
-                if (dataItem instanceof Table) {
+                if (dataItem instanceof Table table) {
                     if (lastParent == null) {
                         lastParent = selectedItem.getParent();
                         dataSource = ((DataSource) selectedItem.getParent().getValue());
@@ -148,7 +188,6 @@ public class DataSourceTreeViewInit {
                         Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出", NodeConstants.primaryStage);
                     }
 
-                    Table table = (Table) dataItem;
                     tables.add(table);
                 }
             }

@@ -10,10 +10,9 @@ import com.alan344.utils.TextUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -48,7 +47,7 @@ public class DataSourceController implements Initializable {
     //-----------------------------------------
 
     @FXML
-    private Label testConnectionResultLabel;
+    private Button testConnectionBtn;
 
     @Resource
     private MainController mainController;
@@ -69,6 +68,8 @@ public class DataSourceController implements Initializable {
 
     private boolean isAdd = true;
 
+    private DataSource oldDataSource;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
@@ -86,19 +87,17 @@ public class DataSourceController implements Initializable {
         if (isAdd) {
             // 判断数据源是否存在
             Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
+            // 点击应用后关闭添加数据源页面
+            dateSourceStage.close();
+
+//            // 添加数据源
+            dataSourceService.addDataSource(dataSource);
+
+            // 把 dataSource 放入 treeItemRoot
+            dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
+        } else {
+            dataSourceService.updateDataSource(oldDataSource, dataSource);
         }
-
-        // 点击应用后关闭添加数据源页面
-        dateSourceStage.close();
-
-        // 添加数据源
-        dataSourceService.addDataSource(dataSource);
-
-        // load table and column info
-        tableService.loadTables(dataSource);
-
-        // 把 dataSource 放入 treeItemRoot
-        dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
     }
 
     /**
@@ -117,14 +116,10 @@ public class DataSourceController implements Initializable {
         final DataSource dataSource = this.packageDateSource();
 
         if (dataSourceService.testConnection(dataSource)) {
-            testConnectionResultLabel.setText("成功");
-            testConnectionResultLabel.setTextFill(Color.GREEN);
+            testConnectionBtn.setStyle("-fx-background-color: green");
         } else {
-            testConnectionResultLabel.setText("失败");
-            testConnectionResultLabel.setTextFill(Color.RED);
+            testConnectionBtn.setStyle("-fx-background-color: #a11111");
         }
-        testConnectionResultLabel.setVisible(true);
-        testConnectionResultLabel.setManaged(true);
     }
 
     /**
@@ -147,6 +142,9 @@ public class DataSourceController implements Initializable {
             password.setText(dataSource.getPassword());
             driveName.setText(dataSource.getDriveName());
             isAdd = false;
+            oldDataSource = dataSource;
+        } else {
+            isAdd = true;
         }
         dateSourceStage.show();
     }

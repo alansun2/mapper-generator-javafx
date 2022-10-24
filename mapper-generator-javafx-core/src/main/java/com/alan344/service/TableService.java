@@ -33,45 +33,31 @@ public class TableService {
     private ColumnService columnService;
 
     /**
-     * 当展开datasource时加载tableItem，并将table写入文件
-     *
-     * @param dataSource 数据源的item
-     */
-    public List<Table> loadTables(DataSource dataSource) {
-        List<Table> tables = this.pullTablesFromRemote(dataSource);
-        if (!tables.isEmpty()) {
-            //加载columns
-            columnService.loadColumns(dataSource, tables);
-            dataSource.setTables(tables);
-            //写入文件
-            this.downLoadToFileBatch(dataSource, tables);
-        }
-        return tables;
-    }
-
-    /**
      * 刷新tables
      *
      * @param dataSource 数据源
      */
     public List<Table> refreshTables(DataSource dataSource) {
-        List<Table> tables = this.pullTablesFromRemote(dataSource);
-        if (!tables.isEmpty()) {
+        List<Table> remoteTables = this.pullTablesFromRemote(dataSource);
+        if (!remoteTables.isEmpty()) {
             List<Table> existTables = dataSource.getTables();
             if (existTables != null && !existTables.isEmpty()) {
                 Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName, table -> table));
-                for (Table table : tables) {
-                    if (tableNameTableMap.containsKey(table.getTableName())) {
-                        Table table1 = tableNameTableMap.get(table.getTableName());
-                        table.setReturnInsertId(table1.isReturnInsertId());
-                        table.setInsert(table1.isInsert());
-                        table.setCount(table1.isCount());
-                        table.setUpdate(table1.isUpdate());
-                        table.setDelete(table1.isDelete());
-                        table.setSelect(table1.isSelect());
-                        table.setUpdateExample(table1.isUpdateExample());
-                        table.setDeleteExample(table1.isDeleteExample());
-                        table.setSelectExample(table1.isSelectExample());
+                for (Table remoteTable : remoteTables) {
+                    if (tableNameTableMap.containsKey(remoteTable.getTableName())) {
+                        Table existTable = tableNameTableMap.get(remoteTable.getTableName());
+                        if (null == existTable) {
+                            continue;
+                        }
+                        remoteTable.setReturnInsertId(existTable.isReturnInsertId());
+                        remoteTable.setInsert(existTable.isInsert());
+                        remoteTable.setCount(existTable.isCount());
+                        remoteTable.setUpdate(existTable.isUpdate());
+                        remoteTable.setDelete(existTable.isDelete());
+                        remoteTable.setSelect(existTable.isSelect());
+                        remoteTable.setUpdateExample(existTable.isUpdateExample());
+                        remoteTable.setDeleteExample(existTable.isDeleteExample());
+                        remoteTable.setSelectExample(existTable.isSelectExample());
                     }
                 }
             }
@@ -79,9 +65,9 @@ public class TableService {
             //删除表文件夹
             this.deleteTableDirectory(dataSource);
             //表写入文件
-            this.downLoadToFileBatch(dataSource, tables);
+            this.downLoadToFileBatch(dataSource, remoteTables);
         }
-        return tables;
+        return remoteTables;
     }
 
     /**
@@ -93,7 +79,7 @@ public class TableService {
     private List<Table> pullTablesFromRemote(DataSource dataSource) {
         final List<Table> tables;
         try {
-            tables = DataSourceUtils.getTables(dataSource.createDataSource().getConnection());
+            tables = DataSourceUtils.getTables(dataSource.getDataSource().getConnection());
         } catch (SQLException e) {
             log.error("获取连接异常", e);
             throw new BizException("获取数据库连接异常");
@@ -107,31 +93,47 @@ public class TableService {
      *
      * @param dataSource 数据源
      */
-    void loadTablesFromFile(DataSource dataSource) {
+    public void loadTables(DataSource dataSource) {
+        List<Table> tables = new ArrayList<>();
+        dataSource.setTables(tables);
+
         File tableDirectory = BaseConstants.getTableDirectory(dataSource);
         if (!tableDirectory.exists()) {
-            return;
-        }
-
-        File[] files = tableDirectory.listFiles();
-        if (files == null || files.length <= 0) {
-            return;
-        }
-
-        List<Table> tables = new ArrayList<>();
-        try {
-            for (File file : files) {
-                Table table = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), Table.class);
-                tables.add(table);
+            this.loadTablesFromRemote(dataSource);
+        } else {
+            File[] files = tableDirectory.listFiles();
+            if (files == null || files.length == 0) {
+                return;
             }
-        } catch (IOException e) {
-            log.error("加载tables文件失败", e);
-            return;
+
+            try {
+                for (File file : files) {
+                    Table table = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), Table.class);
+                    tables.add(table);
+                }
+            } catch (IOException e) {
+                log.error("加载tables文件失败", e);
+                return;
+            }
+
+            columnService.loadColumnsFromFile(dataSource, tables);
         }
+    }
 
-        columnService.loadColumnsFromFile(dataSource, tables);
-
-        dataSource.setTables(tables);
+    /**
+     * 当展开datasource时加载tableItem，并将table写入文件
+     *
+     * @param dataSource 数据源的item
+     */
+    private void loadTablesFromRemote(DataSource dataSource) {
+        List<Table> tables = this.pullTablesFromRemote(dataSource);
+        if (!tables.isEmpty()) {
+            //加载columns
+            columnService.loadColumns(dataSource, tables);
+            dataSource.setTables(tables);
+            //写入文件
+            this.downLoadToFileBatch(dataSource, tables);
+        }
     }
 
     /**

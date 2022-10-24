@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -52,12 +53,26 @@ public class DataSourceService {
     /**
      * 修改数据源
      *
-     * @param dataSource 数据源信息
+     * @param newDataSource 数据源信息
      * @throws IOException e
      */
-    public void updateDataSource(DataSource dataSource) throws IOException {
-        this.downLoadToFile(dataSource);
+    public void updateDataSource(DataSource oldDataSource, DataSource newDataSource) throws IOException {
+        if (oldDataSource.isSame(newDataSource)) {
+            return;
+        }
 
+        this.deleteDataSourceFile(newDataSource);
+
+        this.downLoadToFile(newDataSource);
+
+        if (!oldDataSource.getConfigName().equals(newDataSource.getConfigName()) || !oldDataSource.getUrl().equals(newDataSource.getUrl())) {
+            tableService.deleteTables(newDataSource);
+        }
+
+
+        BeanUtils.copyProperties(newDataSource, oldDataSource);
+
+        oldDataSource.setDataSource(null);
     }
 
 
@@ -114,7 +129,7 @@ public class DataSourceService {
                 if (file.getName().endsWith("datasource")) {
                     DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
                     //从文件加表信息至pane
-                    tableService.loadTablesFromFile(dataSource);
+//                    tableService.loadTablesFromFile(dataSource);
 
                     dataSourceSet.add(dataSource);
                 }
@@ -132,7 +147,7 @@ public class DataSourceService {
      * @return true 成功 false 失败
      */
     public boolean testConnection(DataSource dataSource) {
-        jdbcTemplate.setDataSource(dataSource.createDataSource());
+        jdbcTemplate.setDataSource(dataSource.getDataSource());
         jdbcTemplate.setQueryTimeout(3);
         try {
             jdbcTemplate.query("SELECT 1 FROM dual", (rs, rowNum) -> rs.getString(1));

@@ -24,9 +24,9 @@ public class DataSource implements DataItem {
 
     private transient List<Table> tables;
 
-    private javax.sql.DataSource dataSource;
+    private transient javax.sql.DataSource dataSource;
 
-    public javax.sql.DataSource createDataSource() {
+    public javax.sql.DataSource getDataSource() {
         if (dataSource != null) {
             return dataSource;
         }
@@ -43,6 +43,13 @@ public class DataSource implements DataItem {
         hikariDataSource.setDataSourceProperties(props);
         dataSource = hikariDataSource;
         return hikariDataSource;
+    }
+
+    public boolean isSame(DataSource dataSource) {
+        return this.configName.equals(dataSource.getConfigName()) && this.url.equals(dataSource.getUrl())
+                && this.user.equals(dataSource.getUser()) && this.password.equals(dataSource.getPassword())
+                && this.driveName.equals(dataSource.getDriveName());
+
     }
 
     @Override

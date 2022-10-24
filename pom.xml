@@ -14,14 +14,18 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <javafx.version>17</javafx.version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.5.RELEASE</version>
+        <version>2.7.1</version>
     </parent>
 
     <dependencies>
@@ -39,6 +43,12 @@
                 <groupId>icu.alan344</groupId>
                 <artifactId>happyframework-core</artifactId>
                 <version>1.0.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.opencsv</groupId>
+                        <artifactId>opencsv</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

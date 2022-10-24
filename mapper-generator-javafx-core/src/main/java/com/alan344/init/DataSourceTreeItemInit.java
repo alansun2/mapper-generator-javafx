@@ -2,7 +2,6 @@ package com.alan344.init;
 
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
-import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.controller.MainController;
 import com.alan344.service.DataSourceService;
@@ -86,25 +85,7 @@ public class DataSourceTreeItemInit {
             }
         });
 
-        // package Tables and inert them to the DataSourceTreeItem
-        this.packageTablesAndInertDataSourceTreeItem(dataSource.getTables(), dataSourceTreeItem);
-
         // put dataSource into allDataSource
         BaseConstants.allDataSources.put(dataSourceTreeItem, dataSource);
-    }
-
-    /**
-     * package Tables and inert them to the DataSourceTreeItem
-     *
-     * @param tables             tables
-     * @param dataSourceTreeItem dataSourceTreeItem
-     */
-    private void packageTablesAndInertDataSourceTreeItem(List<Table> tables, TreeItem<DataItem> dataSourceTreeItem) {
-        if (tables != null && !tables.isEmpty()) {
-            tables.forEach(table -> {
-                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
-            });
-        }
     }
 }

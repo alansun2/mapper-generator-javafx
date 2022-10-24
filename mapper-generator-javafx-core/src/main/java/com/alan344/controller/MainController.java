@@ -80,6 +80,7 @@ public class MainController implements Initializable {
     private BeanFactory beanFactory;
 
     // -------------------------init----------------------------------------------------------------------------------//
+
     @Resource
     private DataSourceTreeItemInit dataSourceTreeItemInit;
 
