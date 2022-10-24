@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -101,8 +102,8 @@ public class ColumnService {
      * @return 字段数组
      */
     private List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
-        try {
-            return DataSourceUtils.getColumns(dataSource.getDataSource().getConnection(), tableName);
+        try(final Connection connection = dataSource.getDataSource().getConnection()) {
+            return DataSourceUtils.getColumns(connection, tableName);
         } catch (SQLException e) {
             log.error("获取连接异常", e);
             throw new BizException("获取数据库连接异常");

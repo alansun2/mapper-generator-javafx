@@ -66,7 +66,9 @@ public class DataSourceTreeViewInit {
                     ContextMenu contextMenu;
                     //open context menu on current screen position
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
-
+                        MenuItem connectMenuItem = new MenuItem("连接");
+                        connectMenuItem.setGraphic(new FontIcon("unil-cloud-data-connection:16:BLUE"));
+                        connectMenuItem.setOnAction(actionEvent -> this.initDataSourceItem(treeViewDataSource));
                         MenuItem updateMenuItem = new MenuItem("编辑");
                         updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
                         updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
@@ -80,7 +82,7 @@ public class DataSourceTreeViewInit {
                         deleteMenuItem.setGraphic(new ImageView("/image/delete@16.png"));
                         deleteMenuItem.setOnAction(this::deleteDataSource);
 
-                        contextMenu = new ContextMenu(updateMenuItem, exportMenuItem, refreshMenuItem, deleteMenuItem);
+                        contextMenu = new ContextMenu(connectMenuItem, updateMenuItem, exportMenuItem, refreshMenuItem, deleteMenuItem);
                     } else {
                         // 只有一个到处按钮
                         MenuItem exportMenuItem = new MenuItem("导出");
@@ -111,25 +113,29 @@ public class DataSourceTreeViewInit {
                     && event.getClickCount() == 2
                     && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
                 // 双击数据源展开
-                final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
-                final DataItem value = selectedDataSourceItem.getValue();
-                if (value instanceof DataSource dataSource && selectedDataSourceItem.getChildren().isEmpty()) {
-                    if (!selectedDataSourceItem.isExpanded()) {
-                        tableService.loadTables(dataSource);
-                        final List<Table> tables = dataSource.getTables();
-                        if (CollectionUtils.isEmpty(tables)) {
-                            final Table table = new Table();
-                            table.setTableName("(empty)");
-                            tables.add(table);
-                        } else {
-                            // package Tables and inert them to the DataSourceTreeItem
-                            this.packageTablesAndInertDataSourceTreeItem(dataSource.getTables(), selectedDataSourceItem);
-                        }
-                        selectedDataSourceItem.setExpanded(true);
-                    }
-                }
+                this.initDataSourceItem(treeViewDataSource);
             }
         });
+    }
+
+    private void initDataSourceItem(TreeView<DataItem> treeViewDataSource) {
+        final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+        final DataItem value = selectedDataSourceItem.getValue();
+        if (value instanceof DataSource dataSource && selectedDataSourceItem.getChildren().isEmpty()) {
+            if (!selectedDataSourceItem.isExpanded()) {
+                tableService.loadTables(dataSource);
+                final List<Table> tables = dataSource.getTables();
+                if (CollectionUtils.isEmpty(tables)) {
+                    final Table table = new Table();
+                    table.setTableName("(empty)");
+                    tables.add(table);
+                } else {
+                    // package Tables and inert them to the DataSourceTreeItem
+                    this.packageTablesAndInertDataSourceTreeItem(dataSource.getTables(), selectedDataSourceItem);
+                }
+                selectedDataSourceItem.setExpanded(true);
+            }
+        }
     }
 
     /**
@@ -281,6 +287,7 @@ public class DataSourceTreeViewInit {
         TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         dataSourceTreeItem.setExpanded(false);
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
+        dataSourceTreeItem.getChildren().clear();
         dataSourceController.openDataSourceSetUp(NodeConstants.primaryStage, dataSource);
     }
 

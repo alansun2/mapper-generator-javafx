@@ -3,6 +3,7 @@ package com.alan344.constants;
 import javafx.application.HostServices;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -27,4 +28,6 @@ public class NodeConstants {
      * mybatis 配置时的 listView
      */
     public static ListView<VBox> mybatisListView;
+
+    public static StackPane mainStackPane;
 }

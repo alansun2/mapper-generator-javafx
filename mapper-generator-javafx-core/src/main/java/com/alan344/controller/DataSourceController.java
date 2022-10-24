@@ -86,17 +86,21 @@ public class DataSourceController implements Initializable {
 
         if (isAdd) {
             // 判断数据源是否存在
-            Assert.isTrue(!dataSourceService.getDataSourceSet().contains(dataSource), "该数据源已存在", dateSourceStage);
+            Assert.isTrue(!dataSourceService.contains(dataSource), "该数据源已存在", dateSourceStage);
             // 点击应用后关闭添加数据源页面
             dateSourceStage.close();
 
-//            // 添加数据源
+            // 添加数据源
             dataSourceService.addDataSource(dataSource);
 
             // 把 dataSource 放入 treeItemRoot
             dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
         } else {
+            // 更新数据源
             dataSourceService.updateDataSource(oldDataSource, dataSource);
+
+            // 点击应用后关闭添加数据源页面
+            dateSourceStage.close();
         }
     }
 

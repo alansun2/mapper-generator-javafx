@@ -42,7 +42,7 @@
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <Label prefHeight="15.0" prefWidth="130.0" text="Bean 地址："/>
-                <FileSelectText fx:id="beanLocationText" promptText="bean 地址" prefWidth="509.0"/>
+                <FileSelectText fx:id="beanLocationText" promptText="bean 地址" prefWidth="509.0" prefHeight="23.0"/>
             </children>
             <padding>
                 <Insets left="30.0" right="30"/>
@@ -72,7 +72,7 @@
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <Label prefHeight="15.0" prefWidth="130.0" text="Mapper 地址："/>
-                <FileSelectText fx:id="mapperLocationText" promptText="mapper 地址" prefWidth="509.0"/>
+                <FileSelectText fx:id="mapperLocationText" promptText="mapper 地址" prefWidth="509.0" prefHeight="23.0"/>
             </children>
             <padding>
                 <Insets left="30.0" right="30"/>
@@ -103,7 +103,7 @@
         <HBox alignment="CENTER_LEFT" spacing="10">
             <children>
                 <Label prefHeight="15.0" prefWidth="130.0" text="Xml 地址："/>
-                <FileSelectText fx:id="xmlLocationText" promptText="xml 地址" prefWidth="509.0"/>
+                <FileSelectText fx:id="xmlLocationText" promptText="xml 地址" prefWidth="509.0" prefHeight="23.0"/>
             </children>
             <padding>
                 <Insets left="30.0" right="30"/>

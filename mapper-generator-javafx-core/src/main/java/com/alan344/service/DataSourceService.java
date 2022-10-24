@@ -51,6 +51,16 @@ public class DataSourceService {
     }
 
     /**
+     * 是否存在数据源
+     *
+     * @param dataSource {@link DataSource}
+     * @return true:存在;false:不存在
+     */
+    public boolean contains(DataSource dataSource) {
+        return this.dataSourceSet.contains(dataSource);
+    }
+
+    /**
      * 修改数据源
      *
      * @param newDataSource 数据源信息
@@ -73,6 +83,7 @@ public class DataSourceService {
         BeanUtils.copyProperties(newDataSource, oldDataSource);
 
         oldDataSource.setDataSource(null);
+        oldDataSource.setTables(null);
     }
 
 

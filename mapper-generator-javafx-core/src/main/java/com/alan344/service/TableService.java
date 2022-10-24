@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +79,8 @@ public class TableService {
      */
     private List<Table> pullTablesFromRemote(DataSource dataSource) {
         final List<Table> tables;
-        try {
-            tables = DataSourceUtils.getTables(dataSource.getDataSource().getConnection());
+        try (final Connection connection = dataSource.getDataSource().getConnection()) {
+            tables = DataSourceUtils.getTables(connection);
         } catch (SQLException e) {
             log.error("获取连接异常", e);
             throw new BizException("获取数据库连接异常");

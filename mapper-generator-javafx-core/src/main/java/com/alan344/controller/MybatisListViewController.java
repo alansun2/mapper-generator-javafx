@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,9 @@ public class MybatisListViewController implements Initializable {
 
     @FXML
     private BorderPane borderPane;
+
+    @FXML
+    private StackPane mainStackPane;
 
     @FXML
     private ListView<VBox> listView;
@@ -71,6 +75,7 @@ public class MybatisListViewController implements Initializable {
         NodeConstants.borderPane1 = borderPane;
         NodeConstants.mybatisListView = listView;
         NodeConstants.borderPaneWrap.setCenter(borderPane);
+        NodeConstants.mainStackPane = mainStackPane;
 
         // init mapperCheckBox
         mapperCheckBoxInit.checkBoxInit(mapperCheckBoxHBox1, mapperCheckBoxHBox2);

@@ -28,28 +28,30 @@
         </HBox>
     </top>
     <center>
-        <ListView fx:id="listView">
-            <contextMenu>
-                <ContextMenu>
-                    <items>
-                        <MenuItem onAction="#refreshTableColumn" text="刷新字段">
-                            <graphic>
-                                <ImageView>
-                                    <Image url="/image/refresh@16.png"/>
-                                </ImageView>
-                            </graphic>
-                        </MenuItem>
-                        <MenuItem onAction="#advancedSetUp" text="高级设置">
-                            <graphic>
-                                <ImageView>
-                                    <Image url="/image/advanced-set-up.png"/>
-                                </ImageView>
-                            </graphic>
-                        </MenuItem>
-                    </items>
-                </ContextMenu>
-            </contextMenu>
-        </ListView>
+        <StackPane fx:id="mainStackPane">
+            <ListView fx:id="listView">
+                <contextMenu>
+                    <ContextMenu>
+                        <items>
+                            <MenuItem onAction="#refreshTableColumn" text="刷新字段">
+                                <graphic>
+                                    <ImageView>
+                                        <Image url="/image/refresh@16.png"/>
+                                    </ImageView>
+                                </graphic>
+                            </MenuItem>
+                            <MenuItem onAction="#advancedSetUp" text="高级设置">
+                                <graphic>
+                                    <ImageView>
+                                        <Image url="/image/advanced-set-up.png"/>
+                                    </ImageView>
+                                </graphic>
+                            </MenuItem>
+                        </items>
+                    </ContextMenu>
+                </contextMenu>
+            </ListView>
+        </StackPane>
     </center>
     <bottom>
         <HBox styleClass="bottomHBox" prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10">
