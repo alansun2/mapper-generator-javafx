@@ -121,7 +121,11 @@ public class DataSourceTreeViewInit {
     private void initDataSourceItem(TreeView<DataItem> treeViewDataSource) {
         final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         final DataItem value = selectedDataSourceItem.getValue();
-        if (value instanceof DataSource dataSource && selectedDataSourceItem.getChildren().isEmpty()) {
+        if (value instanceof DataSource) {
+            final DataSource dataSource = (DataSource) value;
+            if (!selectedDataSourceItem.getChildren().isEmpty()) {
+                return;
+            }
             if (!selectedDataSourceItem.isExpanded()) {
                 tableService.loadTables(dataSource);
                 final List<Table> tables = dataSource.getTables();
@@ -186,7 +190,8 @@ public class DataSourceTreeViewInit {
             TreeItem<DataItem> lastParent = null;
             for (TreeItem<DataItem> selectedItem : selectedItems) {
                 DataItem dataItem = selectedItem.getValue();
-                if (dataItem instanceof Table table) {
+                if (dataItem instanceof Table) {
+                    final Table table = (Table) dataItem;
                     if (lastParent == null) {
                         lastParent = selectedItem.getParent();
                         dataSource = ((DataSource) selectedItem.getParent().getValue());
