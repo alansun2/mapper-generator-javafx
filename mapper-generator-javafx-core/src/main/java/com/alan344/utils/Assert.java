@@ -1,6 +1,5 @@
 package com.alan344.utils;
 
-import com.alan344happyframework.exception.BizException;
 import javafx.stage.Stage;
 
 /**
@@ -11,7 +10,7 @@ public class Assert {
     public static void isTrue(boolean expression, String content, Stage primaryStage) {
         if (!expression) {
             Toast.makeText(primaryStage, content, 3000, 500, 500, 15, 5);
-            throw new BizException(content);
+            throw new RuntimeException(content);
         }
     }
 }

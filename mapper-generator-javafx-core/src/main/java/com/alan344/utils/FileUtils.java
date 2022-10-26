@@ -1,7 +1,7 @@
 package com.alan344.utils;
 
-import com.alan344happyframework.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import com.alan344.utils.StringUtils;
 
 import java.io.IOException;
 

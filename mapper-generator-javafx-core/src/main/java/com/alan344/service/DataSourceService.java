@@ -2,13 +2,12 @@ package com.alan344.service;
 
 import com.alan344.bean.DataSource;
 import com.alan344.constants.BaseConstants;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
 import java.util.*;
 
 /**
@@ -28,9 +28,6 @@ public class DataSourceService {
 
     @Resource
     private TableService tableService;
-
-    @Resource
-    private JdbcTemplate jdbcTemplate;
 
     /**
      * 用户判断数据源是否重复
@@ -139,8 +136,6 @@ public class DataSourceService {
             for (File file : files) {
                 if (file.getName().endsWith("datasource")) {
                     DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
-                    //从文件加表信息至pane
-//                    tableService.loadTablesFromFile(dataSource);
 
                     dataSourceSet.add(dataSource);
                 }
@@ -158,10 +153,8 @@ public class DataSourceService {
      * @return true 成功 false 失败
      */
     public boolean testConnection(DataSource dataSource) {
-        jdbcTemplate.setDataSource(dataSource.getDataSource());
-        jdbcTemplate.setQueryTimeout(3);
-        try {
-            jdbcTemplate.query("SELECT 1 FROM dual", (rs, rowNum) -> rs.getString(1));
+        try (final Connection connection = dataSource.getDataSource().getConnection()) {
+            connection.isReadOnly();
         } catch (Exception e) {
             return false;
         }

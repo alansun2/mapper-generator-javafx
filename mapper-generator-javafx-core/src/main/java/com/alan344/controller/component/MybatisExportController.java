@@ -6,8 +6,8 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.node.FileSelectText;
+import com.alan344.utils.StringUtils;
 import com.alan344.utils.TextUtils;
-import com.alan344happyframework.util.StringUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -134,7 +134,7 @@ public class MybatisExportController implements Initializable {
      */
     @FXML
     public void beanDirectoryScan() {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.isEmpty(this.baseDir) ? null : this.baseDir);
+        File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
             beanLocationText.setText(directory.getPath());
             this.baseDir = directory.getPath();
@@ -146,7 +146,7 @@ public class MybatisExportController implements Initializable {
      */
     @FXML
     public void mapperDirectoryScan() {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.isEmpty(this.baseDir) ? null : this.baseDir);
+        File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
             mapperLocationText.setText(directory.getPath());
             this.baseDir = directory.getPath();
@@ -158,7 +158,7 @@ public class MybatisExportController implements Initializable {
      */
     @FXML
     public void xmlDirectoryScan() {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.isEmpty(this.baseDir) ? null : this.baseDir);
+        File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
             xmlLocationText.setText(directory.getPath());
             this.baseDir = directory.getPath();

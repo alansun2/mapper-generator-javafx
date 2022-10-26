@@ -5,8 +5,8 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.DataSourceUtils;
-import com.alan344happyframework.exception.BizException;
-import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -102,11 +103,11 @@ public class ColumnService {
      * @return 字段数组
      */
     private List<Column> getColumnsFromRemote(DataSource dataSource, String tableName) {
-        try(final Connection connection = dataSource.getDataSource().getConnection()) {
+        try (final Connection connection = dataSource.getDataSource().getConnection()) {
             return DataSourceUtils.getColumns(connection, tableName);
         } catch (SQLException e) {
             log.error("获取连接异常", e);
-            throw new BizException("获取数据库连接异常");
+            throw new RuntimeException("获取数据库连接异常");
         }
     }
 
@@ -120,9 +121,9 @@ public class ColumnService {
     void downLoadColumnsToFileBatch(DataSource dataSource, Map<String, List<Column>> tableNameColumnsMap) {
         tableNameColumnsMap.forEach((tableName, columns) -> {
             File columnsFile = BaseConstants.getColumnsFile(dataSource, tableName);
-            String tableNameColumnsMapStr = JSONArray.toJSONString(columns, true);
+            String tableNameColumnsMapStr = JSONArray.toJSONString(columns, JSONWriter.Feature.PrettyFormat);
             try {
-                FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr);
+                FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 log.error("columns download 失败");
             }
@@ -138,9 +139,9 @@ public class ColumnService {
     @Async
     void downLoadColumnsToFileSingle(DataSource dataSource, Table table) {
         File columnsFile = BaseConstants.getColumnsFile(dataSource, table.getTableName());
-        String tableNameColumnsMapStr = JSONArray.toJSONString(table.getColumns(), true);
+        String tableNameColumnsMapStr = JSONArray.toJSONString(table.getColumns(), JSONWriter.Feature.PrettyFormat);
         try {
-            FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr);
+            FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr, StandardCharsets.UTF_8);
         } catch (IOException e) {
             log.error("columns download 失败");
         }
@@ -166,9 +167,8 @@ public class ColumnService {
 
         for (File columnsFile : columnsFiles) {
             try {
-                String tableNameColumns = FileUtils.readFileToString(columnsFile);
-
-                List<Column> columns = JSONArray.parseArray(tableNameColumns, Column.class);
+                String tableNameColumns = FileUtils.readFileToString(columnsFile, StandardCharsets.UTF_8);
+                List<Column> columns = JSONArray.parseArray(tableNameColumns).toJavaList(Column.class);
                 Table table = tableNameTableMap.get(columnsFile.getName());
                 if (table != null) {
                     table.setColumns(columns);

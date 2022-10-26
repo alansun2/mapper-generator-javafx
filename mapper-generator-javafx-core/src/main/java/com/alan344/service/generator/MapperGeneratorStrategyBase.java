@@ -5,9 +5,6 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.Toast;
-import com.alan344happyframework.constants.SeparatorConstants;
-import com.alan344happyframework.exception.BizException;
-import com.alan344happyframework.util.StringUtils;
 import com.github.uinio.mybatis.LombokPlugin;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +14,7 @@ import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.plugins.SerializablePlugin;
+import com.alan344.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -203,7 +201,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // xml 位置配置
         if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
             final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
-            sqlMapGenerator.setAttribute("targetPackage", SeparatorConstants.DOT);
+            sqlMapGenerator.setAttribute("targetPackage", ".");
             sqlMapGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
         }
     }
@@ -263,7 +261,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
             final String globalIgnoreField = mybatisExportConfig.getGlobalIgnoreField();
             if (StringUtils.isNotEmpty(globalIgnoreField)) {
-                final String[] globalIgnoreArr = globalIgnoreField.split(SeparatorConstants.COMMA);
+                final String[] globalIgnoreArr = globalIgnoreField.split(",");
                 for (String globalIgnore : globalIgnoreArr) {
                     final Element ignoreColumn = generatorUtils.addElement(tableEl, "ignoreColumn");
                     ignoreColumn.setAttribute("column", globalIgnore);
@@ -367,7 +365,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 Toast.makeTextDefault(NodeConstants.primaryStage, errors.get(0));
                 return;
             }
-            throw new BizException("导出失败");
+            throw new RuntimeException("导出失败");
         }
 
         if (!warnings.isEmpty()) {

@@ -1,9 +1,8 @@
 package com.alan344.utils;
 
-import com.alan344happyframework.exception.BizException;
-import com.alan344happyframework.util.StringUtils;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import com.alan344.utils.StringUtils;
 
 /**
  * @author AlanSun
@@ -19,9 +18,9 @@ public class TextUtils {
      */
     private static void checkTextIsEmpty(Stage primaryStage, TextField textField) {
         String text = textField.getText();
-        if (StringUtils.isEmpty(text)) {
+        if (!StringUtils.isNotEmpty(text)) {
             Toast.makeText(primaryStage, textField.getPromptText() + "不能为空", 3000, 500, 500, 15, 5);
-            throw new BizException(text + "不能为空");
+            throw new RuntimeException(text + "不能为空");
         }
     }
 

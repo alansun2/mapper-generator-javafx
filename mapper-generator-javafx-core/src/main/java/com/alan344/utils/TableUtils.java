@@ -1,12 +1,11 @@
 package com.alan344.utils;
 
 import com.alan344.bean.ServiceConfig;
-import com.alan344happyframework.constants.SeparatorConstants;
-import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.PropertyRegistry;
+import com.alan344.utils.StringUtils;
 
 import java.util.Properties;
 
@@ -34,7 +33,7 @@ public class TableUtils {
      * @return true；忽略；false: 不忽略
      */
     public static boolean isFieldIgnore(String globalIgnoreColumns, String columnName) {
-        if (StringUtils.isNotBlank(globalIgnoreColumns)) {
+        if (StringUtils.isNotEmpty(globalIgnoreColumns)) {
             return globalIgnoreColumns.contains(columnName);
         }
 
@@ -49,7 +48,7 @@ public class TableUtils {
      */
     public static FullyQualifiedJavaType getRequestBeanType(IntrospectedTable introspectedTable, ServiceConfig serviceConfig) {
         final String baseRecordType = introspectedTable.getBaseRecordType();
-        String requestPackage = serviceConfig.getRequestPackage() + SeparatorConstants.DOT + baseRecordType.substring(baseRecordType.lastIndexOf(SeparatorConstants.DOT) + 1) + "Request";
+        String requestPackage = serviceConfig.getRequestPackage() + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + "Request";
         return new FullyQualifiedJavaType(requestPackage);
     }
 
@@ -60,7 +59,7 @@ public class TableUtils {
      */
     public static String getOriginalBeanName(IntrospectedTable introspectedTable) {
         final String baseRecordType = introspectedTable.getBaseRecordType();
-        return baseRecordType.substring(baseRecordType.lastIndexOf(SeparatorConstants.DOT) + 1);
+        return baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1);
     }
 
     /**

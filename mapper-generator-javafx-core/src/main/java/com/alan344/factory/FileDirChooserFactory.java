@@ -1,8 +1,8 @@
 package com.alan344.factory;
 
-import com.alan344happyframework.util.StringUtils;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import com.alan344.utils.StringUtils;
 
 import java.io.File;
 

@@ -11,6 +11,7 @@ import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
+import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.TreeUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,7 +24,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.collections4.CollectionUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.stereotype.Service;
 

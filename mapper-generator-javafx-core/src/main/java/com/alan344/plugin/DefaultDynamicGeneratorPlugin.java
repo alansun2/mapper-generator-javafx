@@ -5,10 +5,6 @@ import com.alan344.bean.MybatisExportConfig;
 import com.alan344.bean.ServiceConfig;
 import com.alan344.bean.ServiceConfigThreadLocal;
 import com.alan344.utils.TableUtils;
-import com.alan344happyframework.constants.SeparatorConstants;
-import com.alan344happyframework.util.DateUtils;
-import com.github.javaparser.JavaParser;
-import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
@@ -17,7 +13,10 @@ import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.codegen.RootClassInfo;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.internal.util.StringUtility;
+import com.alan344.utils.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -48,17 +47,16 @@ public class DefaultDynamicGeneratorPlugin extends PluginAdapter {
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
-        JavaParser javaParser = new JavaParser();
 
         final ServiceConfig serviceConfig = ServiceConfigThreadLocal.getServiceConfig();
         final String servicePackage = serviceConfig.getServicePackage();
-        if (StringUtils.isBlank(servicePackage)) {
+        if (!StringUtils.isNotEmpty(servicePackage)) {
             return Collections.emptyList();
         }
 
         // 生成类名
         final String baseRecordType = introspectedTable.getBaseRecordType();
-        String servicePackageFull = serviceConfig.getServicePackage() + SeparatorConstants.DOT + baseRecordType.substring(baseRecordType.lastIndexOf(SeparatorConstants.DOT) + 1) + "Service";
+        String servicePackageFull = serviceConfig.getServicePackage() + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + "Service";
         FullyQualifiedJavaType type = new FullyQualifiedJavaType(servicePackageFull);
         TopLevelClass topLevelClass = new TopLevelClass(type);
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
@@ -81,13 +79,13 @@ public class DefaultDynamicGeneratorPlugin extends PluginAdapter {
         topLevelClass.addImportedType(requestBean);
         String originalBeanName = TableUtils.getOriginalBeanName(introspectedTable);
         MybatisExportConfig mybatisExportConfig = MybatisConfigThreadLocal.getMybatisExportConfig();
-        topLevelClass.addImportedType(mybatisExportConfig.getMapperPackage() + SeparatorConstants.DOT + originalBeanName + "Mapper");
+        topLevelClass.addImportedType(mybatisExportConfig.getMapperPackage() + "." + originalBeanName + "Mapper");
         topLevelClass.addImportedType("org.springframework.util.Assert");
         topLevelClass.addImportedType("cn.com.asoco.base.support.UserResourceHolderSynchronization");
         topLevelClass.addImportedType("org.springframework.transaction.annotation.Transactional");
         topLevelClass.addImportedType("java.time.LocalDateTime");
         topLevelClass.addImportedType("java.util.List");
-        topLevelClass.addImportedType(mybatisExportConfig.getBeanPackage() + SeparatorConstants.DOT + originalBeanName);
+        topLevelClass.addImportedType(mybatisExportConfig.getBeanPackage() + "." + originalBeanName);
     }
 
     /**
@@ -110,7 +108,7 @@ public class DefaultDynamicGeneratorPlugin extends PluginAdapter {
         topLevelClass.addJavaDocLine("/**");
         topLevelClass.addJavaDocLine(" * @author " + MybatisConfigThreadLocal.getMybatisExportConfig().getAuthor());
         //添加时间
-        topLevelClass.addJavaDocLine(" * @date " + DateUtils.getCurrentDate());
+        topLevelClass.addJavaDocLine(" * @date " + LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
         topLevelClass.addJavaDocLine(" */");
     }
 

@@ -2,7 +2,6 @@ package com.alan344.utils;
 
 import com.alan344.bean.Column;
 import com.alan344.bean.Table;
-import com.alan344happyframework.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
@@ -35,7 +34,7 @@ public class DataSourceUtils {
             return getTables(metaData, connection.getCatalog(), connection.getSchema());
         } catch (Exception e) {
             log.error("error", e);
-            throw new BizException("获取数据库表异常");
+            throw new RuntimeException("获取数据库表异常");
         }
     }
 
@@ -63,7 +62,7 @@ public class DataSourceUtils {
             return getColumns(metaData, connection.getCatalog(), connection.getSchema(), tableName);
         } catch (Exception e) {
             log.error("error", e);
-            throw new BizException("获取数据库字段异常");
+            throw new RuntimeException("获取数据库字段异常");
         }
     }
 
@@ -98,7 +97,7 @@ public class DataSourceUtils {
             return list;
         } catch (Exception e) {
             log.error("error", e);
-            throw new BizException("获取数据库字段异常");
+            throw new RuntimeException("获取数据库字段异常");
         }
     }
 }

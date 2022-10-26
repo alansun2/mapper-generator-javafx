@@ -3,7 +3,6 @@ package com.alan344.plugin;
 import com.alan344.bean.ServiceConfig;
 import com.alan344.bean.ServiceConfigThreadLocal;
 import com.alan344.utils.TableUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -11,6 +10,7 @@ import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.codegen.RootClassInfo;
 import org.mybatis.generator.config.PropertyRegistry;
+import com.alan344.utils.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +40,7 @@ public class DynamicRequestGeneratorPlugin extends PluginAdapter {
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
         final ServiceConfig serviceConfig = ServiceConfigThreadLocal.getServiceConfig();
         // 如果包路径不存在则跳过 request 的生成
-        if (StringUtils.isBlank(serviceConfig.getRequestPackage())) {
+        if (!StringUtils.isNotEmpty(serviceConfig.getRequestPackage())) {
             return Collections.emptyList();
         }
 
@@ -88,7 +88,7 @@ public class DynamicRequestGeneratorPlugin extends PluginAdapter {
         if (!isGenerateValidationAnnotation) {
             return;
         }
-        String remarks = StringUtils.defaultIfBlank(introspectedColumn.getRemarks(), field.getName());
+        String remarks = StringUtils.isNotEmpty(introspectedColumn.getRemarks()) ? introspectedColumn.getRemarks() : field.getName();
         // 使用逗号来做分割符防止注释过长
         final int i = remarks.indexOf("。");
         if (i != -1) {

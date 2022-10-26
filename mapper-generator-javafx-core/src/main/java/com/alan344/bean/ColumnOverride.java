@@ -1,8 +1,8 @@
 package com.alan344.bean;
 
-import com.alan344happyframework.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
+import com.alan344.utils.StringUtils;
 
 /**
  * @author AlanSun

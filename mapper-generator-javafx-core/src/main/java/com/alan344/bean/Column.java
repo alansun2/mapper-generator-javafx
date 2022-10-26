@@ -1,7 +1,7 @@
 package com.alan344.bean;
 
-import com.alan344.config.BooleanPropertySerializer;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alan344.config.BooleanPropertyWriter;
+import com.alibaba.fastjson2.annotation.JSONField;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class Column {
     private boolean nullable;
     private boolean isAutoIncr;
 
-    @JSONField(serializeUsing = BooleanPropertySerializer.class)
+    @JSONField(serializeUsing = BooleanPropertyWriter.class)
     private BooleanProperty ignore = new SimpleBooleanProperty(false);
 
     private ColumnOverride columnOverride = new ColumnOverride();

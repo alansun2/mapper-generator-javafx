@@ -3,7 +3,7 @@ package com.alan344.bean;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
+import com.alan344.utils.StringUtils;
 
 import java.util.List;
 import java.util.Objects;

@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -53,7 +54,7 @@ public class DataSourceTreeItemInit {
      */
     public void addExpandListenerForDataSource(DataSource dataSource, TreeItem<DataItem> treeItemDataSourceRoot) {
         TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemDataSourceRoot);
-        dataSourceTreeItem.setGraphic(new ImageView("/image/database.png"));
+        dataSourceTreeItem.setGraphic(new FontIcon("unil-database:16:#388ce0"));
         // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
         dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {

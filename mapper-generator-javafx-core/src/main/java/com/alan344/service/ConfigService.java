@@ -2,9 +2,9 @@ package com.alan344.service;
 
 import com.alan344.bean.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
-import com.alan344happyframework.util.BeanUtils;
-import com.alibaba.fastjson.JSONArray;
-import com.google.common.collect.Lists;
+import com.alan344.utils.BeanUtils;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,8 @@ public class ConfigService {
             mybatisExportConfigs = new LinkedList<>();
         }
 
-        LinkedList<MybatisExportConfig> existConfigLinkedList = mybatisExportConfigs.stream().filter(generatorConfig1 -> mybatisExportConfig.getConfigName().equals(generatorConfig1.getConfigName())).collect(Lists::newLinkedList, LinkedList::add, List::addAll);
+        LinkedList<MybatisExportConfig> existConfigLinkedList = mybatisExportConfigs.stream().filter(generatorConfig1 -> mybatisExportConfig.getConfigName().equals(generatorConfig1.getConfigName()))
+                .collect(LinkedList::new, LinkedList::add, List::addAll);
 
         //配置已存在，如果内容修改，则修改
         if (!existConfigLinkedList.isEmpty()) {
@@ -75,7 +76,7 @@ public class ConfigService {
      * @param mybatisExportConfigs 配置信息
      */
     private void downLoadConfigToFile(List<MybatisExportConfig> mybatisExportConfigs) {
-        String configsStr = JSONArray.toJSONString(mybatisExportConfigs, true);
+        String configsStr = JSONArray.toJSONString(mybatisExportConfigs, JSONWriter.Feature.PrettyFormat);
         try {
             FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
@@ -90,15 +91,15 @@ public class ConfigService {
     public LinkedList<MybatisExportConfig> loadConfigFromFile() {
         File file = BaseConstants.getConfigFile();
         if (!file.exists()) {
-            return Lists.newLinkedList();
+            return new LinkedList<>();
         }
 
         try {
-            List<MybatisExportConfig> mybatisExportConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), MybatisExportConfig.class);
-            return mybatisExportConfigs.stream().collect(Lists::newLinkedList, LinkedList::add, List::addAll);
+            List<MybatisExportConfig> mybatisExportConfigs = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString())).toList(MybatisExportConfig.class);
+            return mybatisExportConfigs.stream().collect(LinkedList::new, LinkedList::add, List::addAll);
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
-            return Lists.newLinkedList();
+            return new LinkedList<>();
         }
     }
 }

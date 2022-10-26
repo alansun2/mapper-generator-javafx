@@ -4,9 +4,9 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.DataSourceUtils;
-import com.alan344happyframework.exception.BizException;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.scheduling.annotation.Async;
@@ -83,7 +83,7 @@ public class TableService {
             tables = DataSourceUtils.getTables(connection);
         } catch (SQLException e) {
             log.error("获取连接异常", e);
-            throw new BizException("获取数据库连接异常");
+            throw new RuntimeException("获取数据库连接异常");
         }
         dataSource.setTables(tables);
         return tables;
@@ -155,7 +155,7 @@ public class TableService {
     void downLoadToFileBatch(DataSource dataSource, List<Table> tables) {
         try {
             for (Table table : tables) {
-                String tablesStr = JSON.toJSONString(table, true);
+                String tablesStr = JSON.toJSONString(table, JSONWriter.Feature.PrettyFormat);
                 FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr, StandardCharsets.UTF_8.toString());
             }
         } catch (IOException e) {
@@ -169,7 +169,7 @@ public class TableService {
     @Async
     void downLoadToFileSingle(DataSource dataSource, Table table) {
         try {
-            String tablesStr = JSON.toJSONString(table, true);
+            String tablesStr = JSON.toJSONString(table, JSONWriter.Feature.PrettyFormat);
             FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
             log.error("写入表文件错误", e);

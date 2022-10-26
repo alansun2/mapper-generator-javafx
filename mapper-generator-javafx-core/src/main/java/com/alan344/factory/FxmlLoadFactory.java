@@ -1,6 +1,5 @@
 package com.alan344.factory;
 
-import com.alan344happyframework.exception.BizException;
 import javafx.fxml.FXMLLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
@@ -23,7 +22,7 @@ public class FxmlLoadFactory {
         try {
             node = fxmlLoader.load();
         } catch (IOException e) {
-            throw new BizException(e);
+            throw new RuntimeException(e);
         }
         return node;
     }
