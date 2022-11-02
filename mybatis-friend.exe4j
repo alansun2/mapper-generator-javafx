@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <exe4j version="6.0.1" transformSequenceNumber="2">
-  <directoryPresets config="D:/software/jdk" />
-  <application name="mybatis-friend" distributionSourceDir="D:/project/git/mapper-generator-javafx/mapper-generator-javafx-core/target">
+  <directoryPresets config="D:/project/git/mapper-generator-javafx/mapper-generator-javafx-core/target" />
+  <application name="mybatis-friend" distributionSourceDir="D:/software/mybatis-friend">
     <languages>
       <principalLanguage id="en" customLocalizationFile="" />
     </languages>
@@ -16,13 +16,12 @@
       <versionLine x="20" y="40" text="version %VERSION%" fontSize="8" fontColor="0,0,0" bold="false" />
     </text>
   </splashScreen>
-  <java mainClass="org.springframework.boot.loader.JarLauncher" mainMode="1" vmParameters="-Dfile.encoding=UTF-8" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true" minVersion="17" maxVersion="17" allowBetaVM="false" jdkOnly="false">
+  <java mainClass="com.alan344.MapperGenApplication" mainMode="1" vmParameters="-Dfile.encoding=UTF-8" arguments="" allowVMPassthroughParameters="true" preferredVM="client" bundleRuntime="true" minVersion="11" maxVersion="11" allowBetaVM="false" jdkOnly="false">
     <searchSequence>
-      <registry />
-      <directory location="../../../../../software/jdk/openjdk-17.0.2" />
+      <directory location="./jre" />
     </searchSequence>
     <classPath>
-      <archive location="D:/project/git/mapper-generator-javafx/mapper-generator-javafx-core/target/mybatis-friend.jar" failOnError="false" />
+      <archive location="D:/project/git/mapper-generator-javafx/mapper-generator-javafx-core/target/mybatis-friend-jar-with-dependencies.jar" failOnError="false" />
     </classPath>
     <modulePath />
     <nativeLibraryDirectories />

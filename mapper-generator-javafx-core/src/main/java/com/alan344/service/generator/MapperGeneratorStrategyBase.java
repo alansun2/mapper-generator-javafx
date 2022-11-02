@@ -4,6 +4,7 @@ import com.alan344.bean.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.utils.MyShellCallback;
+import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.github.uinio.mybatis.LombokPlugin;
 import lombok.Getter;
@@ -14,7 +15,6 @@ import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.plugins.SerializablePlugin;
-import com.alan344.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -231,6 +231,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * @param mybatisExportConfig 配置信息
      */
     protected void addTableConfig(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
+        final DataSource selectedDateSource = BaseConstants.selectedDateSource;
         Collection<Table> tables = BaseConstants.selectedTableNameTableMap.values();
         for (Table table : tables) {
 

@@ -1,9 +1,10 @@
 package com.alan344.bean;
 
+import com.alan344.constants.DriverEnum;
+import com.alan344.utils.StringUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.Setter;
-import com.alan344.utils.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -50,6 +51,33 @@ public class DataSource implements DataItem {
                 && this.user.equals(dataSource.getUser()) && this.password.equals(dataSource.getPassword())
                 && this.driveName.equals(dataSource.getDriveName());
 
+    }
+
+    public String getScheme() {
+        final DriverEnum driver = this.getDriver();
+        if (driver.equals(DriverEnum.MYSQL_8_0_16)) {
+            // jdbc:mysql://mysql_dev.tuoyang.vip:3306/school_safety
+            final int startIndex = url.indexOf("/", 13);
+            if (url.contains("?")) {
+                final int endIndex = url.indexOf("?", 13);
+                return url.substring(startIndex + 1, endIndex);
+            } else {
+                return url.substring(startIndex + 1);
+            }
+        } else if (driver.equals(DriverEnum.ORACLE_11)) {
+            return user;
+        }
+        return null;
+    }
+
+    public DriverEnum getDriver() {
+        final String lo = url.toLowerCase();
+        if (lo.contains("mysql")) {
+            return DriverEnum.MYSQL_8_0_16;
+        } else if (lo.contains("oracle")) {
+            return DriverEnum.ORACLE_11;
+        }
+        return null;
     }
 
     @Override

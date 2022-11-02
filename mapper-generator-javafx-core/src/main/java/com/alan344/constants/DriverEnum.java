@@ -4,7 +4,7 @@ package com.alan344.constants;
  * @author AlanSun
  * @date 2020/9/30 10:43
  */
-public enum DriveEnum {
+public enum DriverEnum {
 
     /**
      * mysql 8.0.16 版本
@@ -28,7 +28,7 @@ public enum DriveEnum {
         return defaultPort;
     }
 
-    DriveEnum(String drive, String defaultPort) {
+    DriverEnum(String drive, String defaultPort) {
         this.drive = drive;
         this.defaultPort = defaultPort;
     }
