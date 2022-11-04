@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
-import com.alan344.bean.MybatisExportConfig;
+import com.alan344.bean.config.MybatisExportConfig;
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.component.MybatisExportController;
 import com.alan344.factory.FxmlLoadFactory;
@@ -14,18 +15,15 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -35,15 +33,13 @@ import java.util.stream.Collectors;
 @Controller
 public class MybatisSetupController implements Initializable {
     @FXML
-    private BorderPane mybatisSetupBorderPane;
-    @FXML
-    private ListView<String> setUpListView;
-    @FXML
     private Button addBtn;
     @FXML
     private BorderPane setUpListBoardPane;
     @FXML
     private SplitPane splitPane;
+    @FXML
+    private ListView<String> selectConfigLV;
     @Resource
     private ConfigService configService;
     @Resource
@@ -52,69 +48,42 @@ public class MybatisSetupController implements Initializable {
     private MybatisExportController mybatisExportController;
     @Resource
     private ExportService exportService;
-    @Resource
-    private NodeHandler nodeHandler;
-
-    /**
-     * 配置信息 map
-     */
-    private Map<String, MybatisExportConfig> configNameConfigMap = new HashMap<>();
+    private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addBtn.prefWidthProperty().bind(setUpListBoardPane.widthProperty());
-        VBox exportVBox = FxmlLoadFactory.create("/fxml/component/mybatis-export-setup.fxml", beanFactory);
-        exportVBox.setId("main-set-up");
+        BorderPane borderPane = FxmlLoadFactory.create("/fxml/component/mybatis-export-setup.fxml", beanFactory);
+        borderPane.setId("main-set-up");
 
-        splitPane.getItems().add(exportVBox);
+        splitPane.getItems().add(borderPane);
 
         // 加载配置文件
         List<MybatisExportConfig> mybatisExportConfigs = configService.loadConfigFromFile();
-
         if (!mybatisExportConfigs.isEmpty()) {
             mybatisExportConfigs.forEach(this::addConfigButton);
             // 显示第一个config
             mybatisExportController.showConfig(mybatisExportConfigs.get(0));
-
-            this.configNameConfigMap = mybatisExportConfigs.stream().collect(Collectors.toMap(MybatisExportConfig::getConfigName, o -> o));
         }
 
+        final Map<String, MybatisExportConfig> configNameConfigMap = configService.getConfigNameConfigMap();
+        setUpListBoardPane.setCenter(selectConfigLV);
         // 设置 listview 单选
-        setUpListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        // 设置点击时间
-        setUpListView.setOnMouseClicked(event -> {
+        selectConfigLV.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        // 设置点击事件
+        selectConfigLV.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                mybatisExportController.showConfig(this.configNameConfigMap.get(((ListView<String>) event.getSource()).getSelectionModel().getSelectedItem()));
+                mybatisExportController.showConfig(configNameConfigMap.get(((ListView<String>) event.getSource()).getSelectionModel().getSelectedItem()));
             }
         });
 
         // 添加右键功能
         MenuItem removeMenuItem = new MenuItem("删除");
         removeMenuItem.setOnAction(event -> {
-            final String selectedItem = setUpListView.getSelectionModel().getSelectedItem();
-            this.deleteConfig(selectedItem, this.configNameConfigMap.get(selectedItem));
+            final String selectedItem = selectConfigLV.getSelectionModel().getSelectedItem();
+            this.deleteConfig(selectedItem, configNameConfigMap.get(selectedItem));
         });
-        setUpListView.setContextMenu(new ContextMenu(removeMenuItem));
-
-        // 入栈
-        nodeHandler.addNode(mybatisSetupBorderPane);
-    }
-
-    /**
-     * 添加配置
-     *
-     * @param mybatisExportConfig 配置信息
-     */
-    public void addConfig(MybatisExportConfig mybatisExportConfig) {
-        //写入文件
-        int addType = configService.addConfig(mybatisExportConfig);
-        //同时更新内存的配置信息
-        if (addType == 3) {
-            this.addConfigButton(mybatisExportConfig);
-            this.configNameConfigMap.put(mybatisExportConfig.getConfigName(), mybatisExportConfig);
-        } else if (addType == 1) {
-            this.configNameConfigMap.put(mybatisExportConfig.getConfigName(), mybatisExportConfig);
-        }
+        selectConfigLV.setContextMenu(new ContextMenu(removeMenuItem));
     }
 
     /**
@@ -123,13 +92,13 @@ public class MybatisSetupController implements Initializable {
      * @param mybatisExportConfig 配置信息
      */
     private void deleteConfig(String configName, MybatisExportConfig mybatisExportConfig) {
-        final ObservableList<String> items = setUpListView.getItems();
+        final ObservableList<String> items = selectConfigLV.getItems();
         int size = items.size();
         items.remove(configName);
         if (size == 1) {
             mybatisExportController.clearPane();
         } else {
-            mybatisExportController.showConfig(configNameConfigMap.get(items.get(0)));
+            mybatisExportController.showConfig(configService.getConfigNameConfigMap().get(items.get(0)));
         }
 
         configService.deleteConfig(mybatisExportConfig);
@@ -141,7 +110,7 @@ public class MybatisSetupController implements Initializable {
      * @param mybatisExportConfig 配置信息
      */
     private void addConfigButton(MybatisExportConfig mybatisExportConfig) {
-        setUpListView.getItems().add(mybatisExportConfig.getConfigName());
+        selectConfigLV.getItems().add(mybatisExportConfig.getConfigName());
     }
 
     /**
@@ -163,7 +132,9 @@ public class MybatisSetupController implements Initializable {
 
         Node next = nodeHandler.getNext();
         if (next == null) {
-            next = FxmlLoadFactory.create("/fxml/service-list-view.fxml", beanFactory);
+            next = FxmlLoadFactory.create("/fxml/template-setup.fxml", beanFactory);
+            // 入栈
+            nodeHandler.addNode(next);
         }
 
         NodeConstants.borderPaneWrap.setCenter(next);
@@ -172,6 +143,6 @@ public class MybatisSetupController implements Initializable {
     @FXML
     public void export() {
         mybatisExportController.validExport();
-        exportService.export();
+        exportService.export(BaseConstants.currentConfig);
     }
 }

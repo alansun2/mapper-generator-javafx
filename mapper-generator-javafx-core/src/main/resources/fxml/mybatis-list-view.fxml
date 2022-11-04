@@ -54,7 +54,7 @@
         </StackPane>
     </center>
     <bottom>
-        <HBox styleClass="bottomHBox" prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10">
+        <HBox style="-fx-padding: 0 20;" prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10">
             <Button mnemonicParsing="false" prefWidth="70" text="next" onAction="#next"/>
         </HBox>
     </bottom>

@@ -1,4 +1,4 @@
-package com.alan344.service.node;
+package com.alan344.componet;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;

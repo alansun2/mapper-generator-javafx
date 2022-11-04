@@ -48,7 +48,7 @@ public class TableAdvanceSetupController implements Initializable {
      *
      * @param primaryStage 主窗口
      */
-    public void openTableAdvancedSetUP(Stage primaryStage, VBox selectedItemVBox) {
+    public void openTableAdvancedSetup(Stage primaryStage, VBox selectedItemVBox) {
         if (tableAdvanceSetUpStage == null) {
             tableAdvanceSetUpStage = new Stage();
             tableAdvanceSetUpStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/table-advanced-set-up.fxml", beanFactory)));

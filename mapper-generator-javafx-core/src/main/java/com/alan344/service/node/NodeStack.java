@@ -19,6 +19,8 @@ public class NodeStack {
 
     private ButtonBar buttonBar;
 
+    private boolean isFirst;
+
     public NodeStack getPre() {
         return pre;
     }
@@ -49,5 +51,13 @@ public class NodeStack {
 
     public void setButtonBar(ButtonBar buttonBar) {
         this.buttonBar = buttonBar;
+    }
+
+    public boolean isFirst() {
+        return isFirst;
+    }
+
+    public void setFirst(boolean first) {
+        isFirst = first;
     }
 }

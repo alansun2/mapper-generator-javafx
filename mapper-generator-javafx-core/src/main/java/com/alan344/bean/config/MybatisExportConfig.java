@@ -1,9 +1,12 @@
-package com.alan344.bean;
+package com.alan344.bean.config;
 
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -11,7 +14,7 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class MybatisExportConfig {
+public class MybatisExportConfig implements Cloneable {
     /**
      * 配置的名称
      */
@@ -73,6 +76,11 @@ public class MybatisExportConfig {
      */
     private String modelRootClass;
 
+
+    //---------------------extra file----------------
+
+    private List<ExtraFileConfig> extraFileConfigs = new ArrayList<>(10);
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -92,6 +100,19 @@ public class MybatisExportConfig {
         return Objects.hash(configName);
     }
 
+    @Override
+    public MybatisExportConfig clone() {
+        try {
+            MybatisExportConfig clone = (MybatisExportConfig) super.clone();
+            clone.setMybatisOfficialExportConfig(mybatisOfficialExportConfig.clone());
+            clone.setExtraFileConfigs(extraFileConfigs.stream().map(ExtraFileConfig::clone).collect(Collectors.toList()));
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
     public interface ExportConfig {
         boolean isUserJava8();
 
@@ -109,7 +130,7 @@ public class MybatisExportConfig {
      */
     @Getter
     @Setter
-    public static class MybatisOfficialExportConfig implements ExportConfig {
+    public static class MybatisOfficialExportConfig implements ExportConfig, Cloneable {
         /**
          * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
          */
@@ -136,5 +157,16 @@ public class MybatisExportConfig {
          * 使用注释
          */
         private boolean useComment = true;
+
+        @Override
+        public MybatisOfficialExportConfig clone() {
+            try {
+                MybatisOfficialExportConfig clone = (MybatisOfficialExportConfig) super.clone();
+                // TODO: copy mutable state here, so the clone can't change the internals of the original
+                return clone;
+            } catch (CloneNotSupportedException e) {
+                throw new AssertionError();
+            }
+        }
     }
 }

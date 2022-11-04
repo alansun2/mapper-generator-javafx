@@ -1,5 +1,10 @@
 .button {
-    -fx-background-color: #F4F4F4;
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 0em;
+}
+
+.button .cancel {
+    -fx-background-color: #e0e0e0;
     -fx-background-radius: 0em;
 }
 
@@ -8,23 +13,10 @@
 }
 
 .button:pressed {
-    -fx-background-color: #BFBFBF;
-}
-
-.button:focused {
-    -fx-background-color: #BFBFBF;
-}
-
-.bottomHBox {
-    -fx-padding: 0 20;
-}
-
-.mainVBox {
-    -fx-background-color: #E8E8E8;
-    -fx-padding: 30;
+    -fx-background-color: #9d9c9c;
+    -fx-effect: dropshadow(three-pass-box, #9d9c9c, 10.0, 0, 2, 2);
 }
 
 .text-field {
     -fx-background-radius: 0em;
 }
-

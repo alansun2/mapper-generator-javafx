@@ -4,7 +4,6 @@ import com.alan344.bean.DataSource;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.service.DataSourceService;
-import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.TextUtils;
 import javafx.fxml.FXML;
@@ -57,9 +56,6 @@ public class DataSourceController implements Initializable {
 
     @Resource
     private DataSourceService dataSourceService;
-
-    @Resource
-    private TableService tableService;
 
     @Resource
     private DataSourceTreeItemInit dataSourceTreeItemInit;

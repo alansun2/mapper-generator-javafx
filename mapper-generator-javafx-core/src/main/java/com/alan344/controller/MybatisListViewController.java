@@ -1,6 +1,5 @@
 package com.alan344.controller;
 
-import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.component.TableAdvanceSetupController;
 import com.alan344.factory.FxmlLoadFactory;
@@ -9,7 +8,6 @@ import com.alan344.init.MybatisListViewInit;
 import com.alan344.service.ColumnService;
 import com.alan344.service.node.NodeHandler;
 import com.alan344.utils.Assert;
-import com.alan344.utils.Toast;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,42 +31,30 @@ import java.util.ResourceBundle;
  */
 @Controller
 public class MybatisListViewController implements Initializable {
-
     @FXML
     private BorderPane borderPane;
-
     @FXML
     private StackPane mainStackPane;
-
     @FXML
     private ListView<VBox> listView;
-
     /**
      * 右边 border 固定再上面的 两个 HBox。存放 checkBox
      */
     @FXML
     private HBox mapperCheckBoxHBox1;
-
     @FXML
     private HBox mapperCheckBoxHBox2;
-
     @Resource
     private TableAdvanceSetupController tableAdvanceSetUpController;
-
     @Resource
     private ColumnService columnService;
-
     @Resource
     private MybatisListViewInit mybatisListViewInit;
-
-    @Resource
-    private NodeHandler nodeHandler;
-
     @Resource
     private BeanFactory beanFactory;
-
     @Resource
     private MapperCheckBoxInit mapperCheckBoxInit;
+    private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -116,20 +102,17 @@ public class MybatisListViewController implements Initializable {
         Assert.isTrue(selectedItemVBoxs.size() == 1, "请选择一个表进行操作", NodeConstants.primaryStage);
 
         VBox selectedItemVBox = selectedItemVBoxs.get(0);
-        tableAdvanceSetUpController.openTableAdvancedSetUP(NodeConstants.primaryStage, selectedItemVBox);
+        tableAdvanceSetUpController.openTableAdvancedSetup(NodeConstants.primaryStage, selectedItemVBox);
     }
 
 
     @FXML
     public void next() {
-        if (BaseConstants.selectedTableNameTableMap == null || BaseConstants.selectedTableNameTableMap.isEmpty()) {
-            Toast.makeText(NodeConstants.primaryStage, "没有选择的表", 3000, 500, 500, 15, 5);
-            return;
-        }
-
         Node next = nodeHandler.getNext();
         if (next == null) {
             next = FxmlLoadFactory.create("/fxml/mybatis-setup.fxml", beanFactory);
+            // 入栈
+            nodeHandler.addNode(next);
         }
 
         NodeConstants.borderPaneWrap.setCenter(next);

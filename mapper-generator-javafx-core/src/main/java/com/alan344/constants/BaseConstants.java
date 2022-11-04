@@ -3,7 +3,7 @@ package com.alan344.constants;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
-import com.alan344.bean.MybatisExportConfig;
+import com.alan344.bean.config.MybatisExportConfig;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.VBox;
@@ -58,6 +58,11 @@ public class BaseConstants {
      */
     public static Map<String, Boolean> tableNameSetUpTableRecordMap = new HashMap<>();
 
+    /**
+     * 当前的配置文件
+     */
+    public static MybatisExportConfig currentConfig;
+
     public static File getColumnsFile(DataSource dataSource, String tableName) {
         return new File(MG_DATA_HOME + dataSource.toString() + "_column/" + tableName);
     }
@@ -88,6 +93,4 @@ public class BaseConstants {
     }
 
     public static List<VBox> selectedCheckBoxVBox = new ArrayList<>();
-
-    public static MybatisExportConfig curMybatisExportConfig;
 }

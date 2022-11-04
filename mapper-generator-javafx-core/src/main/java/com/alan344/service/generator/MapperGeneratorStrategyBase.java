@@ -1,8 +1,13 @@
 package com.alan344.service.generator;
 
-import com.alan344.bean.*;
+import com.alan344.bean.Column;
+import com.alan344.bean.ColumnOverride;
+import com.alan344.bean.DataSource;
+import com.alan344.bean.Table;
+import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -110,13 +115,14 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 序列化插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
+        // 额外 model 插件
+        generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
 
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
         final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig = mybatisExportConfig.getMybatisOfficialExportConfig();
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "getter", "true");
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "setter", "true");
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokBuilder(), lombok, "builder", "true");
-
     }
 
     /**
@@ -127,7 +133,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addComment(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
-//        commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
         generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseLombokGetSet() + "");
@@ -231,7 +236,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * @param mybatisExportConfig 配置信息
      */
     protected void addTableConfig(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
-        final DataSource selectedDateSource = BaseConstants.selectedDateSource;
         Collection<Table> tables = BaseConstants.selectedTableNameTableMap.values();
         for (Table table : tables) {
 

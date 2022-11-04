@@ -1,6 +1,6 @@
 package com.alan344.service.generator;
 
-import com.alan344.bean.MybatisExportConfig;
+import com.alan344.bean.config.MybatisExportConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -1,11 +1,9 @@
 package com.alan344.utils;
 
-import com.alan344.bean.ServiceConfig;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.PropertyRegistry;
-import com.alan344.utils.StringUtils;
 
 import java.util.Properties;
 
@@ -44,11 +42,11 @@ public class TableUtils {
      * 获取 request bean
      *
      * @param introspectedTable 表
-     * @param serviceConfig     service配置
+     * @param packageName       包名
      */
-    public static FullyQualifiedJavaType getRequestBeanType(IntrospectedTable introspectedTable, ServiceConfig serviceConfig) {
+    public static FullyQualifiedJavaType getType(IntrospectedTable introspectedTable, String packageName) {
         final String baseRecordType = introspectedTable.getBaseRecordType();
-        String requestPackage = serviceConfig.getRequestPackage() + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + "Request";
+        String requestPackage = packageName + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + "Request";
         return new FullyQualifiedJavaType(requestPackage);
     }
 

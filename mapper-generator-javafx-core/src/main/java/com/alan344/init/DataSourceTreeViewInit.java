@@ -74,7 +74,7 @@ public class DataSourceTreeViewInit {
                         updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
                         MenuItem exportMenuItem = new MenuItem("导出");
                         exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
-                        exportMenuItem.setOnAction(event1 -> export(treeViewDataSource));
+                        exportMenuItem.setOnAction(event1 -> this.export(treeViewDataSource));
                         MenuItem refreshMenuItem = new MenuItem("刷新");
                         refreshMenuItem.setGraphic(new ImageView("/image/refresh@16.png"));
                         refreshMenuItem.setOnAction(event1 -> refreshDataSource(treeViewDataSource));
@@ -84,7 +84,7 @@ public class DataSourceTreeViewInit {
 
                         contextMenu = new ContextMenu(connectMenuItem, updateMenuItem, exportMenuItem, refreshMenuItem, deleteMenuItem);
                     } else {
-                        // 只有一个到处按钮
+                        // 只有一个导出按钮
                         MenuItem exportMenuItem = new MenuItem("导出");
                         exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
                         exportMenuItem.setOnAction(event1 -> export(treeViewDataSource));
@@ -112,8 +112,13 @@ public class DataSourceTreeViewInit {
             } else if (event.getButton() == MouseButton.PRIMARY
                     && event.getClickCount() == 2
                     && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
-                // 双击数据源展开
-                this.initDataSourceItem(treeViewDataSource);
+                final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+                if (selectedDataSourceItem.getValue() instanceof DataSource) {
+                    // 双击数据源展开
+                    this.initDataSourceItem(treeViewDataSource);
+                } else {
+                    this.export(treeViewDataSource);
+                }
             }
         });
     }

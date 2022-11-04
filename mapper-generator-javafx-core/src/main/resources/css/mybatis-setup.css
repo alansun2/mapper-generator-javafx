@@ -44,11 +44,21 @@
     -fx-border-width: 0;
 }
 
+/*list view*/
 .list-view {
     -fx-border-width: 0;
-    -fx-padding: 0 0 0 0;
 }
 
 .list-view .list-cell {
     -fx-alignment: center;
+}
+
+.list-cell:filled:selected:focused, .list-cell:filled:selected {
+    -fx-background-color: linear-gradient(#333 0%, #777 25%, #aaa 75%, #eee 100%);
+    -fx-text-fill: white;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #9696da;
+    -fx-text-fill: white;
 }

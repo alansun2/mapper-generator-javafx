@@ -1,11 +1,10 @@
 package com.alan344.controller.component;
 
-import com.alan344.bean.MybatisConfigThreadLocal;
-import com.alan344.bean.MybatisExportConfig;
+import com.alan344.bean.config.MybatisExportConfig;
+import com.alan344.componet.FileSelectText;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
-import com.alan344.service.node.FileSelectText;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.TextUtils;
 import javafx.collections.ObservableList;
@@ -13,8 +12,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
@@ -30,7 +30,10 @@ import java.util.ResourceBundle;
 @Controller
 public class MybatisExportController implements Initializable {
     @FXML
-    private VBox mainVBox;
+    private BorderPane exportSetupBP;
+    @Getter
+    @FXML
+    private ListView<HBox> exportSetupLV;
     @FXML
     private TextField authorText;
     @FXML
@@ -77,6 +80,8 @@ public class MybatisExportController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        exportSetupLV.prefWidthProperty().bind(exportSetupBP.prefWidthProperty());
+
         modelOnlyCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             mapperLocationText.setDisable(newValue);
             mapperPackageText.setDisable(newValue);
@@ -85,30 +90,20 @@ public class MybatisExportController implements Initializable {
         });
 
         // 绑定文本框和tab的宽度
-        final ObservableList<Node> hBoxs = mainVBox.getChildren();
+        final ObservableList<HBox> hBoxs = exportSetupLV.getItems();
         hBoxs.forEach(node -> {
-            final HBox hBox = (HBox) node;
-            final ObservableList<Node> children = hBox.getChildren();
+            final ObservableList<Node> children = node.getChildren();
             if (children.size() > 1) {
                 final Node node1 = children.get(1);
                 if (node1 instanceof TextField) {
-                    ((TextField) node1).prefWidthProperty().bind(mainVBox.widthProperty().subtract(190));
+                    ((TextField) node1).prefWidthProperty().bind(exportSetupLV.widthProperty().subtract(220));
                 } else if (node1 instanceof FileSelectText) {
-                    ((FileSelectText) node1).prefWidthProperty().bind(mainVBox.widthProperty().subtract(190));
-                }
-            } else if (children.size() == 1) {
-                final Node node1 = children.get(0);
-                if (node1 instanceof TabPane) {
-                    ((TabPane) node1).prefWidthProperty().bind(mainVBox.widthProperty());
+                    ((FileSelectText) node1).prefWidthProperty().bind(exportSetupLV.widthProperty().subtract(220));
                 }
             }
         });
 
-        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            if (BaseConstants.curMybatisExportConfig != null) {
-                BaseConstants.curMybatisExportConfig.setSelectTab(newValue.byteValue());
-            }
-        });
+        tabPane.prefWidthProperty().bind(exportSetupBP.widthProperty());
 
         mapperLocationText.onAction(actionEvent -> this.mapperDirectoryScan());
         beanLocationText.onAction(actionEvent -> this.beanDirectoryScan());
@@ -171,8 +166,10 @@ public class MybatisExportController implements Initializable {
      * @param mybatisExportConfig 配置信息
      */
     public void showConfig(MybatisExportConfig mybatisExportConfig) {
-        BaseConstants.curMybatisExportConfig = mybatisExportConfig;
-        MybatisConfigThreadLocal.setMybatisExportConfig(mybatisExportConfig);
+        if (null == mybatisExportConfig) {
+            return;
+        }
+        BaseConstants.currentConfig = mybatisExportConfig.clone();
 
         configNameText.setText(mybatisExportConfig.getConfigName());
         authorText.setText(mybatisExportConfig.getAuthor());
@@ -237,8 +234,6 @@ public class MybatisExportController implements Initializable {
                 break;
             default:
         }
-        BaseConstants.curMybatisExportConfig = mybatisExportConfig;
-        MybatisConfigThreadLocal.setMybatisExportConfig(mybatisExportConfig);
         return mybatisExportConfig;
     }
 
