@@ -132,7 +132,7 @@ public class MybatisSetupController implements Initializable {
 
         Node next = nodeHandler.getNext();
         if (next == null) {
-            next = FxmlLoadFactory.create("/fxml/template-setup.fxml", beanFactory);
+            next = FxmlLoadFactory.create("/fxml/extra-file-setup.fxml", beanFactory);
             // 入栈
             nodeHandler.addNode(next);
         }

@@ -7,6 +7,7 @@ import com.alan344.bean.Table;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin;
 import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
@@ -113,11 +114,14 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * 添加插件
      */
     protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
-        // 序列化插件
+        // 添加序列化接口插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
-        // 额外 model 插件
+        // 额外 model 生成插件
         generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
+        // 额外的模板文件生成插件
+        generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
 
+        // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
         final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig = mybatisExportConfig.getMybatisOfficialExportConfig();
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "getter", "true");

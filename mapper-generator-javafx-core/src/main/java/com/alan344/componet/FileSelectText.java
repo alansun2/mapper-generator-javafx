@@ -18,7 +18,12 @@ public class FileSelectText extends HBox {
     private final Button button;
 
     public FileSelectText() {
-        textField = new TextField();
+        this("浏览", null);
+    }
+
+
+    public FileSelectText(String btnName, String initText) {
+        textField = new TextField(initText);
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
                 this.setStyle("-fx-border-width: 1;" +
@@ -31,7 +36,7 @@ public class FileSelectText extends HBox {
         textField.setStyle("-fx-background-insets: 0");
         textField.prefHeightProperty().bind(this.heightProperty());
         textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
-        button = new Button("浏览");
+        button = new Button(btnName);
         button.setStyle("-fx-background-insets: 0");
         button.setPrefWidth(64);
         button.prefHeightProperty().bind(this.heightProperty());

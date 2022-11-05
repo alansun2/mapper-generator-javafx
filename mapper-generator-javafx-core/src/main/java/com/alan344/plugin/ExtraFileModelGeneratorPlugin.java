@@ -5,7 +5,6 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.utils.StringUtils;
-import com.alan344.utils.TableUtils;
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -44,7 +43,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                 .filter(extraFileConfig -> extraFileConfig.getTemplateType().equals(ExtraFileTypeEnum.MODEL))
                 .filter(ExtraFileConfig::isEnable).map(extraFileConfig -> {
                     // 生成类
-                    TopLevelClass topLevelClass = new TopLevelClass(TableUtils.getType(introspectedTable, extraFileConfig.getPackageName()));
+                    TopLevelClass topLevelClass = new TopLevelClass(TableUtils.getType(introspectedTable, extraFileConfig.getPackageName(), extraFileConfig.getModelSuffix()));
                     topLevelClass.setVisibility(JavaVisibility.PUBLIC);
 
                     CommentGenerator commentGenerator = context.getCommentGenerator();

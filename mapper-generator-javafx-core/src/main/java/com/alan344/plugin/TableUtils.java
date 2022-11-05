@@ -1,5 +1,6 @@
-package com.alan344.utils;
+package com.alan344.plugin;
 
+import com.alan344.utils.StringUtils;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.config.Context;
@@ -44,9 +45,9 @@ public class TableUtils {
      * @param introspectedTable 表
      * @param packageName       包名
      */
-    public static FullyQualifiedJavaType getType(IntrospectedTable introspectedTable, String packageName) {
+    public static FullyQualifiedJavaType getType(IntrospectedTable introspectedTable, String packageName, String suffix) {
         final String baseRecordType = introspectedTable.getBaseRecordType();
-        String requestPackage = packageName + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + "Request";
+        String requestPackage = packageName + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + StringUtils.getDefaultIfNull(suffix, "");
         return new FullyQualifiedJavaType(requestPackage);
     }
 
@@ -63,7 +64,7 @@ public class TableUtils {
     /**
      * 首字母大写
      */
-    public static String firstLetterCapital(String originalStr) {
+    public static String firstLetterUppercase(String originalStr) {
         char[] methodName = originalStr.toCharArray();
         char firstLetter = methodName[0];
         if (97 <= firstLetter && firstLetter <= 122) {
@@ -75,7 +76,7 @@ public class TableUtils {
     /**
      * 首字母小写
      */
-    public static String firstLetterDownCase(String originalStr) {
+    public static String firstLetterLowercase(String originalStr) {
         char[] methodName = originalStr.toCharArray();
         char firstLetter = methodName[0];
         if (97 <= firstLetter && firstLetter <= 122) {
