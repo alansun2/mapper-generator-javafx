@@ -32,14 +32,7 @@ public class ExportService {
      * 导出
      */
     public void export(MybatisExportConfig mybatisExportConfig) {
-        //写入文件
-        configService.addConfig(mybatisExportConfig);
-
-        // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 table 配置（如 insert）文件重写
-        tableService.downLoadTableIfOverrideModify();
-
-        // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
-        columnService.downLoadColumnOverride();
+        this.saveSetuInternalp(mybatisExportConfig);
 
         boolean exportSuccess = true;
         try {
@@ -52,5 +45,25 @@ public class ExportService {
 
         // 成功或失败后的弹窗
         exportSuccessAlertController.openTableAdvancedSetup(NodeConstants.primaryStage, exportSuccess, mybatisExportConfig);
+    }
+
+    /**
+     * 保存配置
+     *
+     * @param mybatisExportConfig {@link MybatisExportConfig}
+     */
+    public void saveSetup(MybatisExportConfig mybatisExportConfig) {
+        this.saveSetuInternalp(mybatisExportConfig);
+    }
+
+    private void saveSetuInternalp(MybatisExportConfig mybatisExportConfig) {
+        //写入文件
+        configService.addConfig(mybatisExportConfig);
+
+        // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 table 配置（如 insert）文件重写
+        tableService.downLoadTableIfOverrideModify();
+
+        // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 columns 文件重写
+        columnService.downLoadColumnOverride();
     }
 }

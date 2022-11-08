@@ -7,6 +7,7 @@ import com.alan344.bean.Table;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.plugin.DeleteByIMethodPlugin;
 import com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin;
 import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
 import com.alan344.utils.MyShellCallback;
@@ -120,6 +121,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
         // 额外的模板文件生成插件
         generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
+        // 自定义插件
+        generatorUtils.addPlugin(DeleteByIMethodPlugin.class.getName());
 
         // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
@@ -137,9 +140,10 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addComment(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
+        commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
+        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
-        generatorUtils.addProperty(true, commentGenerator, "supportSwagger", exportConfig.isUseLombokGetSet() + "");
     }
 
     /**
@@ -152,6 +156,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         jdbcConnection.setAttribute("connectionURL", selectedDateSource.getUrl());
         jdbcConnection.setAttribute("userId", selectedDateSource.getUser());
         jdbcConnection.setAttribute("password", selectedDateSource.getPassword());
+        generatorUtils.addProperty(true, jdbcConnection, "useInformationSchema", "true");
+        generatorUtils.addProperty(true, jdbcConnection, "remarks", "true");
     }
 
     /**

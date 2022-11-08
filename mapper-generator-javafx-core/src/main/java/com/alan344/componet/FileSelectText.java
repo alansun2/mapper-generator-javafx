@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 
 import java.util.function.Consumer;
@@ -69,5 +70,9 @@ public class FileSelectText extends HBox {
 
     public final void setPromptText(String value) {
         this.textField.setPromptText(value);
+    }
+
+    public final void setTextTooltip(String textTooltip) {
+        this.textField.setTooltip(new Tooltip(textTooltip));
     }
 }

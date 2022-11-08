@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<BorderPane fx:id="mybatisSetupBorderPane" stylesheets="@../css/mybatis-setup.css"
+<BorderPane stylesheets="@../css/mybatis-setup.css"
             xmlns="http://javafx.com/javafx/8.0.171"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.alan344.controller.MybatisSetupController">
     <center>
@@ -21,9 +21,9 @@
     </center>
     <bottom>
         <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 20;">
-            <Button mnemonicParsing="false" prefWidth="70" text="导出" onAction="#export"/>
-            <Button mnemonicParsing="false" prefWidth="70" text="pre" onAction="#pre"/>
-            <Button mnemonicParsing="false" prefWidth="70" text="next" onAction="#next"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="Export" onAction="#export"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="Pre" onAction="#pre"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="Next" onAction="#next"/>
         </HBox>
     </bottom>
 </BorderPane>

@@ -19,6 +19,12 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class MapperGenApplication extends Application {
 
     public static void main(String[] args) {
+        // 捕捉未处理的异常
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            System.out.println("捕捉到未处理的异常：" + e.getMessage());
+            // 抛出栈信息
+            e.printStackTrace();
+        });
         launch(args);
     }
 
@@ -39,7 +45,7 @@ public class MapperGenApplication extends Application {
         primaryStage.getIcons().add(new Image("/image/icon.png"));
         primaryStage.setWidth(1200);
         primaryStage.setHeight(700);
-        primaryStage.setTitle("mybatis friend");
+        primaryStage.setTitle("Mybatis Friend");
         primaryStage.show();
     }
 }

@@ -18,7 +18,7 @@ public class PropertyHBox extends HBox {
         nameLabel.setTooltip(new Tooltip(name));
         c.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth));
         this.setAlignment(Pos.CENTER);
-        this.setStyle("-fx-padding: 0 10");
+        this.setPrefHeight(23);
         this.getChildren().addAll(nameLabel, c);
     }
 }

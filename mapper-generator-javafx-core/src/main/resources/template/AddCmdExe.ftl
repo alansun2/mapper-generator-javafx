@@ -1,0 +1,30 @@
+package ${PACKAGE};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import vip.tuoyang.schoolsafe.basic.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DO;
+import vip.tuoyang.schoolsafe.basic.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}GatewayI;
+import vip.tuoyang.schoolsafe.basic.dto.${TYPE_NAME_UPPER_CAMEL}Cmd;
+
+/**
+ * @author AlanSun
+ * @date ${CUR_DATE_TIME}
+ */
+@Service
+public class ${TYPE_NAME_UPPER_CAMEL}AddCmdExe {
+    @Autowired
+    private ${TYPE_NAME_UPPER_CAMEL}GatewayI ${TYPE_NAME_LOWER_CAMEL}GatewayI;
+
+    public void execute(${TYPE_NAME_UPPER_CAMEL}Cmd ${TYPE_NAME_LOWER_CAMEL}Cmd) {
+        final ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = convert(${TYPE_NAME_LOWER_CAMEL}Cmd);
+        ${TYPE_NAME_LOWER_CAMEL}GatewayI.save${DOMAIN_UPPER_CAMEL}(${TYPE_NAME_LOWER_CAMEL}DO);
+    }
+
+    static ${TYPE_NAME_UPPER_CAMEL}DO convert(${TYPE_NAME_UPPER_CAMEL}Cmd ${TYPE_NAME_LOWER_CAMEL}Cmd) {
+        ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = new ${TYPE_NAME_UPPER_CAMEL}DO();
+        <#list FIELDS_UPPER_CAMELS as item>
+        ${TYPE_NAME_LOWER_CAMEL}DO.set${item}(${TYPE_NAME_LOWER_CAMEL}Cmd.get${item}());
+        </#list>
+        return ${TYPE_NAME_LOWER_CAMEL}DO;
+    }
+}

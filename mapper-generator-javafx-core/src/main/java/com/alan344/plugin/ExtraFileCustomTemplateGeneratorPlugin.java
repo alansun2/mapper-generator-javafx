@@ -4,19 +4,27 @@ import com.alan344.bean.config.ExtraFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
+import com.alan344.utils.tokenparse.GenericTokenParser;
+import com.google.common.base.CaseFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.mybatis.generator.api.GeneratedJavaFile;
+import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.*;
 
 /**
  * @author AlanSun
@@ -24,18 +32,48 @@ import java.util.*;
  **/
 public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
-    private enum TemplatePropertyEnum {
+    public enum TemplatePropertyEnum {
         /**
-         * 首字母大写的类名
+         * package
          */
-        TYPE_NAME,
+        PACKAGE,
         /**
-         * 首字母小写的类名
+         * 首字母大写驼峰格式的类名
          */
-        TYPE_NAME_FIRST_LETTER_LOWERCASE
+        TYPE_NAME_UPPER_CAMEL,
+        /**
+         * 首字母小写驼峰格式的类名
+         */
+        TYPE_NAME_LOWER_CAMEL,
+        /**
+         * 中划线分割小写格式的类名
+         */
+        TYPE_NAME_LOWER_HYPHEN,
+        /**
+         * 领域
+         */
+        DOMAIN,
+        /**
+         * 首字母大写驼峰格式的类名
+         */
+        DOMAIN_UPPER_CAMEL,
+        /**
+         * 领域描述
+         */
+        DOMAIN_DESC,
+        /**
+         * 当前时间
+         */
+        CUR_DATE_TIME,
+        /**
+         * 字段
+         */
+        FIELDS_UPPER_CAMELS
     }
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
+
+    private static final GenericTokenParser GENERIC_TOKEN_PARSER = new GenericTokenParser("${", "}");
 
     @Override
     public void setProperties(Properties properties) {
@@ -51,37 +89,69 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
         final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
         currentConfig.getExtraFileConfigs().stream()
-                .filter(extraFileConfig -> extraFileConfig.getTemplateType().equals(ExtraFileTypeEnum.CUSTOM_TEMPLATE))
+                .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.CUSTOM_TEMPLATE))
                 .filter(ExtraFileConfig::isEnable).forEach(extraFileConfig -> this.process(introspectedTable, extraFileConfig));
         return Collections.emptyList();
     }
 
     private void process(IntrospectedTable introspectedTable, ExtraFileConfig extraFileConfig) {
-        final Configuration cfg = this.getConfig(this.getDirFromPath(extraFileConfig.getCustomTemplateInputPath()));
-        final Template template = this.getTemplate(cfg, this.getTemplateName(extraFileConfig.getCustomTemplateInputPath()));
+        final Configuration cfg = this.getConfig(extraFileConfig.getCustomTemplateDir());
+        final Template template = this.getTemplate(cfg, extraFileConfig.getCustomTemplateFileName());
         try {
-            FileWriterWithEncoding fileWriterWithEncoding = new FileWriterWithEncoding(extraFileConfig.getOutputPath(), StandardCharsets.UTF_8);
-            template.process(this.prepareModelData(introspectedTable), fileWriterWithEncoding);
+            // 数据
+            final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraFileConfig);
+            FileWriterWithEncoding fileWriterWithEncoding = new FileWriterWithEncoding(this.getFileName(extraFileConfig, modelData), StandardCharsets.UTF_8);
+            template.process(modelData, fileWriterWithEncoding);
         } catch (IOException | TemplateException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable) {
-        HashMap<String, Object> map = new HashMap<>(16);
-        map.put(TemplatePropertyEnum.TYPE_NAME.name(), TableUtils.getOriginalBeanName(introspectedTable));
-        map.put(TemplatePropertyEnum.TYPE_NAME_FIRST_LETTER_LOWERCASE.name(), TableUtils.firstLetterLowercase(TableUtils.getOriginalBeanName(introspectedTable)));
-        return map;
+    private String getFileName(ExtraFileConfig extraFileConfig, Map<String, Object> modelData) {
+        final String upperCamel = modelData.get(TYPE_NAME_UPPER_CAMEL.name()).toString();
+
+        final String packageName = modelData.get(PACKAGE.name()).toString();
+        final String outPathFromPackage = packageName.replaceAll("\\.", "/");
+
+        String outputPath = extraFileConfig.getOutputPath();
+        outputPath = outputPath.endsWith("/") ? outputPath : outputPath + "/";
+        final File file = new File(outputPath + outPathFromPackage + "/");
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return outputPath + outPathFromPackage + "/" + upperCamel + extraFileConfig.getModelSuffix() + ".java";
     }
 
-    private String getDirFromPath(String filePath) {
-        File file = new File(filePath);
-        return file.getParent();
+    private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable, ExtraFileConfig extraFileConfig) {
+        HashMap<String, Object> modelDataMap = new HashMap<>(16);
+        final String upperCamel = TableUtils.getUpperCamel(introspectedTable);
+        modelDataMap.put(TYPE_NAME_UPPER_CAMEL.name(), upperCamel);
+        modelDataMap.put(TYPE_NAME_LOWER_CAMEL.name(), TableUtils.getLowerCase(upperCamel));
+        modelDataMap.put(TYPE_NAME_LOWER_HYPHEN.name(), TableUtils.getLowerHyphen(upperCamel));
+        modelDataMap.put(CUR_DATE_TIME.name(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        final TableUtils.Domain domain = TableUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true);
+        modelDataMap.put(DOMAIN.name(), domain.getD());
+        modelDataMap.put(DOMAIN_UPPER_CAMEL.name(), CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, domain.getD()));
+        modelDataMap.put(DOMAIN_DESC.name(), domain.getDd());
+        modelDataMap.put(PACKAGE.name(), this.getPackage(extraFileConfig, domain));
+        final List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
+        final List<String> fieldUpperCamels = allColumns.stream().map(introspectedColumn -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, introspectedColumn.getActualColumnName()))
+                .collect(Collectors.toList());
+        modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
+        return modelDataMap;
     }
 
-    private String getTemplateName(String filePath) {
-        File file = new File(filePath);
-        return file.getName();
+    /**
+     * 获取包名
+     *
+     * @param extraFileConfig 配置
+     * @param domain          领域
+     * @return 包名
+     */
+    private String getPackage(ExtraFileConfig extraFileConfig, TableUtils.Domain domain) {
+        String packageName = extraFileConfig.getPackageName();
+        packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
+        return packageName;
     }
 
     private Template getTemplate(Configuration cfg, String templateName) {

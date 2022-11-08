@@ -21,16 +21,19 @@ public class ExtraFileConfig implements Cloneable {
     /**
      * 模板类型
      */
-    private ExtraFileTypeEnum templateType;
+    private ExtraFileTypeEnum extraFileType = ExtraFileTypeEnum.MODEL;
     /**
      * 文件输出地址
      */
     private String outputPath;
     /**
+     * 父类
+     */
+    private String superClass;
+    /**
      * 包名
      */
     private String packageName;
-
     /**
      * 当 TemplateTypeEnum 为 MODEL 时，可以指定后缀
      */
@@ -43,10 +46,19 @@ public class ExtraFileConfig implements Cloneable {
      * 生成 model 时的忽略字段，逗号分隔
      */
     private String modelIgnoreColumns;
+
+    private boolean lombokGetter;
+    private boolean lombokSetter;
+    private boolean lombokToString;
+
     /**
-     * 自定义默认的地址
+     * 自定义模板文件夹
      */
-    private String customTemplateInputPath;
+    private String customTemplateDir;
+    /**
+     * 自定义文件名称
+     */
+    private String customTemplateFileName;
 
     public void setModelIgnoreColumns(String modelIgnoreColumns) {
         if (StringUtils.isNotEmpty(modelIgnoreColumns)) {
@@ -57,9 +69,8 @@ public class ExtraFileConfig implements Cloneable {
     @Override
     public ExtraFileConfig clone() {
         try {
-            ExtraFileConfig clone = (ExtraFileConfig) super.clone();
             // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
+            return (ExtraFileConfig) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

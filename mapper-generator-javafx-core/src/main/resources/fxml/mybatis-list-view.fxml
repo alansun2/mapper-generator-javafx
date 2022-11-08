@@ -55,7 +55,7 @@
     </center>
     <bottom>
         <HBox style="-fx-padding: 0 20;" prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10">
-            <Button mnemonicParsing="false" prefWidth="70" text="next" onAction="#next"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="Next" onAction="#next"/>
         </HBox>
     </bottom>
 </BorderPane>

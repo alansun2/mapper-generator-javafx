@@ -2,6 +2,7 @@ open module com.alan344 {
     requires static lombok;
     requires mybatis.extension.plugin;
     requires freemarker;
+    requires com.google.common;
 
     requires org.mybatis.generator;
     requires com.github.javaparser.core;
@@ -22,7 +23,6 @@ open module com.alan344 {
     requires org.kordamp.ikonli.unicons;
     requires org.kordamp.bootstrapfx.core;
     requires org.controlsfx.controls;
-
 
     exports com.alan344;
 }

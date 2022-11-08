@@ -1,6 +1,10 @@
 package com.alan344.plugin;
 
 import com.alan344.utils.StringUtils;
+import com.alibaba.fastjson2.JSON;
+import com.google.common.base.CaseFormat;
+import lombok.Getter;
+import lombok.Setter;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.config.Context;
@@ -40,48 +44,76 @@ public class TableUtils {
     }
 
     /**
-     * 获取 request bean
+     * 获取类 full name
      *
      * @param introspectedTable 表
      * @param packageName       包名
      */
-    public static FullyQualifiedJavaType getType(IntrospectedTable introspectedTable, String packageName, String suffix) {
-        final String baseRecordType = introspectedTable.getBaseRecordType();
-        String requestPackage = packageName + "." + baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1) + StringUtils.getDefaultIfNull(suffix, "");
+    public static FullyQualifiedJavaType getTypeFullName(IntrospectedTable introspectedTable, String packageName, String suffix) {
+        String requestPackage = packageName + "." + getUpperCamel(introspectedTable) + StringUtils.getDefaultIfNull(suffix, "");
         return new FullyQualifiedJavaType(requestPackage);
     }
 
     /**
-     * 获取原始的 bean 名称
+     * 首字母大写驼峰
      *
      * @param introspectedTable 类
      */
-    public static String getOriginalBeanName(IntrospectedTable introspectedTable) {
+    public static String getUpperCamel(IntrospectedTable introspectedTable) {
         final String baseRecordType = introspectedTable.getBaseRecordType();
         return baseRecordType.substring(baseRecordType.lastIndexOf(".") + 1);
     }
 
     /**
-     * 首字母大写
+     * 首字母小写驼峰
      */
-    public static String firstLetterUppercase(String originalStr) {
-        char[] methodName = originalStr.toCharArray();
+    public static String getLowerCase(String upperCamel) {
+        char[] methodName = upperCamel.toCharArray();
         char firstLetter = methodName[0];
-        if (97 <= firstLetter && firstLetter <= 122) {
-            methodName[0] ^= 32;
+        if (65 <= firstLetter && firstLetter <= 90) {
+            methodName[0] = (char) (firstLetter + 32);
         }
         return String.valueOf(methodName);
     }
 
     /**
-     * 首字母小写
+     * 小写中划线
      */
-    public static String firstLetterLowercase(String originalStr) {
-        char[] methodName = originalStr.toCharArray();
-        char firstLetter = methodName[0];
-        if (97 <= firstLetter && firstLetter <= 122) {
-            methodName[0] = (char) (firstLetter + 32);
+    public static String getLowerHyphen(String upperCamel) {
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, upperCamel);
+    }
+
+    /**
+     * 从备注中获取领域
+     *
+     * @param remarks 备注
+     * @return 领域
+     */
+    public static Domain getDomainFromRemarks(String remarks, boolean enableDomain) {
+        if (!enableDomain) {
+            return Domain.DOMAIN;
         }
-        return String.valueOf(methodName);
+        if (!org.springframework.util.StringUtils.hasText(remarks)) {
+            return Domain.DOMAIN;
+        }
+        final int start = remarks.indexOf("{");
+        final int end = remarks.lastIndexOf("}");
+        if (start >= 0 && end >= 0) {
+            final String substring = remarks.substring(start, end + 1);
+            return JSON.parseObject(substring, Domain.class);
+        } else {
+            return Domain.DOMAIN;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class Domain {
+
+        public static final Domain DOMAIN = new Domain();
+
+        private String d = "";
+
+        private String dd = "";
     }
 }
