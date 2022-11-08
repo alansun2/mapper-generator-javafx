@@ -33,7 +33,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
                             .build().render(RenderingStrategies.MYBATIS3);
                     return ${TYPE_NAME_LOWER_CAMEL}Mapper.selectMany(render);
                 },
-                ${TYPE_NAME_LOWER_CAMEL}s -> ${TYPE_NAME_LOWER_CAMEL}s.stream().map(this::convert).collect(Collectors.toList()));
+                ${TYPE_NAME_LOWER_CAMEL}List -> ${TYPE_NAME_LOWER_CAMEL}List.stream().map(this::convert).collect(Collectors.toList()));
 
     }
 
