@@ -21,8 +21,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}UpdateCmdExe {
     private ${TYPE_NAME_UPPER_CAMEL}GatewayI ${TYPE_NAME_LOWER_CAMEL}GatewayI;
 
     public void execute(${TYPE_NAME_UPPER_CAMEL}Cmd ${TYPE_NAME_LOWER_CAMEL}Cmd) {
-        final ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DOById = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${DOMAIN_UPPER_CAMEL}ById(${TYPE_NAME_LOWER_CAMEL}Cmd.getId());
-        AssertUtils.isTrue(null != ${TYPE_NAME_LOWER_CAMEL}DOById && ${TYPE_NAME_LOWER_CAMEL}DOById.getIsDelete() == BaseConstants.IS_DELETE_0, "被操作记录不存在", HttpStatus.NOT_FOUND.value());
+        final ${TYPE_NAME_UPPER_CAMEL}DO byId = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${DOMAIN_UPPER_CAMEL}ById(${TYPE_NAME_LOWER_CAMEL}Cmd.getId());
+        AssertUtils.isTrue(null != byId && byId.getIsDelete() == BaseConstants.IS_DELETE_0, "被操作记录不存在", HttpStatus.NOT_FOUND.value());
         final ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = convert(${TYPE_NAME_LOWER_CAMEL}Cmd);
         ${TYPE_NAME_LOWER_CAMEL}GatewayI.update${DOMAIN_UPPER_CAMEL}ById(${TYPE_NAME_LOWER_CAMEL}DO);
     }
