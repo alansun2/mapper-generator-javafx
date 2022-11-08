@@ -85,7 +85,7 @@ public class DataSourceUtils {
             while (columns.next()) {
                 Column column = new Column();
                 column.setColumnName(columns.getString("COLUMN_NAME"));
-                column.setType(columns.getString("TYPE_NAME_UPPER_CAMEL"));
+                column.setType(columns.getString("TYPE_NAME"));
                 column.setSize(columns.getInt("COLUMN_SIZE"));
                 column.setRemark(columns.getString("REMARKS"));
                 column.setNullable(columns.getInt("NULLABLE") == DatabaseMetaData.columnNullable);
