@@ -92,10 +92,12 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
      * @return 包名
      */
     private String getPackageName(String remarks, ExtraFileConfig extraFileConfig) {
-        final String packageName = extraFileConfig.getPackageName();
+        String packageName = extraFileConfig.getPackageName();
 
         final TableUtils.Domain domain = TableUtils.getDomainFromRemarks(remarks, true);
-        return GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
+        packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
+        packageName = packageName.replaceAll("\\.\\.", "\\.");
+        return packageName;
     }
 
     /**

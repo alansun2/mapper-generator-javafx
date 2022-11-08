@@ -151,6 +151,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
     private String getPackage(ExtraFileConfig extraFileConfig, TableUtils.Domain domain) {
         String packageName = extraFileConfig.getPackageName();
         packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
+        packageName = packageName.replaceAll("\\.\\.", "\\.");
         return packageName;
     }
 
