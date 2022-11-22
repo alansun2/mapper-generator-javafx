@@ -204,8 +204,7 @@ public class MybatisExportController implements Initializable {
     /**
      * 获取配置信息
      */
-    public MybatisExportConfig getConfig() {
-        MybatisExportConfig mybatisExportConfig = new MybatisExportConfig();
+    public MybatisExportConfig getConfig(MybatisExportConfig mybatisExportConfig) {
         mybatisExportConfig.setConfigName(configNameText.getText());
         mybatisExportConfig.setAuthor(authorText.getText());
         mybatisExportConfig.setBeanLocation(beanLocationText.getText());
@@ -234,6 +233,7 @@ public class MybatisExportController implements Initializable {
                 break;
             default:
         }
+
         return mybatisExportConfig;
     }
 

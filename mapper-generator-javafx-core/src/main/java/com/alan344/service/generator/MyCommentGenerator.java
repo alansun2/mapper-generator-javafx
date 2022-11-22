@@ -200,9 +200,9 @@ public class MyCommentGenerator implements CommentGenerator {
 
         topLevelClass.addJavaDocLine("/**"); //$NON-NLS-1$
         topLevelClass.addJavaDocLine(" * @author " + author); //$NON-NLS-1$
-        topLevelClass.addJavaDocLine(" * @author " + author); //$NON-NLS-1$
-        topLevelClass.addJavaDocLine(" *");
-        topLevelClass.addJavaDocLine(" * " + introspectedTable.getRemarks() + " 对应表:" + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName()); //$NON-NLS-1$
+        topLevelClass.addJavaDocLine(" * @date " + this.getDateString()); //$NON-NLS-1$
+        topLevelClass.addJavaDocLine(" * <p>");
+        topLevelClass.addJavaDocLine(" * " + introspectedTable.getRemarks() + "对应表:" + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName()); //$NON-NLS-1$
         topLevelClass.addJavaDocLine(" */"); //$NON-NLS-1$
     }
 
@@ -362,11 +362,11 @@ public class MyCommentGenerator implements CommentGenerator {
     private String getGeneratedAnnotation(String comment) {
         StringBuilder buffer = new StringBuilder();
         buffer.append("@Generated("); //$NON-NLS-1$
-        buffer.append("value=\""); //$NON-NLS-1$
+        buffer.append("value = \""); //$NON-NLS-1$
         buffer.append('\"');
 
         if (!suppressAllComments && StringUtility.stringHasValue(comment)) {
-            buffer.append(", comments=\""); //$NON-NLS-1$
+            buffer.append(", comments = \""); //$NON-NLS-1$
             buffer.append(comment);
             buffer.append('\"');
         }

@@ -58,13 +58,13 @@ public class ConfigService {
                 final int i = mybatisExportConfigs.indexOf(olderConfig);
                 mybatisExportConfigs.remove(olderConfig);
                 mybatisExportConfigs.add(i, mybatisExportConfig);
-                this.downLoadConfigToFile(mybatisExportConfigs);
+                this.saveConfigToFile(mybatisExportConfigs);
                 this.configNameConfigMap.put(mybatisExportConfig.getConfigName(), mybatisExportConfig);
             }
         } else {
             // 新配置
             mybatisExportConfigs.addFirst(mybatisExportConfig);
-            this.downLoadConfigToFile(mybatisExportConfigs);
+            this.saveConfigToFile(mybatisExportConfigs);
             this.configNameConfigMap.put(mybatisExportConfig.getConfigName(), mybatisExportConfig);
         }
     }
@@ -77,7 +77,7 @@ public class ConfigService {
     public void deleteConfig(MybatisExportConfig mybatisExportConfig) {
         List<MybatisExportConfig> mybatisExportConfigs = this.loadConfigFromFile();
         mybatisExportConfigs.remove(mybatisExportConfig);
-        this.downLoadConfigToFile(mybatisExportConfigs);
+        this.saveConfigToFile(mybatisExportConfigs);
         this.configNameConfigMap.remove(mybatisExportConfig.getConfigName());
     }
 
@@ -86,7 +86,7 @@ public class ConfigService {
      *
      * @param mybatisExportConfigs 配置信息
      */
-    private void downLoadConfigToFile(List<MybatisExportConfig> mybatisExportConfigs) {
+    private void saveConfigToFile(List<MybatisExportConfig> mybatisExportConfigs) {
         String configsStr = JSONArray.toJSONString(mybatisExportConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName);
         try {
             FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr, StandardCharsets.UTF_8.toString());

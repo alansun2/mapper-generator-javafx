@@ -20,3 +20,7 @@
 .text-field {
     -fx-background-radius: 0em;
 }
+
+.border-pane-padding {
+    -fx-padding: 10;
+}

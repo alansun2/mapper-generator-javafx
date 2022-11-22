@@ -252,7 +252,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             final Element tableEl = generatorUtils.addElement(context, "table");
             tableEl.setAttribute("tableName", table.getTableName());
 
-//            tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getDatabase());
+            if (BaseConstants.selectedDateSource.getScheme() != null) {
+                tableEl.setAttribute("schema", BaseConstants.selectedDateSource.getScheme());
+            }
 
             this.checkBoxSelected("enableInsert", tableEl, table.isInsert());
             this.checkBoxSelected("enableCountByExample", tableEl, table.isCount());

@@ -11,12 +11,12 @@
     <top>
         <HBox alignment="CENTER" spacing="20" styleClass="topHBox">
             <VBox spacing="15">
-                <HBox fx:id="mapperCheckBoxHBox1" alignment="CENTER" spacing="15">
+                <HBox fx:id="mapperCheckBoxHbox1" alignment="CENTER" spacing="15">
                     <CheckBox mnemonicParsing="false" selected="true" text="updateExample"/>
                     <CheckBox mnemonicParsing="false" selected="true" text="deleteExample"/>
                     <CheckBox mnemonicParsing="false" selected="true" text="selectExample"/>
                 </HBox>
-                <HBox fx:id="mapperCheckBoxHBox2" alignment="CENTER" spacing="15">
+                <HBox fx:id="mapperCheckBoxHbox2" alignment="CENTER" spacing="15">
                     <CheckBox mnemonicParsing="false" text="insert返回id"/>
                     <CheckBox mnemonicParsing="false" selected="true" text="insert"/>
                     <CheckBox mnemonicParsing="false" selected="true" text="count"/>
@@ -55,7 +55,7 @@
     </center>
     <bottom>
         <HBox style="-fx-padding: 0 20;" prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10">
-            <Button mnemonicParsing="false" prefWidth="70" text="Next" onAction="#next"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="下一步" onAction="#next"/>
         </HBox>
     </bottom>
 </BorderPane>

@@ -26,7 +26,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
     private ${TYPE_NAME_UPPER_CAMEL}Mapper ${TYPE_NAME_LOWER_CAMEL}Mapper;
 
     @Override
-    public void save${DOMAIN_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO) {
+    public void save${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO) {
         ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL} = new ${TYPE_NAME_UPPER_CAMEL}();
         BeanUtils.copyProperties(${TYPE_NAME_LOWER_CAMEL}DO, ${TYPE_NAME_LOWER_CAMEL});
         ${TYPE_NAME_LOWER_CAMEL}.setCreateTime(LocalDateTime.now());
@@ -37,7 +37,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
     }
 
     @Override
-    public void update${DOMAIN_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO) {
+    public void update${TYPE_NAME_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO) {
         ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL} = new ${TYPE_NAME_UPPER_CAMEL}();
         BeanUtils.copyProperties(${TYPE_NAME_LOWER_CAMEL}DO, ${TYPE_NAME_LOWER_CAMEL});
         ${TYPE_NAME_LOWER_CAMEL}.setUpdateTime(LocalDateTime.now());
@@ -47,8 +47,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
     }
 
     @Override
-    public ${TYPE_NAME_UPPER_CAMEL}DO get${DOMAIN_UPPER_CAMEL}ById(Long id) {
-        final Optional<${DOMAIN_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Mapper.selectByPrimaryKey(id);
-        return ${TYPE_NAME_LOWER_CAMEL}Opt.map(${TYPE_NAME_UPPER_CAMEL}DOConvertMapper.INSTANCE::convertToDO).orElse(null);
+    public Optional<${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ById(Long id) {
+        final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Mapper.selectByPrimaryKey(id);
+        return ${TYPE_NAME_LOWER_CAMEL}Opt.map(${TYPE_NAME_UPPER_CAMEL}DOConvertMapper.INSTANCE::convertToDO);
     }
 }

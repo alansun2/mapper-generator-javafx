@@ -23,6 +23,7 @@ open module com.alan344 {
     requires org.kordamp.ikonli.unicons;
     requires org.kordamp.bootstrapfx.core;
     requires org.controlsfx.controls;
+    requires com.jfoenix;
 
     exports com.alan344;
 }

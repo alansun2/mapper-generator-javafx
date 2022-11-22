@@ -21,7 +21,12 @@ import java.util.Map;
 public class BaseConstants {
     private static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGeneratorV2";
     public static final String MG_DATA_HOME = MG_HOME + "/data/";
-    private static final String MG_CONFIG_FILE = MG_HOME + "/config/base-config";
+    public static final String MG_CONF_HOME = MG_HOME + "/config/";
+    private static final String MG_CONFIG_FILE = MG_CONF_HOME + "base-config";
+    /**
+     * 额外文件配置
+     */
+    private static final String MG_EXTRA_CONFIG_FILE = MG_CONF_HOME + "extra-file-config";
 
     /**
      * all dataSource
@@ -90,6 +95,15 @@ public class BaseConstants {
      */
     public static File getConfigFile() {
         return new File(MG_CONFIG_FILE);
+    }
+
+    /**
+     * 获取额外文件配置文件地址
+     *
+     * @return 额外文件配置文件地址
+     */
+    public static File getExtraFileConfigFile() {
+        return new File(MG_EXTRA_CONFIG_FILE);
     }
 
     public static List<VBox> selectedCheckBoxVBox = new ArrayList<>();

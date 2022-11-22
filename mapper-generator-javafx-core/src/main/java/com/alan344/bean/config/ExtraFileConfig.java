@@ -2,6 +2,7 @@ package com.alan344.bean.config;
 
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.utils.StringUtils;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -74,5 +75,20 @@ public class ExtraFileConfig implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExtraFileConfig that = (ExtraFileConfig) o;
+
+        return name.equals(that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }

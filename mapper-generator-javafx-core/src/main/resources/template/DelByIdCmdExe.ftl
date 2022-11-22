@@ -20,7 +20,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}DelByIdCmdExe {
     private ${TYPE_NAME_UPPER_CAMEL}Mapper ${TYPE_NAME_LOWER_CAMEL}Mapper;
 
     public void execute(Long id) {
-        final ${TYPE_NAME_UPPER_CAMEL}DO byId = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${DOMAIN_UPPER_CAMEL}ById(id);
+        final ${TYPE_NAME_UPPER_CAMEL}DO byId = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${TYPE_NAME_UPPER_CAMEL}ById(id);
         if (null != byId && byId.getIsDelete() == BaseConstants.IS_DELETE_0) {
             ${TYPE_NAME_LOWER_CAMEL}Mapper.deleteById(id, UserResourceHolder.getUserNameAndId());
         }

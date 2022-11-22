@@ -9,6 +9,8 @@ import vip.tuoyang.schoolsafe.basic.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${T
 import vip.tuoyang.schoolsafe.basic.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}GatewayI;
 import vip.tuoyang.schoolsafe.basic.dto.data.${TYPE_NAME_UPPER_CAMEL}DTO;
 
+import java.util.Optional;
+
 /**
  * @author AlanSun
  * @date ${CUR_DATE_TIME}
@@ -19,9 +21,9 @@ public class ${TYPE_NAME_UPPER_CAMEL}ByIdQryExe {
     private ${TYPE_NAME_UPPER_CAMEL}GatewayI ${TYPE_NAME_LOWER_CAMEL}GatewayI;
 
     public ${TYPE_NAME_UPPER_CAMEL}DTO execute(Long id) {
-        final ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${DOMAIN_UPPER_CAMEL}ById(id);
-        AssertUtils.isTrue(null != ${TYPE_NAME_LOWER_CAMEL}DO && ${TYPE_NAME_LOWER_CAMEL}DO.getIsDelete() == BaseConstants.IS_DELETE_0, "记录不存在", HttpStatus.NOT_FOUND.value());
-        return this.convert(${TYPE_NAME_LOWER_CAMEL}DO);
+        final Optional<${TYPE_NAME_UPPER_CAMEL}DO> ${TYPE_NAME_LOWER_CAMEL}DoOpt = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${TYPE_NAME_UPPER_CAMEL}ById(id);
+        AssertUtils.isTrue(${TYPE_NAME_LOWER_CAMEL}DoOpt.isPresent() && ${TYPE_NAME_LOWER_CAMEL}DoOpt.get().getIsDelete() == BaseConstants.IS_DELETE_0, "记录不存在", HttpStatus.NOT_FOUND.value());
+        return this.convert(${TYPE_NAME_LOWER_CAMEL}DO.get());
     }
 
     private ${TYPE_NAME_UPPER_CAMEL}DTO convert(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO) {

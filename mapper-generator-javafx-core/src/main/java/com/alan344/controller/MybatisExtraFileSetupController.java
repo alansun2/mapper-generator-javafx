@@ -1,22 +1,17 @@
 package com.alan344.controller;
 
 import com.alan344.bean.config.ExtraFileConfig;
-import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.componet.ExtraFileLabel;
 import com.alan344.componet.FileSelectText;
 import com.alan344.componet.PropertyHBox;
-import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
-import com.alan344.service.ExportService;
-import com.alan344.service.node.NodeHandler;
-import com.alan344.utils.CollectionUtils;
+import com.alan344.service.ExtraFileConfigService;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -32,82 +27,101 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
-import java.util.ResourceBundle;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
  * @date 2022/11/3 9:49
  */
 @Service
-public class MybatisExtraFileSetupController implements Initializable {
+public class MybatisExtraFileSetupController {
     @Autowired
-    private ExportService exportService;
-    private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
-    @FXML
+    private ExtraFileConfigService extraFileConfigService;
+    private Stage stage;
     private ListView<ExtraFileLabel> listView;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        final List<ExtraFileConfig> extraFileConfigs = currentConfig.getExtraFileConfigs();
-        if (CollectionUtils.isNotEmpty(extraFileConfigs)) {
-            extraFileConfigs.forEach(this::addExtraFileAfterSubmit);
+    private final Map<Integer, ExtraFileConfig> configTem = new HashMap<>();
+
+    public void openExtraFilePageInternal(boolean showCheckBox, Consumer<List<ExtraFileConfig>> consumer) {
+        if (null != stage) {
+            stage.show();
+            return;
         }
 
-        // 单选
-        listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        stage = new Stage();
+        listView = new ListView<>();
+        final List<ExtraFileConfig> extraFileConfigList = extraFileConfigService.getExtraFileConfigList();
+        extraFileConfigList.forEach(extraFileConfig -> listView.getItems().add(this.packageExtraFileLabel(showCheckBox, extraFileConfig)));
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.getStylesheets().add("/css/common.css");
+        borderPane.setStyle("-fx-background-insets: 0");
+        borderPane.setPrefHeight(500);
+        borderPane.setPrefWidth(700);
+        borderPane.setCenter(listView);
+
+        borderPane.setBottom(this.getBtnHbox(stage, showCheckBox, consumer));
+        stage.setScene(new Scene(borderPane));
+        stage.setResizable(false);
+        stage.getIcons().add(new Image("/image/advanced-set-up.png"));
+        stage.setTitle("额外文件配置");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(NodeConstants.primaryStage);
+        stage.show();
     }
 
-    @FXML
-    public void export() {
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        final List<ExtraFileConfig> extraFileConfigs = currentConfig.getExtraFileConfigs();
-        for (ExtraFileConfig extraFileConfig : extraFileConfigs) {
-            final ExtraFileTypeEnum templateType = extraFileConfig.getExtraFileType();
-            if (StringUtils.isEmpty(extraFileConfig.getOutputPath())) {
-                Toast.makeText(NodeConstants.primaryStage, extraFileConfig.getName() + "配置中，文件地址必填", 3000, 500, 500, 15, 5);
+    private HBox getBtnHbox(Stage stage, boolean showCheckBox, Consumer<List<ExtraFileConfig>> consumer) {
+        int btnWidth = 50;
+        HBox hBox = new HBox(15);
+        hBox.setStyle("-fx-padding: 10;");
+        hBox.setAlignment(Pos.CENTER_RIGHT);
+
+        Button importBtn = new Button("导入");
+        importBtn.setPrefWidth(btnWidth);
+        importBtn.setOnAction(event -> {
+            final ObservableList<ExtraFileLabel> items = listView.getItems();
+            if (items.isEmpty()) {
+                Toast.makeText(stage, "请先新增", 3000, 500, 500, 15, 5);
                 return;
             }
-            if (StringUtils.isEmpty(extraFileConfig.getPackageName())) {
-                Toast.makeText(NodeConstants.primaryStage, extraFileConfig.getName() + "配置中，包名必填", 3000, 500, 500, 15, 5);
+
+            final List<ExtraFileLabel> selectedList = items.stream().filter(ExtraFileLabel::isSelected).toList();
+            if (selectedList.isEmpty()) {
+                Toast.makeText(stage, "至少选择一条导入", 3000, 500, 500, 15, 5);
                 return;
             }
-            if (templateType == ExtraFileTypeEnum.CUSTOM_TEMPLATE) {
-                if (StringUtils.isEmpty(extraFileConfig.getCustomTemplateDir())) {
-                    Toast.makeText(NodeConstants.primaryStage, extraFileConfig.getName() + "配置中，自定义模板路径必填", 3000, 500, 500, 15, 5);
-                    return;
-                }
-            }
-        }
-        exportService.export(currentConfig);
-    }
+            final List<ExtraFileConfig> extraFileConfigs = selectedList.stream().map(ExtraFileLabel::getExtraFileConfig).collect(Collectors.toList());
+            consumer.accept(extraFileConfigs);
+        });
 
-    @FXML
-    public void pre() {
-        NodeConstants.borderPaneWrap.setCenter(nodeHandler.getPre());
-    }
-
-    /**
-     * 添加额外文件
-     */
-    @FXML
-    public void saveSetup() {
-        exportService.saveSetup(BaseConstants.currentConfig);
-    }
-
-    /**
-     * 添加额外文件
-     */
-    @FXML
-    public void addExtraFile() {
-        ExtraFileConfig extraFileConfig = new ExtraFileConfig();
-        this.openExtraFileSetup(extraFileConfig, o -> {
-            this.addExtraFileAfterSubmit(o);
-            BaseConstants.currentConfig.getExtraFileConfigs().add(extraFileConfig);
-        }, false);
+        Button addBtn = new Button("新增");
+        addBtn.setPrefWidth(btnWidth);
+        addBtn.setOnAction(event -> {
+            ExtraFileConfig extraFileConfig = new ExtraFileConfig();
+            this.openExtraFileSetup(extraFileConfig, extraFileConfig1 -> this.addExtraFileAfterSubmit(showCheckBox, extraFileConfig1), false);
+            configTem.put(-listView.getItems().size(), extraFileConfig);
+        });
+        Button saveBtn = new Button("保存配置");
+        saveBtn.setPrefWidth(70);
+        saveBtn.setOnAction(event -> {
+            // 添加文件到缓存
+            configTem.forEach((integer, extraFileConfig) -> {
+                extraFileConfigService.addExtraFileConfig(extraFileConfig, integer < 0 ? null : integer);
+            });
+            // 保存到磁盘
+            extraFileConfigService.saveExtraFileConfig();
+            // 清除配置缓存
+            configTem.clear();
+        });
+        Button closeBtn = new Button("关闭");
+        closeBtn.setPrefWidth(btnWidth);
+        closeBtn.setOnAction(event -> stage.hide());
+        hBox.getChildren().addAll(importBtn, saveBtn, addBtn, closeBtn);
+        return hBox;
     }
 
     /**
@@ -271,6 +285,9 @@ public class MybatisExtraFileSetupController implements Initializable {
             extraFileConfig.setCustomTemplateDir(customTemplatePathTextField.getText());
             extraFileConfig.setCustomTemplateFileName(customTemplateFileNameTextField.getText());
 
+            // 检查文件配置
+            this.checkConfig(extraFileConfig);
+
             submitBtnAction.accept(extraFileConfig);
             addTemplateStage.close();
         });
@@ -290,8 +307,26 @@ public class MybatisExtraFileSetupController implements Initializable {
         addTemplateStage.getIcons().add(new Image("/image/advanced-set-up.png"));
         addTemplateStage.setTitle((isEdit ? "编辑" : "新增") + "额外文件");
         addTemplateStage.initModality(Modality.WINDOW_MODAL);
-        addTemplateStage.initOwner(NodeConstants.primaryStage);
+        addTemplateStage.initOwner(stage);
         addTemplateStage.show();
+    }
+
+    private void checkConfig(ExtraFileConfig extraFileConfig) {
+        final ExtraFileTypeEnum templateType = extraFileConfig.getExtraFileType();
+        if (StringUtils.isEmpty(extraFileConfig.getOutputPath())) {
+            Toast.makeText(NodeConstants.primaryStage, extraFileConfig.getName() + "配置中，文件地址必填", 3000, 500, 500, 15, 5);
+            return;
+        }
+        if (StringUtils.isEmpty(extraFileConfig.getPackageName())) {
+            Toast.makeText(NodeConstants.primaryStage, extraFileConfig.getName() + "配置中，包名必填", 3000, 500, 500, 15, 5);
+            return;
+        }
+        if (templateType == ExtraFileTypeEnum.CUSTOM_TEMPLATE) {
+            if (StringUtils.isEmpty(extraFileConfig.getCustomTemplateDir())) {
+                Toast.makeText(NodeConstants.primaryStage, extraFileConfig.getName() + "配置中，自定义模板路径必填", 3000, 500, 500, 15, 5);
+                return;
+            }
+        }
     }
 
     private void showByExtraFileType(ExtraFileTypeEnum extraFileTypeEnum,
@@ -335,26 +370,24 @@ public class MybatisExtraFileSetupController implements Initializable {
         }
     }
 
-    private void addExtraFileAfterSubmit(ExtraFileConfig extraFileConfig) {
-        listView.getItems().add(this.packageExtraFileLabel(extraFileConfig));
+    private void addExtraFileAfterSubmit(boolean showCheckBox, ExtraFileConfig extraFileConfig) {
+        listView.getItems().add(this.packageExtraFileLabel(showCheckBox, extraFileConfig));
     }
 
     private void copyItem(ExtraFileLabel old) {
         final ExtraFileConfig extraFileConfigSource = old.getExtraFileConfig();
         final ExtraFileConfig extraFileConfig = extraFileConfigSource.clone();
         extraFileConfig.setName(extraFileConfig.getName() + "copy");
-        final ExtraFileLabel extraFileLabel = this.packageExtraFileLabel(extraFileConfig);
+        final ExtraFileLabel extraFileLabel = this.packageExtraFileLabel(old.isShowCheckBox(), extraFileConfig);
         final int i = listView.getItems().indexOf(old);
         listView.getItems().add(i + 1, extraFileLabel);
-        BaseConstants.currentConfig.getExtraFileConfigs().add(i + 1, extraFileConfig);
+        configTem.put(i + 1, extraFileConfig);
     }
 
-    private ExtraFileLabel packageExtraFileLabel(ExtraFileConfig extraFileConfig) {
-        ExtraFileLabel extraFileLabel = new ExtraFileLabel(extraFileConfig.getName(), extraFileConfig.getExtraFileType(),
-                extraFileConfig.isEnable(), extraFileConfig::setEnable);
+    private ExtraFileLabel packageExtraFileLabel(boolean showCheckBox, ExtraFileConfig extraFileConfig) {
+        ExtraFileLabel extraFileLabel = new ExtraFileLabel(showCheckBox, extraFileConfig);
         extraFileLabel.setPrefHeight(23);
         extraFileLabel.setAlignment(Pos.CENTER);
-        extraFileLabel.setExtraFileConfig(extraFileConfig);
         extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(220));
         // 编辑
         extraFileLabel.onEditAction(actionEvent -> this.openExtraFileSetup(extraFileConfig,
@@ -362,7 +395,7 @@ public class MybatisExtraFileSetupController implements Initializable {
         // 删除
         extraFileLabel.onDelAction(actionEvent -> {
             listView.getItems().remove(extraFileLabel);
-            BaseConstants.currentConfig.getExtraFileConfigs().remove(extraFileConfig);
+            extraFileConfigService.deleteExtraFileConfig(extraFileConfig);
         });
         // 复制
         extraFileLabel.onCopyAction(actionEvent -> {

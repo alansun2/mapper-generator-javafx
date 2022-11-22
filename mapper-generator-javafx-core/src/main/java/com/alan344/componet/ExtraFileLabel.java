@@ -1,7 +1,7 @@
 package com.alan344.componet;
 
 import com.alan344.bean.config.ExtraFileConfig;
-import com.alan344.constants.ExtraFileTypeEnum;
+import com.jfoenix.controls.JFXCheckBox;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -19,22 +19,29 @@ public class ExtraFileLabel extends HBox {
     private final Button deleteButton;
     private final Button copyBtn;
     private final Label nameLabel;
-    private ExtraFileConfig extraFileConfig;
+    private final ExtraFileConfig extraFileConfig;
 
-    public ExtraFileLabel(String name, ExtraFileTypeEnum extraFileTypeEnum, boolean curToggle, Consumer<Boolean> consumer) {
-        int nameWidth = 130, toggleWidth = 64, btnWidth = 64;
+    private final JFXCheckBox jfxCheckBox;
 
-        nameLabel = new Label(name);
+    private final boolean showCheckBox;
+
+    public ExtraFileLabel(boolean showCheckBox, ExtraFileConfig extraFileConfig) {
+        this.extraFileConfig = extraFileConfig;
+        this.showCheckBox = showCheckBox;
+        int jfxCheckBoxWidth = 30, nameWidth = 130, btnWidth = 64;
+
+        jfxCheckBox = new JFXCheckBox();
+        jfxCheckBox.setDisable(!showCheckBox);
+        jfxCheckBox.setPrefWidth(jfxCheckBoxWidth);
+
+        nameLabel = new Label(extraFileConfig.getName());
         nameLabel.setStyle("-fx-background-insets: 0");
         nameLabel.setPrefWidth(nameWidth);
         nameLabel.prefHeightProperty().bind(this.heightProperty());
 
-        Label extraFileTypeLabel = new Label(extraFileTypeEnum.name());
+        Label extraFileTypeLabel = new Label(extraFileConfig.getExtraFileType().name());
         extraFileTypeLabel.setStyle("-fx-background-insets: 0");
-        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth + toggleWidth + (btnWidth * 3)));
-
-        ToggleSwitch toggleSwitch = new ToggleSwitch(toggleWidth, curToggle, consumer);
-        toggleSwitch.prefHeightProperty().bind(this.heightProperty());
+        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(jfxCheckBoxWidth + nameWidth + (btnWidth * 3)));
 
         scanButton = new Button("Edit");
         scanButton.setStyle("-fx-background-insets: 0");
@@ -51,7 +58,7 @@ public class ExtraFileLabel extends HBox {
         copyBtn.setPrefWidth(btnWidth);
         copyBtn.prefHeightProperty().bind(this.heightProperty());
 
-        this.getChildren().addAll(nameLabel, extraFileTypeLabel, toggleSwitch, scanButton, deleteButton, copyBtn);
+        this.getChildren().addAll(jfxCheckBox, nameLabel, extraFileTypeLabel, scanButton, deleteButton, copyBtn);
         this.setSpacing(10);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-background-insets: 0");
@@ -77,7 +84,11 @@ public class ExtraFileLabel extends HBox {
         return this.extraFileConfig;
     }
 
-    public void setExtraFileConfig(ExtraFileConfig extraFileConfig) {
-        this.extraFileConfig = extraFileConfig;
+    public boolean isSelected() {
+        return this.jfxCheckBox.isSelected();
+    }
+
+    public boolean isShowCheckBox() {
+        return showCheckBox;
     }
 }

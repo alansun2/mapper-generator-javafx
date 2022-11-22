@@ -3,10 +3,8 @@ package com.alan344.bean.config;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -68,6 +66,10 @@ public class MybatisExportConfig implements Cloneable {
      */
     private int selectTab;
     /**
+     * 是否导出额外文件
+     */
+    private boolean isExportExtraFile;
+    /**
      * Mybatis-generator 原生配置
      */
     private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
@@ -79,7 +81,7 @@ public class MybatisExportConfig implements Cloneable {
 
     //---------------------extra file----------------
 
-    private List<ExtraFileConfig> extraFileConfigs = new ArrayList<>(10);
+    private List<ExtraFileGroupConfig> extraFileGroupConfigs;
 
     @Override
     public boolean equals(Object o) {
@@ -105,7 +107,6 @@ public class MybatisExportConfig implements Cloneable {
         try {
             MybatisExportConfig clone = (MybatisExportConfig) super.clone();
             clone.setMybatisOfficialExportConfig(mybatisOfficialExportConfig.clone());
-            clone.setExtraFileConfigs(extraFileConfigs.stream().map(ExtraFileConfig::clone).collect(Collectors.toList()));
             // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {

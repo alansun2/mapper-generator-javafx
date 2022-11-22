@@ -15,7 +15,7 @@ public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {
      *
      * @param cmd {@link ${TYPE_NAME_UPPER_CAMEL}Cmd}
      */
-    void add${DOMAIN_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}Cmd cmd);
+    void add${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}Cmd cmd);
 
     /**
      * 分页获取${DOMAIN_DESC}列表
@@ -23,7 +23,7 @@ public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {
      * @param qry {@link ${TYPE_NAME_UPPER_CAMEL}PageQry}
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}DTO}s
      */
-    Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${DOMAIN_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry);
+    Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry);
 
     /**
      * 根据 id 获取${DOMAIN_DESC}
@@ -31,19 +31,19 @@ public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {
      * @param id id
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}DTO}
      */
-    ${TYPE_NAME_UPPER_CAMEL}DTO get${DOMAIN_UPPER_CAMEL}ById(Long id);
+    ${TYPE_NAME_UPPER_CAMEL}DTO get${TYPE_NAME_UPPER_CAMEL}ById(Long id);
 
     /**
      * 修改${DOMAIN_DESC}
      *
      * @param cmd {@link ${TYPE_NAME_UPPER_CAMEL}Cmd}
      */
-    void update${DOMAIN_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}Cmd cmd);
+    void update${TYPE_NAME_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}Cmd cmd);
 
     /**
      * 根据 id 删除${DOMAIN_DESC}
      *
      * @param id id
      */
-    void delete${DOMAIN_UPPER_CAMEL}ById(Long id);
+    void delete${TYPE_NAME_UPPER_CAMEL}ById(Long id);
 }

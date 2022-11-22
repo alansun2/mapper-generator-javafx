@@ -25,8 +25,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @param cmd {@link ${TYPE_NAME_UPPER_CAMEL}Cmd}
      */
     @PostMapping
-    public void add${DOMAIN_UPPER_CAMEL}(@Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
-        ${TYPE_NAME_LOWER_CAMEL}ServiceI.add${DOMAIN_UPPER_CAMEL}(cmd);
+    public void add${TYPE_NAME_UPPER_CAMEL}(@Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
+        ${TYPE_NAME_LOWER_CAMEL}ServiceI.add${TYPE_NAME_UPPER_CAMEL}(cmd);
     }
 
     /**
@@ -36,8 +36,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}DTO}s
      */
     @GetMapping(value = "page")
-    public Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${DOMAIN_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
-        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${DOMAIN_UPPER_CAMEL}Page(qry);
+    public Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
+        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}Page(qry);
     }
 
     /**
@@ -47,8 +47,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}DTO}
      */
     @GetMapping(value = "{id}")
-    public ${TYPE_NAME_UPPER_CAMEL}DTO get${DOMAIN_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
-        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${DOMAIN_UPPER_CAMEL}ById(id);
+    public ${TYPE_NAME_UPPER_CAMEL}DTO get${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
+        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}ById(id);
     }
 
     /**
@@ -58,9 +58,9 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @param cmd {@link ${TYPE_NAME_UPPER_CAMEL}Cmd}
      */
     @PutMapping(value = "{id}")
-    public void update${DOMAIN_UPPER_CAMEL}ById(@PathVariable("id") Long id, @Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
+    public void update${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id, @Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
         cmd.setId(id);
-        ${TYPE_NAME_LOWER_CAMEL}ServiceI.update${DOMAIN_UPPER_CAMEL}ById(cmd);
+        ${TYPE_NAME_LOWER_CAMEL}ServiceI.update${TYPE_NAME_UPPER_CAMEL}ById(cmd);
     }
 
     /**
@@ -69,7 +69,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @param id id
      */
     @DeleteMapping(value = "{id}")
-    public void delete${DOMAIN_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
-        ${TYPE_NAME_LOWER_CAMEL}ServiceI.delete${DOMAIN_UPPER_CAMEL}ById(id);
+    public void delete${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
+        ${TYPE_NAME_LOWER_CAMEL}ServiceI.delete${TYPE_NAME_UPPER_CAMEL}ById(id);
     }
 }

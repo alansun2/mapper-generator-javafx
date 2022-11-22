@@ -15,12 +15,15 @@ public class ToggleSwitch extends AnchorPane {
 
     public ToggleSwitch(double width, boolean curToggle, Consumer<Boolean> consumer) {
         this.setPrefWidth(width);
+        this.setMaxHeight(10);
+        this.setPrefHeight(10);
         final double halfWidth = width / 2;
         this.setStyle((curToggle ? "-fx-background-color: #7070fd;" : "-fx-background-color: #d20a0a;") + "-fx-background-insets: 0; -fx-background-radius: 15");
         Button button = new Button(curToggle ? "开" : "关");
         button.setStyle("-fx-border-width: 0; -fx-background-radius: 15; -fx-background-insets: 0");
         button.setPrefWidth(halfWidth);
-        button.prefHeightProperty().bind(this.heightProperty());
+        button.setPrefHeight(10);
+//        button.prefHeightProperty().bind(this.heightProperty());
         button.setLayoutX(curToggle ? 0 : halfWidth);
         button.setLayoutY(0);
         button.setOnAction(actionEvent -> {
@@ -44,6 +47,10 @@ public class ToggleSwitch extends AnchorPane {
             tt.play();
         });
         this.getChildren().add(button);
+    }
+
+    public void setPrefHeight(int prefHeight) {
+        super.setPrefHeight(prefHeight);
     }
 
     private void open(Button source, TranslateTransition tt, double from, double to, Consumer<Boolean> consumer) {

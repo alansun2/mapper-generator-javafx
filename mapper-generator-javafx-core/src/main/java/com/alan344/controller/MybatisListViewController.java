@@ -41,9 +41,9 @@ public class MybatisListViewController implements Initializable {
      * 右边 border 固定再上面的 两个 HBox。存放 checkBox
      */
     @FXML
-    private HBox mapperCheckBoxHBox1;
+    private HBox mapperCheckBoxHbox1;
     @FXML
-    private HBox mapperCheckBoxHBox2;
+    private HBox mapperCheckBoxHbox2;
     @Resource
     private TableAdvanceSetupController tableAdvanceSetUpController;
     @Resource
@@ -64,7 +64,7 @@ public class MybatisListViewController implements Initializable {
         NodeConstants.mainStackPane = mainStackPane;
 
         // init mapperCheckBox
-        mapperCheckBoxInit.checkBoxInit(mapperCheckBoxHBox1, mapperCheckBoxHBox2);
+        mapperCheckBoxInit.checkBoxInit(mapperCheckBoxHbox1, mapperCheckBoxHbox2);
 
         mybatisListViewInit.addListener(listView);
 
@@ -77,19 +77,19 @@ public class MybatisListViewController implements Initializable {
      */
     @FXML
     public void refreshTableColumn() {
-        ObservableList<VBox> selectedItemVBoxs = listView.getSelectionModel().getSelectedItems();
+        ObservableList<VBox> selectedItemVboxList = listView.getSelectionModel().getSelectedItems();
 
-        Assert.isTrue(selectedItemVBoxs.size() == 1, "请选择一个表进行操作", NodeConstants.primaryStage);
+        Assert.isTrue(selectedItemVboxList.size() == 1, "请选择一个表进行操作", NodeConstants.primaryStage);
 
-        VBox selectedItemVBox = selectedItemVBoxs.get(0);
-        String tableName = ((Label) ((HBox) selectedItemVBox.getChildren().get(0)).getChildren().get(0)).getText();
+        VBox selectedItemVbox = selectedItemVboxList.get(0);
+        String tableName = ((Label) ((HBox) selectedItemVbox.getChildren().get(0)).getChildren().get(0)).getText();
         columnService.reloadColumns(tableName);
         // 如果 size == 2 说明是，闭合状态下点击，如果 > 2 说明是展开状态下点击，这时需要删除
-        ObservableList<Node> children = selectedItemVBox.getChildren();
+        ObservableList<Node> children = selectedItemVbox.getChildren();
         if (children.size() > 2) {
-            selectedItemVBox.getChildren().remove(2);
+            selectedItemVbox.getChildren().remove(2);
         }
-        mybatisListViewInit.expandTableViewColumns(selectedItemVBox);
+        mybatisListViewInit.expandTableViewColumns(selectedItemVbox);
     }
 
     /**
@@ -97,12 +97,12 @@ public class MybatisListViewController implements Initializable {
      */
     @FXML
     public void advancedSetUp() {
-        ObservableList<VBox> selectedItemVBoxs = listView.getSelectionModel().getSelectedItems();
+        ObservableList<VBox> selectedItemVboxList = listView.getSelectionModel().getSelectedItems();
 
-        Assert.isTrue(selectedItemVBoxs.size() == 1, "请选择一个表进行操作", NodeConstants.primaryStage);
+        Assert.isTrue(selectedItemVboxList.size() == 1, "请选择一个表进行操作", NodeConstants.primaryStage);
 
-        VBox selectedItemVBox = selectedItemVBoxs.get(0);
-        tableAdvanceSetUpController.openTableAdvancedSetup(NodeConstants.primaryStage, selectedItemVBox);
+        VBox selectedItemVbox = selectedItemVboxList.get(0);
+        tableAdvanceSetUpController.openTableAdvancedSetup(NodeConstants.primaryStage, selectedItemVbox);
     }
 
 

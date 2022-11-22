@@ -64,6 +64,7 @@ public class MybatisSetupController implements Initializable {
             mybatisExportConfigs.forEach(this::addConfigButton);
             // 显示第一个config
             mybatisExportController.showConfig(mybatisExportConfigs.get(0));
+            selectConfigLV.getSelectionModel().select(0);
         }
 
         final Map<String, MybatisExportConfig> configNameConfigMap = configService.getConfigNameConfigMap();
@@ -132,17 +133,28 @@ public class MybatisSetupController implements Initializable {
 
         Node next = nodeHandler.getNext();
         if (next == null) {
-            next = FxmlLoadFactory.create("/fxml/extra-file-setup.fxml", beanFactory);
+            next = FxmlLoadFactory.create("/fxml/extra-file-group.fxml", beanFactory);
             // 入栈
             nodeHandler.addNode(next);
         }
 
+        final MybatisExportConfig config = mybatisExportController.getConfig(BaseConstants.currentConfig);
+        config.setExportExtraFile(true);
         NodeConstants.borderPaneWrap.setCenter(next);
+    }
+
+    @FXML
+    public void saveSetUp() {
+        mybatisExportController.validExport();
+        final MybatisExportConfig config = mybatisExportController.getConfig(BaseConstants.currentConfig);
+        exportService.saveSetup(config);
     }
 
     @FXML
     public void export() {
         mybatisExportController.validExport();
-        exportService.export(BaseConstants.currentConfig);
+        final MybatisExportConfig config = mybatisExportController.getConfig(BaseConstants.currentConfig);
+        config.setExportExtraFile(false);
+        exportService.export(config);
     }
 }

@@ -21,9 +21,10 @@
     </center>
     <bottom>
         <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 20;">
-            <Button mnemonicParsing="false" prefWidth="70" text="Export" onAction="#export"/>
-            <Button mnemonicParsing="false" prefWidth="70" text="Pre" onAction="#pre"/>
-            <Button mnemonicParsing="false" prefWidth="70" text="Next" onAction="#next"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="保存配置" onAction="#saveSetUp"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="导出" onAction="#export"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="返回" onAction="#pre"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="下一步" onAction="#next"/>
         </HBox>
     </bottom>
 </BorderPane>

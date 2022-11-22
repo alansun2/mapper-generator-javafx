@@ -46,7 +46,7 @@
         <SplitPane dividerPositions="0.15">
             <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
                 <top>
-                    <TextField fx:id="tableFindTextField" focusTraversable="false" promptText="table filter"/>
+                    <TextField fx:id="tableFindTextField" focusTraversable="false" promptText="Table Filter"/>
                 </top>
                 <center>
                     <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="350.0" prefWidth="224.0"

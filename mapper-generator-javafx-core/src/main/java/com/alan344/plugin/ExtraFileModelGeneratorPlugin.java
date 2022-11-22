@@ -3,7 +3,9 @@ package com.alan344.plugin;
 import com.alan344.bean.config.ExtraFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
+import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
+import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.tokenparse.GenericTokenParser;
 import org.mybatis.generator.api.*;
@@ -35,8 +37,11 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        return currentConfig.getExtraFileConfigs().stream()
+        if (CollectionUtils.isEmpty(ConfigConstants.extraFileConfigs)) {
+            return Collections.emptyList();
+        }
+
+        return ConfigConstants.extraFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
                 .filter(ExtraFileConfig::isEnable).map(extraFileConfig -> {
                     // 生成类

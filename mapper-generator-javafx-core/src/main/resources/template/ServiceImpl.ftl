@@ -33,29 +33,29 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void add${DOMAIN_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
+    public void add${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
         ${TYPE_NAME_LOWER_CAMEL}AddCmdExe.execute(cmd);
     }
 
     @Override
-    public Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${DOMAIN_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
+    public Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
         return ${TYPE_NAME_LOWER_CAMEL}PageQryExe.execute(qry);
     }
 
     @Override
-    public ${TYPE_NAME_UPPER_CAMEL}DTO get${DOMAIN_UPPER_CAMEL}ById(Long id) {
+    public ${TYPE_NAME_UPPER_CAMEL}DTO get${TYPE_NAME_UPPER_CAMEL}ById(Long id) {
         return ${TYPE_NAME_LOWER_CAMEL}ByIdQryExe.execute(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void update${DOMAIN_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
+    public void update${TYPE_NAME_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
         ${TYPE_NAME_LOWER_CAMEL}UpdateCmdExe.execute(cmd);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void delete${DOMAIN_UPPER_CAMEL}ById(Long id) {
+    public void delete${TYPE_NAME_UPPER_CAMEL}ById(Long id) {
         ${TYPE_NAME_LOWER_CAMEL}DelByIdCmdExe.execute(id);
     }
 }

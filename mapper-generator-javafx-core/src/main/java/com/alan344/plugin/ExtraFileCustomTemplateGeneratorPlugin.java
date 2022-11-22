@@ -1,9 +1,9 @@
 package com.alan344.plugin;
 
 import com.alan344.bean.config.ExtraFileConfig;
-import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.constants.BaseConstants;
+import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
+import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.tokenparse.GenericTokenParser;
 import com.google.common.base.CaseFormat;
 import freemarker.template.Configuration;
@@ -87,8 +87,11 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        currentConfig.getExtraFileConfigs().stream()
+        if (CollectionUtils.isEmpty(ConfigConstants.extraFileConfigs)) {
+            return Collections.emptyList();
+        }
+
+        ConfigConstants.extraFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.CUSTOM_TEMPLATE))
                 .filter(ExtraFileConfig::isEnable).forEach(extraFileConfig -> this.process(introspectedTable, extraFileConfig));
         return Collections.emptyList();
