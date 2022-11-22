@@ -156,7 +156,6 @@ public class MybatisExtraFileGroupController implements Initializable {
         });
         HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
         btnHbox.setAlignment(Pos.CENTER_RIGHT);
-        btnHbox.setStyle("-fx-padding: 10 10 0 10");
         borderPane.setBottom(btnHbox);
 
         stage.setScene(new Scene(borderPane));
@@ -253,7 +252,7 @@ public class MybatisExtraFileGroupController implements Initializable {
                                                         ExtraFileConfig extraFileConfig,
                                                         ExtraFileGroupConfig.ExtraFileConfig extraFileConfig1) {
         ExtraFileOfGroupLabel extraFileLabel = new ExtraFileOfGroupLabel(extraFileConfig.getName(), extraFileConfig.getExtraFileType(),
-                extraFileConfig1.isEnable(), extraFileConfig::setEnable);
+                extraFileConfig1.isEnable(), extraFileConfig1::setEnable);
         extraFileLabel.setPrefHeight(23);
         extraFileLabel.setAlignment(Pos.CENTER);
         extraFileLabel.setExtraFileConfig(extraFileConfig);
