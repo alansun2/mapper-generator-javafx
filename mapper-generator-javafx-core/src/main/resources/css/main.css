@@ -4,12 +4,6 @@
     -fx-background-color: #BFBFBF;
 }
 
-.borderPane1 {
-    -fx-background-color: #F4F4F4;
-    -fx-border-width: 0;
-    -fx-padding: 0 0 0 0;
-}
-
 .topHBox {
     -fx-padding: 10 0 10 0;
 }

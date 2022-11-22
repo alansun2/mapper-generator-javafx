@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -46,6 +47,8 @@ public class MybatisExtraFileSetupController {
 
     private final Map<Integer, ExtraFileConfig> configTem = new HashMap<>();
 
+    private Button saveBtn;
+
     public void openExtraFilePageInternal(boolean showCheckBox, Consumer<List<ExtraFileConfig>> consumer) {
         if (null != stage) {
             stage.show();
@@ -62,6 +65,12 @@ public class MybatisExtraFileSetupController {
         borderPane.setStyle("-fx-background-insets: 0");
         borderPane.setPrefHeight(500);
         borderPane.setPrefWidth(700);
+        borderPane.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode().equals(KeyCode.ESCAPE)) {
+                stage.close();
+            }
+        });
+
         borderPane.setCenter(listView);
 
         borderPane.setBottom(this.getBtnHbox(stage, showCheckBox, consumer));
@@ -81,6 +90,7 @@ public class MybatisExtraFileSetupController {
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
         Button importBtn = new Button("导入");
+        importBtn.setDisable(!showCheckBox);
         importBtn.setPrefWidth(btnWidth);
         importBtn.setOnAction(event -> {
             final ObservableList<ExtraFileLabel> items = listView.getItems();
@@ -98,14 +108,7 @@ public class MybatisExtraFileSetupController {
             consumer.accept(extraFileConfigs);
         });
 
-        Button addBtn = new Button("新增");
-        addBtn.setPrefWidth(btnWidth);
-        addBtn.setOnAction(event -> {
-            ExtraFileConfig extraFileConfig = new ExtraFileConfig();
-            this.openExtraFileSetup(extraFileConfig, extraFileConfig1 -> this.addExtraFileAfterSubmit(showCheckBox, extraFileConfig1), false);
-            configTem.put(-listView.getItems().size(), extraFileConfig);
-        });
-        Button saveBtn = new Button("保存配置");
+        saveBtn = new Button("保存配置");
         saveBtn.setPrefWidth(70);
         saveBtn.setOnAction(event -> {
             // 添加文件到缓存
@@ -116,7 +119,21 @@ public class MybatisExtraFileSetupController {
             extraFileConfigService.saveExtraFileConfig();
             // 清除配置缓存
             configTem.clear();
+            saveBtn.setDisable(true);
         });
+
+        Button addBtn = new Button("新增");
+        addBtn.setPrefWidth(btnWidth);
+        addBtn.setOnAction(event -> {
+            ExtraFileConfig extraFileConfig = new ExtraFileConfig();
+            this.openExtraFileSetup(extraFileConfig, extraFileConfig1 -> {
+                this.addExtraFileAfterSubmit(showCheckBox, extraFileConfig1);
+                saveBtn.setDisable(false);
+            }, false);
+            configTem.put(-listView.getItems().size(), extraFileConfig);
+            saveBtn.setDisable(false);
+        });
+
         Button closeBtn = new Button("关闭");
         closeBtn.setPrefWidth(btnWidth);
         closeBtn.setOnAction(event -> stage.hide());
@@ -144,6 +161,11 @@ public class MybatisExtraFileSetupController {
         vBox.setPrefWidth(500);
         borderPane.setCenter(vBox);
         borderPane.setPadding(new Insets(10));
+        borderPane.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+            if (event.getCode().equals(KeyCode.ESCAPE)) {
+                addTemplateStage.close();
+            }
+        });
 
         int labelWidth = 130;
         // 属性名称
@@ -268,8 +290,10 @@ public class MybatisExtraFileSetupController {
 
         // 按钮
         Button cancelButton = new Button("取消");
+        cancelButton.setPrefWidth(50);
         cancelButton.setOnAction(actionEvent -> addTemplateStage.close());
         Button submitButton = new Button("确定");
+        submitButton.setPrefWidth(50);
         submitButton.setOnAction(actionEvent -> {
             extraFileConfig.setName(nameTextField.getText());
             extraFileConfig.setExtraFileType(fileTypeCb.getSelectionModel().getSelectedItem());
@@ -291,7 +315,7 @@ public class MybatisExtraFileSetupController {
             submitBtnAction.accept(extraFileConfig);
             addTemplateStage.close();
         });
-        HBox btnHbox = new HBox(20, cancelButton, submitButton);
+        HBox btnHbox = new HBox(10, cancelButton, submitButton);
         btnHbox.setStyle("-fx-padding: 10 0 0 0");
         btnHbox.setAlignment(Pos.CENTER_RIGHT);
         borderPane.setBottom(btnHbox);
@@ -391,15 +415,20 @@ public class MybatisExtraFileSetupController {
         extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(220));
         // 编辑
         extraFileLabel.onEditAction(actionEvent -> this.openExtraFileSetup(extraFileConfig,
-                extraFileConfig1 -> extraFileLabel.setLabelText(extraFileConfig1.getName()), true));
+                extraFileConfig1 -> {
+                    extraFileLabel.setLabelText(extraFileConfig1.getName());
+                    saveBtn.setDisable(false);
+                }, true));
         // 删除
         extraFileLabel.onDelAction(actionEvent -> {
             listView.getItems().remove(extraFileLabel);
             extraFileConfigService.deleteExtraFileConfig(extraFileConfig);
+            saveBtn.setDisable(false);
         });
         // 复制
         extraFileLabel.onCopyAction(actionEvent -> {
             this.copyItem(extraFileLabel);
+            saveBtn.setDisable(false);
         });
 
         return extraFileLabel;

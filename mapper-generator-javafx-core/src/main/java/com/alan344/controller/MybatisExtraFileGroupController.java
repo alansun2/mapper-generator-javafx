@@ -217,7 +217,9 @@ public class MybatisExtraFileGroupController implements Initializable {
                 final boolean notExist = finalExtraFileConfigNames.add(extraFileConfig1);
                 if (notExist) {
                     rightListView.getItems().add(this.packageExtraFileLabel(rightListView, finalExtraFileConfigNames, extraFileConfig, extraFileConfig1));
-                    borderPane.setCenter(rightListView);
+                    if (borderPane.getCenter() == null) {
+                        borderPane.setCenter(rightListView);
+                    }
                 }
             });
         });

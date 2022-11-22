@@ -19,7 +19,7 @@
         </SplitPane>
     </center>
     <bottom>
-        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 20;">
+        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 10">
             <Button mnemonicParsing="false" prefWidth="100" text="添加额外文件" onAction="#openExtraFilePage"/>
             <Button mnemonicParsing="false" prefWidth="70" text="保存配置" onAction="#saveSetup"/>
             <Button mnemonicParsing="false" prefWidth="70" text="导出" onAction="#export"/>

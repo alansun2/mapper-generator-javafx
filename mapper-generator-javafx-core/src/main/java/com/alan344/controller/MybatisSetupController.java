@@ -54,7 +54,6 @@ public class MybatisSetupController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         addBtn.prefWidthProperty().bind(setUpListBoardPane.widthProperty());
         BorderPane borderPane = FxmlLoadFactory.create("/fxml/component/mybatis-export-setup.fxml", beanFactory);
-        borderPane.setId("main-set-up");
 
         splitPane.getItems().add(borderPane);
 

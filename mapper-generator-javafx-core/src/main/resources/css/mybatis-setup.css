@@ -1,26 +1,5 @@
 @import "common.css";
 
-#main-set-up {
-    -fx-padding: 0
-}
-
-.addConfigButton {
-    -fx-background-color: #F4F4F4;
-    -fx-background-radius: 0em;
-}
-
-.addConfigButton:hover {
-    -fx-background-color: #BFBFBF;
-}
-
-.addConfigButton:pressed {
-    -fx-background-color: #BFBFBF;
-}
-
-.anchorPane {
-    -fx-background-color: #E8E8E8;
-}
-
 /*split-pane*/
 .split-pane:horizontal > .split-pane-divider {
     -fx-background-color: #E8E8E8;

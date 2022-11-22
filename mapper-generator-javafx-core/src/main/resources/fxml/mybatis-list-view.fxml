@@ -4,7 +4,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<BorderPane fx:id="borderPane" managed="false" styleClass="borderPane1" visible="false"
+<BorderPane fx:id="borderPane" managed="false" visible="false"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.alan344.controller.MybatisListViewController">
@@ -54,7 +54,7 @@
         </StackPane>
     </center>
     <bottom>
-        <HBox style="-fx-padding: 0 20;" prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10">
+        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 10">
             <Button mnemonicParsing="false" prefWidth="70" text="下一步" onAction="#next"/>
         </HBox>
     </bottom>

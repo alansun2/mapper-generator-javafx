@@ -11,7 +11,7 @@
             <BorderPane fx:id="setUpListBoardPane" minWidth="200" maxWidth="400">
                 <top>
                     <Button fx:id="addBtn" focusTraversable="false" layoutX="6.0" layoutY="3.0" mnemonicParsing="false"
-                            onAction="#addEmptyExportPane" styleClass="addConfigButton" text="+添加"/>
+                            onAction="#addEmptyExportPane" text="+添加"/>
                 </top>
                 <center>
                     <ListView fx:id="selectConfigLV"/>
@@ -20,7 +20,7 @@
         </SplitPane>
     </center>
     <bottom>
-        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 20;">
+        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 10;">
             <Button mnemonicParsing="false" prefWidth="70" text="保存配置" onAction="#saveSetUp"/>
             <Button mnemonicParsing="false" prefWidth="70" text="导出" onAction="#export"/>
             <Button mnemonicParsing="false" prefWidth="70" text="返回" onAction="#pre"/>
