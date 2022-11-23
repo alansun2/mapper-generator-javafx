@@ -253,7 +253,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             tableEl.setAttribute("tableName", table.getTableName());
 
             if (BaseConstants.selectedDateSource.getScheme() != null) {
-                tableEl.setAttribute("schema", BaseConstants.selectedDateSource.getScheme());
+                tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getScheme());
             }
 
             this.checkBoxSelected("enableInsert", tableEl, table.isInsert());

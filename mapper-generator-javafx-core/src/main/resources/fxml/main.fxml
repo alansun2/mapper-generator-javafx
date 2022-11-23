@@ -2,12 +2,13 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.*?>
 <BorderPane fx:id="borderPaneMain" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
             xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            style="-fx-background-color: #F7F8FA;"
             fx:controller="com.alan344.controller.MainController">
     <top>
-        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER">
+        <MenuBar fx:id="menuBar" BorderPane.alignment="CENTER" style="-fx-background-insets: 0">
             <Menu mnemonicParsing="false" text="文件">
                 <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源">
                     <graphic>
@@ -46,7 +47,11 @@
         <SplitPane dividerPositions="0.15">
             <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
                 <top>
-                    <TextField fx:id="tableFindTextField" focusTraversable="false" promptText="Table Filter"/>
+                    <HBox fx:id="tableFindTextFieldHbox" style="-fx-pref-height: 25; -fx-padding: 0 0 2 0">
+                        <TextField fx:id="tableFindTextField"
+                                   style="-fx-background-color: #FFF;" focusTraversable="false"
+                                   promptText="Table Filter"/>
+                    </HBox>
                 </top>
                 <center>
                     <TreeView fx:id="treeViewDataSource" fixedCellSize="28" prefHeight="350.0" prefWidth="224.0"
@@ -55,8 +60,7 @@
                     </TreeView>
                 </center>
             </BorderPane>
-            <BorderPane fx:id="borderPaneWrap">
-            </BorderPane>
+            <BorderPane fx:id="borderPaneWrap"/>
         </SplitPane>
     </center>
 </BorderPane>

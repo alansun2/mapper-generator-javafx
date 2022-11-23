@@ -134,10 +134,10 @@ public class MybatisExtraFileSetupController {
             saveBtn.setDisable(false);
         });
 
-        Button closeBtn = new Button("关闭");
-        closeBtn.setPrefWidth(btnWidth);
-        closeBtn.setOnAction(event -> stage.hide());
-        hBox.getChildren().addAll(importBtn, saveBtn, addBtn, closeBtn);
+        Button cancelBtn = new Button("取消");
+        cancelBtn.setPrefWidth(btnWidth);
+        cancelBtn.setOnAction(event -> stage.hide());
+        hBox.getChildren().addAll(importBtn, saveBtn, addBtn, cancelBtn);
         return hBox;
     }
 

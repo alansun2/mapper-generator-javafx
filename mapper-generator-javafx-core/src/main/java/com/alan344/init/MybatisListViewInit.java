@@ -246,6 +246,8 @@ public class MybatisListViewInit {
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
 
+        String columnStyleClass = "myColumn";
+
         String tableName = ((Label) (((HBox) selectedVBox.getChildren().get(0))).getChildren().get(0)).getText();
         TableView<Column> columnTableView = new TableView<>(FXCollections.observableArrayList(BaseConstants.selectedTableNameTableMap.get(tableName).getColumns()));
         columnTableView.setEditable(true);
@@ -257,13 +259,13 @@ public class MybatisListViewInit {
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
         tcColumnNam.setSortable(false);
         tcColumnNam.prefWidthProperty().bind(widthBind.multiply(0.16));
-        tcColumnNam.getStyleClass().setAll("myColumn");
+        tcColumnNam.getStyleClass().setAll("columnStyleClass");
 
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
         tcType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType()));
         tcType.setSortable(false);
         tcType.prefWidthProperty().bind(widthBind.multiply(0.16));
-        tcType.getStyleClass().setAll("myColumn");
+        tcType.getStyleClass().setAll(columnStyleClass);
 
         TableColumn<Column, String> property = new TableColumn<>("property");
         property.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -274,7 +276,7 @@ public class MybatisListViewInit {
         });
         property.setSortable(false);
         property.prefWidthProperty().bind(widthBind.multiply(0.16));
-        property.getStyleClass().setAll("myColumn");
+        property.getStyleClass().setAll(columnStyleClass);
 
         TableColumn<Column, String> javaType = new TableColumn<>("java type");
         javaType.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -285,7 +287,7 @@ public class MybatisListViewInit {
         });
         javaType.setSortable(false);
         javaType.prefWidthProperty().bind(widthBind.multiply(0.2));
-        javaType.getStyleClass().setAll("myColumn");
+        javaType.getStyleClass().setAll(columnStyleClass);
 
         TableColumn<Column, String> typeHandler = new TableColumn<>("type handler");
         typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -296,7 +298,7 @@ public class MybatisListViewInit {
         });
         typeHandler.setSortable(false);
         typeHandler.prefWidthProperty().bind(widthBind.multiply(0.22));
-        typeHandler.getStyleClass().setAll("myColumn");
+        typeHandler.getStyleClass().setAll(columnStyleClass);
 
         TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
         ignoreCheckBox.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
@@ -309,7 +311,7 @@ public class MybatisListViewInit {
         }));
         ignoreCheckBox.setSortable(false);
         ignoreCheckBox.prefWidthProperty().bind(widthBind.multiply(0.1));
-        ignoreCheckBox.getStyleClass().setAll("myColumn");
+        ignoreCheckBox.getStyleClass().setAll(columnStyleClass);
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);

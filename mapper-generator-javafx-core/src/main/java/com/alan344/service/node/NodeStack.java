@@ -1,7 +1,6 @@
 package com.alan344.service.node;
 
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar;
 
 /**
  * @author AlanSun
@@ -16,8 +15,6 @@ public class NodeStack {
     private NodeStack next;
 
     private Node node;
-
-    private ButtonBar buttonBar;
 
     private boolean isFirst;
 
@@ -43,14 +40,6 @@ public class NodeStack {
 
     public void setNode(Node node) {
         this.node = node;
-    }
-
-    public ButtonBar getButtonBar() {
-        return buttonBar;
-    }
-
-    public void setButtonBar(ButtonBar buttonBar) {
-        this.buttonBar = buttonBar;
     }
 
     public boolean isFirst() {

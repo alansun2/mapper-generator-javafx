@@ -15,15 +15,15 @@ public class ToggleSwitch extends AnchorPane {
 
     public ToggleSwitch(double width, boolean curToggle, Consumer<Boolean> consumer) {
         this.setPrefWidth(width);
-        this.setMaxHeight(10);
+//        this.setMaxHeight(10);
         this.setPrefHeight(10);
         final double halfWidth = width / 2;
-        this.setStyle((curToggle ? "-fx-background-color: #7070fd;" : "-fx-background-color: #d20a0a;") + "-fx-background-insets: 0; -fx-background-radius: 15");
+        this.setStyle((curToggle ? "-fx-background-color: #48D060;" : "-fx-background-color: #E3E2E2FF;") + "-fx-background-insets: 0; -fx-background-radius: 15; -fx-font-size: 10");
         Button button = new Button(curToggle ? "开" : "关");
-        button.setStyle("-fx-border-width: 0; -fx-background-radius: 15; -fx-background-insets: 0");
+        button.setStyle("-fx-background-color: #AFADAD; -fx-background-radius: 15; -fx-background-insets: 0; -fx-font-size: 10");
         button.setPrefWidth(halfWidth);
-        button.setPrefHeight(10);
-//        button.prefHeightProperty().bind(this.heightProperty());
+//        button.setPrefHeight(10);
+        button.prefHeightProperty().bind(this.heightProperty());
         button.setLayoutX(curToggle ? 0 : halfWidth);
         button.setLayoutY(0);
         button.setOnAction(actionEvent -> {
@@ -59,7 +59,7 @@ public class ToggleSwitch extends AnchorPane {
         tt.setFromY(0);
         tt.setToX(to);
         tt.setToY(0);
-        this.setStyle("-fx-background-color: #7070fd; -fx-background-insets: 0; -fx-background-radius: 15");
+        this.setStyle("-fx-background-color: #48D060; -fx-background-insets: 0; -fx-background-radius: 15; -fx-font-size: 1");
         consumer.accept(true);
     }
 
@@ -69,7 +69,7 @@ public class ToggleSwitch extends AnchorPane {
         tt.setFromY(0);
         tt.setToX(to);
         tt.setToY(0);
-        this.setStyle("-fx-background-color: #d20a0a; -fx-background-insets: 0; -fx-background-radius: 15");
+        this.setStyle("-fx-background-color: #E3E2E2FF; -fx-background-insets: 0; -fx-background-radius: 15; -fx-font-size: 10");
         consumer.accept(false);
     }
 }

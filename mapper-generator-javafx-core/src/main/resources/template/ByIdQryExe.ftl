@@ -22,7 +22,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}ByIdQryExe {
 
     public ${TYPE_NAME_UPPER_CAMEL}DTO execute(Long id) {
         final Optional<${TYPE_NAME_UPPER_CAMEL}DO> ${TYPE_NAME_LOWER_CAMEL}DoOpt = ${TYPE_NAME_LOWER_CAMEL}GatewayI.get${TYPE_NAME_UPPER_CAMEL}ById(id);
-        AssertUtils.isTrue(${TYPE_NAME_LOWER_CAMEL}DoOpt.isPresent() && ${TYPE_NAME_LOWER_CAMEL}DoOpt.get().getIsDelete() == BaseConstants.IS_DELETE_0, "记录不存在", HttpStatus.NOT_FOUND.value());
+        AssertUtils.isTrue(${TYPE_NAME_LOWER_CAMEL}DoOpt.isPresent() && ${TYPE_NAME_LOWER_CAMEL}DoOpt.get().getIsDelete() == BaseConstants.IS_DELETE_0,
+                "记录不存在", HttpStatus.NOT_FOUND.value());
         return this.convert(${TYPE_NAME_LOWER_CAMEL}DO.get());
     }
 

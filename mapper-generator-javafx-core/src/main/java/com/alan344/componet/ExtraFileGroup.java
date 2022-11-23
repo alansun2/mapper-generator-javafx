@@ -20,8 +20,8 @@ public class ExtraFileGroup extends HBox {
     public ExtraFileGroup(ExtraFileGroupConfig extraFileGroupConfig, Consumer<MouseEvent> consumer) {
         this.extraFileGroupConfig = extraFileGroupConfig;
         label = new Label(extraFileGroupConfig.getGroupName());
-        label.setPrefWidth(90);
-        ToggleSwitch button = new ToggleSwitch(40, extraFileGroupConfig.isEnable(), extraFileGroupConfig::setEnable);
+        label.setPrefWidth(70);
+        ToggleSwitch button = new ToggleSwitch(50, extraFileGroupConfig.isEnable(), extraFileGroupConfig::setEnable);
         button.setPrefHeight(10);
         this.getChildren().addAll(label, button);
         this.setSpacing(5);

@@ -10,7 +10,7 @@
             prefHeight="400.0" prefWidth="600.0">
     <center>
         <SplitPane dividerPositions="0.2">
-            <BorderPane>
+            <BorderPane maxWidth="300">
                 <center>
                     <ListView fx:id="groupListView"/>
                 </center>

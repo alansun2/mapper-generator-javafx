@@ -49,7 +49,7 @@ public class ExtraFileLabel extends HBox {
         scanButton.prefHeightProperty().bind(this.heightProperty());
 
         deleteButton = new Button("Del");
-        deleteButton.setStyle("-fx-background-insets: 0; -fx-background-color: #DC3545");
+        deleteButton.setStyle("-fx-background-insets: 0; -fx-background-color: #E35252; -fx-text-fill: white");
         deleteButton.setPrefWidth(btnWidth);
         deleteButton.prefHeightProperty().bind(this.heightProperty());
 

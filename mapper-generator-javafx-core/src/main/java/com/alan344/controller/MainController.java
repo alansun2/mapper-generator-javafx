@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -67,6 +68,8 @@ public class MainController implements Initializable {
     @Getter
     @FXML
     private TextField tableFindTextField;
+    @FXML
+    private HBox tableFindTextFieldHbox;
 
     //-------------------------------service----------------------------------------------------------------------------
 
@@ -98,6 +101,9 @@ public class MainController implements Initializable {
         NodeConstants.borderPaneWrap = borderPaneWrap;
         // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPaneMain.widthProperty());
+
+        tableFindTextField.prefHeightProperty().bind(tableFindTextFieldHbox.heightProperty());
+        tableFindTextField.prefWidthProperty().bind(tableFindTextFieldHbox.widthProperty());
 
         dataSourceTreeViewInit.treeViewInit(treeViewDataSource);
 

@@ -97,6 +97,8 @@ public class ServiceListViewInit {
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
 
+        String columnStyleClass = "myColumn";
+
         String tableName = ((Label) ((HBox) selectedVBox.getChildren().get(0)).getChildren().get(0)).getText();
         TableView<Column> columnTableView = new TableView<>(FXCollections.observableArrayList(BaseConstants.selectedTableNameTableMap.get(tableName).getColumns()));
         columnTableView.setEditable(true);
@@ -109,7 +111,7 @@ public class ServiceListViewInit {
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
         tcColumnNam.setSortable(false);
         tcColumnNam.prefWidthProperty().bind(widthBind.multiply(0.5));
-        tcColumnNam.getStyleClass().setAll("myColumn");
+        tcColumnNam.getStyleClass().setAll(columnStyleClass);
 
         // 条件
         TableColumn<Column, ConditionEnum> conditionColumn = new TableColumn<>("条件");
@@ -123,7 +125,7 @@ public class ServiceListViewInit {
         });
         conditionColumn.setSortable(false);
         conditionColumn.prefWidthProperty().bind(widthBind.multiply(0.5));
-        conditionColumn.getStyleClass().setAll("myColumn");
+        conditionColumn.getStyleClass().setAll(columnStyleClass);
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(conditionColumn);

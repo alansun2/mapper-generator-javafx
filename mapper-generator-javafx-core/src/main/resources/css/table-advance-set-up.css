@@ -1,12 +1,1 @@
-.button {
-    -fx-background-color: #BFBFBF;
-    -fx-background-radius: 0em;
-}
-
-.button:hover {
-    -fx-background-color: #fff;
-}
-
-.button:pressed {
-    -fx-background-color: #fff;
-}
+@import "common.css";

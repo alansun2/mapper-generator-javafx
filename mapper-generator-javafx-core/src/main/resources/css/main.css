@@ -1,28 +1,5 @@
 @import "common.css";
 
-.anchorPane {
-    -fx-background-color: #BFBFBF;
-}
-
-.topHBox {
-    -fx-padding: 10 0 10 0;
-}
-
 .myColumn {
     -fx-alignment: CENTER;
-}
-
-#tableFindLabel {
-    -fx-background-color: gray;
-    -fx-font-size: 16;
-}
-
-/*split-pane*/
-.split-pane:horizontal > .split-pane-divider {
-    -fx-padding: 0 0 0 0;
-    /*-fx-background-color: #E8E8E8;*/
-}
-
-ButtonBar {
-    -fx-padding: 5 20;
 }
