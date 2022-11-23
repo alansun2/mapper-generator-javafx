@@ -105,6 +105,7 @@ StackPane {
 .list-cell {
     -fx-alignment: center;
     -fx-background-color: #FFF;
+    -fx-background-radius: 5;
 }
 
 .list-cell:selected:focused {
@@ -121,7 +122,7 @@ StackPane {
 .tree-view {
     -fx-background-insets: 0;
     -fx-background-color: #F7F8FA;
-    -fx-padding: 0 5 0 5;
+    /*-fx-padding: 0 5 0 5;*/
 }
 
 .tree-cell {
