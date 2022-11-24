@@ -1,20 +1,17 @@
 .button {
-    -fx-background-color: #e0e0e0;
-    -fx-background-radius: 0em;
-}
-
-.button .cancel {
-    -fx-background-color: #e0e0e0;
-    -fx-background-radius: 0em;
+    -fx-background-color: #FFF;
+    /*-fx-background-radius: 2;*/
+    -fx-border-radius: 3;
+    -fx-border-color: #E0E0E0;
 }
 
 .button:hover {
-    -fx-background-color: #BFBFBF;
+    -fx-border-color: #9D9C9C;
 }
 
 .button:pressed {
-    -fx-background-color: #9D9C9C;
-    -fx-effect: dropshadow(three-pass-box, #9d9c9c, 10.0, 0, 2, 2);
+    -fx-border-color: #9D9C9C;
+    /*-fx-effect: dropshadow(three-pass-box, #9d9c9c, 10.0, 0, 2, 2);*/
 }
 
 .label {
@@ -33,6 +30,11 @@
 
 /* border-pane */
 BorderPane {
+    -fx-background-color: #FFF;
+    -fx-background-insets: 0;
+}
+
+AnchorPane {
     -fx-background-color: #FFF;
     -fx-background-insets: 0;
 }
@@ -59,17 +61,19 @@ StackPane {
 
 /* scroll-bar */
 .scroll-bar .thumb {
-    -fx-padding: 0;
+    -fx-background-insets: 0;
     -fx-background-color: rgba(207, 207, 207, 0.4);
     -fx-background-radius: 0em;
 }
 
 .scroll-bar:horizontal {
     -fx-background-color: transparent;
+    -fx-pref-height: 9;
 }
 
 .scroll-bar:vertical {
     -fx-background-color: transparent;
+    -fx-pref-width: 9;
 }
 
 .scroll-bar:horizontal .increment-button, .scroll-bar:horizontal .increment-arrow {
@@ -100,6 +104,7 @@ StackPane {
 .list-view {
     -fx-background-insets: 0;
     -fx-background-color: #FFF;
+    -fx-padding: 0 5 0 5;
 }
 
 .list-cell {
@@ -122,7 +127,7 @@ StackPane {
 .tree-view {
     -fx-background-insets: 0;
     -fx-background-color: #F7F8FA;
-    /*-fx-padding: 0 5 0 5;*/
+    -fx-padding: 0 5 0 5;
 }
 
 .tree-cell {

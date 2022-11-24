@@ -9,15 +9,13 @@ import com.alan344.init.FindTableInit;
 import com.alan344.utils.DialogUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.control.textfield.TextFields;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Controller;
 
@@ -65,8 +63,9 @@ public class MainController implements Initializable {
     /**
      * 搜索表时用的 TextField
      */
-    @Getter
     @FXML
+    private Label searchLabel;
+    @Getter
     private TextField tableFindTextField;
     @FXML
     private HBox tableFindTextFieldHbox;
@@ -102,6 +101,12 @@ public class MainController implements Initializable {
         // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPaneMain.widthProperty());
 
+        tableFindTextField = TextFields.createClearableTextField();
+        tableFindTextField.setStyle("-fx-background-color: #FFF;");
+        tableFindTextField.setPromptText("Table Filter");
+        tableFindTextField.setFocusTraversable(false);
+        tableFindTextFieldHbox.getChildren().add(tableFindTextField);
+        searchLabel.prefHeightProperty().bind(tableFindTextFieldHbox.heightProperty());
         tableFindTextField.prefHeightProperty().bind(tableFindTextFieldHbox.heightProperty());
         tableFindTextField.prefWidthProperty().bind(tableFindTextFieldHbox.widthProperty());
 

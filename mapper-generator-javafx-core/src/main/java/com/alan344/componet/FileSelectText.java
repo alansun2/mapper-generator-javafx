@@ -38,13 +38,14 @@ public class FileSelectText extends HBox {
         textField.prefHeightProperty().bind(this.heightProperty());
         textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
         button = new Button(btnName);
-        button.setStyle("-fx-background-insets: 0");
         button.setPrefWidth(64);
         button.prefHeightProperty().bind(this.heightProperty());
         this.getChildren().addAll(textField, button);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-border-width: 1;" +
                 "-fx-border-color: #BABABA;");
+
+        this.getStylesheets().add("/css/text-button.css");
     }
 
 

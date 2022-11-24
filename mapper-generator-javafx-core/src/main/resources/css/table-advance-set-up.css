@@ -1,1 +1,5 @@
 @import "common.css";
+
+AnchorPane {
+    -fx-background-color: #F7F8FA;
+}
