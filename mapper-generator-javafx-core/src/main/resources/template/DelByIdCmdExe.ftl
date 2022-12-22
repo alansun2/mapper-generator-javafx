@@ -8,6 +8,8 @@ import vip.tuoyang.schoolsafe.${server}.domain<#if DOMAIN != "">.${DOMAIN}</#if>
 import vip.tuoyang.schoolsafe.${server}.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}GatewayI;
 import vip.tuoyang.schoolsafe.${server}<#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}Mapper;
 
+import java.util.Optional;
+
 /**
  * @author AlanSun
  * @date ${CUR_DATE_TIME}
