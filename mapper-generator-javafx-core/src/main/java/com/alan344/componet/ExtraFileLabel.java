@@ -44,7 +44,7 @@ public class ExtraFileLabel extends HBox {
         extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(jfxCheckBoxWidth + nameWidth + (btnWidth * 3)));
 
         scanButton = new Button("Edit");
-        scanButton.setStyle("-fx-background-insets: 0");
+        scanButton.setStyle("-fx-background-insets: 0; -fx-background-color: #7070fd; -fx-text-fill: white");
         scanButton.setPrefWidth(btnWidth);
         scanButton.prefHeightProperty().bind(this.heightProperty());
 

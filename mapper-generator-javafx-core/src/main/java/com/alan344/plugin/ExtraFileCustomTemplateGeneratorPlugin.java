@@ -1,6 +1,8 @@
 package com.alan344.plugin;
 
 import com.alan344.bean.config.ExtraFileConfig;
+import com.alan344.bean.config.MybatisExportConfig;
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
@@ -90,19 +92,20 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         if (CollectionUtils.isEmpty(ConfigConstants.extraFileConfigs)) {
             return Collections.emptyList();
         }
-
+        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
+        final LinkedHashMap<String, String> customProperties = currentConfig.getCustomProperties();
         ConfigConstants.extraFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.CUSTOM_TEMPLATE))
-                .filter(ExtraFileConfig::isEnable).forEach(extraFileConfig -> this.process(introspectedTable, extraFileConfig));
+                .forEach(extraFileConfig -> this.process(introspectedTable, extraFileConfig, customProperties));
         return Collections.emptyList();
     }
 
-    private void process(IntrospectedTable introspectedTable, ExtraFileConfig extraFileConfig) {
+    private void process(IntrospectedTable introspectedTable, ExtraFileConfig extraFileConfig, LinkedHashMap<String, String> customProperties) {
         final Configuration cfg = this.getConfig(extraFileConfig.getCustomTemplateDir());
         final Template template = this.getTemplate(cfg, extraFileConfig.getCustomTemplateFileName());
         try {
             // 数据
-            final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraFileConfig);
+            final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraFileConfig, customProperties);
             FileWriterWithEncoding fileWriterWithEncoding = new FileWriterWithEncoding(this.getFileName(extraFileConfig, modelData), StandardCharsets.UTF_8);
             template.process(modelData, fileWriterWithEncoding);
         } catch (IOException | TemplateException e) {
@@ -125,14 +128,14 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         return outputPath + outPathFromPackage + "/" + upperCamel + extraFileConfig.getModelSuffix() + ".java";
     }
 
-    private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable, ExtraFileConfig extraFileConfig) {
+    private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable, ExtraFileConfig extraFileConfig, LinkedHashMap<String, String> customProperties) {
         HashMap<String, Object> modelDataMap = new HashMap<>(16);
-        final String upperCamel = TableUtils.getUpperCamel(introspectedTable);
+        final String upperCamel = PluginUtils.getUpperCamel(introspectedTable);
         modelDataMap.put(TYPE_NAME_UPPER_CAMEL.name(), upperCamel);
-        modelDataMap.put(TYPE_NAME_LOWER_CAMEL.name(), TableUtils.getLowerCase(upperCamel));
-        modelDataMap.put(TYPE_NAME_LOWER_HYPHEN.name(), TableUtils.getLowerHyphen(upperCamel));
+        modelDataMap.put(TYPE_NAME_LOWER_CAMEL.name(), PluginUtils.getLowerCase(upperCamel));
+        modelDataMap.put(TYPE_NAME_LOWER_HYPHEN.name(), PluginUtils.getLowerHyphen(upperCamel));
         modelDataMap.put(CUR_DATE_TIME.name(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        final TableUtils.Domain domain = TableUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true);
+        final PluginUtils.Domain domain = PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true);
         modelDataMap.put(DOMAIN.name(), domain.getD());
         modelDataMap.put(DOMAIN_UPPER_CAMEL.name(), CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, domain.getD()));
         modelDataMap.put(DOMAIN_DESC.name(), domain.getDd());
@@ -141,6 +144,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         final List<String> fieldUpperCamels = allColumns.stream().map(introspectedColumn -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, introspectedColumn.getActualColumnName()))
                 .collect(Collectors.toList());
         modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
+
+        modelDataMap.putAll(customProperties);
+
         return modelDataMap;
     }
 
@@ -151,7 +157,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
      * @param domain          领域
      * @return 包名
      */
-    private String getPackage(ExtraFileConfig extraFileConfig, TableUtils.Domain domain) {
+    private String getPackage(ExtraFileConfig extraFileConfig, PluginUtils.Domain domain) {
         String packageName = extraFileConfig.getPackageName();
         packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
         packageName = packageName.replaceAll("\\.\\.", "\\.");

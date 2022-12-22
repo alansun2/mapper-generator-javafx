@@ -3,11 +3,11 @@ package com.alan344.controller;
 import com.alan344.bean.config.ExtraFileConfig;
 import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.componet.ExtraFileGroup;
-import com.alan344.componet.ExtraFileOfGroupLabel;
+import com.alan344.componet.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExportService;
 import com.alan344.service.ExtraFileConfigService;
 import com.alan344.service.node.NodeHandler;
@@ -22,11 +22,13 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -75,6 +77,14 @@ public class MybatisExtraFileGroupController implements Initializable {
             groupListView.setPlaceholder(new Label("没有数据"));
             extraFileGroupConfigs = new ArrayList<>(2);
             currentConfig.setExtraFileGroupConfigs(extraFileGroupConfigs);
+        }
+
+        // 自定义属性
+        final LinkedHashMap<String, String> customProperties = currentConfig.getCustomProperties();
+        if (customProperties != null && !customProperties.isEmpty()) {
+
+        } else {
+
         }
 
         // groupListView 设置右键
@@ -176,7 +186,12 @@ public class MybatisExtraFileGroupController implements Initializable {
             final ExtraFileGroupConfig extraFileGroupConfig = first.get();
             final Map<String, ExtraFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap();
             ConfigConstants.extraFileConfigs = extraFileGroupConfig.getExtraFileConfigNames().stream()
-                    .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable).map(extraFileConfig -> extraFileConfigMap.get(extraFileConfig.getName())).toList();
+                    .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable).map(extraFileConfig -> {
+                        final ExtraFileConfig extraFileConfig1 = extraFileConfigMap.get(extraFileConfig.getName());
+                        extraFileConfig1.setOutputPath(extraFileConfig.getOutputPath());
+                        extraFileConfig1.setPackageName(extraFileConfig.getPackageName());
+                        return extraFileConfig1;
+                    }).toList();
         } else {
             ConfigConstants.extraFileConfigs = null;
         }
@@ -211,18 +226,97 @@ public class MybatisExtraFileGroupController implements Initializable {
             }
             final ListView<ExtraFileOfGroupLabel> rightListView = this.getRightListView(curExtraFileGroupConfig);
             Set<ExtraFileGroupConfig.ExtraFileConfig> finalExtraFileConfigNames = extraFileConfigNames;
+
+            final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
+            final List<ExtraFileGroupConfig> extraFileGroupConfigs = currentConfig.getExtraFileGroupConfigs();
+            Map<String, ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigMap = new HashMap<>();
+            if (extraFileGroupConfigs != null) {
+                extraFileGroupConfigs.forEach(extraFileGroupConfig -> {
+                    final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames1 = extraFileGroupConfig.getExtraFileConfigNames();
+                    extraFileConfigNames1.forEach(extraFileConfig -> extraFileConfigMap.put(extraFileConfig.getName(), extraFileConfig));
+                });
+            }
             extraFileConfigs.forEach(extraFileConfig -> {
-                ExtraFileGroupConfig.ExtraFileConfig extraFileConfig1 = new ExtraFileGroupConfig.ExtraFileConfig();
-                extraFileConfig1.setName(extraFileConfig.getName());
-                final boolean notExist = finalExtraFileConfigNames.add(extraFileConfig1);
+                ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew = new ExtraFileGroupConfig.ExtraFileConfig();
+                extraFileConfigNew.setName(extraFileConfig.getName());
+                final boolean notExist = finalExtraFileConfigNames.add(extraFileConfigNew);
                 if (notExist) {
-                    rightListView.getItems().add(this.packageExtraFileLabel(rightListView, finalExtraFileConfigNames, extraFileConfig, extraFileConfig1));
+                    // 填充文件输出地址和包名防止重复填写
+                    final ExtraFileGroupConfig.ExtraFileConfig original = extraFileConfigMap.get(extraFileConfig.getName());
+                    if (null != original) {
+                        extraFileConfigNew.setOutputPath(original.getOutputPath());
+                        extraFileConfigNew.setPackageName(original.getPackageName());
+                    }
+                    rightListView.getItems().add(this.packageExtraFileLabel(rightListView, finalExtraFileConfigNames, extraFileConfig, extraFileConfigNew));
                     if (borderPane.getCenter() == null) {
                         borderPane.setCenter(rightListView);
                     }
                 }
             });
         });
+    }
+
+    /**
+     * 打开添加自定义属性页面
+     */
+    @FXML
+    public void openExtraFileCustomProperties() {
+        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
+        LinkedHashMap<String, String> customProperties = currentConfig.getCustomProperties();
+        if (null == customProperties) {
+            customProperties = new LinkedHashMap<>();
+            currentConfig.setCustomProperties(customProperties);
+        }
+        this.addCustomProperty(customProperties);
+    }
+
+    private void addCustomProperty(LinkedHashMap<String, String> customProperties) {
+        Stage stage = new Stage();
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.getStyleClass().add("border-pane-padding");
+        borderPane.getStylesheets().add("css/common.css");
+        borderPane.setPrefWidth(400);
+        borderPane.setPrefHeight(400);
+
+        ListView<CustomPropertyHBox> lv = new ListView<>();
+
+        customProperties.forEach((key, value) -> {
+            CustomPropertyHBox customPropertyHBox = new CustomPropertyHBox(key, value);
+            customPropertyHBox.delOnAction(event -> {
+                lv.getItems().remove(customPropertyHBox);
+            });
+            lv.getItems().add(customPropertyHBox);
+        });
+
+        borderPane.setCenter(lv);
+
+        // 按钮
+        Button addBtn = new Button("添加");
+        addBtn.setOnAction(event -> this.addCustomProperty(customPropertyHBox -> {
+            lv.getItems().add(customPropertyHBox);
+            customPropertyHBox.delOnAction(event1 -> lv.getItems().remove(customPropertyHBox));
+        }));
+        Button cancelBtn = new Button("取消");
+        cancelBtn.setOnAction(event -> stage.close());
+        Button applyBtn = new Button("应用");
+        applyBtn.setOnAction(event -> {
+            customProperties.clear();
+            lv.getItems().forEach(customPropertyHBox -> customProperties.put(customPropertyHBox.getKey(), customPropertyHBox.getValue()));
+            stage.close();
+        });
+        HBox btnHbox = new HBox(10, addBtn, cancelBtn, applyBtn);
+        btnHbox.setAlignment(Pos.CENTER_RIGHT);
+
+        borderPane.setBottom(btnHbox);
+
+        stage.setScene(new Scene(borderPane));
+        stage.setResizable(false);
+        stage.getIcons().add(new Image("/image/advanced-set-up.png"));
+        stage.setTitle("设置自定义属性");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(NodeConstants.primaryStage);
+        stage.show();
     }
 
     private ExtraFileGroup generatorExtraFileGroup(ExtraFileGroupConfig extraFileGroupConfig) {
@@ -259,6 +353,10 @@ public class MybatisExtraFileGroupController implements Initializable {
         extraFileLabel.setAlignment(Pos.CENTER);
         extraFileLabel.setExtraFileConfig(extraFileConfig);
         extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(220));
+        // 编辑
+        extraFileLabel.onEditAction(actionEvent -> {
+            this.openEdit(extraFileConfig1);
+        });
         // 删除
         extraFileLabel.onDelAction(actionEvent -> {
             listView.getItems().remove(extraFileLabel);
@@ -266,5 +364,116 @@ public class MybatisExtraFileGroupController implements Initializable {
         });
 
         return extraFileLabel;
+    }
+
+    private void openEdit(ExtraFileGroupConfig.ExtraFileConfig extraFileConfig) {
+        Stage stage = new Stage();
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.getStyleClass().add("border-pane-padding");
+        borderPane.getStylesheets().add("css/common.css");
+        borderPane.setPrefWidth(400);
+        borderPane.setPrefHeight(150);
+
+        int labelWidth = 80;
+
+        VBox vBox = new VBox();
+        vBox.setSpacing(10);
+        // 文件地址
+        FileSelectText outputPathTextField = new FileSelectText("浏览", extraFileConfig.getOutputPath());
+        outputPathTextField.setPromptText("文件输出地址");
+        outputPathTextField.setTextTooltip("不包含包名的路径");
+        outputPathTextField.onAction(actionEvent -> {
+            // 文件导出地址
+            BaseConstants.baseFileDir = extraFileConfig.getOutputPath();
+            File directory = FileDirChooserFactory.createDirectoryScan(null, com.alan344.utils.StringUtils.getDefaultIfNull(BaseConstants.baseFileDir, null));
+            if (directory != null) {
+                outputPathTextField.setText(directory.getPath());
+                BaseConstants.baseFileDir = directory.getPath();
+            }
+        });
+        PropertyHBox outputPathHbox = new PropertyHBox("文件输出地址", labelWidth, outputPathTextField);
+        vBox.getChildren().add(outputPathHbox);
+
+        // 包名
+        TextField packageNameTextField = new TextField(extraFileConfig.getPackageName());
+        packageNameTextField.setPromptText("包名");
+        PropertyHBox packageNameHbox = new PropertyHBox("包名", labelWidth, packageNameTextField);
+        vBox.getChildren().add(packageNameHbox);
+
+        borderPane.setCenter(vBox);
+
+        // 按钮
+        Button cancelBtn = new Button("取消");
+        cancelBtn.setOnAction(event -> stage.close());
+        Button applyBtn = new Button("应用");
+        applyBtn.setOnAction(event -> {
+            extraFileConfig.setOutputPath(outputPathTextField.getText());
+            extraFileConfig.setPackageName(packageNameTextField.getText());
+            stage.close();
+        });
+        HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
+        btnHbox.setAlignment(Pos.CENTER_RIGHT);
+
+        borderPane.setBottom(btnHbox);
+
+        stage.setScene(new Scene(borderPane));
+        stage.setResizable(false);
+        stage.getIcons().add(new Image("/image/advanced-set-up.png"));
+        stage.setTitle("编辑");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(NodeConstants.primaryStage);
+        stage.show();
+    }
+
+    private void addCustomProperty(Consumer<CustomPropertyHBox> consumer) {
+        Stage stage = new Stage();
+
+        BorderPane borderPane = new BorderPane();
+        borderPane.getStyleClass().add("border-pane-padding");
+        borderPane.getStylesheets().add("css/common.css");
+        borderPane.setPrefWidth(400);
+        borderPane.setPrefHeight(150);
+
+        int labelWidth = 80;
+
+        VBox vBox = new VBox();
+        vBox.setSpacing(10);
+
+        // key
+        TextField keyTextField = new TextField();
+        keyTextField.setPromptText("key");
+        PropertyHBox keyHbox = new PropertyHBox("key", labelWidth, keyTextField);
+        vBox.getChildren().add(keyHbox);
+
+        // value
+        TextField valueTextField = new TextField();
+        valueTextField.setPromptText("value");
+        PropertyHBox valueHbox = new PropertyHBox("value", labelWidth, valueTextField);
+        vBox.getChildren().add(valueHbox);
+
+        borderPane.setCenter(vBox);
+
+        // 按钮
+        Button cancelBtn = new Button("取消");
+        cancelBtn.setOnAction(event -> stage.close());
+        Button applyBtn = new Button("应用");
+        applyBtn.setOnAction(event -> {
+            CustomPropertyHBox customPropertyHBox = new CustomPropertyHBox(keyTextField.getText(), valueTextField.getText());
+            consumer.accept(customPropertyHBox);
+            stage.close();
+        });
+        HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
+        btnHbox.setAlignment(Pos.CENTER_RIGHT);
+
+        borderPane.setBottom(btnHbox);
+
+        stage.setScene(new Scene(borderPane));
+        stage.setResizable(false);
+        stage.getIcons().add(new Image("/image/advanced-set-up.png"));
+        stage.setTitle("编辑");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(NodeConstants.primaryStage);
+        stage.show();
     }
 }

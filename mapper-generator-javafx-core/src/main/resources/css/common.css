@@ -135,7 +135,7 @@ StackPane {
     -fx-background-radius: 5;
 }
 
-.tree-cell:selected:focused {
+.tree-cell:selected {
     /*-fx-background-color: linear-gradient(#838b9b 0%, #949eb2 25%, #adb9d2 75%, #CFDEFC 100%);*/
     -fx-background-color: #C9D8F8;
     -fx-text-fill: #000;

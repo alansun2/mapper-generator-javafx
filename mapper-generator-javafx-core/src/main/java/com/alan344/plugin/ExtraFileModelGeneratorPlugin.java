@@ -1,8 +1,6 @@
 package com.alan344.plugin;
 
 import com.alan344.bean.config.ExtraFileConfig;
-import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
@@ -43,9 +41,9 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
 
         return ConfigConstants.extraFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
-                .filter(ExtraFileConfig::isEnable).map(extraFileConfig -> {
+                .map(extraFileConfig -> {
                     // 生成类
-                    TopLevelClass topLevelClass = new TopLevelClass(TableUtils.getTypeFullName(introspectedTable, this.getPackageName(introspectedTable.getRemarks(), extraFileConfig), extraFileConfig.getModelSuffix()));
+                    TopLevelClass topLevelClass = new TopLevelClass(PluginUtils.getTypeFullName(introspectedTable, this.getPackageName(introspectedTable.getRemarks(), extraFileConfig), extraFileConfig.getModelSuffix()));
                     topLevelClass.setVisibility(JavaVisibility.PUBLIC);
                     // 添加 lombok 注解
                     this.addLombok(extraFileConfig, topLevelClass);
@@ -63,13 +61,13 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                     List<IntrospectedColumn> introspectedColumns = introspectedTable.getAllColumns();
 
                     Plugin plugins = context.getPlugins();
-                    String rootClass = TableUtils.getRootClass(introspectedTable, context);
+                    String rootClass = PluginUtils.getRootClass(introspectedTable, context);
                     for (IntrospectedColumn introspectedColumn : introspectedColumns) {
                         if (RootClassInfo.getInstance(rootClass, Collections.emptyList()).containsProperty(introspectedColumn)) {
                             continue;
                         }
                         // 全局忽略字段
-                        if (TableUtils.isFieldIgnore(extraFileConfig.getModelIgnoreColumns(), introspectedColumn.getActualColumnName())) {
+                        if (PluginUtils.isFieldIgnore(extraFileConfig.getModelIgnoreColumns(), introspectedColumn.getActualColumnName())) {
                             continue;
                         }
 
@@ -99,7 +97,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
     private String getPackageName(String remarks, ExtraFileConfig extraFileConfig) {
         String packageName = extraFileConfig.getPackageName();
 
-        final TableUtils.Domain domain = TableUtils.getDomainFromRemarks(remarks, true);
+        final PluginUtils.Domain domain = PluginUtils.getDomainFromRemarks(remarks, true);
         packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
         packageName = packageName.replaceAll("\\.\\.", "\\.");
         return packageName;

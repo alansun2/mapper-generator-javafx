@@ -27,5 +27,5 @@ public interface ${TYPE_NAME_UPPER_CAMEL}GatewayI {
      * @param id id
      * @return ${TYPE_NAME_LOWER_CAMEL}DO {@link ${TYPE_NAME_UPPER_CAMEL}DO}
      */
-    Optional${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ById(Long id);
+    Optional<${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ById(Long id);
 }

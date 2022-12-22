@@ -24,6 +24,8 @@ open module com.alan344 {
     requires org.kordamp.bootstrapfx.core;
     requires org.controlsfx.controls;
     requires com.jfoenix;
+    requires com.sun.jna.platform;
+    requires com.sun.jna;
 
     exports com.alan344;
 }

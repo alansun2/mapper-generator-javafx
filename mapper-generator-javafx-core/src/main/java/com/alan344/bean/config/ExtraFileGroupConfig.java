@@ -24,6 +24,16 @@ public class ExtraFileGroupConfig {
     public static class ExtraFileConfig {
         private String name;
 
+        /**
+         * 文件输出地址
+         */
+        private String outputPath;
+
+        /**
+         * 包名
+         */
+        private String packageName;
+
         private boolean enable;
 
         @Override

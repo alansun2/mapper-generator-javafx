@@ -3,6 +3,7 @@ package com.alan344.bean.config;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -82,6 +83,11 @@ public class MybatisExportConfig implements Cloneable {
     //---------------------extra file----------------
 
     private List<ExtraFileGroupConfig> extraFileGroupConfigs;
+
+    /**
+     * 自定义属性
+     */
+    private LinkedHashMap<String, String> customProperties;
 
     @Override
     public boolean equals(Object o) {

@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+
 /**
  * @author AlanSun
  * @date 2017年3月24日 下午2:32:30
@@ -14,6 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class BizException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = -5328505822127772820L;
 
     private int errorCode;

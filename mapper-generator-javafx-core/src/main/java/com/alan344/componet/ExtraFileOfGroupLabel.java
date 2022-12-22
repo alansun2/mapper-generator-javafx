@@ -15,7 +15,9 @@ import java.util.function.Consumer;
  * @date 2022/8/21 15:01
  */
 public class ExtraFileOfGroupLabel extends HBox {
-    private final Button deleteButton;
+    private final Button deleteBtn;
+
+    private final Button editBtn;
     private final Label nameLabel;
     private ExtraFileConfig extraFileConfig;
 
@@ -29,24 +31,33 @@ public class ExtraFileOfGroupLabel extends HBox {
 
         Label extraFileTypeLabel = new Label(extraFileTypeEnum.name());
         extraFileTypeLabel.setStyle("-fx-background-insets: 0");
-        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth + toggleWidth + (btnWidth)));
+        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth + toggleWidth + (btnWidth * 2)));
 
         ToggleSwitch toggleSwitch = new ToggleSwitch(toggleWidth, curToggle, consumer);
         toggleSwitch.prefHeightProperty().bind(this.heightProperty());
 
-        deleteButton = new Button("Del");
-        deleteButton.setStyle("-fx-background-insets: 0; -fx-background-color: #E35252; -fx-text-fill: white");
-        deleteButton.setPrefWidth(btnWidth);
-        deleteButton.prefHeightProperty().bind(this.heightProperty());
+        editBtn = new Button("Edit");
+        editBtn.setStyle("-fx-background-insets: 0; -fx-background-color: #7070fd; -fx-text-fill: white");
+        editBtn.setPrefWidth(btnWidth);
+        editBtn.prefHeightProperty().bind(this.heightProperty());
 
-        this.getChildren().addAll(nameLabel, extraFileTypeLabel, toggleSwitch, deleteButton);
+        deleteBtn = new Button("Del");
+        deleteBtn.setStyle("-fx-background-insets: 0; -fx-background-color: #E35252; -fx-text-fill: white");
+        deleteBtn.setPrefWidth(btnWidth);
+        deleteBtn.prefHeightProperty().bind(this.heightProperty());
+
+        this.getChildren().addAll(nameLabel, extraFileTypeLabel, toggleSwitch, editBtn, deleteBtn);
         this.setSpacing(10);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-background-insets: 0");
     }
 
     public void onDelAction(Consumer<ActionEvent> consumer) {
-        this.deleteButton.setOnAction(consumer::accept);
+        this.deleteBtn.setOnAction(consumer::accept);
+    }
+
+    public void onEditAction(Consumer<ActionEvent> consumer) {
+        this.editBtn.setOnAction(consumer::accept);
     }
 
     public void setLabelText(String text) {

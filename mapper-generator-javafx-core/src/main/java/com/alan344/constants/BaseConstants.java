@@ -107,4 +107,9 @@ public class BaseConstants {
     }
 
     public static List<VBox> selectedCheckBoxVBox = new ArrayList<>();
+
+    /**
+     * 用于目录的临时存储
+     */
+    public static String baseFileDir;
 }

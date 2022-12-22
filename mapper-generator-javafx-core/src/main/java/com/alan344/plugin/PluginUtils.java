@@ -16,7 +16,7 @@ import java.util.Properties;
  * @author AlanSun
  * @date 2020/12/3 15:33
  */
-public class TableUtils {
+public class PluginUtils {
 
     public static String getRootClass(IntrospectedTable introspectedTable, Context context) {
         String rootClass = introspectedTable.getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_CLASS);

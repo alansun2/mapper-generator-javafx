@@ -10,6 +10,7 @@ import com.alan344.utils.DialogUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import lombok.Getter;
@@ -100,6 +101,8 @@ public class MainController implements Initializable {
         NodeConstants.borderPaneWrap = borderPaneWrap;
         // 把菜单的长度和主布局控件绑定
         menuBar.prefWidthProperty().bind(borderPaneMain.widthProperty());
+        menuBar.setOnMousePressed(this::handleMousePressed);
+        menuBar.setOnMouseDragged(this::handleMouseDragged);
 
         tableFindTextField = TextFields.createClearableTextField();
         tableFindTextField.setStyle("-fx-background-color: #FFF;");
@@ -120,6 +123,26 @@ public class MainController implements Initializable {
 
         // 加载右边中间的 borderPane
         FxmlLoadFactory.create("/fxml/mybatis-list-view.fxml", beanFactory);
+    }
+
+
+    private double dragOffsetX;
+
+    private double dragOffsetY;
+
+    protected void handleMousePressed(MouseEvent e) {
+        // Store the mouse x and y coordinates with respect to the
+        // stage in the reference variables to use them in the drag event
+        // 点击鼠标时，获取鼠标在窗体上点击时相对应窗体左上角的偏移
+        this.dragOffsetX = e.getScreenX() - NodeConstants.primaryStage.getX();
+        this.dragOffsetY = e.getScreenY() - NodeConstants.primaryStage.getY();
+    }
+
+    protected void handleMouseDragged(MouseEvent e) {
+        // Move the stage by the drag amount
+        // 拖动鼠标后，获取鼠标相对应显示器坐标减去鼠标相对窗体的坐标，并将其设置为窗体在显示器上的坐标
+        NodeConstants.primaryStage.setX(e.getScreenX() - this.dragOffsetX);
+        NodeConstants.primaryStage.setY(e.getScreenY() - this.dragOffsetY);
     }
 
     //--------------------------------init end------------------------------------------------------------------------//

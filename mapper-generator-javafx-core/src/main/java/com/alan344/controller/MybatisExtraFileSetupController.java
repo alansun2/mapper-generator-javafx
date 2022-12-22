@@ -18,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -65,12 +64,6 @@ public class MybatisExtraFileSetupController {
         borderPane.setStyle("-fx-background-insets: 0");
         borderPane.setPrefHeight(500);
         borderPane.setPrefWidth(700);
-        borderPane.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode().equals(KeyCode.ESCAPE)) {
-                stage.close();
-            }
-        });
-
         borderPane.setCenter(listView);
 
         borderPane.setBottom(this.getBtnHbox(stage, showCheckBox, consumer));
@@ -130,7 +123,7 @@ public class MybatisExtraFileSetupController {
                 this.addExtraFileAfterSubmit(showCheckBox, extraFileConfig1);
                 saveBtn.setDisable(false);
             }, false);
-            configTem.put(-listView.getItems().size(), extraFileConfig);
+            configTem.put(listView.getItems().size(), extraFileConfig);
             saveBtn.setDisable(false);
         });
 
@@ -161,11 +154,6 @@ public class MybatisExtraFileSetupController {
         vBox.setPrefWidth(500);
         borderPane.setCenter(vBox);
         borderPane.setPadding(new Insets(10));
-        borderPane.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (event.getCode().equals(KeyCode.ESCAPE)) {
-                addTemplateStage.close();
-            }
-        });
 
         int labelWidth = 130;
         // 属性名称
@@ -183,28 +171,6 @@ public class MybatisExtraFileSetupController {
         }
         PropertyHBox fileTypeHbox = new PropertyHBox("文件类型", labelWidth, fileTypeCb);
         vBox.getChildren().add(fileTypeHbox);
-
-        // 文件地址
-        FileSelectText outputPathTextField = new FileSelectText("浏览", extraFileConfig.getOutputPath());
-        outputPathTextField.setPromptText("文件输出地址");
-        outputPathTextField.setTextTooltip("不包含包名的路径");
-        outputPathTextField.onAction(actionEvent -> {
-            // 文件导出地址
-            baseDir = extraFileConfig.getOutputPath();
-            File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.getDefaultIfNull(this.baseDir, null));
-            if (directory != null) {
-                outputPathTextField.setText(directory.getPath());
-                this.baseDir = directory.getPath();
-            }
-        });
-        PropertyHBox outputPathHbox = new PropertyHBox("文件输出地址", labelWidth, outputPathTextField);
-        vBox.getChildren().add(outputPathHbox);
-
-        // 包名
-        TextField packageNameTextField = new TextField(extraFileConfig.getPackageName());
-        packageNameTextField.setPromptText("包名");
-        PropertyHBox packageNameHbox = new PropertyHBox("包名", labelWidth, packageNameTextField);
-        vBox.getChildren().add(packageNameHbox);
 
         // 父类
         final TextField superClassTextField = new TextField(extraFileConfig.getSuperClass());
@@ -297,8 +263,6 @@ public class MybatisExtraFileSetupController {
         submitButton.setOnAction(actionEvent -> {
             extraFileConfig.setName(nameTextField.getText());
             extraFileConfig.setExtraFileType(fileTypeCb.getSelectionModel().getSelectedItem());
-            extraFileConfig.setOutputPath(outputPathTextField.getText());
-            extraFileConfig.setPackageName(packageNameTextField.getText());
             extraFileConfig.setSuperClass(superClassTextField.getText());
             extraFileConfig.setModelSuffix(modelSuffixTextField.getText());
             extraFileConfig.setGenerateValidAnnotation(checkBox.isSelected());
