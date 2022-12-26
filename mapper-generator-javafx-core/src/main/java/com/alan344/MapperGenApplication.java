@@ -45,7 +45,7 @@ public class MapperGenApplication extends Application {
         NodeConstants.hostServices = getHostServices();
         final Scene scene = new Scene(FxmlLoadFactory.create("/fxml/main.fxml", applicationContext));
         primaryStage.setScene(scene);
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+        // primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setIconified(true);
         //图标
         primaryStage.getIcons().add(new Image("/image/icon.png"));

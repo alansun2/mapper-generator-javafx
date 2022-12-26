@@ -1,9 +1,10 @@
 package ${PACKAGE};
 
 import vip.tuoyang.base.core.bean.response.Page;
+import vip.tuoyang.schoolsafe.${server}.dto.data<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DTO;
+import vip.tuoyang.schoolsafe.${server}.dto.data<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageDTO;
 import vip.tuoyang.schoolsafe.${server}.dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}Cmd;
 import vip.tuoyang.schoolsafe.${server}.dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
-import vip.tuoyang.schoolsafe.${server}.dto.data<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DTO;
 
 /**
  * @author AlanSun
@@ -21,9 +22,9 @@ public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {
      * 分页获取${DOMAIN_DESC}列表
      *
      * @param qry {@link ${TYPE_NAME_UPPER_CAMEL}PageQry}
-     * @return {@link ${TYPE_NAME_UPPER_CAMEL}DTO}s
+     * @return {@link ${TYPE_NAME_UPPER_CAMEL}PageDTO}s
      */
-    Page<${TYPE_NAME_UPPER_CAMEL}DTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry);
+    Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry);
 
     /**
      * 根据 id 获取${DOMAIN_DESC}

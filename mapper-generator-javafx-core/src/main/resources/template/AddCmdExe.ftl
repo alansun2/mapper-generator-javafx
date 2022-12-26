@@ -15,15 +15,15 @@ public class ${TYPE_NAME_UPPER_CAMEL}AddCmdExe {
     @Autowired
     private ${TYPE_NAME_UPPER_CAMEL}GatewayI ${TYPE_NAME_LOWER_CAMEL}GatewayI;
 
-    public void execute(${TYPE_NAME_UPPER_CAMEL}Cmd ${TYPE_NAME_LOWER_CAMEL}Cmd) {
-        final ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = convert(${TYPE_NAME_LOWER_CAMEL}Cmd);
+    public void execute(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
+        final ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = convert(cmd);
         ${TYPE_NAME_LOWER_CAMEL}GatewayI.save${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_LOWER_CAMEL}DO);
     }
 
-    static ${TYPE_NAME_UPPER_CAMEL}DO convert(${TYPE_NAME_UPPER_CAMEL}Cmd ${TYPE_NAME_LOWER_CAMEL}Cmd) {
+    static ${TYPE_NAME_UPPER_CAMEL}DO convert(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
         ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = new ${TYPE_NAME_UPPER_CAMEL}DO();
         <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}DO.set${item}(${TYPE_NAME_LOWER_CAMEL}Cmd.get${item}());
+        ${TYPE_NAME_LOWER_CAMEL}DO.set${item}(cmd.get${item}());
         </#list>
         return ${TYPE_NAME_LOWER_CAMEL}DO;
     }

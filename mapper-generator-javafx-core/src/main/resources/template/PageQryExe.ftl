@@ -26,7 +26,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
     @Autowired
     private ${TYPE_NAME_UPPER_CAMEL}Mapper ${TYPE_NAME_LOWER_CAMEL}Mapper;
 
-    public Page<${TYPE_NAME_UPPER_CAMEL}DTO> execute(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
+    public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> execute(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
         return qry.doPage(() -> {
                     final SelectStatementProvider render = SqlBuilder.select().from(${TYPE_NAME_LOWER_CAMEL}).where()
                             .and(username, isLikeWhenPresent(qry.getUsername()).map(s -> PageRequest.getLike(qry.getUsername())))
@@ -37,11 +37,11 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
 
     }
 
-    private ${TYPE_NAME_UPPER_CAMEL}DTO convert(${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
-        ${TYPE_NAME_UPPER_CAMEL}DTO ${TYPE_NAME_LOWER_CAMEL}DTO = new ${TYPE_NAME_UPPER_CAMEL}DTO();
+    private ${TYPE_NAME_UPPER_CAMEL}PageDTO convert(${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
+        ${TYPE_NAME_UPPER_CAMEL}PageDTO ${TYPE_NAME_LOWER_CAMEL}PageDTO = new ${TYPE_NAME_UPPER_CAMEL}PageDTO();
         <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}DTO.set${item}(${TYPE_NAME_LOWER_CAMEL}.get${item}());
+        ${TYPE_NAME_LOWER_CAMEL}PageDTO.set${item}(${TYPE_NAME_LOWER_CAMEL}.get${item}());
         </#list>
-        return ${TYPE_NAME_LOWER_CAMEL}DTO;
+        return ${TYPE_NAME_LOWER_CAMEL}PageDTO;
     }
 }
