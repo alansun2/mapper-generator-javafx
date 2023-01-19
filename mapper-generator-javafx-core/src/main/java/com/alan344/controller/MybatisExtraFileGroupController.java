@@ -201,8 +201,6 @@ public class MybatisExtraFileGroupController implements Initializable {
     @FXML
     public void pre() {
         NodeConstants.borderPaneWrap.setCenter(nodeHandler.getPre());
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        currentConfig.setExportExtraFile(false);
     }
 
     /**

@@ -13,6 +13,7 @@ import vip.tuoyang.schoolsafe.${server}<#if DOMAIN != "">.${DOMAIN}</#if>.dataob
 import vip.tuoyang.schoolsafe.${server}<#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}Mapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -34,6 +35,23 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
 
         final int ic = ${TYPE_NAME_LOWER_CAMEL}Mapper.insertSelective(${TYPE_NAME_LOWER_CAMEL});
         AssertUtils.isTrue(ic == 1, "新增异常，请稍后重试");
+    }
+
+    @Override
+    public void save${TYPE_NAME_UPPER_CAMEL}Batch(List<${TYPE_NAME_UPPER_CAMEL}DO> ${TYPE_NAME_LOWER_CAMEL}DOS) {
+        final LocalDateTime now = LocalDateTime.now();
+        final String userNameAndId = UserResourceHolder.getUserNameAndId();
+        final List<InspectionTaskConfigItemSnapshot> inspectionTaskConfigItemSnapshots = ${TYPE_NAME_LOWER_CAMEL}DOS.stream().map(item -> {
+            ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL} = new ${TYPE_NAME_UPPER_CAMEL}();
+            BeanUtils.copyProperties(${TYPE_NAME_LOWER_CAMEL}DO, ${TYPE_NAME_LOWER_CAMEL});
+            ${TYPE_NAME_LOWER_CAMEL}.setIsDelete(BaseConstants.IS_DELETE_0);
+            ${TYPE_NAME_LOWER_CAMEL}.setCreateTime(now);
+            ${TYPE_NAME_LOWER_CAMEL}.setCreateBy(userNameAndId);
+            return ${TYPE_NAME_LOWER_CAMEL};
+        }).toList();
+
+        final int ic = ${TYPE_NAME_LOWER_CAMEL}Mapper.insertMultiple(inspectionTaskConfigItemSnapshots);
+        AssertUtils.isTrue(ic == ${TYPE_NAME_LOWER_CAMEL}DOS.size(), "新增异常，请稍后重试");
     }
 
     @Override

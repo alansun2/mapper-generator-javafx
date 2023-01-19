@@ -79,7 +79,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // 添加 context 属性
         this.addContextProperty(generatorUtils);
 
-        //添加插件
+        // 添加插件
         this.addPlugin(generatorUtils, mybatisExportConfig);
 
         // 注释
@@ -117,10 +117,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // 添加序列化接口插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
-        // 额外 model 生成插件
-        generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
-        // 额外的模板文件生成插件
-        generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
+        if (mybatisExportConfig.isExportExtraFile()) {
+            // 额外 model 生成插件
+            generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
+            // 额外的模板文件生成插件
+            generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
+        }
         // 自定义插件
         generatorUtils.addPlugin(DeleteByIMethodPlugin.class.getName());
 

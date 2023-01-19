@@ -15,7 +15,7 @@ import vip.tuoyang.schoolsafe.${server}.dto<#if DOMAIN != "">.${DOMAIN}</#if>.${
  * @date ${CUR_DATE_TIME}
  */
 @RestController
-@RequestMapping(value = "/${TYPE_NAME_LOWER_HYPHEN}/")
+@RequestMapping(value = "/${TYPE_NAME_LOWER_HYPHEN}")
 public class ${TYPE_NAME_UPPER_CAMEL}Controller {
     @Autowired
     private ${TYPE_NAME_UPPER_CAMEL}ServiceI ${TYPE_NAME_LOWER_CAMEL}ServiceI;
@@ -36,7 +36,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @param qry {@link ${TYPE_NAME_UPPER_CAMEL}PageQry}
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}PageDTO}s
      */
-    @GetMapping(value = "page")
+    @GetMapping(value = "/page")
     public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
         return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}Page(qry);
     }
@@ -47,7 +47,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @param id id
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}DTO}
      */
-    @GetMapping(value = "{id}")
+    @GetMapping(value = "/{id}")
     public ${TYPE_NAME_UPPER_CAMEL}DTO get${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
         return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}ById(id);
     }
@@ -58,7 +58,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @param id  id
      * @param cmd {@link ${TYPE_NAME_UPPER_CAMEL}Cmd}
      */
-    @PutMapping(value = "{id}")
+    @PutMapping(value = "/{id}")
     public void update${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id, @Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
         cmd.setId(id);
         ${TYPE_NAME_LOWER_CAMEL}ServiceI.update${TYPE_NAME_UPPER_CAMEL}ById(cmd);
@@ -69,7 +69,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      *
      * @param id id
      */
-    @DeleteMapping(value = "{id}")
+    @DeleteMapping(value = "/{id}")
     public void delete${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
         ${TYPE_NAME_LOWER_CAMEL}ServiceI.delete${TYPE_NAME_UPPER_CAMEL}ById(id);
     }

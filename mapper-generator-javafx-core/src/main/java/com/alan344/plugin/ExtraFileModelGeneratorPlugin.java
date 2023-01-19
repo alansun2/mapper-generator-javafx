@@ -165,17 +165,17 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
         if (field.getType().compareTo(FullyQualifiedJavaType.getStringInstance()) == 0) {
             final int length = introspectedColumn.getLength();
             topLevelClass.addImportedType("org.hibernate.validator.constraints.Length");
-            field.addAnnotation("@Length(max = " + length + ", message = \"" + remarks + "最多 " + length + "个字符\")");
+            field.addAnnotation("@Length(max = " + length + ", message = \"" + remarks + "最多 " + length + " 个字符\")");
 
             if (!introspectedColumn.isNullable()) {
                 topLevelClass.addImportedType("javax.validation.constraints.NotBlank");
-                field.addAnnotation("@NotBlank(message = \"" + remarks + "必填\")");
+                field.addAnnotation("@NotBlank(message = \"" + remarks + " 必填\")");
             }
         } else {
             // 其他
             if (!introspectedColumn.isNullable()) {
                 topLevelClass.addImportedType("javax.validation.constraints.NotNull");
-                field.addAnnotation("@NotNull(message = \"" + remarks + "必填\")");
+                field.addAnnotation("@NotNull(message = \"" + remarks + " 必填\")");
             }
         }
     }

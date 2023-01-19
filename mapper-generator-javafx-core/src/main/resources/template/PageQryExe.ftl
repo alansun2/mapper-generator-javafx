@@ -28,7 +28,9 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
 
     public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> execute(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
         return qry.doPage(() -> {
-                    final SelectStatementProvider render = SqlBuilder.select().from(${TYPE_NAME_LOWER_CAMEL}).where()
+                    final SelectStatementProvider render = SqlBuilder.select(${TYPE_NAME_UPPER_CAMEL}Mapper.selectList)
+                            .from(${TYPE_NAME_LOWER_CAMEL})
+                            .where()
                             .and(username, isLikeWhenPresent(qry.getUsername()).map(s -> PageRequest.getLike(qry.getUsername())))
                             .build().render(RenderingStrategies.MYBATIS3);
                     return ${TYPE_NAME_LOWER_CAMEL}Mapper.selectMany(render);

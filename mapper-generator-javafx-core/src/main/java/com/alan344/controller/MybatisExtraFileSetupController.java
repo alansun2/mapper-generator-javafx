@@ -62,8 +62,8 @@ public class MybatisExtraFileSetupController {
         BorderPane borderPane = new BorderPane();
         borderPane.getStylesheets().add("/css/common.css");
         borderPane.setStyle("-fx-background-insets: 0");
-        borderPane.setPrefHeight(500);
-        borderPane.setPrefWidth(700);
+        borderPane.setPrefHeight(550);
+        borderPane.setPrefWidth(750);
         borderPane.setCenter(listView);
 
         borderPane.setBottom(this.getBtnHbox(stage, showCheckBox, consumer));
