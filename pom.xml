@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <javafx.version>19</javafx.version>
+        <javafx.version>17.0.2</javafx.version>
     </properties>
 
     <dependencyManagement>

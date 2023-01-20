@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import org.controlsfx.control.ToggleSwitch;
 
 import java.util.function.Consumer;
 
@@ -33,7 +34,10 @@ public class ExtraFileOfGroupLabel extends HBox {
         extraFileTypeLabel.setStyle("-fx-background-insets: 0");
         extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth + toggleWidth + (btnWidth * 2)));
 
-        ToggleSwitch toggleSwitch = new ToggleSwitch(toggleWidth, curToggle, consumer);
+        ToggleSwitch toggleSwitch = new ToggleSwitch();
+        toggleSwitch.setPrefWidth(toggleWidth);
+        toggleSwitch.setSelected(curToggle);
+        toggleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> consumer.accept(newValue));
         toggleSwitch.prefHeightProperty().bind(this.heightProperty());
 
         editBtn = new Button("Edit");

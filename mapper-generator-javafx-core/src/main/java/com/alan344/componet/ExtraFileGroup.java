@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import org.controlsfx.control.ToggleSwitch;
 
 import java.util.function.Consumer;
 
@@ -21,8 +22,11 @@ public class ExtraFileGroup extends HBox {
         this.extraFileGroupConfig = extraFileGroupConfig;
         label = new Label(extraFileGroupConfig.getGroupName());
         label.setPrefWidth(70);
-        ToggleSwitch button = new ToggleSwitch(50, extraFileGroupConfig.isEnable(), extraFileGroupConfig::setEnable);
+        ToggleSwitch button = new ToggleSwitch();
         button.setPrefHeight(10);
+        button.setPrefWidth(50);
+        button.setSelected(extraFileGroupConfig.isEnable());
+        button.selectedProperty().addListener((observable, oldValue, newValue) -> extraFileGroupConfig.setEnable(newValue));
         this.getChildren().addAll(label, button);
         this.setSpacing(5);
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, consumer::accept);

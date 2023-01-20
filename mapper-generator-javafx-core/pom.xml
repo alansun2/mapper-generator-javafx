@@ -176,7 +176,7 @@
             <plugin>
                 <groupId>io.github.fvarrui</groupId>
                 <artifactId>javapackager</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.6</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -184,12 +184,28 @@
                             <goal>package</goal>
                         </goals>
                         <configuration>
-                            <!-- mandatory -->
+                            <name>mybatis-friend</name>
+                            <displayName>mybatis-friend</displayName>
+                            <!--                            <platform>windows</platform>-->
+                            <!-- 虚拟机参数 -->
+                            <!--                            <vmArgs>-->
+                            <!--                                <arg>&#45;&#45;add-opens java.base/java.lang.reflect=com.jfoenix</arg>-->
+                            <!--                                <arg>&#45;&#45;add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls</arg>-->
+                            <!--                            </vmArgs>-->
                             <mainClass>com.alan344.MapperGenApplication</mainClass>
                             <!-- optional -->
+                            <!-- 是否将jvm一起打包到程序中 -->
                             <bundleJre>true</bundleJre>
-                            <platform>auto</platform>
-                            <name>mybatis-friend</name>
+                            <!-- jre路径本地路径 -->
+                            <jrePath>${java.home}</jrePath>
+                            <!--是否打包安装包-->
+                            <customizedJre>false</customizedJre>
+                            <copyDependencies>true</copyDependencies>
+                            <generateInstaller>false</generateInstaller>
+                            <forceInstaller>true</forceInstaller>
+                            <winConfig>
+                                <headerType>gui</headerType>
+                            </winConfig>
                         </configuration>
                     </execution>
                 </executions>
