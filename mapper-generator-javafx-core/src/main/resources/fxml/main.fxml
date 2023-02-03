@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import org.kordamp.ikonli.javafx.*?>
 <BorderPane fx:id="borderPaneMain" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
-            xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
             style="-fx-background-color: #F7F8FA;"
             fx:controller="com.alan344.controller.MainController">
     <top>
@@ -13,32 +12,24 @@
             <Menu mnemonicParsing="false" text="文件">
                 <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源">
                     <graphic>
-                        <ImageView>
-                            <Image url="/image/add-database.png"/>
-                        </ImageView>
+                        <FontIcon iconLiteral="unil-database:16:BLACK"/>
                     </graphic>
                 </MenuItem>
                 <MenuItem mnemonicParsing="false" onAction="#exit" text="退出">
                     <graphic>
-                        <ImageView>
-                            <Image url="/image/exit.png"/>
-                        </ImageView>
+                        <FontIcon iconLiteral="unil-exit:16:RED"/>
                     </graphic>
                 </MenuItem>
             </Menu>
             <Menu mnemonicParsing="false" text="帮助">
                 <MenuItem mnemonicParsing="false" onAction="#openAboutWindow" text="关于">
                     <graphic>
-                        <ImageView>
-                            <Image url="/image/about.png"/>
-                        </ImageView>
+                        <FontIcon iconLiteral="unil-exclamation-circle:16:#9BDDCA"/>
                     </graphic>
                 </MenuItem>
                 <MenuItem mnemonicParsing="false" onAction="#openGithub" text="github">
                     <graphic>
-                        <ImageView>
-                            <Image url="/image/github.png"/>
-                        </ImageView>
+                        <FontIcon iconLiteral="unil-github:16"/>
                     </graphic>
                 </MenuItem>
             </Menu>
@@ -52,7 +43,7 @@
                           style="-fx-pref-height: 25; -fx-padding: 0 0 0 6; -fx-border-width: 0 0 2 0; -fx-border-color: #cacbd0">
                         <Label fx:id="searchLabel">
                             <graphic>
-                                <FontIcon iconLiteral="unil-search:15:#CACBD0"/>
+                                <FontIcon iconLiteral="unil-search:16:#CACBD0"/>
                             </graphic>
                         </Label>
                     </HBox>

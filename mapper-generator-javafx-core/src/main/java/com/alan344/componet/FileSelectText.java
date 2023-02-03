@@ -38,6 +38,8 @@ public class FileSelectText extends HBox {
         textField.prefHeightProperty().bind(this.heightProperty());
         textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
         button = new Button(btnName);
+        button.getStylesheets().add("css/common.css");
+        button.getStyleClass().add("mf-scan");
         button.setPrefWidth(64);
         button.prefHeightProperty().bind(this.heightProperty());
         this.getChildren().addAll(textField, button);

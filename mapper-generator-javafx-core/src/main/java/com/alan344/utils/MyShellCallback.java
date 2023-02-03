@@ -10,6 +10,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.generator.exception.ShellException;
 import org.mybatis.generator.internal.DefaultShellCallback;
 
 import java.io.File;
@@ -27,6 +28,12 @@ import java.util.Set;
 @Slf4j
 public class MyShellCallback extends DefaultShellCallback {
     private boolean supportMerge;
+
+    @Override
+    public File getDirectory(String targetProject, String targetPackage) throws ShellException {
+        final File directory = super.getDirectory(targetProject, targetPackage);
+        return directory;
+    }
 
     public MyShellCallback(boolean overwrite, boolean supportMerge) {
         super(overwrite);

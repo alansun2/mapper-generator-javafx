@@ -21,6 +21,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -201,7 +202,7 @@ public class MybatisListViewInit {
 
             // 展开按钮
             Button expand = new Button();
-            expand.setGraphic(new ImageView("/image/expand.png"));
+            expand.setGraphic(new FontIcon("unim-angle-down:16:GRAY"));
             expand.setStyle("-fx-background-color: transparent");
             expand.setPrefWidth(80);
             expand.setOnAction(event -> {
@@ -211,17 +212,17 @@ public class MybatisListViewInit {
                 ObservableList<Node> children = selectedVBox.getChildren();
                 if (children.size() == 2) {
                     // 展开状态
-                    expand.setGraphic(new ImageView("/image/close.png"));
+                    expand.setGraphic(new FontIcon("unim-angle-up:16:GRAY"));
                     this.expandTableViewColumns(selectedVBox);
                 } else {
                     // 展开状态时，tableView 就是第三个
                     HBox tableView = (HBox) children.get(2);
                     if (tableView.isVisible()) {
-                        expand.setGraphic(new ImageView("/image/expand.png"));
+                        expand.setGraphic(new FontIcon("unim-angle-down:16:GRAY"));
                         tableView.setVisible(false);
                         tableView.setManaged(false);
                     } else {
-                        expand.setGraphic(new ImageView("/image/close.png"));
+                        expand.setGraphic(new FontIcon("unim-angle-up:16:GRAY"));
                         tableView.setVisible(true);
                         tableView.setManaged(true);
                     }

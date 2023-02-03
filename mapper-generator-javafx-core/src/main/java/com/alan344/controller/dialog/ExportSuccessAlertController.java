@@ -59,7 +59,7 @@ public class ExportSuccessAlertController {
             tableAdvanceSetUpStage = new Stage();
             tableAdvanceSetUpStage.setScene(new Scene(tableAdvanceSetUpPane));
             tableAdvanceSetUpStage.setTitle("导出成功");
-            tableAdvanceSetUpStage.getIcons().add(new Image("/image/advanced-set-up.png"));
+            tableAdvanceSetUpStage.getIcons().add(new Image("/image/icon.png"));
             tableAdvanceSetUpStage.setResizable(false);
             tableAdvanceSetUpStage.initModality(Modality.WINDOW_MODAL);
             tableAdvanceSetUpStage.initOwner(stage);

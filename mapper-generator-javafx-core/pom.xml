@@ -48,6 +48,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
         </dependency>
@@ -154,6 +159,17 @@
             <artifactId>jna-platform</artifactId>
             <version>5.12.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.glavo.materialfx</groupId>
+            <artifactId>materialfx</artifactId>
+            <version>11.13.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -186,12 +202,16 @@
                         <configuration>
                             <name>mybatis-friend</name>
                             <displayName>mybatis-friend</displayName>
+                            <additionalResources>
+                                <additionalResource>target/classes/template/</additionalResource>
+                            </additionalResources>
                             <!--                            <platform>windows</platform>-->
                             <!-- 虚拟机参数 -->
-                            <!--                            <vmArgs>-->
-                            <!--                                <arg>&#45;&#45;add-opens java.base/java.lang.reflect=com.jfoenix</arg>-->
-                            <!--                                <arg>&#45;&#45;add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls</arg>-->
-                            <!--                            </vmArgs>-->
+                            <vmArgs>
+                                <arg>-Denv=pro</arg>
+                                <!--                                <arg>&#45;&#45;add-opens java.base/java.lang.reflect=com.jfoenix</arg>-->
+                                <!--                                <arg>&#45;&#45;add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls</arg>-->
+                            </vmArgs>
                             <mainClass>com.alan344.MapperGenApplication</mainClass>
                             <!-- optional -->
                             <!-- 是否将jvm一起打包到程序中 -->

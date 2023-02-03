@@ -51,9 +51,9 @@ public class TableAdvanceSetupController implements Initializable {
     public void openTableAdvancedSetup(Stage primaryStage, VBox selectedItemVBox) {
         if (tableAdvanceSetUpStage == null) {
             tableAdvanceSetUpStage = new Stage();
-            tableAdvanceSetUpStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/table-advanced-set-up.fxml", beanFactory)));
+            tableAdvanceSetUpStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/table-advanced-setup.fxml", beanFactory)));
             tableAdvanceSetUpStage.setTitle("高级设置");
-            tableAdvanceSetUpStage.getIcons().add(new Image("/image/advanced-set-up.png"));
+            tableAdvanceSetUpStage.getIcons().add(new Image("/image/icon.png"));
             tableAdvanceSetUpStage.setResizable(false);
             tableAdvanceSetUpStage.initModality(Modality.WINDOW_MODAL);
             tableAdvanceSetUpStage.initOwner(primaryStage);

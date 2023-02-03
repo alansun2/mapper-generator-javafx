@@ -10,6 +10,7 @@ import com.alan344.constants.NodeConstants;
 import com.alan344.plugin.DeleteByIMethodPlugin;
 import com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin;
 import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
+import com.alan344.plugin.PluginUtils;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -21,6 +22,7 @@ import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
+import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.plugins.SerializablePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,6 +37,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.alan344.plugin.PluginUtils.Domain.DOMAIN;
 
 /**
  * @author AlanSun
@@ -258,6 +262,13 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getScheme());
             }
 
+            // 处理 package 领域
+            if (exportConfig.isEnableDomain()) {
+                this.domainHandle(table, "domainObjectName", tableEl);
+                this.domainHandle(table, "mapperName", tableEl);
+                this.domainHandle(table, "sqlProviderName", tableEl);
+            }
+
             this.checkBoxSelected("enableInsert", tableEl, table.isInsert());
             this.checkBoxSelected("enableCountByExample", tableEl, table.isCount());
             this.checkBoxSelected("enableUpdateByPrimaryKey", tableEl, table.isUpdate());
@@ -378,8 +389,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             myBatisGenerator.generate(null, null, null);
         } catch (InvalidConfigurationException | InterruptedException | IOException | SQLException e) {
             log.error("生成mapper error", e);
-            if (e instanceof InvalidConfigurationException) {
-                final InvalidConfigurationException invalidConfigurationException = (InvalidConfigurationException) e;
+            if (e instanceof final InvalidConfigurationException invalidConfigurationException) {
                 final List<String> errors = invalidConfigurationException.getErrors();
                 Toast.makeTextDefault(NodeConstants.primaryStage, errors.get(0));
                 return;
@@ -389,6 +399,13 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
         if (!warnings.isEmpty()) {
             warnings.forEach(log::warn);
+        }
+    }
+
+    protected void domainHandle(Table table, String attributeName, Element tableEl) {
+        final PluginUtils.Domain domainFromRemarks = PluginUtils.getDomainFromRemarks(table.getRemark(), true);
+        if (domainFromRemarks != DOMAIN) {
+            tableEl.setAttribute(attributeName, domainFromRemarks.getD() + "." + JavaBeansUtil.getCamelCaseString(table.getTableName(), true));
         }
     }
 }

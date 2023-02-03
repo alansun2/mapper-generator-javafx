@@ -16,14 +16,6 @@ import java.util.List;
 @Slf4j
 public class DataSourceUtils {
 
-    private static final String MYSQL = "MYSQL";
-    private static final String ORACLE = "ORACLE";
-    private static final String HANA = "HANA";
-    private static final String SQLSERVER = "SQLSERVER";
-    private static final String H2 = "H2";
-    private static final String POSTGRESQL = "POSTGRESQL";
-    private static final String ZENITH = "ZENITH";
-
     public static List<Table> getTables(Connection connection) {
         try {
             DatabaseMetaData metaData = connection.getMetaData();

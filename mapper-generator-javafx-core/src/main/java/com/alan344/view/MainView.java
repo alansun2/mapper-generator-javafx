@@ -14,10 +14,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 /**
  * @author AlanSun
- * @date 2023/1/20 9:04
+ * @date 2023/1/30 11:26
  */
 public class MainView extends Application {
-
     private ConfigurableApplicationContext applicationContext;
 
     @Override
@@ -32,8 +31,6 @@ public class MainView extends Application {
         NodeConstants.hostServices = getHostServices();
         final Scene scene = new Scene(FxmlLoadFactory.create("/fxml/main.fxml", applicationContext));
         primaryStage.setScene(scene);
-        // primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setIconified(true);
         // 图标
         primaryStage.getIcons().add(new Image("/image/icon.png"));
         primaryStage.setWidth(1200);

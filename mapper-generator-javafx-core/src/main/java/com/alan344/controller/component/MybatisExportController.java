@@ -69,9 +69,10 @@ public class MybatisExportController implements Initializable {
     private CheckBox useCommentCheckBox;
     @FXML
     private CheckBox useLombokGetSetCheckBox;
-
     @FXML
     private CheckBox useLombokBuilderCheckBox;
+    @FXML
+    private CheckBox enableDomainCheckBox;
     /**
      * tab
      */
@@ -191,6 +192,7 @@ public class MybatisExportController implements Initializable {
         useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseComment());
         useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
         useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
+        enableDomainCheckBox.setSelected(mybatisOfficialExportConfig.isEnableDomain());
         final ObservableList<Toggle> toggles = targetName.getToggles();
         for (Toggle toggle : toggles) {
             final RadioButton radioButton = (RadioButton) toggle;
@@ -228,6 +230,7 @@ public class MybatisExportController implements Initializable {
                 mybatisOfficialExportConfig.setUseComment(useCommentCheckBox.isSelected());
                 mybatisOfficialExportConfig.setUseLombokGetSet(useLombokGetSetCheckBox.isSelected());
                 mybatisOfficialExportConfig.setUseLombokBuilder(useLombokBuilderCheckBox.isSelected());
+                mybatisOfficialExportConfig.setEnableDomain(enableDomainCheckBox.isSelected());
 
                 mybatisExportConfig.setMybatisOfficialExportConfig(mybatisOfficialExportConfig);
                 break;
@@ -263,6 +266,7 @@ public class MybatisExportController implements Initializable {
         useCommentCheckBox.setSelected(true);
         useLombokGetSetCheckBox.setSelected(true);
         useLombokBuilderCheckBox.setSelected(false);
+        enableDomainCheckBox.setSelected(false);
     }
 }
 

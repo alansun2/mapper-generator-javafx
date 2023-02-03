@@ -130,6 +130,11 @@ public class MybatisExportConfig implements Cloneable {
         boolean isUseComment();
 
         String getTargetName();
+
+        /**
+         * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
+         */
+        boolean isEnableDomain();
     }
 
     /**
@@ -164,6 +169,10 @@ public class MybatisExportConfig implements Cloneable {
          * 使用注释
          */
         private boolean useComment = true;
+        /**
+         * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
+         */
+        private boolean enableDomain = false;
 
         @Override
         public MybatisOfficialExportConfig clone() {

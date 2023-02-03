@@ -5,7 +5,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.controller.DataSourceController;
+import com.alan344.controller.DataSourceSetupController;
 import com.alan344.controller.MainController;
 import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
@@ -19,7 +19,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -50,7 +49,7 @@ public class DataSourceTreeViewInit {
     @Resource
     private MainController mainController;
     @Resource
-    private DataSourceController dataSourceController;
+    private DataSourceSetupController dataSourceSetupController;
 
     /**
      * treeView init
@@ -61,10 +60,10 @@ public class DataSourceTreeViewInit {
             ObservableList<TreeItem<DataItem>> selectedItems = treeViewDataSource.getSelectionModel().getSelectedItems();
             if (event.getButton() == MouseButton.SECONDARY) {
                 // 右键释放
-                //item is selected - this prevents fail when clicking on empty space
+                // item is selected - this prevents fail when clicking on empty space
                 if (selectedItems != null) {
                     ContextMenu contextMenu;
-                    //open context menu on current screen position
+                    // open context menu on current screen position
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
                         MenuItem connectMenuItem = new MenuItem("连接");
                         connectMenuItem.setGraphic(new FontIcon("unil-cloud-data-connection:16:BLUE"));
@@ -73,20 +72,20 @@ public class DataSourceTreeViewInit {
                         updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
                         updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
                         MenuItem exportMenuItem = new MenuItem("导出");
-                        exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
+                        exportMenuItem.setGraphic(new FontIcon("unil-export:16:GREEN"));
                         exportMenuItem.setOnAction(event1 -> this.export(treeViewDataSource));
                         MenuItem refreshMenuItem = new MenuItem("刷新");
-                        refreshMenuItem.setGraphic(new ImageView("/image/refresh@16.png"));
+                        refreshMenuItem.setGraphic(new FontIcon("unis-refresh:16:GRAY"));
                         refreshMenuItem.setOnAction(event1 -> refreshDataSource(treeViewDataSource));
                         MenuItem deleteMenuItem = new MenuItem("删除数据源");
-                        deleteMenuItem.setGraphic(new ImageView("/image/delete@16.png"));
+                        deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
                         deleteMenuItem.setOnAction(this::deleteDataSource);
 
                         contextMenu = new ContextMenu(connectMenuItem, updateMenuItem, exportMenuItem, refreshMenuItem, deleteMenuItem);
                     } else {
                         // 只有一个导出按钮
                         MenuItem exportMenuItem = new MenuItem("导出");
-                        exportMenuItem.setGraphic(new ImageView("/image/export-datasource@16.png"));
+                        exportMenuItem.setGraphic(new FontIcon("unil-export:16:GREEN"));
                         exportMenuItem.setOnAction(event1 -> export(treeViewDataSource));
 
                         contextMenu = new ContextMenu(exportMenuItem);
@@ -157,7 +156,7 @@ public class DataSourceTreeViewInit {
         if (tables != null && !tables.isEmpty()) {
             tables.forEach(table -> {
                 TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+                tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
             });
         }
     }
@@ -174,7 +173,7 @@ public class DataSourceTreeViewInit {
         if (selectedItems.size() == 1) {
             TreeItem<DataItem> dataItemTreeItem = selectedItems.get(0);
             if (dataItemTreeItem.getValue() instanceof DataSource) {
-                //选中数据源时的导出
+                // 选中数据源时的导出
                 ObservableList<TreeItem<DataItem>> children = dataItemTreeItem.getChildren();
                 tables = new ArrayList<>();
                 if (!children.isEmpty()) {
@@ -183,14 +182,14 @@ public class DataSourceTreeViewInit {
 
                 dataSource = (DataSource) dataItemTreeItem.getValue();
             } else {
-                //单独选中table的导出
+                // 单独选中table的导出
                 Table table = (Table) dataItemTreeItem.getValue();
                 tables = Collections.singletonList(table);
 
                 dataSource = ((DataSource) dataItemTreeItem.getParent().getValue());
             }
         } else {
-            //选中多个table的导出
+            // 选中多个table的导出
             tables = new ArrayList<>();
             TreeItem<DataItem> lastParent = null;
             for (TreeItem<DataItem> selectedItem : selectedItems) {
@@ -230,7 +229,7 @@ public class DataSourceTreeViewInit {
         // 如果没有字段，则从远程加载
         tables.forEach(table -> columnService.reloadColumnsIfNotNull(table));
 
-        //show rightBorderTopHBox
+        // show rightBorderTopHBox
         final BorderPane borderPane1 = NodeConstants.borderPane1;
         if (!borderPane1.isVisible() && !borderPane1.isManaged()) {
             borderPane1.setVisible(true);
@@ -280,7 +279,7 @@ public class DataSourceTreeViewInit {
             children.remove(0, children.size());
             tables.forEach(table -> {
                 TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
-                tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+                tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
             });
         }
 
@@ -298,7 +297,7 @@ public class DataSourceTreeViewInit {
         dataSourceTreeItem.setExpanded(false);
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
         dataSourceTreeItem.getChildren().clear();
-        dataSourceController.openDataSourceSetUp(NodeConstants.primaryStage, dataSource);
+        dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, dataSource);
     }
 
     /**

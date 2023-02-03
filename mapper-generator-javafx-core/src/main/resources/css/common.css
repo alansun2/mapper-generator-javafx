@@ -14,6 +14,15 @@
     /*-fx-effect: dropshadow(three-pass-box, #9d9c9c, 10.0, 0, 2, 2);*/
 }
 
+.mf-scan, .mf-add {
+    -fx-background-color: #78d07e;
+}
+
+/* 导出按钮 */
+.export {
+    -fx-background-color: #CFDEFC;
+}
+
 .label {
     -fx-text-fill: #000;
     -fx-alignment: CENTER;

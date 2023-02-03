@@ -2,7 +2,6 @@ package com.alan344.controller;
 
 import com.alan344.factory.FxmlLoadFactory;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.beans.factory.BeanFactory;
@@ -31,8 +30,6 @@ public class AboutController {
         if (aboutStage == null) {
             aboutStage = new Stage();
             aboutStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/about.fxml", beanFactory)));
-            aboutStage.setTitle("设置导出");
-            aboutStage.getIcons().add(new Image("/image/setting@32.png"));
             aboutStage.setResizable(false);
             aboutStage.initStyle(StageStyle.UNDECORATED);
             aboutStage.initOwner(primaryStage);

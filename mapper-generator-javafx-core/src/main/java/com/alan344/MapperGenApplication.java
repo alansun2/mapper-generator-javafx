@@ -13,7 +13,7 @@ public class MapperGenApplication {
 
     public static void main(String[] args) {
         // 捕捉未处理的异常
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> log.error("捕捉到未处理的异常：" + e.getMessage()));
+        // Thread.setDefaultUncaughtExceptionHandler((t, e) -> log.error("捕捉到未处理的异常：" + e.getMessage()));
         Application.launch(MainView.class, args);
     }
 }

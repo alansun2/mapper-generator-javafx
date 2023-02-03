@@ -37,7 +37,7 @@ public class ColumnService {
      * @param tables     表
      */
     void loadColumns(DataSource dataSource, List<Table> tables) {
-        Map<String, List<Column>> tableNameColumnsMap = new HashMap<>();
+        Map<String, List<Column>> tableNameColumnsMap = new HashMap<>(tables.size());
         for (Table table : tables) {
             String tableName = table.getTableName();
             List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
@@ -45,7 +45,7 @@ public class ColumnService {
             tableNameColumnsMap.put(tableName, columns);
         }
 
-        //写入文件
+        // 写入文件
         this.downLoadColumnsToFileBatch(dataSource, tableNameColumnsMap);
     }
 
@@ -223,7 +223,7 @@ public class ColumnService {
                 Table table = BaseConstants.selectedTableNameTableMap.get(tableName);
                 this.downLoadColumnsToFileSingle(BaseConstants.selectedDateSource, table);
             });
-            //清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
+            // 清空map,因为有多个数据源，一个导出结束后，用户可能还会选择别的数据源进行导出
             BaseConstants.tableNameIsOverrideRecodeMap.clear();
         }
     }

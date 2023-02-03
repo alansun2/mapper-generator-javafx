@@ -1,6 +1,6 @@
 package com.alan344.plugin;
 
-import com.alan344.bean.config.ExtraFileConfig;
+import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
@@ -35,11 +35,11 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
-        if (CollectionUtils.isEmpty(ConfigConstants.extraFileConfigs)) {
+        if (CollectionUtils.isEmpty(ConfigConstants.extraTemplateFileConfigs)) {
             return Collections.emptyList();
         }
 
-        return ConfigConstants.extraFileConfigs.stream()
+        return ConfigConstants.extraTemplateFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
                 .map(extraFileConfig -> {
                     // 生成类
@@ -91,11 +91,11 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
      * 获取包名
      *
      * @param remarks         备注
-     * @param extraFileConfig 配置文件
+     * @param extraTemplateFileConfig 配置文件
      * @return 包名
      */
-    private String getPackageName(String remarks, ExtraFileConfig extraFileConfig) {
-        String packageName = extraFileConfig.getPackageName();
+    private String getPackageName(String remarks, ExtraTemplateFileConfig extraTemplateFileConfig) {
+        String packageName = extraTemplateFileConfig.getPackageName();
 
         final PluginUtils.Domain domain = PluginUtils.getDomainFromRemarks(remarks, true);
         packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
@@ -108,20 +108,20 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
      *
      * @param topLevelClass {@link TopLevelClass}
      */
-    private void addLombok(ExtraFileConfig extraFileConfig, TopLevelClass topLevelClass) {
+    private void addLombok(ExtraTemplateFileConfig extraTemplateFileConfig, TopLevelClass topLevelClass) {
 //        if (data) {
 //            topLevelClass.addImportedType("lombok.Data");
 //            topLevelClass.addAnnotation("@Data");
 //        }
-        if (extraFileConfig.isLombokGetter()) {
+        if (extraTemplateFileConfig.isLombokGetter()) {
             topLevelClass.addImportedType("lombok.Getter");
             topLevelClass.addAnnotation("@Getter");
         }
-        if (extraFileConfig.isLombokSetter()) {
+        if (extraTemplateFileConfig.isLombokSetter()) {
             topLevelClass.addImportedType("lombok.Setter");
             topLevelClass.addAnnotation("@Setter");
         }
-        if (extraFileConfig.isLombokToString()) {
+        if (extraTemplateFileConfig.isLombokToString()) {
             topLevelClass.addImportedType("lombok.ToString");
             topLevelClass.addAnnotation("@ToString");
         }

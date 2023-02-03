@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -62,10 +63,10 @@ public class FindTableInit {
                     if (isDelete) {
                         dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
                         DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
-                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().contains(tableNamePrefix)).collect(Collectors.toList());
+                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().contains(tableNamePrefix)).toList();
                         for (Table filteredTable : filteredTables) {
                             TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
-                            tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+                            tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                         }
                     }
                     final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
@@ -76,7 +77,7 @@ public class FindTableInit {
                     DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
                     for (Table filteredTable : dataSource.getTables()) {
                         TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
-                        tableTreeItem.setGraphic(new ImageView("/image/table.png"));
+                        tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                     }
                 }
             }

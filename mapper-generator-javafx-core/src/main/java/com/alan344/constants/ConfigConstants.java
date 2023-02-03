@@ -1,6 +1,6 @@
 package com.alan344.constants;
 
-import com.alan344.bean.config.ExtraFileConfig;
+import com.alan344.bean.config.ExtraTemplateFileConfig;
 
 import java.util.List;
 
@@ -12,5 +12,5 @@ public class ConfigConstants {
     /**
      * 当前的额外文件配置
      */
-    public static List<ExtraFileConfig> extraFileConfigs;
+    public static List<ExtraTemplateFileConfig> extraTemplateFileConfigs;
 }

@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
 import com.alan344.bean.DataItem;
+import com.alan344.componet.CustomTreeCell;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
@@ -18,6 +19,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -74,7 +77,7 @@ public class MainController implements Initializable {
     //-------------------------------service----------------------------------------------------------------------------
 
     @Resource
-    private DataSourceController dataSourceController;
+    private DataSourceSetupController dataSourceSetupController;
 
     @Resource
     private AboutController aboutController;
@@ -92,6 +95,9 @@ public class MainController implements Initializable {
 
     @Resource
     private FindTableInit findTableInit;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     //--------------------------------init----------------------------------------------------------------------//
 
@@ -113,6 +119,7 @@ public class MainController implements Initializable {
         tableFindTextField.prefHeightProperty().bind(tableFindTextFieldHbox.heightProperty());
         tableFindTextField.prefWidthProperty().bind(tableFindTextFieldHbox.widthProperty());
 
+        treeViewDataSource.setCellFactory(CustomTreeCell.forTreeView());
         dataSourceTreeViewInit.treeViewInit(treeViewDataSource);
 
         // 从文件加载数据源至pane
@@ -122,9 +129,8 @@ public class MainController implements Initializable {
         findTableInit.addListener(treeViewDataSource, tableFindTextField, borderPaneWrap);
 
         // 加载右边中间的 borderPane
-        FxmlLoadFactory.create("/fxml/mybatis-list-view.fxml", beanFactory);
+        FxmlLoadFactory.create("/fxml/mybatis-table-setup.fxml", beanFactory);
     }
-
 
     private double dragOffsetX;
 
@@ -152,7 +158,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void addSource() {
-        dataSourceController.openDataSourceSetUp(NodeConstants.primaryStage, null);
+        dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, null);
     }
 
     /**

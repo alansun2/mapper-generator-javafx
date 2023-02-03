@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.alan344.controller.ExtraFileController"
+            stylesheets="@../css/extra-file.css"
+            prefHeight="400.0" prefWidth="600.0">
+    <center>
+        <SplitPane dividerPositions="0.25">
+            <BorderPane maxWidth="300">
+                <center>
+                    <ListView fx:id="groupListView"/>
+                </center>
+            </BorderPane>
+            <BorderPane fx:id="borderPane"/>
+        </SplitPane>
+    </center>
+    <bottom>
+        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 10">
+            <Button mnemonicParsing="false" prefWidth="100" text="添加额外属性"
+                    onAction="#openExtraFileCustomProperties"/>
+            <Button mnemonicParsing="false" prefWidth="100" text="添加额外文件" onAction="#openExtraFilePage"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="保存配置" onAction="#saveSetup"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="导出" styleClass="export" onAction="#export"/>
+            <Button mnemonicParsing="false" prefWidth="70" text="返回" onAction="#pre"/>
+        </HBox>
+    </bottom>
+</BorderPane>
