@@ -7,6 +7,7 @@ import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.TextUtils;
+import com.jfoenix.controls.JFXCheckBox;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,7 +40,7 @@ public class MybatisExportController implements Initializable {
     @FXML
     private TextField configNameText;
     @FXML
-    private CheckBox modelOnlyCheckBox;
+    private JFXCheckBox modelOnlyCheckBox;
     @FXML
     private FileSelectTextHBox beanLocationText;
     @FXML
@@ -62,17 +63,17 @@ public class MybatisExportController implements Initializable {
     @FXML
     private ToggleGroup targetName;
     @FXML
-    private CheckBox userJava8CheckBox;
+    private JFXCheckBox userJava8CheckBox;
     @FXML
-    private CheckBox useBigDecimalCheckBox;
+    private JFXCheckBox useBigDecimalCheckBox;
     @FXML
-    private CheckBox useCommentCheckBox;
+    private JFXCheckBox useCommentCheckBox;
     @FXML
-    private CheckBox useLombokGetSetCheckBox;
+    private JFXCheckBox useLombokGetSetCheckBox;
     @FXML
-    private CheckBox useLombokBuilderCheckBox;
+    private JFXCheckBox useLombokBuilderCheckBox;
     @FXML
-    private CheckBox enableDomainCheckBox;
+    private JFXCheckBox enableDomainCheckBox;
     /**
      * tab
      */

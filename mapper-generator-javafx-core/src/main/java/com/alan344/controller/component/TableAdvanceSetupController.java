@@ -3,10 +3,10 @@ package com.alan344.controller.component;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.factory.FxmlLoadFactory;
+import com.jfoenix.controls.JFXCheckBox;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
@@ -30,7 +30,7 @@ import java.util.ResourceBundle;
 public class TableAdvanceSetupController implements Initializable {
 
     @FXML
-    private CheckBox serializableCheckBox;
+    private JFXCheckBox serializableCheckBox;
 
     @Resource
     private BeanFactory beanFactory;

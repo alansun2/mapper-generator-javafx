@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 @Getter
 @Setter
-public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.GroupName<ExtraTemplateFileConfig>, Cloneable {
+public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.GroupName, Cloneable {
     /**
      * 分组名称
      */
@@ -42,7 +42,7 @@ public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.
     }
 
     @Override
-    public void setList(Collection<ExtraTemplateFileConfig> list) {
+    public void setList(Collection list) {
         this.extraTemplateFileConfigList = list;
     }
 }

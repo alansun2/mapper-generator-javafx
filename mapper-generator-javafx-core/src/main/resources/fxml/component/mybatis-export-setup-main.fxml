@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.alan344.componet.FileSelectTextHBox?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane fx:id="exportSetupBP" prefWidth="600.0"
@@ -15,7 +16,7 @@
             </HBox>
 
             <HBox alignment="CENTER" spacing="10">
-                <CheckBox fx:id="modelOnlyCheckBox" mnemonicParsing="false" text="只生成model"/>
+                <JFXCheckBox fx:id="modelOnlyCheckBox" mnemonicParsing="false" text="只生成model"/>
             </HBox>
 
             <HBox alignment="CENTER" spacing="10">
@@ -70,31 +71,31 @@
             <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE">
                 <Tab text="Mybatis">
                     <AnchorPane prefWidth="600">
-                        <CheckBox fx:id="userJava8CheckBox" layoutX="27.0" layoutY="56.0"
-                                  mnemonicParsing="false" selected="true" text="支持 java8"/>
-                        <CheckBox fx:id="useBigDecimalCheckBox" layoutX="262.0" layoutY="93.0"
-                                  mnemonicParsing="false" selected="true" text="使用 BigDecimal"/>
-                        <CheckBox fx:id="enableDomainCheckBox" layoutX="262.0" layoutY="128.0"
-                                  mnemonicParsing="false" selected="true" text="启用领域"/>
-                        <CheckBox fx:id="useCommentCheckBox" layoutX="262.0" layoutY="56.0"
-                                  mnemonicParsing="false" selected="true" text="启用注释"/>
-                        <CheckBox fx:id="useLombokGetSetCheckBox" layoutX="27.0" layoutY="93.0"
-                                  mnemonicParsing="false" text="启用 lombokGetSet 注解"/>
-                        <RadioButton layoutX="125.0" layoutY="20.0" mnemonicParsing="false" selected="true"
-                                     text="Mybatis3">
+                        <JFXCheckBox fx:id="userJava8CheckBox" layoutX="27.0" layoutY="56.0"
+                                     mnemonicParsing="false" selected="true" text="支持 java8"/>
+                        <JFXCheckBox fx:id="useBigDecimalCheckBox" layoutX="262.0" layoutY="93.0"
+                                     mnemonicParsing="false" selected="true" text="使用 BigDecimal"/>
+                        <JFXCheckBox fx:id="enableDomainCheckBox" layoutX="262.0" layoutY="128.0"
+                                     mnemonicParsing="false" selected="true" text="启用领域"/>
+                        <JFXCheckBox fx:id="useCommentCheckBox" layoutX="262.0" layoutY="56.0"
+                                     mnemonicParsing="false" selected="true" text="启用注释"/>
+                        <JFXCheckBox fx:id="useLombokGetSetCheckBox" layoutX="27.0" layoutY="93.0"
+                                     mnemonicParsing="false" text="启用 lombokGetSet 注解"/>
+                        <JFXRadioButton layoutX="125.0" layoutY="20.0" mnemonicParsing="false" selected="true"
+                                        text="Mybatis3">
                             <toggleGroup>
                                 <ToggleGroup fx:id="targetName"/>
                             </toggleGroup>
-                        </RadioButton>
-                        <RadioButton layoutX="373.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3DynamicSql"
-                                     toggleGroup="$targetName">
-                        </RadioButton>
-                        <RadioButton layoutX="225.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3Simple"
-                                     toggleGroup="$targetName">
-                        </RadioButton>
+                        </JFXRadioButton>
+                        <JFXRadioButton layoutX="373.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3DynamicSql"
+                                        toggleGroup="$targetName">
+                        </JFXRadioButton>
+                        <JFXRadioButton layoutX="225.0" layoutY="20.0" mnemonicParsing="false" text="MyBatis3Simple"
+                                        toggleGroup="$targetName">
+                        </JFXRadioButton>
                         <Label layoutX="26.0" layoutY="20.0" text="targetName："/>
-                        <CheckBox fx:id="useLombokBuilderCheckBox" layoutX="27.0" layoutY="128.0"
-                                  mnemonicParsing="false" text="启用 lombokBuilder 注解"/>
+                        <JFXCheckBox fx:id="useLombokBuilderCheckBox" layoutX="27.0" layoutY="128.0"
+                                     mnemonicParsing="false" text="启用 lombokBuilder 注解"/>
                     </AnchorPane>
                 </Tab>
             </TabPane>

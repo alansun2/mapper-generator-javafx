@@ -1,8 +1,10 @@
 package com.alan344.bean.config;
 
+import com.alan344.componet.LeftRightLinkageBorderPane;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
@@ -13,11 +15,15 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class MybatisExportConfig implements Cloneable {
+public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName, Cloneable {
     /**
      * 配置的名称
      */
     private String configName;
+    /**
+     * 是否是系统内置
+     */
+    private boolean isSystem;
     /**
      * 类中的作者信息
      */
@@ -106,6 +112,26 @@ public class MybatisExportConfig implements Cloneable {
     @Override
     public int hashCode() {
         return Objects.hash(configName);
+    }
+
+    @Override
+    public String getGroupName() {
+        return this.configName;
+    }
+
+    @Override
+    public void setGroupName(String groupName) {
+        this.configName = groupName;
+    }
+
+    @Override
+    public Collection getList() {
+        return null;
+    }
+
+    @Override
+    public void setList(Collection list) {
+
     }
 
     @Override

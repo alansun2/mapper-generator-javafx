@@ -5,6 +5,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.jfoenix.controls.JFXCheckBox;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,7 +16,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -106,7 +106,7 @@ public class MybatisListViewInit {
             HBox tableNameLabelHBox = new HBox(tableNameLabel);
             tableNameLabelHBox.setAlignment(Pos.CENTER);
 
-            CheckBox returnId = new CheckBox("insert返回id");
+            JFXCheckBox returnId = new JFXCheckBox("insert返回id");
             returnId.setSelected(table.isReturnInsertId());
             returnId.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isReturnInsertId() != newValue) {
@@ -115,7 +115,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox insert = new CheckBox("insert");
+            JFXCheckBox insert = new JFXCheckBox("insert");
             insert.setSelected(table.isInsert());
             insert.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isInsert() != newValue) {
@@ -124,7 +124,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox count = new CheckBox("count");
+            JFXCheckBox count = new JFXCheckBox("count");
             count.setSelected(table.isCount());
             count.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isCount() != newValue) {
@@ -133,7 +133,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox update = new CheckBox("update");
+            JFXCheckBox update = new JFXCheckBox("update");
             update.setSelected(table.isSelect());
             update.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isUpdate() != newValue) {
@@ -142,7 +142,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox delete = new CheckBox("delete");
+            JFXCheckBox delete = new JFXCheckBox("delete");
             delete.setSelected(table.isDelete());
             delete.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isDelete() != newValue) {
@@ -151,7 +151,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox select = new CheckBox("select");
+            JFXCheckBox select = new JFXCheckBox("select");
             select.setSelected(table.isSelect());
             select.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isSelect() != newValue) {
@@ -164,7 +164,7 @@ public class MybatisListViewInit {
             checkBoxHBox1.setAlignment(Pos.CENTER);
             checkBoxHBox1.setSpacing(15);
 
-            CheckBox updateExample = new CheckBox("updateExample");
+            JFXCheckBox updateExample = new JFXCheckBox("updateExample");
             updateExample.setSelected(table.isUpdateExample());
             updateExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isUpdateExample() != newValue) {
@@ -173,7 +173,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox deleteExample = new CheckBox("deleteExample");
+            JFXCheckBox deleteExample = new JFXCheckBox("deleteExample");
             deleteExample.setSelected(table.isDeleteExample());
             deleteExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isDeleteExample() != newValue) {
@@ -182,7 +182,7 @@ public class MybatisListViewInit {
                 }
             });
 
-            CheckBox selectExample = new CheckBox("selectExample");
+            JFXCheckBox selectExample = new JFXCheckBox("selectExample");
             selectExample.setSelected(table.isSelectExample());
             selectExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isSelectExample() != newValue) {

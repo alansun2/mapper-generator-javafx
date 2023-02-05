@@ -54,20 +54,24 @@ public class ExtraFileController {
     private ExtraFileConfigService extraFileConfigService;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
     private final Map<String, ListView<ExtraFileItemHBox>> groupNameListViewMapCache = new HashMap<>();
-    private LeftRightLinkageBorderPane<ExtraFileGroupConfig.ExtraFileConfig, ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
+    private LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
+    private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> cache = new HashMap<>(8);
 
-    public BorderPane getBorderPane() {
-        linkageBorderPane = new LeftRightLinkageBorderPane<>(
-                ExtraFileGroupConfig::new,
-                this::convert2ExtraFileGroupItem,
-                this::getRightListView,
-                NodeConstants.primaryStage,
-                this.getBottomBtns(),
-                0.25
-        );
+    public BorderPane getBorderPane(String configName) {
+        linkageBorderPane = cache.computeIfAbsent(configName, mybatisExportConfig1 -> {
+            final LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane1 = new LeftRightLinkageBorderPane<>(
+                    ExtraFileGroupConfig::new,
+                    this::convert2ExtraFileGroupItem,
+                    this::getRightListView,
+                    NodeConstants.primaryStage,
+                    this.getBottomBtns(),
+                    0.25
+            );
 
-        final List<ExtraFileGroupConfig> extraFileGroupConfigs = configService.getExtraFileGroupConfigs();
-        linkageBorderPane.addLeftItems(extraFileGroupConfigs, this::getRightListView);
+            final List<ExtraFileGroupConfig> extraFileGroupConfigs = configService.getExtraFileGroupConfigs();
+            linkageBorderPane1.addLeftItems(extraFileGroupConfigs, this::getRightListView);
+            return linkageBorderPane1;
+        });
         return linkageBorderPane;
     }
 

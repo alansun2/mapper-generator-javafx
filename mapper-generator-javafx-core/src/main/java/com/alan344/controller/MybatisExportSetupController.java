@@ -39,7 +39,7 @@ public class MybatisExportSetupController implements Initializable {
     @FXML
     private SplitPane splitPane;
     @FXML
-    private ListView<String> selectConfigLV;
+    private ListView<Label> selectConfigLV;
     @Resource
     private ConfigService configService;
     @Resource
@@ -74,7 +74,7 @@ public class MybatisExportSetupController implements Initializable {
         // 设置点击事件
         selectConfigLV.setOnMouseClicked(event -> {
             if (event.getButton() == MouseButton.PRIMARY) {
-                mybatisExportController.showConfig(configNameConfigMap.get(((ListView<String>) event.getSource()).getSelectionModel().getSelectedItem()));
+                mybatisExportController.showConfig(configNameConfigMap.get(((ListView<Label>) event.getSource()).getSelectionModel().getSelectedItem().getText()));
             }
         });
 
@@ -85,8 +85,8 @@ public class MybatisExportSetupController implements Initializable {
         MenuItem delMenuItem = new MenuItem("删除");
         delMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
         delMenuItem.setOnAction(event -> {
-            final String selectedItem = selectConfigLV.getSelectionModel().getSelectedItem();
-            this.deleteConfig(selectedItem, configNameConfigMap.get(selectedItem));
+            final Label selectedItem = selectConfigLV.getSelectionModel().getSelectedItem();
+            this.deleteConfig(selectedItem, configNameConfigMap.get(selectedItem.getText()));
         });
         selectConfigLV.setContextMenu(new ContextMenu(addMenuItem, delMenuItem));
     }
@@ -96,14 +96,14 @@ public class MybatisExportSetupController implements Initializable {
      *
      * @param mybatisExportConfig 配置信息
      */
-    private void deleteConfig(String configName, MybatisExportConfig mybatisExportConfig) {
-        final ObservableList<String> items = selectConfigLV.getItems();
+    private void deleteConfig(Label configNameLabel, MybatisExportConfig mybatisExportConfig) {
+        final ObservableList<Label> items = selectConfigLV.getItems();
         int size = items.size();
-        items.remove(configName);
+        items.remove(configNameLabel);
         if (size == 1) {
             mybatisExportController.clearPane();
         } else {
-            mybatisExportController.showConfig(configService.getConfigNameConfigMap().get(items.get(0)));
+            mybatisExportController.showConfig(configService.getConfigNameConfigMap().get(items.get(0).getText()));
         }
 
         configService.deleteConfig(mybatisExportConfig);
@@ -115,7 +115,9 @@ public class MybatisExportSetupController implements Initializable {
      * @param mybatisExportConfig 配置信息
      */
     private void addConfigButton(MybatisExportConfig mybatisExportConfig) {
-        selectConfigLV.getItems().add(mybatisExportConfig.getConfigName());
+        final Label label = new Label(mybatisExportConfig.getConfigName());
+        label.setPrefHeight(23);
+        selectConfigLV.getItems().add(label);
     }
 
     /**
@@ -134,13 +136,13 @@ public class MybatisExportSetupController implements Initializable {
     @FXML
     public void next() {
         mybatisExportController.validExport();
+        final MybatisExportConfig config = mybatisExportController.getConfig(BaseConstants.currentConfig);
+        config.setExportExtraFile(true);
 
-        Node next = extraFileController.getBorderPane();
+        Node next = extraFileController.getBorderPane(config.getConfigName());
         // 入栈
         nodeHandler.addNode(next);
 
-        final MybatisExportConfig config = mybatisExportController.getConfig(BaseConstants.currentConfig);
-        config.setExportExtraFile(true);
         NodeConstants.borderPaneWrap.setCenter(next);
     }
 

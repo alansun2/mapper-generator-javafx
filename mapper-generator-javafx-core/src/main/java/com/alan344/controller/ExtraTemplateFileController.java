@@ -54,7 +54,7 @@ public class ExtraTemplateFileController {
     private ResourceLoader resourceLoader;
     private Stage stage;
     private Button saveBtn;
-    private LeftRightLinkageBorderPane<ExtraTemplateFileConfig, ExtraTemplateFileGroupConfig, ExtraTemplateFileGroupItemHBox> linkageBorderPane;
+    private LeftRightLinkageBorderPane<ExtraTemplateFileGroupConfig, ExtraTemplateFileGroupItemHBox> linkageBorderPane;
 
     public void openExtraFilePageInternal(boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
         if (null != stage) {

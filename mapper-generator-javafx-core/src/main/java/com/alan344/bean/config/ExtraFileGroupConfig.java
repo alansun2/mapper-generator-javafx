@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupName<ExtraFileGroupConfig.ExtraFileConfig>, Cloneable {
+public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupName, Cloneable {
     /**
      * 分组名称
      */
@@ -39,7 +39,7 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
     }
 
     @Override
-    public void setList(Collection<ExtraFileConfig> list) {
+    public void setList(Collection list) {
         this.extraFileConfigs = new HashSet<>(list);
     }
 

@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * @author AlanSun
  * @date 2023/2/4 0:10
  */
-public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane.GroupName<C>, GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {
+public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.GroupName, GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {
     private final ListView<GI> groupListView = new ListView<>();
     private final BorderPane borderPane = new BorderPane();
     private final Map<String, Region> listViewCache = new HashMap<>();
@@ -65,6 +65,9 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
                     gc.setSystem(false);
                     gc.setList(new ArrayList<>(3));
                     GI gi = generatorGI.apply(gc);
+                    if (gi instanceof Region) {
+                        ((Region) gi).setPrefHeight(25);
+                    }
                     groupListView.getItems().add(gi);
                 }));
 
@@ -81,6 +84,9 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
                     clone.setGroupName(clone.getGroupName() + "COPY");
                     clone.setSystem(false);
                     GI gi = generatorGI.apply(gc);
+                    if (gi instanceof Region) {
+                        ((Region) gi).setPrefHeight(25);
+                    }
                     groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, gi);
                 });
 
@@ -113,7 +119,13 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
         if (!gcList.isEmpty()) {
             borderPane.setCenter(fistItemsSupplier.apply(gcList.get(0)));
             // this.groupListView.pre
-            this.groupListView.getItems().addAll(gcList.stream().map(generatorGI).toList());
+            this.groupListView.getItems().addAll(gcList.stream().map(gc -> {
+                final GI gi = generatorGI.apply(gc);
+                if (gi instanceof Region) {
+                    ((Region) gi).setPrefHeight(25);
+                }
+                return gi;
+            }).toList());
             this.groupListView.getSelectionModel().select(0);
         }
     }
@@ -175,14 +187,14 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
         stage.show();
     }
 
-    public interface GroupName<L> {
+    public interface GroupName {
         String getGroupName();
 
         void setGroupName(String groupName);
 
-        Collection<L> getList();
+        Collection getList();
 
-        void setList(Collection<L> list);
+        void setList(Collection list);
 
         boolean isSystem();
 
