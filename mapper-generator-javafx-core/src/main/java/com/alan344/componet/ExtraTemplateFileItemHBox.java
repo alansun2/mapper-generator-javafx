@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/8/21 15:01
  */
-public class ExtraTemplateFileItem extends HBox {
+public class ExtraTemplateFileItemHBox extends HBox {
     private final Button scanButton;
     private final Button deleteButton;
     private final Button copyBtn;
@@ -25,7 +25,7 @@ public class ExtraTemplateFileItem extends HBox {
 
     private final boolean showCheckBox;
 
-    public ExtraTemplateFileItem(boolean showCheckBox, ExtraTemplateFileConfig extraTemplateFileConfig) {
+    public ExtraTemplateFileItemHBox(boolean showCheckBox, ExtraTemplateFileConfig extraTemplateFileConfig) {
         this.extraTemplateFileConfig = extraTemplateFileConfig;
         this.showCheckBox = showCheckBox;
         int jfxCheckBoxWidth = 30, nameWidth = 130, btnWidth = 64;

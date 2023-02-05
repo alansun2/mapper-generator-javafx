@@ -28,6 +28,7 @@ public class CustomPropertyHBox extends HBox {
         valueTF = new TextField(value);
         valueTF.prefWidthProperty().bind(this.widthProperty().multiply(0.45));
         delBtn = new Button("Del");
+        delBtn.setStyle("-fx-background-insets: 0; -fx-background-color: #E35252; -fx-text-fill: white");
         delBtn.prefWidthProperty().bind(this.widthProperty().multiply(0.15));
         this.setSpacing(10);
         this.getChildren().addAll(keyLabel, label, valueTF, delBtn);

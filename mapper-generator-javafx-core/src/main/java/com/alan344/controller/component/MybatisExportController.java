@@ -1,7 +1,7 @@
 package com.alan344.controller.component;
 
 import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.componet.FileSelectText;
+import com.alan344.componet.FileSelectTextHBox;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
@@ -41,17 +41,17 @@ public class MybatisExportController implements Initializable {
     @FXML
     private CheckBox modelOnlyCheckBox;
     @FXML
-    private FileSelectText beanLocationText;
+    private FileSelectTextHBox beanLocationText;
     @FXML
     private TextField beanPackageText;
     @FXML
     private TextField beanRootClassText;
     @FXML
-    private FileSelectText mapperLocationText;
+    private FileSelectTextHBox mapperLocationText;
     @FXML
     private TextField mapperPackageText;
     @FXML
-    private FileSelectText xmlLocationText;
+    private FileSelectTextHBox xmlLocationText;
     @FXML
     private TextField mapperRootInterfaceText;
     @FXML
@@ -98,8 +98,8 @@ public class MybatisExportController implements Initializable {
                 final Node node1 = children.get(1);
                 if (node1 instanceof TextField) {
                     ((TextField) node1).prefWidthProperty().bind(exportSetupLV.widthProperty().subtract(220));
-                } else if (node1 instanceof FileSelectText) {
-                    ((FileSelectText) node1).prefWidthProperty().bind(exportSetupLV.widthProperty().subtract(220));
+                } else if (node1 instanceof FileSelectTextHBox) {
+                    ((FileSelectTextHBox) node1).prefWidthProperty().bind(exportSetupLV.widthProperty().subtract(220));
                 }
             }
         });
@@ -241,7 +241,7 @@ public class MybatisExportController implements Initializable {
     }
 
     /**
-     * 点击新增配置时清空配置面板
+     * 点击添加配置时清空配置面板
      */
     public void clearPane() {
         configNameText.setText(null);

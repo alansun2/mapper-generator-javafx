@@ -8,16 +8,18 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.FileDirChooserFactory;
+import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
 import com.alan344.service.ExtraFileConfigService;
 import com.alan344.service.node.NodeHandler;
 import com.alan344.utils.CollectionUtils;
-import com.jfoenix.controls.JFXTextField;
+import com.alan344.utils.Toast;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
@@ -25,16 +27,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author AlanSun
@@ -43,174 +41,70 @@ import java.util.stream.Stream;
  * 添加额外文件
  */
 @Service
-public class ExtraFileController implements Initializable {
-    @FXML
-    private ListView<ExtraFileGroupItem> groupListView;
-    @FXML
-    private BorderPane borderPane;
+public class ExtraFileController {
     @Autowired
     private ExportService exportService;
+    @Autowired
+    private ConfigService configService;
     @Autowired
     private ExtraTemplateFileController extraTemplateFileController;
     @Autowired
     private ExtraFileConfigService extraFileConfigService;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
+    private final Map<String, ListView<ExtraFileItemHBox>> groupNameListViewMapCache = new HashMap<>();
+    private LeftRightLinkageBorderPane<ExtraFileGroupConfig.ExtraFileConfig, ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
 
-    private final Map<String, ListView<ExtraFileItem>> groupNameListViewMapCache = new HashMap<>();
+    public BorderPane getBorderPane() {
+        linkageBorderPane = new LeftRightLinkageBorderPane<>(
+                ExtraFileGroupConfig::new,
+                this::convert2ExtraFileGroupItem,
+                this::getRightListView,
+                NodeConstants.primaryStage,
+                this.getBottomBtns(),
+                0.25
+        );
+
+        final List<ExtraFileGroupConfig> extraFileGroupConfigs = configService.getExtraFileGroupConfigs();
+        linkageBorderPane.addLeftItems(extraFileGroupConfigs, this::getRightListView);
+        return linkageBorderPane;
+    }
+
+    private List<Button> getBottomBtns() {
+        Button openExtraPropertyStageBtn = new Button("添加额外属性");
+        openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties());
+        openExtraPropertyStageBtn.setPrefWidth(100);
+        Button openExtraTemplateFileStageBtn = new Button("添加额外文件");
+        openExtraTemplateFileStageBtn.setOnAction(event -> {
+            final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+            if (null == selectedItem) {
+                Toast.makeText(NodeConstants.primaryStage, "请选择一个分组再添加", 3000, 500, 500, 15, 5);
+                return;
+            }
+            final ExtraFileGroupConfig config = selectedItem.getConfig();
+            if (config.getIsSystem()) {
+                Toast.makeText(NodeConstants.primaryStage, "不能使用默认分组， 请新建分组后再使用", 3000, 500, 500, 15, 5);
+                return;
+            }
+            this.openExtraFilePage();
+        });
+        openExtraTemplateFileStageBtn.setPrefWidth(100);
+        Button saveBtn = new Button("保存配置");
+        saveBtn.setOnAction(event -> this.saveSetup());
+        saveBtn.setPrefWidth(70);
+        Button exportBtn = new Button("导出");
+        exportBtn.getStyleClass().add("export");
+        exportBtn.setOnAction(event -> this.export());
+        exportBtn.setPrefWidth(70);
+        Button preBtn = new Button("返回");
+        preBtn.setOnAction(event -> this.pre());
+        preBtn.setPrefWidth(70);
+        return List.of(openExtraPropertyStageBtn, openExtraTemplateFileStageBtn, saveBtn, exportBtn, preBtn);
+    }
 
     /**
      * 当前选中的分组中
      */
     private ExtraFileGroupConfig curExtraFileGroupConfig;
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // 清空缓存
-        groupNameListViewMapCache.clear();
-        groupListView.getItems().clear();
-        // 设置单选
-        groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        // 初始化分组
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        List<ExtraFileGroupConfig> extraFileGroupConfigs = currentConfig.getExtraFileGroupConfigs();
-        // 分组为空
-        if (CollectionUtils.isEmpty(extraFileGroupConfigs)) {
-            extraFileGroupConfigs = this.getDefaults();
-            currentConfig.setExtraFileGroupConfigs(extraFileGroupConfigs);
-        }
-        extraFileGroupConfigs.forEach(extraFileGroupConfig ->
-                groupListView.getItems().add(this.generatorExtraFileGroup(extraFileGroupConfig)));
-        groupListView.getSelectionModel().select(0);
-        curExtraFileGroupConfig = extraFileGroupConfigs.get(0);
-        borderPane.setCenter(this.getRightListView(curExtraFileGroupConfig));
-
-        // groupListView 设置右键
-        MenuItem addMenuItem = new MenuItem("添加");
-        addMenuItem.setGraphic(new FontIcon("unil-plus-circle:16:BLUE"));
-        List<ExtraFileGroupConfig> finalExtraFileGroupConfigs = extraFileGroupConfigs;
-        addMenuItem.setOnAction(event -> {
-            this.openGroupConfigStage(null, false, s -> {
-                ExtraFileGroupConfig extraFileGroupConfig = new ExtraFileGroupConfig();
-                extraFileGroupConfig.setGroupName(s);
-                // 如果为空，第一个添加的选为默认
-                final boolean empty = groupListView.getItems().isEmpty();
-                // 添加到 listView
-                groupListView.getItems().add(this.generatorExtraFileGroup(extraFileGroupConfig));
-                if (empty) {
-                    groupListView.getSelectionModel().select(0);
-                    curExtraFileGroupConfig = extraFileGroupConfig;
-                }
-                // 添加到配置
-                finalExtraFileGroupConfigs.add(extraFileGroupConfig);
-            });
-        });
-
-        MenuItem editMenuItem = new MenuItem("修改");
-        editMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
-        editMenuItem.setOnAction(event -> {
-            final ExtraFileGroupItem selectedItem = groupListView.getSelectionModel().getSelectedItem();
-            if (null != selectedItem) {
-                this.openGroupConfigStage(selectedItem.getName(), true, selectedItem::setName);
-            }
-        });
-
-        MenuItem delMenuItem = new MenuItem("删除");
-        delMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
-        delMenuItem.setOnAction(event -> {
-            final ExtraFileGroupItem selectedItem = groupListView.getSelectionModel().getSelectedItem();
-            if (null != selectedItem) {
-                groupListView.getItems().remove(selectedItem);
-                finalExtraFileGroupConfigs.remove(selectedItem.getExtraFileGroupConfig());
-            }
-        });
-
-        // JFXPopup
-        groupListView.setContextMenu(new ContextMenu(addMenuItem, editMenuItem, delMenuItem));
-    }
-
-    private List<ExtraFileGroupConfig> getDefaults() {
-        List<ExtraFileGroupConfig> extraFileGroupConfigs = new ArrayList<>();
-        ExtraFileGroupConfig extraFileGroupConfig1 = new ExtraFileGroupConfig();
-        extraFileGroupConfig1.setEnable(false);
-        extraFileGroupConfig1.setGroupName("usual test");
-        final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet1 = Stream.of("Controller",
-                "ServiceI", "ServiceImpl").map(s -> {
-            ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = new ExtraFileGroupConfig.ExtraFileConfig();
-            extraFileConfig.setEnable(true);
-            extraFileConfig.setName(s);
-            extraFileConfig.setOutputPath("/data/mybatis-friend-test/com/test/usual");
-            extraFileConfig.setPackageName("com.test");
-            return extraFileConfig;
-        }).collect(Collectors.toSet());
-        extraFileGroupConfig1.setExtraFileConfigNames(extraFileConfigSet1);
-        extraFileGroupConfigs.add(extraFileGroupConfig1);
-
-        ExtraFileGroupConfig extraFileGroupConfig = new ExtraFileGroupConfig();
-        extraFileGroupConfig.setEnable(false);
-        extraFileGroupConfig.setGroupName("cola架构 test");
-        final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet = Stream.of("AddCmdExe", "ByIdQryExe", "Controller", "DelByIdCmdExe", "DOConvertMapper",
-                "GatewayI", "GatewayImpl", "PageQryExe", "ServiceI", "ServiceImpl", "UpdateCmdExe").map(s -> {
-            ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = new ExtraFileGroupConfig.ExtraFileConfig();
-            extraFileConfig.setEnable(true);
-            extraFileConfig.setName(s);
-            extraFileConfig.setOutputPath("/data/mybatis-friend-test/com/test/cola");
-            extraFileConfig.setPackageName("com.test");
-            return extraFileConfig;
-        }).collect(Collectors.toSet());
-        extraFileGroupConfig.setExtraFileConfigNames(extraFileConfigSet);
-        extraFileGroupConfigs.add(extraFileGroupConfig);
-
-        return extraFileGroupConfigs;
-    }
-
-    /**
-     * 打开新增/修改分组页面
-     *
-     * @param stringConsumer 分组名
-     * @param isEdit         是否是编辑
-     */
-    private void openGroupConfigStage(String name, boolean isEdit, Consumer<String> stringConsumer) {
-        Stage stage = new Stage();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add("border-pane-padding");
-        borderPane.getStylesheets().add("css/common.css");
-        borderPane.setPrefWidth(400);
-        borderPane.setPrefHeight(150);
-
-        // 分组名称
-        Label label = new Label("分组名称: ");
-        label.setPrefWidth(80);
-        TextField textField = new TextField();
-        if (null != name) {
-            textField.setText(name);
-        }
-        textField.setPromptText("分组名称");
-        textField.prefWidthProperty().bind(borderPane.prefWidthProperty().subtract(80));
-        HBox nameText = new HBox(10, label, textField);
-        nameText.setAlignment(Pos.CENTER);
-        borderPane.setCenter(nameText);
-
-        // 按钮
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setOnAction(event -> stage.close());
-        Button applyBtn = new Button("应用");
-        applyBtn.setOnAction(event -> {
-            stringConsumer.accept(textField.getText());
-            stage.close();
-        });
-        HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
-        btnHbox.setAlignment(Pos.CENTER_RIGHT);
-        borderPane.setBottom(btnHbox);
-
-        stage.setScene(new Scene(borderPane));
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle((isEdit ? "编辑" : "新增") + "分组");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
-        stage.show();
-    }
 
     @FXML
     public void export() {
@@ -253,13 +147,13 @@ public class ExtraFileController implements Initializable {
      */
     @FXML
     public void openExtraFilePage() {
-        extraTemplateFileController.openExtraFilePageInternal(groupListView.getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
+        extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
             Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames = curExtraFileGroupConfig.getExtraFileConfigNames();
             if (null == extraFileConfigNames) {
                 extraFileConfigNames = new HashSet<>();
                 curExtraFileGroupConfig.setExtraFileConfigNames(extraFileConfigNames);
             }
-            final ListView<ExtraFileItem> rightListView = this.getRightListView(curExtraFileGroupConfig);
+            final ListView<ExtraFileItemHBox> rightListView = this.getRightListView(curExtraFileGroupConfig);
             Set<ExtraFileGroupConfig.ExtraFileConfig> finalExtraFileConfigNames = extraFileConfigNames;
 
             final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
@@ -283,9 +177,9 @@ public class ExtraFileController implements Initializable {
                         extraFileConfigNew.setOutputPath(original.getOutputPath());
                         extraFileConfigNew.setPackageName(original.getPackageName());
                     }
-                    rightListView.getItems().add(this.packageExtraFileLabel(rightListView, finalExtraFileConfigNames, extraTemplateFileConfig, extraFileConfigNew));
-                    if (borderPane.getCenter() == null) {
-                        borderPane.setCenter(rightListView);
+                    rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, finalExtraFileConfigNames, extraTemplateFileConfig, extraFileConfigNew));
+                    if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
+                        linkageBorderPane.getRightBorderPane().setCenter(rightListView);
                     }
                 }
             });
@@ -355,37 +249,37 @@ public class ExtraFileController implements Initializable {
         stage.show();
     }
 
-    private ExtraFileGroupItem generatorExtraFileGroup(ExtraFileGroupConfig extraFileGroupConfig) {
-        return new ExtraFileGroupItem(extraFileGroupConfig, mouseEvent -> {
+    private ExtraFileGroupItemHBox convert2ExtraFileGroupItem(ExtraFileGroupConfig extraFileGroupConfig) {
+        return new ExtraFileGroupItemHBox(extraFileGroupConfig, mouseEvent -> {
             // 鼠标点击事件
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                final ExtraFileGroupItem extraFileGroupItem = (ExtraFileGroupItem) mouseEvent.getSource();
-                borderPane.setCenter(this.getRightListView(extraFileGroupItem.getExtraFileGroupConfig()));
+                final ExtraFileGroupItemHBox extraFileGroupItemHBox = (ExtraFileGroupItemHBox) mouseEvent.getSource();
+                linkageBorderPane.getRightBorderPane().setCenter(this.getRightListView(extraFileGroupItemHBox.getConfig()));
                 this.curExtraFileGroupConfig = extraFileGroupConfig;
             }
         });
     }
 
-    private ListView<ExtraFileItem> getRightListView(ExtraFileGroupConfig extraFileGroupConfig) {
+    private ListView<ExtraFileItemHBox> getRightListView(ExtraFileGroupConfig extraFileGroupConfig) {
         final List<String> groupNameNames = extraFileGroupConfig.getExtraFileConfigNames().stream()
                 .map(extraFileConfig -> extraFileConfig.getGroupName() + ":" + extraFileConfig.getName()).toList();
         return groupNameListViewMapCache.computeIfAbsent(extraFileGroupConfig.getGroupName(), s -> {
-            ListView<ExtraFileItem> extraFileConfigListView = new ListView<>();
+            ListView<ExtraFileItemHBox> extraFileConfigListView = new ListView<>();
             final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(groupNameNames);
             final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames = extraFileGroupConfig.getExtraFileConfigNames();
             if (CollectionUtils.isNotEmpty(extraFileConfigNames)) {
                 extraFileConfigNames.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getGroupName() + ":" + extraFileConfig.getName())).forEach(extraFileConfig -> extraFileConfigListView.getItems()
-                        .add(this.packageExtraFileLabel(extraFileConfigListView, extraFileConfigNames, extraFileConfigMap.get(extraFileConfig.getGroupName() + ":" + extraFileConfig.getName()), extraFileConfig)));
+                        .add(this.convert2ExtraFileItem(extraFileConfigListView, extraFileConfigNames, extraFileConfigMap.get(extraFileConfig.getGroupName() + ":" + extraFileConfig.getName()), extraFileConfig)));
             }
             return extraFileConfigListView;
         });
     }
 
-    private ExtraFileItem packageExtraFileLabel(ListView<ExtraFileItem> listView,
-                                                Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileNames,
-                                                ExtraTemplateFileConfig extraTemplateFileConfig,
-                                                ExtraFileGroupConfig.ExtraFileConfig extraFileConfig1) {
-        ExtraFileItem extraFileLabel = new ExtraFileItem(extraTemplateFileConfig.getName(), extraTemplateFileConfig.getExtraFileType(),
+    private ExtraFileItemHBox convert2ExtraFileItem(ListView<ExtraFileItemHBox> listView,
+                                                    Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileNames,
+                                                    ExtraTemplateFileConfig extraTemplateFileConfig,
+                                                    ExtraFileGroupConfig.ExtraFileConfig extraFileConfig1) {
+        ExtraFileItemHBox extraFileLabel = new ExtraFileItemHBox(extraTemplateFileConfig.getName(), extraTemplateFileConfig.getExtraFileType(),
                 extraFileConfig1.isEnable(), extraFileConfig1::setEnable);
         extraFileLabel.setPrefHeight(23);
         extraFileLabel.setAlignment(Pos.CENTER);
@@ -418,7 +312,7 @@ public class ExtraFileController implements Initializable {
         VBox vBox = new VBox();
         vBox.setSpacing(10);
         // 文件地址
-        FileSelectText outputPathTextField = new FileSelectText("浏览", extraFileConfig.getOutputPath());
+        FileSelectTextHBox outputPathTextField = new FileSelectTextHBox("浏览", extraFileConfig.getOutputPath());
         outputPathTextField.setPromptText("文件输出地址");
         outputPathTextField.setTextTooltip("不包含包名的路径");
         outputPathTextField.onAction(actionEvent -> {
@@ -452,7 +346,6 @@ public class ExtraFileController implements Initializable {
         });
         HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
         btnHbox.setAlignment(Pos.CENTER_RIGHT);
-
         borderPane.setBottom(btnHbox);
 
         stage.setScene(new Scene(borderPane));

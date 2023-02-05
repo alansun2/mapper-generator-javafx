@@ -9,14 +9,14 @@ import java.util.Optional;
  */
 public interface ${TYPE_NAME_UPPER_CAMEL}GatewayI {
     /**
-     * 新增${DOMAIN_DESC}
+     * 添加${DOMAIN_DESC}
      *
      * @param ${TYPE_NAME_LOWER_CAMEL}DO {@link ${TYPE_NAME_UPPER_CAMEL}DO}
      */
     void save${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO);
 
     /**
-    * 批量新增${DOMAIN_DESC}
+    * 批量添加${DOMAIN_DESC}
     *
     * @param ${TYPE_NAME_LOWER_CAMEL}DOS {@link ${TYPE_NAME_UPPER_CAMEL}DO}s
     */

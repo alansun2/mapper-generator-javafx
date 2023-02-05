@@ -3,21 +3,18 @@ package com.alan344.componet;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 
 /**
  * @author AlanSun
  * @date 2022/11/21 15:33
  */
-public class ExtraTemplateFileGroupItem extends HBox {
+public class ExtraTemplateFileGroupItemHBox extends HBox implements LeftRightLinkageBorderPane.Item<ExtraTemplateFileGroupConfig> {
     private final Label label;
 
     private final ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig;
 
-    private static final ToggleGroup toggleGroup = new ToggleGroup();
-
-    public ExtraTemplateFileGroupItem(ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig) {
+    public ExtraTemplateFileGroupItemHBox(ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig) {
         this.extraTemplateFileGroupConfig = extraTemplateFileGroupConfig;
         label = new Label(extraTemplateFileGroupConfig.getGroupName());
         label.setPrefWidth(70);
@@ -28,16 +25,19 @@ public class ExtraTemplateFileGroupItem extends HBox {
         this.setAlignment(Pos.CENTER);
     }
 
+    @Override
     public String getName() {
         return label.getText();
     }
 
+    @Override
     public void setName(String name) {
         label.setText(name);
         extraTemplateFileGroupConfig.setGroupName(name);
     }
 
-    public ExtraTemplateFileGroupConfig getExtraTemplateFileConfigGroup() {
+    @Override
+    public ExtraTemplateFileGroupConfig getConfig() {
         return this.extraTemplateFileGroupConfig;
     }
 }

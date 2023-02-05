@@ -15,14 +15,14 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/8/21 15:01
  */
-public class ExtraFileItem extends HBox {
+public class ExtraFileItemHBox extends HBox {
     private final Button deleteBtn;
 
     private final Button editBtn;
     private final Label nameLabel;
     private ExtraTemplateFileConfig extraTemplateFileConfig;
 
-    public ExtraFileItem(String name, ExtraFileTypeEnum extraFileTypeEnum, boolean curToggle, Consumer<Boolean> consumer) {
+    public ExtraFileItemHBox(String name, ExtraFileTypeEnum extraFileTypeEnum, boolean curToggle, Consumer<Boolean> consumer) {
         int nameWidth = 130, toggleWidth = 64, btnWidth = 64;
 
         nameLabel = new Label(name);

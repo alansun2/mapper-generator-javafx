@@ -1,8 +1,10 @@
 package com.alan344.service;
 
+import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.BeanUtils;
+import com.alan344.utils.CollectionUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONWriter;
 import lombok.Getter;
@@ -14,11 +16,9 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author AlanSun
@@ -49,7 +49,7 @@ public class ConfigService {
         LinkedList<MybatisExportConfig> existConfigLinkedList = mybatisExportConfigs.stream().filter(generatorConfig1 -> mybatisExportConfig.getConfigName().equals(generatorConfig1.getConfigName()))
                 .collect(LinkedList::new, LinkedList::add, List::addAll);
 
-        //配置已存在，如果内容修改，则修改
+        // 配置已存在，如果内容修改，则修改
         if (!existConfigLinkedList.isEmpty()) {
             MybatisExportConfig olderConfig = existConfigLinkedList.getFirst();
             boolean isSame = BeanUtils.checkPropertyOfBean(mybatisExportConfig, olderConfig);
@@ -87,6 +87,14 @@ public class ConfigService {
      * @param mybatisExportConfigs 配置信息
      */
     private void saveConfigToFile(List<MybatisExportConfig> mybatisExportConfigs) {
+        if (CollectionUtils.isEmpty(mybatisExportConfigs)) {
+            return;
+        }
+        // 删除内置的配置
+        mybatisExportConfigs.forEach(mybatisExportConfig -> {
+            final List<ExtraFileGroupConfig> extraFileGroupConfigs = mybatisExportConfig.getExtraFileGroupConfigs();
+            extraFileGroupConfigs.removeIf(ExtraFileGroupConfig::getIsSystem);
+        });
         String configsStr = JSONArray.toJSONString(mybatisExportConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName);
         try {
             FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
@@ -94,7 +102,6 @@ public class ConfigService {
             log.error("写入配置信息失败", e);
         }
     }
-
 
     /**
      * 从文件加载配置至pane
@@ -119,5 +126,62 @@ public class ConfigService {
                 return mybatisExportConfigs2;
             }
         }
+    }
+
+    /**
+     * 获取额外配置
+     *
+     * @return {@link ExtraFileGroupConfig}s
+     */
+    public List<ExtraFileGroupConfig> getExtraFileGroupConfigs() {
+        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
+        List<ExtraFileGroupConfig> extraFileGroupConfigs = currentConfig.getExtraFileGroupConfigs();
+        final List<ExtraFileGroupConfig> defaults = this.getDefaults();
+        if (CollectionUtils.isEmpty(extraFileGroupConfigs)) {
+            extraFileGroupConfigs = defaults;
+        } else {
+            for (int i = 0; i < defaults.size(); i++) {
+                extraFileGroupConfigs.add(i, defaults.get(i));
+            }
+        }
+
+        return extraFileGroupConfigs;
+    }
+
+    private List<ExtraFileGroupConfig> getDefaults() {
+        List<ExtraFileGroupConfig> extraFileGroupConfigs = new ArrayList<>();
+        ExtraFileGroupConfig extraFileGroupConfig1 = new ExtraFileGroupConfig();
+        extraFileGroupConfig1.setEnable(false);
+        extraFileGroupConfig1.setIsSystem(true);
+        extraFileGroupConfig1.setGroupName("usual test");
+        final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet1 = Stream.of("Controller",
+                "ServiceI", "ServiceImpl").map(s -> {
+            ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = new ExtraFileGroupConfig.ExtraFileConfig();
+            extraFileConfig.setEnable(true);
+            extraFileConfig.setName(s);
+            extraFileConfig.setOutputPath(BaseConstants.MG_EXAMPLE_HOME + "mybatis-friend-test/com/test/usual");
+            extraFileConfig.setPackageName("com.test");
+            return extraFileConfig;
+        }).collect(Collectors.toSet());
+        extraFileGroupConfig1.setExtraFileConfigNames(extraFileConfigSet1);
+        extraFileGroupConfigs.add(extraFileGroupConfig1);
+
+        ExtraFileGroupConfig extraFileGroupConfig = new ExtraFileGroupConfig();
+        extraFileGroupConfig.setEnable(false);
+        extraFileGroupConfig.setIsSystem(true);
+        extraFileGroupConfig.setGroupName("cola 架构 test");
+        final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet = Stream.of("AddCmdExe", "ByIdQryExe", "Controller", "DelByIdCmdExe", "DOConvertMapper",
+                "GatewayI", "GatewayImpl", "PageQryExe", "ServiceI", "ServiceImpl", "UpdateCmdExe").map(s -> {
+            ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = new ExtraFileGroupConfig.ExtraFileConfig();
+            extraFileConfig.setEnable(true);
+            extraFileConfig.setName(s);
+            extraFileConfig.setOutputPath(BaseConstants.MG_EXAMPLE_HOME + "mybatis-friend-test/com/test/cola");
+            extraFileConfig.setPackageName("com.test");
+            return extraFileConfig;
+        }).collect(Collectors.toSet());
+        extraFileGroupConfig.setExtraFileConfigNames(extraFileConfigSet);
+        extraFileGroupConfigs.add(extraFileGroupConfig);
+
+        return extraFileGroupConfigs;
     }
 }

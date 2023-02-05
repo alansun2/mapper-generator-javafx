@@ -1,9 +1,10 @@
 package com.alan344.bean.config;
 
+import com.alan344.componet.LeftRightLinkageBorderPane;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author AlanSun
@@ -11,11 +12,17 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class ExtraTemplateFileGroupConfig implements Cloneable {
-
+public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.GroupName<ExtraTemplateFileConfig>, Cloneable {
+    /**
+     * 分组名称
+     */
     private String groupName;
+    /**
+     * 是否是系统内置的配置
+     */
+    private Boolean isSystem;
 
-    private List<ExtraTemplateFileConfig> extraTemplateFileConfigList;
+    private Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList;
 
     @Override
     public ExtraTemplateFileGroupConfig clone() {
@@ -27,5 +34,15 @@ public class ExtraTemplateFileGroupConfig implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public Collection<ExtraTemplateFileConfig> getList() {
+        return this.extraTemplateFileConfigList;
+    }
+
+    @Override
+    public void setList(Collection<ExtraTemplateFileConfig> list) {
+        this.extraTemplateFileConfigList = list;
     }
 }

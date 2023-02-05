@@ -13,17 +13,17 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/8/21 15:01
  */
-public class FileSelectText extends HBox {
+public class FileSelectTextHBox extends HBox {
 
     private final TextField textField;
     private final Button button;
 
-    public FileSelectText() {
+    public FileSelectTextHBox() {
         this("浏览", null);
     }
 
 
-    public FileSelectText(String btnName, String initText) {
+    public FileSelectTextHBox(String btnName, String initText) {
         textField = new TextField(initText);
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {

@@ -3,6 +3,7 @@ package com.alan344.service;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.constants.BaseConstants;
+import com.alan344.utils.CollectionUtils;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONWriter;
 import org.apache.commons.io.FileUtils;
@@ -35,7 +36,7 @@ public class ExtraFileConfigService {
         final List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigList = this.getExtraFileConfigList();
         Map<String, ExtraTemplateFileConfig> stringExtraTemplateFileConfigMap = new HashMap<>(16);
         for (ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig : extraTemplateFileConfigList) {
-            final List<ExtraTemplateFileConfig> extraTemplateFileConfigList1 = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
+            final Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList1 = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
             for (ExtraTemplateFileConfig extraTemplateFileConfig : extraTemplateFileConfigList1) {
                 stringExtraTemplateFileConfigMap.put(extraTemplateFileGroupConfig.getGroupName() + ":" + extraTemplateFileConfig.getName(), extraTemplateFileConfig);
             }
@@ -58,7 +59,15 @@ public class ExtraFileConfigService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        }
 
+        final List<ExtraTemplateFileGroupConfig> defaults = this.getDefault();
+        if (CollectionUtils.isEmpty(extraTemplateFileConfigs)) {
+            extraTemplateFileConfigs = defaults;
+        } else {
+            for (int i = 0; i < defaults.size(); i++) {
+                extraTemplateFileConfigs.add(i, defaults.get(i));
+            }
         }
         return extraTemplateFileConfigs;
     }
@@ -69,6 +78,8 @@ public class ExtraFileConfigService {
      * @return 模板分组
      */
     private List<ExtraTemplateFileGroupConfig> getDefault() {
+
+
         return Collections.emptyList();
     }
 }

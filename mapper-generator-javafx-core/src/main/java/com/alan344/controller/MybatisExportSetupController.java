@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import lombok.extern.slf4j.Slf4j;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -47,6 +48,8 @@ public class MybatisExportSetupController implements Initializable {
     private MybatisExportController mybatisExportController;
     @Resource
     private ExportService exportService;
+    @Autowired
+    private ExtraFileController extraFileController;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
 
     @Override
@@ -116,7 +119,7 @@ public class MybatisExportSetupController implements Initializable {
     }
 
     /**
-     * 新增一个配置
+     * 添加一个配置
      */
     @FXML
     public void addEmptyExportPane() {
@@ -132,7 +135,7 @@ public class MybatisExportSetupController implements Initializable {
     public void next() {
         mybatisExportController.validExport();
 
-        Node next = FxmlLoadFactory.create("/fxml/extra-file.fxml", beanFactory);
+        Node next = extraFileController.getBorderPane();
         // 入栈
         nodeHandler.addNode(next);
 

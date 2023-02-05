@@ -22,6 +22,10 @@ public class BaseConstants {
     private static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGeneratorV2";
     public static final String MG_DATA_HOME = MG_HOME + "/data/";
     public static final String MG_CONF_HOME = MG_HOME + "/config/";
+    /**
+     * example export dir
+     */
+    public static final String MG_EXAMPLE_HOME = MG_HOME + "/example-out/";
     private static final String MG_CONFIG_FILE = MG_CONF_HOME + "base-config";
     /**
      * 额外文件配置

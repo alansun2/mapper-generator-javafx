@@ -15,14 +15,14 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/11/21 15:33
  */
-public class ExtraFileGroupItem extends HBox {
+public class ExtraFileGroupItemHBox extends HBox implements LeftRightLinkageBorderPane.Item<ExtraFileGroupConfig> {
     private final Label label;
 
     private final ExtraFileGroupConfig extraFileGroupConfig;
 
     private static final ToggleGroup TOGGLE_GROUP = new ToggleGroup();
 
-    public ExtraFileGroupItem(ExtraFileGroupConfig extraFileGroupConfig, Consumer<MouseEvent> consumer) {
+    public ExtraFileGroupItemHBox(ExtraFileGroupConfig extraFileGroupConfig, Consumer<MouseEvent> consumer) {
         this.extraFileGroupConfig = extraFileGroupConfig;
         label = new Label(extraFileGroupConfig.getGroupName());
         label.setPrefWidth(100);
@@ -40,15 +40,18 @@ public class ExtraFileGroupItem extends HBox {
         this.setAlignment(Pos.CENTER);
     }
 
+    @Override
     public String getName() {
         return label.getText();
     }
 
+    @Override
     public void setName(String name) {
         label.setText(name);
     }
 
-    public ExtraFileGroupConfig getExtraFileGroupConfig() {
+    @Override
+    public ExtraFileGroupConfig getConfig() {
         return this.extraFileGroupConfig;
     }
 }

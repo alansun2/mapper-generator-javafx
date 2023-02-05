@@ -34,7 +34,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
         ${TYPE_NAME_LOWER_CAMEL}.setCreateBy(UserResourceHolder.getUserNameAndId());
 
         final int ic = ${TYPE_NAME_LOWER_CAMEL}Mapper.insertSelective(${TYPE_NAME_LOWER_CAMEL});
-        AssertUtils.isTrue(ic == 1, "新增异常，请稍后重试");
+        AssertUtils.isTrue(ic == 1, "添加异常，请稍后重试");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
         }).toList();
 
         final int ic = ${TYPE_NAME_LOWER_CAMEL}Mapper.insertMultiple(inspectionTaskConfigItemSnapshots);
-        AssertUtils.isTrue(ic == ${TYPE_NAME_LOWER_CAMEL}DOS.size(), "新增异常，请稍后重试");
+        AssertUtils.isTrue(ic == ${TYPE_NAME_LOWER_CAMEL}DOS.size(), "添加异常，请稍后重试");
     }
 
     @Override
