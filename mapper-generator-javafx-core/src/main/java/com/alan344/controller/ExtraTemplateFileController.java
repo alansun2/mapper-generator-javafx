@@ -9,6 +9,8 @@ import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExtraFileConfigService;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXDialog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,11 +24,20 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -34,10 +45,13 @@ import java.util.stream.Collectors;
  * @author AlanSun
  * @date 2022/11/3 9:49
  */
+@Slf4j
 @Service
 public class ExtraTemplateFileController {
     @Autowired
     private ExtraFileConfigService extraFileConfigService;
+    @Autowired
+    private ResourceLoader resourceLoader;
     private Stage stage;
     private Button saveBtn;
     private LeftRightLinkageBorderPane<ExtraTemplateFileConfig, ExtraTemplateFileGroupConfig, ExtraTemplateFileGroupItemHBox> linkageBorderPane;
@@ -69,7 +83,7 @@ public class ExtraTemplateFileController {
         linkageBorderPane.setPrefHeight(550);
         linkageBorderPane.setPrefWidth(800);
 
-        final List<ExtraTemplateFileGroupConfig> extraTemplateFileGroupConfigs = extraFileConfigService.getExtraFileConfigList();
+        final List<ExtraTemplateFileGroupConfig> extraTemplateFileGroupConfigs = extraFileConfigService.getExtraTemplateFileGroupConfig();
         linkageBorderPane.addLeftItems(extraTemplateFileGroupConfigs, extraTemplateFileGroupConfig -> this.getCenterListView(showCheckBox, extraTemplateFileGroupConfig));
         return linkageBorderPane;
     }
@@ -98,7 +112,7 @@ public class ExtraTemplateFileController {
                 return;
             }
             final List<ExtraTemplateFileGroupConfig> extraTemplateFileGroupConfigs = linkageBorderPane.getGroupLeftListView().getItems().stream()
-                    .map(ExtraTemplateFileGroupItemHBox::getConfig).toList();
+                    .map(ExtraTemplateFileGroupItemHBox::getConfig).collect(Collectors.toCollection(ArrayList::new));
             // 保存到磁盘
             extraFileConfigService.saveExtraFileConfig(extraTemplateFileGroupConfigs);
             saveBtn.setDisable(true);
@@ -125,7 +139,7 @@ public class ExtraTemplateFileController {
                 return;
             }
             final ExtraTemplateFileGroupConfig config = selectedItem.getConfig();
-            if (config.getIsSystem()) {
+            if (config.isSystem()) {
                 Toast.makeText(stage, "不能使用默认分组， 请新建分组后再使用", 3000, 500, 500, 15, 5);
                 return;
             }
@@ -146,7 +160,7 @@ public class ExtraTemplateFileController {
     /**
      * 文件浏览的地址缓存
      */
-    private String baseDir;
+    private String baseDir, exportDir;
 
     /**
      * 打开额外文件设置
@@ -168,6 +182,7 @@ public class ExtraTemplateFileController {
         // 属性名称
         final TextField nameTextField = new TextField(extraTemplateFileConfig.getName());
         nameTextField.setPromptText("配置名称");
+        nameTextField.setDisable(extraTemplateFileConfig.isSystem());
         if (isEdit) {
             nameTextField.setEditable(false);
         }
@@ -178,44 +193,48 @@ public class ExtraTemplateFileController {
         ChoiceBox<ExtraFileTypeEnum> fileTypeCb = new ChoiceBox<>(FXCollections.observableArrayList(ExtraFileTypeEnum.MODEL, ExtraFileTypeEnum.CUSTOM_TEMPLATE));
         fileTypeCb.getItems().addAll();
         fileTypeCb.setValue(extraTemplateFileConfig.getExtraFileType());
-        if (isEdit) {
-            fileTypeCb.setDisable(true);
-        }
+        fileTypeCb.setDisable(isEdit || extraTemplateFileConfig.isSystem());
         PropertyHBox fileTypeHbox = new PropertyHBox("文件类型", labelWidth, fileTypeCb);
         vBox.getChildren().add(fileTypeHbox);
 
         // 父类
         final TextField superClassTextField = new TextField(extraTemplateFileConfig.getSuperClass());
         superClassTextField.setPromptText("父类，类全限定名称");
+        superClassTextField.setDisable(extraTemplateFileConfig.isSystem());
         PropertyHBox superClassHbox = new PropertyHBox("父类", labelWidth, superClassTextField);
         vBox.getChildren().add(superClassHbox);
 
         // model 后缀
         TextField modelSuffixTextField = new TextField(extraTemplateFileConfig.getModelSuffix());
         modelSuffixTextField.setPromptText("model 后缀");
+        modelSuffixTextField.setDisable(extraTemplateFileConfig.isSystem());
         PropertyHBox modelSuffixHbox = new PropertyHBox("model 后缀", labelWidth, modelSuffixTextField);
         vBox.getChildren().add(modelSuffixHbox);
 
         // 是否开启 validation 注解
-        CheckBox checkBox = new CheckBox();
+        JFXCheckBox checkBox = new JFXCheckBox();
+        checkBox.setDisable(extraTemplateFileConfig.isSystem());
         checkBox.setSelected(extraTemplateFileConfig.isGenerateValidAnnotation());
         PropertyHBox modelValidSuffixHbox = new PropertyHBox("是否开启 Validate 注解", labelWidth, checkBox);
         vBox.getChildren().add(modelValidSuffixHbox);
 
         // lombok @Getter
-        CheckBox lombokGetterCheckBox = new CheckBox();
+        JFXCheckBox lombokGetterCheckBox = new JFXCheckBox();
+        lombokGetterCheckBox.setDisable(extraTemplateFileConfig.isSystem());
         lombokGetterCheckBox.setSelected(extraTemplateFileConfig.isLombokGetter());
         PropertyHBox lombokGetterHbox = new PropertyHBox("lombok @Getter", labelWidth, lombokGetterCheckBox);
         vBox.getChildren().add(lombokGetterHbox);
 
         // lombok @Setter
-        CheckBox lombokSetterCheckBox = new CheckBox();
+        JFXCheckBox lombokSetterCheckBox = new JFXCheckBox();
+        lombokSetterCheckBox.setDisable(extraTemplateFileConfig.isSystem());
         lombokSetterCheckBox.setSelected(extraTemplateFileConfig.isLombokSetter());
         PropertyHBox lombokSetterHbox = new PropertyHBox("lombok @Setter", labelWidth, lombokSetterCheckBox);
         vBox.getChildren().add(lombokSetterHbox);
 
         // lombok @ToString
-        CheckBox lombokToStringCheckBox = new CheckBox();
+        JFXCheckBox lombokToStringCheckBox = new JFXCheckBox();
+        lombokToStringCheckBox.setDisable(extraTemplateFileConfig.isSystem());
         lombokToStringCheckBox.setSelected(extraTemplateFileConfig.isLombokToString());
         PropertyHBox lombokToStringHbox = new PropertyHBox("lombok @ToString", labelWidth, lombokToStringCheckBox);
         vBox.getChildren().add(lombokToStringHbox);
@@ -223,47 +242,58 @@ public class ExtraTemplateFileController {
         // 忽略字段
         TextField ignoreColumnTextField = new TextField(extraTemplateFileConfig.getModelIgnoreColumns());
         ignoreColumnTextField.setPromptText("忽略字段，逗号分隔");
+        ignoreColumnTextField.setDisable(extraTemplateFileConfig.isSystem());
         PropertyHBox ignoreColumnHbox = new PropertyHBox("忽略字段", labelWidth, ignoreColumnTextField);
         vBox.getChildren().add(ignoreColumnHbox);
 
-        // 自定义模板文件夹
-        FileSelectTextHBox customTemplatePathTextField = new FileSelectTextHBox("浏览", extraTemplateFileConfig.getCustomTemplateDir());
-        customTemplatePathTextField.setPromptText("模板文件夹");
-        customTemplatePathTextField.onAction(actionEvent -> {
+        // 自定义模板文件
+        FileTemplateTextHBox customTemplatePathTextField = new FileTemplateTextHBox(extraTemplateFileConfig.getCustomTemplateDir());
+        customTemplatePathTextField.disable(extraTemplateFileConfig.isSystem());
+        customTemplatePathTextField.setPromptText("模板文件");
+        customTemplatePathTextField.getTextField().setEditable(false);
+        customTemplatePathTextField.importAction(actionEvent -> {
             baseDir = extraTemplateFileConfig.getCustomTemplateDir();
-            // 文件导出地址
-            File directory = FileDirChooserFactory.createDirectoryScan(null, StringUtils.getDefaultIfNull(this.baseDir, null));
-            if (directory != null) {
-                customTemplatePathTextField.setText(directory.getPath());
-                this.baseDir = directory.getPath();
+            if (StringUtils.isNotEmpty(extraTemplateFileConfig.getCustomTemplateDir())) {
+                final File file = FileUtils.getFile(extraTemplateFileConfig.getCustomTemplateDir());
+                baseDir = file.getParent();
+            }
+            // 文件地址
+            File filePath = FileDirChooserFactory.createFileScan("freemarker 模板选择器", baseDir, "freemarker 文件", "*.ftl");
+            if (filePath != null) {
+                customTemplatePathTextField.setText(filePath.getPath());
+                this.baseDir = filePath.getPath();
             }
         });
-        PropertyHBox customTemplatePathHbox = new PropertyHBox("模板文件夹", labelWidth, customTemplatePathTextField);
-        vBox.getChildren().add(customTemplatePathHbox);
+        customTemplatePathTextField.exportAction(actionEvent -> {
+            // 文件地址
+            File filePath = FileDirChooserFactory.createDirectoryScan("模板导出地址", exportDir);
+            if (filePath != null) {
+                this.exportDir = filePath.getPath();
+                final Resource resource = resourceLoader.getResource(customTemplatePathTextField.getText());
+                try {
+                    final File file = FileUtils.getFile(customTemplatePathTextField.getText());
+                    IOUtils.copy(resource.getInputStream(), new FileOutputStream(filePath.getPath() + "/" + file.getName()));
 
-        // 模板文件名称
-        FileSelectTextHBox customTemplateFileNameTextField = new FileSelectTextHBox("浏览", extraTemplateFileConfig.getCustomTemplateFileName());
-        customTemplateFileNameTextField.setPromptText("模板文件名称");
-        customTemplateFileNameTextField.onAction(actionEvent -> {
-            baseDir = extraTemplateFileConfig.getCustomTemplateDir();
-            // 文件导出地址
-            File file = FileDirChooserFactory.createFileScan(null, StringUtils.getDefaultIfNull(this.baseDir, null), "freemarker 文件", "*.ftl");
-            if (file != null) {
-                customTemplateFileNameTextField.setText(file.getName());
-                this.baseDir = file.getParent();
+                    JFXDialog jfxDialog = new JFXDialog();
+                    jfxDialog.setContent(new Label("sdfas"));
+                    jfxDialog.show();
+                } catch (IOException e) {
+                    log.error("导出文件失败", e);
+                }
             }
         });
-        PropertyHBox customTemplateFileNameHbox = new PropertyHBox("模板文件名称", labelWidth, customTemplateFileNameTextField);
-        vBox.getChildren().add(customTemplateFileNameHbox);
+
+        PropertyHBox customTemplatePathHbox = new PropertyHBox("模板文件", labelWidth, customTemplatePathTextField);
+        vBox.getChildren().add(customTemplatePathHbox);
 
         // 展示
         this.showByExtraFileType(extraTemplateFileConfig.getExtraFileType(), modelValidSuffixHbox, lombokGetterHbox,
-                lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox, customTemplateFileNameHbox);
+                lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox);
 
         fileTypeCb.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             final ExtraFileTypeEnum extraFileTypeEnum = fileTypeCb.getItems().get(newValue.intValue());
             this.showByExtraFileType(extraFileTypeEnum, modelValidSuffixHbox, lombokGetterHbox,
-                    lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox, customTemplateFileNameHbox);
+                    lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox);
         });
 
         // 按钮
@@ -271,8 +301,10 @@ public class ExtraTemplateFileController {
         cancelButton.setPrefWidth(50);
         cancelButton.setOnAction(actionEvent -> addTemplateStage.close());
         Button submitButton = new Button("确定");
+        submitButton.setDisable(extraTemplateFileConfig.isSystem());
         submitButton.setPrefWidth(50);
         submitButton.setOnAction(actionEvent -> {
+            extraTemplateFileConfig.setId(UUID.randomUUID().toString());
             extraTemplateFileConfig.setName(nameTextField.getText());
             extraTemplateFileConfig.setExtraFileType(fileTypeCb.getSelectionModel().getSelectedItem());
             extraTemplateFileConfig.setSuperClass(superClassTextField.getText());
@@ -283,7 +315,6 @@ public class ExtraTemplateFileController {
             extraTemplateFileConfig.setLombokSetter(lombokSetterCheckBox.isSelected());
             extraTemplateFileConfig.setLombokToString(lombokToStringCheckBox.isSelected());
             extraTemplateFileConfig.setCustomTemplateDir(customTemplatePathTextField.getText());
-            extraTemplateFileConfig.setCustomTemplateFileName(customTemplateFileNameTextField.getText());
 
             // 检查文件配置
             this.checkConfig(extraTemplateFileConfig);
@@ -335,13 +366,10 @@ public class ExtraTemplateFileController {
                                      PropertyHBox lombokSetterHbox,
                                      PropertyHBox lombokToStringHbox,
                                      PropertyHBox ignoreColumnHbox,
-                                     PropertyHBox customTemplatePathHbox,
-                                     PropertyHBox templateFileNameHbox) {
+                                     PropertyHBox customTemplatePathHbox) {
         if (extraFileTypeEnum == ExtraFileTypeEnum.MODEL) {
             customTemplatePathHbox.setManaged(false);
             customTemplatePathHbox.setVisible(false);
-            templateFileNameHbox.setManaged(false);
-            templateFileNameHbox.setVisible(false);
             modelValidSuffixHbox.setManaged(true);
             modelValidSuffixHbox.setVisible(true);
             lombokGetterHbox.setManaged(true);
@@ -355,8 +383,6 @@ public class ExtraTemplateFileController {
         } else {
             customTemplatePathHbox.setManaged(true);
             customTemplatePathHbox.setVisible(true);
-            templateFileNameHbox.setManaged(true);
-            templateFileNameHbox.setVisible(true);
             modelValidSuffixHbox.setManaged(false);
             modelValidSuffixHbox.setVisible(false);
             lombokGetterHbox.setManaged(false);
@@ -373,6 +399,7 @@ public class ExtraTemplateFileController {
     private void copyItem(ExtraTemplateFileItemHBox old) {
         final ExtraTemplateFileConfig extraTemplateFileConfigSource = old.getExtraTemplateFileConfig();
         final ExtraTemplateFileConfig clone = extraTemplateFileConfigSource.clone();
+        clone.setId(UUID.randomUUID().toString());
         clone.setName(clone.getName() + "COPY");
         final ExtraTemplateFileItemHBox extraTemplateFileItemHBox = this.packageextrafilelabel(old.isShowCheckBox(), clone);
         final int i = ((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).getItems().indexOf(old);
@@ -381,9 +408,8 @@ public class ExtraTemplateFileController {
 
     private ExtraTemplateFileItemHBox packageextrafilelabel(boolean showCheckBox, ExtraTemplateFileConfig extraTemplateFileConfig) {
         ExtraTemplateFileItemHBox extraTemplateFileItemHBox = new ExtraTemplateFileItemHBox(showCheckBox, extraTemplateFileConfig);
-        extraTemplateFileItemHBox.setPrefHeight(23);
         extraTemplateFileItemHBox.setAlignment(Pos.CENTER);
-        extraTemplateFileItemHBox.prefWidthProperty().bind(((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).widthProperty());
+        extraTemplateFileItemHBox.prefWidthProperty().bind(linkageBorderPane.getRightBorderPane().widthProperty().subtract(25));
         // 编辑
         extraTemplateFileItemHBox.onEditAction(actionEvent -> this.openExtraFileSetup(extraTemplateFileConfig, true,
                 extraFileConfig1 -> {

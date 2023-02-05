@@ -13,11 +13,17 @@ import lombok.Setter;
 @Setter
 public class ExtraTemplateFileConfig implements Cloneable {
 
+    private String id;
+
     private String name;
     /**
      * 配置是否开启
      */
     private boolean enable;
+    /**
+     * 是否是内置的
+     */
+    private boolean isSystem;
     /**
      * 模板类型
      */
@@ -55,10 +61,6 @@ public class ExtraTemplateFileConfig implements Cloneable {
      * 自定义模板文件夹
      */
     private String customTemplateDir;
-    /**
-     * 自定义文件名称
-     */
-    private String customTemplateFileName;
 
     public void setModelIgnoreColumns(String modelIgnoreColumns) {
         if (StringUtils.isNotEmpty(modelIgnoreColumns)) {

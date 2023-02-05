@@ -4,48 +4,59 @@ import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.CollectionUtils;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
  * @date 2022/11/19 23:35
  */
+@Slf4j
 @Service
 public class ExtraFileConfigService {
+    @Value("classpath:default-extra-template-file-config.json")
+    private Resource resource;
 
     private List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigs;
 
     public void saveExtraFileConfig(List<ExtraTemplateFileGroupConfig> items) {
         extraTemplateFileConfigs = items;
         try {
-            FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(), JSONArray.toJSONString(this.getExtraFileConfigList(), JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
+            // delete internal config
+            items.removeIf(ExtraTemplateFileGroupConfig::isSystem);
+            FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(), JSONArray.toJSONString(this.getExtraTemplateFileGroupConfig(), JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public Map<String, ExtraTemplateFileConfig> getExtraFileConfigMap(List<String> groupNameNameList) {
-        final List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigList = this.getExtraFileConfigList();
-        Map<String, ExtraTemplateFileConfig> stringExtraTemplateFileConfigMap = new HashMap<>(16);
-        for (ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig : extraTemplateFileConfigList) {
-            final Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList1 = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
-            for (ExtraTemplateFileConfig extraTemplateFileConfig : extraTemplateFileConfigList1) {
-                stringExtraTemplateFileConfigMap.put(extraTemplateFileGroupConfig.getGroupName() + ":" + extraTemplateFileConfig.getName(), extraTemplateFileConfig);
-            }
+    public Map<String, ExtraTemplateFileConfig> getExtraFileConfigMap(List<String> templateIds) {
+        final List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigList = this.getExtraTemplateFileGroupConfig();
+        if (CollectionUtils.isEmpty(extraTemplateFileConfigList)) {
+            return Collections.emptyMap();
         }
 
-        return stringExtraTemplateFileConfigMap;
+        final Set<String> templateIdSet = new HashSet<>(templateIds);
+        return extraTemplateFileConfigList.stream().flatMap(extraTemplateFileGroupConfig -> extraTemplateFileGroupConfig.getList().stream())
+                .filter(extraTemplateFileConfig -> templateIdSet.contains(extraTemplateFileConfig.getId()))
+                .collect(Collectors.toMap(ExtraTemplateFileConfig::getId, Function.identity()));
     }
 
-    public List<ExtraTemplateFileGroupConfig> getExtraFileConfigList() {
+    public List<ExtraTemplateFileGroupConfig> getExtraTemplateFileGroupConfig() {
         if (null != extraTemplateFileConfigs) {
             return extraTemplateFileConfigs;
         }
@@ -78,7 +89,12 @@ public class ExtraFileConfigService {
      * @return 模板分组
      */
     private List<ExtraTemplateFileGroupConfig> getDefault() {
-
+        try {
+            final InputStream inputStream = resource.getInputStream();
+            return JSON.parseArray(inputStream).toList(ExtraTemplateFileGroupConfig.class);
+        } catch (IOException e) {
+            log.error("获取默认模板分组失败", e);
+        }
 
         return Collections.emptyList();
     }

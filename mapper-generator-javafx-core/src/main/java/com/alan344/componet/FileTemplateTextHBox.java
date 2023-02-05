@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 
 import java.util.function.Consumer;
@@ -13,17 +12,13 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/8/21 15:01
  */
-public class FileSelectTextHBox extends HBox {
+public class FileTemplateTextHBox extends HBox {
 
     private final TextField textField;
-    private final Button button;
+    private final Button importBtn;
+    private final Button exportBtn;
 
-    public FileSelectTextHBox() {
-        this("浏览", null);
-    }
-
-
-    public FileSelectTextHBox(String btnName, String initText) {
+    public FileTemplateTextHBox(String initText) {
         textField = new TextField(initText);
         textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
@@ -38,13 +33,18 @@ public class FileSelectTextHBox extends HBox {
         textField.prefHeightProperty().bind(this.heightProperty());
         textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
 
-        button = new Button(btnName);
-        button.getStylesheets().add("css/common.css");
-        button.getStyleClass().add("mf-scan");
-        button.setPrefWidth(64);
-        button.prefHeightProperty().bind(this.heightProperty());
+        importBtn = new Button("导入");
+        importBtn.getStylesheets().add("css/common.css");
+        importBtn.getStyleClass().add("mf-scan");
+        importBtn.setPrefWidth(64);
+        importBtn.prefHeightProperty().bind(this.heightProperty());
 
-        this.getChildren().addAll(textField, button);
+        exportBtn = new Button("导出");
+        exportBtn.getStylesheets().add("css/common.css");
+        exportBtn.setPrefWidth(64);
+        exportBtn.prefHeightProperty().bind(this.heightProperty());
+
+        this.getChildren().addAll(textField, importBtn, exportBtn);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-border-width: 1;" +
                 "-fx-border-color: #BABABA;");
@@ -65,19 +65,20 @@ public class FileSelectTextHBox extends HBox {
         return this.textField;
     }
 
-    public void onAction(Consumer<ActionEvent> consumer) {
-        this.button.setOnAction(consumer::accept);
+    public void importAction(Consumer<ActionEvent> consumer) {
+        this.importBtn.setOnAction(consumer::accept);
     }
 
-    public final String getPromptText() {
-        return this.textField.getPromptText();
+    public void exportAction(Consumer<ActionEvent> consumer) {
+        this.exportBtn.setOnAction(consumer::accept);
     }
 
     public final void setPromptText(String value) {
         this.textField.setPromptText(value);
     }
 
-    public final void setTextTooltip(String textTooltip) {
-        this.textField.setTooltip(new Tooltip(textTooltip));
+    public void disable(boolean disable) {
+        textField.setDisable(disable);
+        this.importBtn.setDisable(disable);
     }
 }

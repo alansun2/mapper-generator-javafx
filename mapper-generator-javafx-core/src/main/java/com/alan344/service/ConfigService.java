@@ -5,20 +5,23 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.utils.BeanUtils;
 import com.alan344.utils.CollectionUtils;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONWriter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author AlanSun
@@ -27,6 +30,8 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 public class ConfigService {
+    @Value(value = "classpath:default-extra-file-config.json")
+    private Resource resource;
     /**
      * 配置信息 map
      */
@@ -93,7 +98,7 @@ public class ConfigService {
         // 删除内置的配置
         mybatisExportConfigs.forEach(mybatisExportConfig -> {
             final List<ExtraFileGroupConfig> extraFileGroupConfigs = mybatisExportConfig.getExtraFileGroupConfigs();
-            extraFileGroupConfigs.removeIf(ExtraFileGroupConfig::getIsSystem);
+            extraFileGroupConfigs.removeIf(ExtraFileGroupConfig::isSystem);
         });
         String configsStr = JSONArray.toJSONString(mybatisExportConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName);
         try {
@@ -149,39 +154,13 @@ public class ConfigService {
     }
 
     private List<ExtraFileGroupConfig> getDefaults() {
-        List<ExtraFileGroupConfig> extraFileGroupConfigs = new ArrayList<>();
-        ExtraFileGroupConfig extraFileGroupConfig1 = new ExtraFileGroupConfig();
-        extraFileGroupConfig1.setEnable(false);
-        extraFileGroupConfig1.setIsSystem(true);
-        extraFileGroupConfig1.setGroupName("usual test");
-        final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet1 = Stream.of("Controller",
-                "ServiceI", "ServiceImpl").map(s -> {
-            ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = new ExtraFileGroupConfig.ExtraFileConfig();
-            extraFileConfig.setEnable(true);
-            extraFileConfig.setName(s);
-            extraFileConfig.setOutputPath(BaseConstants.MG_EXAMPLE_HOME + "mybatis-friend-test/com/test/usual");
-            extraFileConfig.setPackageName("com.test");
-            return extraFileConfig;
-        }).collect(Collectors.toSet());
-        extraFileGroupConfig1.setExtraFileConfigNames(extraFileConfigSet1);
-        extraFileGroupConfigs.add(extraFileGroupConfig1);
+        try {
+            final InputStream inputStream = resource.getInputStream();
+            return JSON.parseArray(inputStream).toList(ExtraFileGroupConfig.class);
+        } catch (IOException e) {
+            log.error("获取默认分组失败", e);
+        }
 
-        ExtraFileGroupConfig extraFileGroupConfig = new ExtraFileGroupConfig();
-        extraFileGroupConfig.setEnable(false);
-        extraFileGroupConfig.setIsSystem(true);
-        extraFileGroupConfig.setGroupName("cola 架构 test");
-        final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet = Stream.of("AddCmdExe", "ByIdQryExe", "Controller", "DelByIdCmdExe", "DOConvertMapper",
-                "GatewayI", "GatewayImpl", "PageQryExe", "ServiceI", "ServiceImpl", "UpdateCmdExe").map(s -> {
-            ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = new ExtraFileGroupConfig.ExtraFileConfig();
-            extraFileConfig.setEnable(true);
-            extraFileConfig.setName(s);
-            extraFileConfig.setOutputPath(BaseConstants.MG_EXAMPLE_HOME + "mybatis-friend-test/com/test/cola");
-            extraFileConfig.setPackageName("com.test");
-            return extraFileConfig;
-        }).collect(Collectors.toSet());
-        extraFileGroupConfig.setExtraFileConfigNames(extraFileConfigSet);
-        extraFileGroupConfigs.add(extraFileGroupConfig);
-
-        return extraFileGroupConfigs;
+        return Collections.emptyList();
     }
 }

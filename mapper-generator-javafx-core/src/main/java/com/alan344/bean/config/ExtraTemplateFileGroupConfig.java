@@ -20,7 +20,7 @@ public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.
     /**
      * 是否是系统内置的配置
      */
-    private Boolean isSystem;
+    private boolean isSystem;
 
     private Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList;
 

@@ -125,7 +125,7 @@ public class ColumnService {
             try {
                 FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr, StandardCharsets.UTF_8);
             } catch (IOException e) {
-                log.error("columns download 失败");
+                log.error("columns download 失败", e);
             }
         });
     }
@@ -143,7 +143,7 @@ public class ColumnService {
         try {
             FileUtils.writeStringToFile(columnsFile, tableNameColumnsMapStr, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            log.error("columns download 失败");
+            log.error("columns download 失败", e);
         }
     }
 

@@ -12,6 +12,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.mybatis.generator.api.GeneratedJavaFile;
 import org.mybatis.generator.api.IntrospectedColumn;
@@ -105,7 +106,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
     private void process(IntrospectedTable introspectedTable, ExtraTemplateFileConfig extraTemplateFileConfig, LinkedHashMap<String, String> customProperties) {
         final Configuration cfg = this.getConfig(extraTemplateFileConfig.getCustomTemplateDir());
-        final Template template = this.getTemplate(cfg, extraTemplateFileConfig.getCustomTemplateFileName());
+        final Template template = this.getTemplate(cfg, extraTemplateFileConfig.getCustomTemplateDir());
         try {
             // 数据
             final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraTemplateFileConfig, customProperties);
@@ -157,7 +158,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
      * 获取包名
      *
      * @param extraTemplateFileConfig 配置
-     * @param domain          领域
+     * @param domain                  领域
      * @return 包名
      */
     private String getPackage(ExtraTemplateFileConfig extraTemplateFileConfig, PluginUtils.Domain domain) {
@@ -175,8 +176,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         }
     }
 
-    private Configuration getConfig(String templateDir) {
-        Configuration cfg = CONFIGURATION_HASH_MAP.get(templateDir);
+    private Configuration getConfig(String filePath) {
+        final String dir = FileUtils.getFile(filePath).getParent();
+        Configuration cfg = CONFIGURATION_HASH_MAP.get(filePath);
         if (null == cfg) {
             // Create your Configuration instance, and specify if up to what FreeMarker
             // version (here 2.3.29) do you want to apply the fixes that are not 100%
@@ -187,7 +189,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
             // plain directory for it, but non-file-system sources are possible too:
             ResourceLoader resourceLoader = new DefaultResourceLoader();
 
-            cfg.setTemplateLoader(new SpringTemplateLoader(resourceLoader, templateDir));
+            cfg.setTemplateLoader(new SpringTemplateLoader(resourceLoader, dir));
 
             // From here we will set the settings recommended for new projects. These
             // aren't the defaults for backward compatibilty.
@@ -208,7 +210,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
             // Do not fall back to higher scopes when reading a null loop variable:
             cfg.setFallbackOnNullLoopVariable(false);
-            CONFIGURATION_HASH_MAP.put(templateDir, cfg);
+            CONFIGURATION_HASH_MAP.put(dir, cfg);
         }
         return cfg;
     }

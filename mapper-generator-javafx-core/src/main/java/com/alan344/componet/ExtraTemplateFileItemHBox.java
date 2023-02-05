@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  * @date 2022/8/21 15:01
  */
 public class ExtraTemplateFileItemHBox extends HBox {
-    private final Button scanButton;
+    private final Button editButton;
     private final Button deleteButton;
     private final Button copyBtn;
     private final Label nameLabel;
@@ -43,10 +43,10 @@ public class ExtraTemplateFileItemHBox extends HBox {
         extraFileTypeLabel.setStyle("-fx-background-insets: 0");
         extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(jfxCheckBoxWidth + nameWidth + (btnWidth * 3)));
 
-        scanButton = new Button("Edit");
-        scanButton.setStyle("-fx-background-insets: 0; -fx-background-color: #7070fd; -fx-text-fill: white");
-        scanButton.setPrefWidth(btnWidth);
-        scanButton.prefHeightProperty().bind(this.heightProperty());
+        editButton = new Button("Edit");
+        editButton.setStyle("-fx-background-insets: 0; -fx-background-color: #7070fd; -fx-text-fill: white");
+        editButton.setPrefWidth(btnWidth);
+        editButton.prefHeightProperty().bind(this.heightProperty());
 
         deleteButton = new Button("Del");
         deleteButton.setStyle("-fx-background-insets: 0; -fx-background-color: #E35252; -fx-text-fill: white");
@@ -58,14 +58,15 @@ public class ExtraTemplateFileItemHBox extends HBox {
         copyBtn.setPrefWidth(btnWidth);
         copyBtn.prefHeightProperty().bind(this.heightProperty());
 
-        this.getChildren().addAll(jfxCheckBox, nameLabel, extraFileTypeLabel, scanButton, deleteButton, copyBtn);
+        this.disable(extraTemplateFileConfig.isSystem());
+        this.getChildren().addAll(jfxCheckBox, nameLabel, extraFileTypeLabel, editButton, deleteButton, copyBtn);
         this.setSpacing(10);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-background-insets: 0");
     }
 
     public void onEditAction(Consumer<ActionEvent> consumer) {
-        this.scanButton.setOnAction(consumer::accept);
+        this.editButton.setOnAction(consumer::accept);
     }
 
     public void onDelAction(Consumer<ActionEvent> consumer) {
@@ -90,5 +91,10 @@ public class ExtraTemplateFileItemHBox extends HBox {
 
     public boolean isShowCheckBox() {
         return showCheckBox;
+    }
+
+    private void disable(boolean disable) {
+        deleteButton.setDisable(disable);
+        copyBtn.setDisable(disable);
     }
 }

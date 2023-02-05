@@ -109,6 +109,14 @@ StackPane {
     -fx-pref-height: 0;
 }
 
+.menu-bar {
+    -fx-background-color: #F7F8FA;
+    /*-fx-background-color: linear-gradient(rgb(255, 118, 118) 0%, rgb(237, 101, 101) 100%);*/
+    -fx-selection-bar: #CFDEFC;;
+    -fx-text-background-color: lightgrey;
+    -fx-focused-text-base-color: white;
+}
+
 /* list-view */
 .list-view {
     -fx-background-insets: 0;

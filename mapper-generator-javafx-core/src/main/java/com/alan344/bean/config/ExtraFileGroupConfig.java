@@ -21,26 +21,26 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
      */
     private String groupName;
     /**
-     * 是否是系统内置的配置
-     */
-    private Boolean isSystem;
-    /**
      * 是否开启
      */
     private boolean enable;
     /**
+     * 是否是系统内置的配置
+     */
+    private boolean isSystem;
+    /**
      * 额外文件的名称
      */
-    private Set<ExtraFileConfig> extraFileConfigNames;
+    private Set<ExtraFileConfig> extraFileConfigs;
 
     @Override
     public Collection<ExtraFileConfig> getList() {
-        return this.extraFileConfigNames;
+        return this.extraFileConfigs;
     }
 
     @Override
     public void setList(Collection<ExtraFileConfig> list) {
-        this.extraFileConfigNames = new HashSet<>(list);
+        this.extraFileConfigs = new HashSet<>(list);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
         try {
             ExtraFileGroupConfig clone = (ExtraFileGroupConfig) super.clone();
             // TODO: copy mutable state here, so the clone can't change the internals of the original
-            clone.setExtraFileConfigNames(extraFileConfigNames.stream().map(ExtraFileConfig::clone).collect(Collectors.toSet()));
+            clone.setExtraFileConfigs(extraFileConfigs.stream().map(ExtraFileConfig::clone).collect(Collectors.toSet()));
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
@@ -57,8 +57,8 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
 
     @Getter
     @Setter
-    public static class ExtraFileConfig implements Cloneable{
-        private String groupName;
+    public static class ExtraFileConfig implements Cloneable {
+        private String templateId;
         private String name;
         /**
          * 文件输出地址
@@ -80,12 +80,12 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
 
             ExtraFileConfig that = (ExtraFileConfig) o;
 
-            return name.equals(that.name);
+            return templateId.equals(that.templateId);
         }
 
         @Override
         public int hashCode() {
-            return name.hashCode();
+            return templateId.hashCode();
         }
 
         @Override

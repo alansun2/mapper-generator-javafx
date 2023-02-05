@@ -33,6 +33,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -81,7 +83,7 @@ public class ExtraFileController {
                 return;
             }
             final ExtraFileGroupConfig config = selectedItem.getConfig();
-            if (config.getIsSystem()) {
+            if (config.isSystem()) {
                 Toast.makeText(NodeConstants.primaryStage, "不能使用默认分组， 请新建分组后再使用", 3000, 500, 500, 15, 5);
                 return;
             }
@@ -112,13 +114,14 @@ public class ExtraFileController {
         final List<ExtraFileGroupConfig> extraFileGroupConfigs = currentConfig.getExtraFileGroupConfigs();
         final Optional<ExtraFileGroupConfig> first = extraFileGroupConfigs.stream().filter(ExtraFileGroupConfig::isEnable).findFirst();
         if (first.isPresent()) {
+            // selected group
             final ExtraFileGroupConfig extraFileGroupConfig = first.get();
-            final List<String> groupNameNames = extraFileGroupConfig.getExtraFileConfigNames().stream()
-                    .map(extraFileConfig -> extraFileConfig.getGroupName() + ":" + extraFileConfig.getName()).toList();
+            final List<String> groupNameNames = extraFileGroupConfig.getExtraFileConfigs().stream()
+                    .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
             final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(groupNameNames);
-            ConfigConstants.extraTemplateFileConfigs = extraFileGroupConfig.getExtraFileConfigNames().stream()
+            ConfigConstants.extraTemplateFileConfigs = extraFileGroupConfig.getExtraFileConfigs().stream()
                     .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable).map(extraFileConfig -> {
-                        final ExtraTemplateFileConfig extraTemplateFileConfig1 = extraFileConfigMap.get(extraFileConfig.getGroupName() + ":" + extraFileConfig.getName());
+                        final ExtraTemplateFileConfig extraTemplateFileConfig1 = extraFileConfigMap.get(extraFileConfig.getTemplateId());
                         extraTemplateFileConfig1.setOutputPath(extraFileConfig.getOutputPath());
                         extraTemplateFileConfig1.setPackageName(extraFileConfig.getPackageName());
                         return extraTemplateFileConfig1;
@@ -148,36 +151,35 @@ public class ExtraFileController {
     @FXML
     public void openExtraFilePage() {
         extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
-            Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames = curExtraFileGroupConfig.getExtraFileConfigNames();
+            // 获取已经存在的配置
+            Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames = curExtraFileGroupConfig.getExtraFileConfigs();
             if (null == extraFileConfigNames) {
                 extraFileConfigNames = new HashSet<>();
-                curExtraFileGroupConfig.setExtraFileConfigNames(extraFileConfigNames);
+                curExtraFileGroupConfig.setExtraFileConfigs(extraFileConfigNames);
             }
             final ListView<ExtraFileItemHBox> rightListView = this.getRightListView(curExtraFileGroupConfig);
-            Set<ExtraFileGroupConfig.ExtraFileConfig> finalExtraFileConfigNames = extraFileConfigNames;
 
-            final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-            final List<ExtraFileGroupConfig> extraFileGroupConfigs = currentConfig.getExtraFileGroupConfigs();
-            Map<String, ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigMap = new HashMap<>();
-            if (extraFileGroupConfigs != null) {
-                extraFileGroupConfigs.forEach(extraFileGroupConfig -> {
-                    final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames1 = extraFileGroupConfig.getExtraFileConfigNames();
-                    extraFileConfigNames1.forEach(extraFileConfig -> extraFileConfigMap.put(extraFileConfig.getName(), extraFileConfig));
-                });
-            }
+            // 获取所有的配置
+            final Map<String, ExtraFileGroupConfig.ExtraFileConfig> templateIdMap = linkageBorderPane.getGroupLeftListView()
+                    .getItems().stream()
+                    .flatMap(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig().getList().stream())
+                    .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig));
+
+            Set<ExtraFileGroupConfig.ExtraFileConfig> finalExtraFileConfigNames = extraFileConfigNames;
             extraTemplateFileConfigs.forEach(extraTemplateFileConfig -> {
                 ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew = new ExtraFileGroupConfig.ExtraFileConfig();
-                extraFileConfigNew.setGroupName(extraTemplateFileConfig.getName());
+                extraFileConfigNew.setTemplateId(extraTemplateFileConfig.getId());
                 extraFileConfigNew.setName(extraTemplateFileConfig.getName());
+                extraFileConfigNew.setEnable(true);
                 final boolean notExist = finalExtraFileConfigNames.add(extraFileConfigNew);
                 if (notExist) {
                     // 填充文件输出地址和包名防止重复填写
-                    final ExtraFileGroupConfig.ExtraFileConfig original = extraFileConfigMap.get(extraTemplateFileConfig.getName());
+                    final ExtraFileGroupConfig.ExtraFileConfig original = templateIdMap.get(extraTemplateFileConfig.getId());
                     if (null != original) {
                         extraFileConfigNew.setOutputPath(original.getOutputPath());
                         extraFileConfigNew.setPackageName(original.getPackageName());
                     }
-                    rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, finalExtraFileConfigNames, extraTemplateFileConfig, extraFileConfigNew));
+                    rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, finalExtraFileConfigNames, extraTemplateFileConfig, extraFileConfigNew, curExtraFileGroupConfig));
                     if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
                         linkageBorderPane.getRightBorderPane().setCenter(rightListView);
                     }
@@ -250,7 +252,7 @@ public class ExtraFileController {
     }
 
     private ExtraFileGroupItemHBox convert2ExtraFileGroupItem(ExtraFileGroupConfig extraFileGroupConfig) {
-        return new ExtraFileGroupItemHBox(extraFileGroupConfig, mouseEvent -> {
+        final ExtraFileGroupItemHBox extraFileGroupItemHBox1 = new ExtraFileGroupItemHBox(extraFileGroupConfig, mouseEvent -> {
             // 鼠标点击事件
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 final ExtraFileGroupItemHBox extraFileGroupItemHBox = (ExtraFileGroupItemHBox) mouseEvent.getSource();
@@ -258,41 +260,49 @@ public class ExtraFileController {
                 this.curExtraFileGroupConfig = extraFileGroupConfig;
             }
         });
+        return extraFileGroupItemHBox1;
     }
 
     private ListView<ExtraFileItemHBox> getRightListView(ExtraFileGroupConfig extraFileGroupConfig) {
-        final List<String> groupNameNames = extraFileGroupConfig.getExtraFileConfigNames().stream()
-                .map(extraFileConfig -> extraFileConfig.getGroupName() + ":" + extraFileConfig.getName()).toList();
+        final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream()
+                .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
         return groupNameListViewMapCache.computeIfAbsent(extraFileGroupConfig.getGroupName(), s -> {
-            ListView<ExtraFileItemHBox> extraFileConfigListView = new ListView<>();
-            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(groupNameNames);
-            final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigNames = extraFileGroupConfig.getExtraFileConfigNames();
-            if (CollectionUtils.isNotEmpty(extraFileConfigNames)) {
-                extraFileConfigNames.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getGroupName() + ":" + extraFileConfig.getName())).forEach(extraFileConfig -> extraFileConfigListView.getItems()
-                        .add(this.convert2ExtraFileItem(extraFileConfigListView, extraFileConfigNames, extraFileConfigMap.get(extraFileConfig.getGroupName() + ":" + extraFileConfig.getName()), extraFileConfig)));
+            ListView<ExtraFileItemHBox> extraFileItemHBoxListView = new ListView<>();
+
+            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(templateIds);
+            final Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet = extraFileGroupConfig.getExtraFileConfigs();
+            if (CollectionUtils.isNotEmpty(extraFileConfigSet)) {
+                extraFileConfigSet.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getTemplateId()))
+                        .forEach(extraFileConfig -> extraFileItemHBoxListView.getItems().add(this.convert2ExtraFileItem(
+                                extraFileItemHBoxListView,
+                                extraFileConfigSet,
+                                extraFileConfigMap.get(extraFileConfig.getTemplateId()),
+                                extraFileConfig,
+                                extraFileGroupConfig)));
             }
-            return extraFileConfigListView;
+            return extraFileItemHBoxListView;
         });
     }
 
     private ExtraFileItemHBox convert2ExtraFileItem(ListView<ExtraFileItemHBox> listView,
-                                                    Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileNames,
+                                                    Set<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet,
                                                     ExtraTemplateFileConfig extraTemplateFileConfig,
-                                                    ExtraFileGroupConfig.ExtraFileConfig extraFileConfig1) {
+                                                    ExtraFileGroupConfig.ExtraFileConfig extraFileConfig,
+                                                    ExtraFileGroupConfig extraFileGroupConfig) {
         ExtraFileItemHBox extraFileLabel = new ExtraFileItemHBox(extraTemplateFileConfig.getName(), extraTemplateFileConfig.getExtraFileType(),
-                extraFileConfig1.isEnable(), extraFileConfig1::setEnable);
-        extraFileLabel.setPrefHeight(23);
+                extraFileConfig.isEnable(), extraFileConfig::setEnable);
+        extraFileLabel.disable(extraFileGroupConfig.isSystem());
         extraFileLabel.setAlignment(Pos.CENTER);
         extraFileLabel.setExtraFileConfig(extraTemplateFileConfig);
-        extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(220));
+        extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(25));
         // 编辑
         extraFileLabel.onEditAction(actionEvent -> {
-            this.openEdit(extraFileConfig1);
+            this.openEdit(extraFileConfig);
         });
         // 删除
         extraFileLabel.onDelAction(actionEvent -> {
             listView.getItems().remove(extraFileLabel);
-            extraFileNames.remove(extraFileConfig1);
+            extraFileConfigSet.remove(extraFileConfig);
         });
 
         return extraFileLabel;

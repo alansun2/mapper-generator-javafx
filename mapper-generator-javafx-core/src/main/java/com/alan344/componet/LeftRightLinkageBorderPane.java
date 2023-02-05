@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -26,13 +27,13 @@ import java.util.function.Supplier;
 public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane.GroupName<C>, GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {
     private final ListView<GI> groupListView = new ListView<>();
     private final BorderPane borderPane = new BorderPane();
-    private final Map<String, Node> listViewCache = new HashMap<>();
+    private final Map<String, Region> listViewCache = new HashMap<>();
     private final Stage stage;
     private final Function<GC, GI> generatorGI;
 
     public LeftRightLinkageBorderPane(Supplier<GC> generatorGC,
                                       Function<GC, GI> generatorGI,
-                                      Function<GC, Node> rightNodeFunc,
+                                      Function<GC, Region> rightNodeFunc,
                                       Stage stage,
                                       List<Button> bottomBtns,
                                       double... positions) {
@@ -56,45 +57,52 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
             final GI selectedItem = groupListView.getSelectionModel().getSelectedItem();
             if (event.getButton() == MouseButton.SECONDARY) {
                 // open context menu on current screen position
-                MenuItem addMenuItem = new MenuItem("添加");
+                MenuItem addMenuItem = new MenuItem("New");
                 addMenuItem.setGraphic(new FontIcon("unil-plus-circle:16:BLUE"));
                 addMenuItem.setOnAction(event1 -> this.openGroupConfigStage(null, false, groupName -> {
                     GC gc = generatorGC.get();
                     gc.setGroupName(groupName);
-                    gc.setIsSystem(false);
+                    gc.setSystem(false);
                     gc.setList(new ArrayList<>(3));
                     GI gi = generatorGI.apply(gc);
                     groupListView.getItems().add(gi);
                 }));
 
-                MenuItem updateMenuItem = new MenuItem("编辑");
+                MenuItem updateMenuItem = new MenuItem("Edit");
                 updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
                 updateMenuItem.setOnAction(event1 -> this.openGroupConfigStage(selectedItem.getName(), true, selectedItem::setName));
 
-                MenuItem copyMenuItem = new MenuItem("复制");
+                MenuItem copyMenuItem = new MenuItem("Copy");
                 copyMenuItem.setGraphic(new FontIcon("unil-copy:16:GRAY"));
                 copyMenuItem.setOnAction(event1 -> {
                     final GC gc = selectedItem.getConfig();
                     final GC clone = (GC) gc.clone();
                     BeanUtils.copyProperties(gc, clone);
                     clone.setGroupName(clone.getGroupName() + "COPY");
+                    clone.setSystem(false);
                     GI gi = generatorGI.apply(gc);
                     groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, gi);
                 });
 
-                MenuItem deleteMenuItem = new MenuItem("删除");
+                MenuItem deleteMenuItem = new MenuItem("Del");
                 deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
                 deleteMenuItem.setOnAction(event1 -> groupListView.getItems().remove(selectedItem));
 
-                ContextMenu contextMenu = new ContextMenu(addMenuItem, updateMenuItem, copyMenuItem, deleteMenuItem);
+                final boolean isSystem = selectedItem.getConfig().isSystem();
+                ContextMenu contextMenu;
+                if (isSystem) {
+                    contextMenu = new ContextMenu(addMenuItem, copyMenuItem);
+                } else {
+                    contextMenu = new ContextMenu(addMenuItem, updateMenuItem, copyMenuItem, deleteMenuItem);
+                }
                 // 放入  contextMenu
                 groupListView.setContextMenu(contextMenu);
             } else if (event.getButton() == MouseButton.PRIMARY) {
                 // 左键点击
                 if (null != selectedItem) {
                     final GC gc = selectedItem.getConfig();
-                    final Node node = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
-                    borderPane.setCenter(node);
+                    final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
+                    borderPane.setCenter(region);
                 }
             }
         });
@@ -104,6 +112,7 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
         // 展开第一个
         if (!gcList.isEmpty()) {
             borderPane.setCenter(fistItemsSupplier.apply(gcList.get(0)));
+            // this.groupListView.pre
             this.groupListView.getItems().addAll(gcList.stream().map(generatorGI).toList());
             this.groupListView.getSelectionModel().select(0);
         }
@@ -175,9 +184,9 @@ public class LeftRightLinkageBorderPane<C, GC extends LeftRightLinkageBorderPane
 
         void setList(Collection<L> list);
 
-        Boolean getIsSystem();
+        boolean isSystem();
 
-        void setIsSystem(Boolean isSystem);
+        void setSystem(boolean isSystem);
 
         Object clone();
     }

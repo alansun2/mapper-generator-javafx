@@ -4,6 +4,7 @@ import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.jfoenix.controls.JFXToggleButton;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -28,17 +29,16 @@ public class ExtraFileItemHBox extends HBox {
         nameLabel = new Label(name);
         nameLabel.setStyle("-fx-background-insets: 0");
         nameLabel.setPrefWidth(nameWidth);
-        nameLabel.prefHeightProperty().bind(this.heightProperty());
 
         Label extraFileTypeLabel = new Label(extraFileTypeEnum.name());
         extraFileTypeLabel.setStyle("-fx-background-insets: 0");
-        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth + toggleWidth + (btnWidth * 2)));
+        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(nameWidth + toggleWidth + (btnWidth * 2)).subtract(45));
 
         JFXToggleButton toggleSwitch = new JFXToggleButton();
-        toggleSwitch.setSize(8);
+        toggleSwitch.setSize(7);
+        toggleSwitch.setPadding(new Insets(-10.5, 0, -10.5, 0));
         toggleSwitch.setSelected(curToggle);
         toggleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> consumer.accept(newValue));
-        toggleSwitch.prefHeightProperty().bind(this.heightProperty());
 
         editBtn = new Button("Edit");
         editBtn.setStyle("-fx-background-insets: 0; -fx-background-color: #7070fd; -fx-text-fill: white");
@@ -61,6 +61,12 @@ public class ExtraFileItemHBox extends HBox {
 
     public void onEditAction(Consumer<ActionEvent> consumer) {
         this.editBtn.setOnAction(consumer::accept);
+    }
+
+
+    public void disable(boolean disable) {
+        editBtn.setDisable(disable);
+        deleteBtn.setDisable(disable);
     }
 
     public void setLabelText(String text) {
