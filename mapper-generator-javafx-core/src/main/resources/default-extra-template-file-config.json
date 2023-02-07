@@ -81,7 +81,7 @@
       },
       {
         "id": "cola-6",
-        "customTemplateDir": "classpath:templates\\cola\\AddCmdExe.ftl",
+        "customTemplateDir": "classpath:templates/cola/AddCmdExe.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -96,7 +96,7 @@
       },
       {
         "id": "cola-7",
-        "customTemplateDir": "classpath:templates\\cola\\UpdateCmdExe.ftl",
+        "customTemplateDir": "classpath:templates/cola/UpdateCmdExe.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -111,7 +111,7 @@
       },
       {
         "id": "cola-8",
-        "customTemplateDir": "classpath:templates\\cola\\DelByIdCmdExe.ftl",
+        "customTemplateDir": "classpath:templates/cola/DelByIdCmdExe.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -126,7 +126,7 @@
       },
       {
         "id": "cola-9",
-        "customTemplateDir": "classpath:templates\\cola\\ByIdQryExe.ftl",
+        "customTemplateDir": "classpath:templates/cola/ByIdQryExe.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -141,7 +141,7 @@
       },
       {
         "id": "cola-10",
-        "customTemplateDir": "classpath:templates\\cola\\PageQryExe.ftl",
+        "customTemplateDir": "classpath:templates/cola/PageQryExe.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -156,7 +156,7 @@
       },
       {
         "id": "cola-11",
-        "customTemplateDir": "classpath:templates\\cola\\ServiceImpl.ftl",
+        "customTemplateDir": "classpath:templates/cola/ServiceImpl.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -171,7 +171,7 @@
       },
       {
         "id": "cola-12",
-        "customTemplateDir": "classpath:templates\\cola\\ServiceI.ftl",
+        "customTemplateDir": "classpath:templates/cola/ServiceI.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -186,7 +186,7 @@
       },
       {
         "id": "cola-13",
-        "customTemplateDir": "classpath:templates\\cola\\Controller.ftl",
+        "customTemplateDir": "classpath:templates/cola/Controller.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -201,7 +201,7 @@
       },
       {
         "id": "cola-14",
-        "customTemplateDir": "classpath:templates\\cola\\GatewayI.ftl",
+        "customTemplateDir": "classpath:templates/cola/GatewayI.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -216,7 +216,7 @@
       },
       {
         "id": "cola-15",
-        "customTemplateDir": "classpath:templates\\cola\\GatewayImpl.ftl",
+        "customTemplateDir": "classpath:templates/cola/GatewayImpl.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -231,7 +231,7 @@
       },
       {
         "id": "cola-16",
-        "customTemplateDir": "classpath:templates\\cola\\DOConvertMapper.ftl",
+        "customTemplateDir": "classpath:templates/cola/DOConvertMapper.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -313,7 +313,7 @@
       },
       {
         "id": "usual-5",
-        "customTemplateDir": "classpath:templates\\cola\\ServiceImpl.ftl",
+        "customTemplateDir": "classpath:templates/cola/ServiceImpl.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -328,7 +328,7 @@
       },
       {
         "id": "usual-6",
-        "customTemplateDir": "classpath:templates\\cola\\ServiceI.ftl",
+        "customTemplateDir": "classpath:templates/cola/ServiceI.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",

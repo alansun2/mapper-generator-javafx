@@ -1,12 +1,11 @@
 package com.alan344.bean.config;
 
 import com.alan344.componet.LeftRightLinkageBorderPane;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,16 +30,18 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
     /**
      * 额外文件的名称
      */
-    private Set<ExtraFileConfig> extraFileConfigs;
+    private Collection<ExtraFileConfig> extraFileConfigs;
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public Collection<ExtraFileConfig> getList() {
         return this.extraFileConfigs;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public void setList(Collection list) {
-        this.extraFileConfigs = new HashSet<>(list);
+        this.extraFileConfigs = list;
     }
 
     @Override
@@ -72,21 +73,6 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
          * 是否开启
          */
         private boolean enable;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            ExtraFileConfig that = (ExtraFileConfig) o;
-
-            return templateId.equals(that.templateId);
-        }
-
-        @Override
-        public int hashCode() {
-            return templateId.hashCode();
-        }
 
         @Override
         public ExtraFileConfig clone() {

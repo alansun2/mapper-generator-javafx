@@ -76,13 +76,11 @@ public class DataSourceService {
             tableService.deleteTables(newDataSource);
         }
 
-
         BeanUtils.copyProperties(newDataSource, oldDataSource);
 
         oldDataSource.setDataSource(null);
         oldDataSource.setTables(null);
     }
-
 
     /**
      * 删除数据源

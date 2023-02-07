@@ -1,19 +1,24 @@
 package com.alan344.controller;
 
+import cn.hutool.core.util.ZipUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.componet.CustomTreeCell;
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.factory.DialogUtils;
+import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.init.DataSourceTreeViewInit;
 import com.alan344.init.FindTableInit;
-import com.alan344.utils.DialogUtils;
+import com.alan344.utils.FileUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +29,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ResourceBundle;
 
 /**
@@ -34,6 +41,8 @@ import java.util.ResourceBundle;
 @Slf4j
 @Controller
 public class MainController implements Initializable {
+    @FXML
+    private StackPane mainStackPane;
     /**
      * 主布局控件
      */
@@ -166,7 +175,33 @@ public class MainController implements Initializable {
      */
     @FXML
     public void exit() {
-        DialogUtils.closeDialog(NodeConstants.primaryStage);
+        DialogUtils.closeDialog(NodeConstants.primaryStage, mainStackPane);
+    }
+
+    @FXML
+    public void importConfig() {
+        // 选择文件
+        final File fileScan = FileDirChooserFactory.createFileScan("选择zip文件", BaseConstants.baseFileDir, "配置文件", "*.zip");
+        if (null != fileScan) {
+            // 先备份
+            ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", StandardCharsets.UTF_8, true);
+            BaseConstants.baseFileDir = fileScan.getParent();
+            ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), StandardCharsets.UTF_8);
+            // 弹框
+            DialogUtils.successDialog(NodeConstants.primaryStage, "导入成功");
+        }
+    }
+
+    @FXML
+    public void exportConfig() {
+        final File fileScan = FileDirChooserFactory.createDirectoryScan("导出文件名称", null);
+        if (null != fileScan) {
+            ZipUtil.zip(BaseConstants.MG_CONF_HOME, fileScan.getAbsolutePath() + "/config.zip", StandardCharsets.UTF_8, true);
+            Button button = new Button("打开文件夹");
+            button.setOnAction(event -> FileUtils.open(fileScan.getAbsolutePath()));
+            // 弹框
+            DialogUtils.successDialog(NodeConstants.primaryStage, "导出成功", button);
+        }
     }
 
     /**

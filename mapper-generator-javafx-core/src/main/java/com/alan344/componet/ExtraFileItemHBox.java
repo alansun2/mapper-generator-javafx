@@ -65,7 +65,6 @@ public class ExtraFileItemHBox extends HBox {
 
 
     public void disable(boolean disable) {
-        editBtn.setDisable(disable);
         deleteBtn.setDisable(disable);
     }
 

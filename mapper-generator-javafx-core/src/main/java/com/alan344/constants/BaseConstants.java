@@ -19,18 +19,21 @@ import java.util.Map;
  * @date ：2019/8/8 21:43
  */
 public class BaseConstants {
-    private static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGeneratorV2";
+    public static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGeneratorV2";
     public static final String MG_DATA_HOME = MG_HOME + "/data/";
     public static final String MG_CONF_HOME = MG_HOME + "/config/";
     /**
-     * example export dir
+     * 基础配置
      */
-    public static final String MG_EXAMPLE_HOME = MG_HOME + "/example-out/";
     private static final String MG_CONFIG_FILE = MG_CONF_HOME + "base-config";
     /**
      * 额外文件配置
      */
     private static final String MG_EXTRA_CONFIG_FILE = MG_CONF_HOME + "extra-file-config";
+    /**
+     * example export dir
+     */
+    public static final String MG_EXAMPLE_HOME = MG_HOME + "/example-out/";
 
     /**
      * all dataSource
@@ -97,7 +100,7 @@ public class BaseConstants {
      *
      * @return 配置信息目录
      */
-    public static File getConfigFile() {
+    public static File getBaseConfigFile() {
         return new File(MG_CONFIG_FILE);
     }
 

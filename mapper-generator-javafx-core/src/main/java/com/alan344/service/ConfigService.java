@@ -95,14 +95,9 @@ public class ConfigService {
         if (CollectionUtils.isEmpty(mybatisExportConfigs)) {
             return;
         }
-        // 删除内置的配置
-        mybatisExportConfigs.forEach(mybatisExportConfig -> {
-            final List<ExtraFileGroupConfig> extraFileGroupConfigs = mybatisExportConfig.getExtraFileGroupConfigs();
-            extraFileGroupConfigs.removeIf(ExtraFileGroupConfig::isSystem);
-        });
         String configsStr = JSONArray.toJSONString(mybatisExportConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName);
         try {
-            FileUtils.writeStringToFile(BaseConstants.getConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
+            FileUtils.writeStringToFile(BaseConstants.getBaseConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
             log.error("写入配置信息失败", e);
         }
@@ -112,7 +107,7 @@ public class ConfigService {
      * 从文件加载配置至pane
      */
     public LinkedList<MybatisExportConfig> loadConfigFromFile() {
-        File file = BaseConstants.getConfigFile();
+        File file = BaseConstants.getBaseConfigFile();
         if (!file.exists()) {
             return mybatisExportConfigs2;
         }
@@ -121,7 +116,7 @@ public class ConfigService {
             return mybatisExportConfigs2;
         } else {
             try {
-                List<MybatisExportConfig> mybatisExportConfigs1 = JSONArray.parseArray(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString())).toList(MybatisExportConfig.class);
+                List<MybatisExportConfig> mybatisExportConfigs1 = JSON.parseArray(FileUtils.openInputStream(file)).toList(MybatisExportConfig.class);
                 mybatisExportConfigs2 = mybatisExportConfigs1.stream().collect(LinkedList::new, LinkedList::add, List::addAll);
                 isLoaded = true;
                 configNameConfigMap = mybatisExportConfigs2.stream().collect(Collectors.toMap(MybatisExportConfig::getConfigName, o -> o));
@@ -156,7 +151,15 @@ public class ConfigService {
     private List<ExtraFileGroupConfig> getDefaults() {
         try {
             final InputStream inputStream = resource.getInputStream();
-            return JSON.parseArray(inputStream).toList(ExtraFileGroupConfig.class);
+            final List<ExtraFileGroupConfig> extraFileGroupConfigs = JSON.parseArray(inputStream).toList(ExtraFileGroupConfig.class);
+            // 设置内置示例的导出地址
+            extraFileGroupConfigs.forEach(extraFileGroupConfig -> {
+                final Collection<ExtraFileGroupConfig.ExtraFileConfig> list = extraFileGroupConfig.getList();
+                list.forEach(extraFileConfig -> {
+                    extraFileConfig.setOutputPath(BaseConstants.MG_EXAMPLE_HOME + extraFileConfig.getOutputPath());
+                });
+            });
+            return extraFileGroupConfigs;
         } catch (IOException e) {
             log.error("获取默认分组失败", e);
         }

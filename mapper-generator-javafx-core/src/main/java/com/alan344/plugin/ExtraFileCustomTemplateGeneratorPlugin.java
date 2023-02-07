@@ -1,5 +1,6 @@
 package com.alan344.plugin;
 
+import cn.hutool.core.io.FileUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
@@ -132,7 +133,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         return outputPath + outPathFromPackage + "/" + upperCamel + extraTemplateFileConfig.getModelSuffix() + ".java";
     }
 
-    private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable, ExtraTemplateFileConfig extraTemplateFileConfig, LinkedHashMap<String, String> customProperties) {
+    private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable,
+                                                 ExtraTemplateFileConfig extraTemplateFileConfig,
+                                                 LinkedHashMap<String, String> customProperties) {
         HashMap<String, Object> modelDataMap = new HashMap<>(16);
         final String upperCamel = PluginUtils.getUpperCamel(introspectedTable);
         modelDataMap.put(TYPE_NAME_UPPER_CAMEL.name(), upperCamel);
@@ -149,7 +152,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
                 .collect(Collectors.toList());
         modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
 
-        modelDataMap.putAll(customProperties);
+        if (null != customProperties) {
+            modelDataMap.putAll(customProperties);
+        }
 
         return modelDataMap;
     }
@@ -170,16 +175,16 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
     private Template getTemplate(Configuration cfg, String templateName) {
         try {
-            return cfg.getTemplate(templateName);
+            return cfg.getTemplate(FileUtil.getName(templateName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     private Configuration getConfig(String filePath) {
-        final String dir = FileUtils.getFile(filePath).getParent();
         Configuration cfg = CONFIGURATION_HASH_MAP.get(filePath);
         if (null == cfg) {
+            final String dir = FileUtils.getFile(filePath).getParent();
             // Create your Configuration instance, and specify if up to what FreeMarker
             // version (here 2.3.29) do you want to apply the fixes that are not 100%
             // backward-compatible. See the Configuration JavaDoc for details.

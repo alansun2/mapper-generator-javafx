@@ -6,15 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import vip.tuoyang.base.core.support.UserResourceHolder;
 import vip.tuoyang.base.core.util.AssertUtils;
-import vip.tuoyang.schoolsafe.${server}.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DO;
-import vip.tuoyang.schoolsafe.${server}.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}GatewayI;
-import vip.tuoyang.schoolsafe.${server}<#if DOMAIN != "">.${DOMAIN}</#if>.convert.${TYPE_NAME_UPPER_CAMEL}DOConvertMapper;
-import vip.tuoyang.schoolsafe.${server}<#if DOMAIN != "">.${DOMAIN}</#if>.dataobject.${TYPE_NAME_UPPER_CAMEL};
-import vip.tuoyang.schoolsafe.${server}<#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}Mapper;
+import ${package_prefix}.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DO;
+import ${package_prefix}.domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}GatewayI;
+import ${package_prefix}<#if DOMAIN != "">.${DOMAIN}</#if>.convert.${TYPE_NAME_UPPER_CAMEL}DOConvertMapper;
+import ${package_prefix}<#if DOMAIN != "">.${DOMAIN}</#if>.dataobject.${TYPE_NAME_UPPER_CAMEL};
+import ${package_prefix}<#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}Mapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import static ${package_prefix}.<#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}DynamicSqlSupport.id;
+import static ${package_prefix}.<#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}DynamicSqlSupport.isDelete;
 
 /**
  * @author AlanSun
@@ -68,5 +71,14 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
     public Optional<${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ById(Long id) {
         final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Mapper.selectByPrimaryKey(id);
         return ${TYPE_NAME_LOWER_CAMEL}Opt.map(${TYPE_NAME_UPPER_CAMEL}DOConvertMapper.INSTANCE::convertToDO);
+    }
+
+    @Override
+    public List<${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ByIds(List<Long> ids, boolean isNeedDelete) {
+            final ${TYPE_NAME_UPPER_CAMEL}DOConvertMapper instance = ${TYPE_NAME_UPPER_CAMEL}DOConvertMapper.INSTANCE;
+            return ${TYPE_NAME_LOWER_CAMEL}Mapper.select(s -> s.where()
+            .and(${TYPE_NAME_UPPER_CAMEL}DynamicSqlSupport.id, SqlBuilder.isIn(ids))
+            .and(${TYPE_NAME_UPPER_CAMEL}DynamicSqlSupport.isDelete, SqlBuilder.isEqualTo(isNeedDelete).filter(aByte -> !aByte).map(aBoolean -> BaseConstants.IS_DELETE_0))
+            ).stream().map(instance::convertToDO).toList();
     }
 }

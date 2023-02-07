@@ -87,7 +87,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     if (gi instanceof Region) {
                         ((Region) gi).setPrefHeight(25);
                     }
-                    groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, gi);
+                    groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, generatorGI.apply(clone));
                 });
 
                 MenuItem deleteMenuItem = new MenuItem("Del");

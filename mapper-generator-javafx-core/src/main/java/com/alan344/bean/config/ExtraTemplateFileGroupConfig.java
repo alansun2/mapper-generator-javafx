@@ -1,6 +1,7 @@
 package com.alan344.bean.config;
 
 import com.alan344.componet.LeftRightLinkageBorderPane;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,11 +37,13 @@ public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.
         }
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public Collection<ExtraTemplateFileConfig> getList() {
         return this.extraTemplateFileConfigList;
     }
 
+    @JSONField(serialize = false, deserialize = false)
     @Override
     public void setList(Collection list) {
         this.extraTemplateFileConfigList = list;
