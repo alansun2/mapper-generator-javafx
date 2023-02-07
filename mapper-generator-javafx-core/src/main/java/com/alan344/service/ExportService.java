@@ -32,7 +32,7 @@ public class ExportService {
      * 导出
      */
     public void export(MybatisExportConfig mybatisExportConfig) {
-        this.saveSetuInternalp(mybatisExportConfig);
+        this.saveSetupInternal(mybatisExportConfig);
 
         boolean exportSuccess = true;
         try {
@@ -53,10 +53,10 @@ public class ExportService {
      * @param mybatisExportConfig {@link MybatisExportConfig}
      */
     public void saveSetup(MybatisExportConfig mybatisExportConfig) {
-        this.saveSetuInternalp(mybatisExportConfig);
+        this.saveSetupInternal(mybatisExportConfig);
     }
 
-    private void saveSetuInternalp(MybatisExportConfig mybatisExportConfig) {
+    private void saveSetupInternal(MybatisExportConfig mybatisExportConfig) {
         //写入文件
         configService.addConfig(mybatisExportConfig);
 

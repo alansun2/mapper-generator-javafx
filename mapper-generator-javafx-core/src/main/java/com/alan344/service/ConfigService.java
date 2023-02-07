@@ -95,7 +95,15 @@ public class ConfigService {
         if (CollectionUtils.isEmpty(mybatisExportConfigs)) {
             return;
         }
-        String configsStr = JSONArray.toJSONString(mybatisExportConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName);
+        final List<MybatisExportConfig> mybatisExportConfigsClone = mybatisExportConfigs.stream().map(MybatisExportConfig::clone).toList();
+        // 删除内置的配置
+        mybatisExportConfigsClone.forEach(mybatisExportConfig -> {
+            final List<ExtraFileGroupConfig> extraFileGroupConfigs = mybatisExportConfig.getExtraFileGroupConfigs();
+            if (CollectionUtils.isNotEmpty(extraFileGroupConfigs)) {
+                extraFileGroupConfigs.removeIf(ExtraFileGroupConfig::isSystem);
+            }
+        });
+        String configsStr = JSONArray.toJSONString(mybatisExportConfigsClone, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName);
         try {
             FileUtils.writeStringToFile(BaseConstants.getBaseConfigFile(), configsStr, StandardCharsets.UTF_8.toString());
         } catch (IOException e) {

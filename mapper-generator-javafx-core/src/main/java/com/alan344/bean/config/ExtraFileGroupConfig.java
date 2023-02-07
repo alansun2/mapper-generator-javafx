@@ -49,7 +49,9 @@ public class ExtraFileGroupConfig implements LeftRightLinkageBorderPane.GroupNam
         try {
             ExtraFileGroupConfig clone = (ExtraFileGroupConfig) super.clone();
             // TODO: copy mutable state here, so the clone can't change the internals of the original
-            clone.setExtraFileConfigs(extraFileConfigs.stream().map(ExtraFileConfig::clone).collect(Collectors.toSet()));
+            if (null != clone.getExtraFileConfigs()) {
+                clone.setExtraFileConfigs(clone.getExtraFileConfigs().stream().map(ExtraFileConfig::clone).collect(Collectors.toList()));
+            }
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();

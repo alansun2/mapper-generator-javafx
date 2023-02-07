@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -13,7 +15,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.springframework.beans.BeanUtils;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -30,6 +31,8 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
     private final Map<String, Region> listViewCache = new HashMap<>();
     private final Stage stage;
     private final Function<GC, GI> generatorGI;
+
+    private List<GC> gcList;
 
     public LeftRightLinkageBorderPane(Supplier<GC> generatorGC,
                                       Function<GC, GI> generatorGI,
@@ -66,33 +69,42 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     gc.setList(new ArrayList<>(3));
                     GI gi = generatorGI.apply(gc);
                     if (gi instanceof Region) {
-                        ((Region) gi).setPrefHeight(25);
+                        ((Region) gi).setPrefHeight(23);
                     }
+                    gcList.add(gc);
                     groupListView.getItems().add(gi);
                 }));
 
                 MenuItem updateMenuItem = new MenuItem("Edit");
                 updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
-                updateMenuItem.setOnAction(event1 -> this.openGroupConfigStage(selectedItem.getName(), true, selectedItem::setName));
+                updateMenuItem.setOnAction(event1 -> this.openGroupConfigStage(selectedItem.getName(), true, groupName -> {
+                    selectedItem.setName(groupName);
+                    final GC config = selectedItem.getConfig();
+                    config.setGroupName(groupName);
+                }));
 
                 MenuItem copyMenuItem = new MenuItem("Copy");
                 copyMenuItem.setGraphic(new FontIcon("unil-copy:16:GRAY"));
                 copyMenuItem.setOnAction(event1 -> {
                     final GC gc = selectedItem.getConfig();
+
                     final GC clone = (GC) gc.clone();
-                    BeanUtils.copyProperties(gc, clone);
-                    clone.setGroupName(clone.getGroupName() + "COPY");
+                    clone.setGroupName(clone.getGroupName() + "-COPY");
                     clone.setSystem(false);
-                    GI gi = generatorGI.apply(gc);
-                    if (gi instanceof Region) {
-                        ((Region) gi).setPrefHeight(25);
+                    GI cloneGi = generatorGI.apply(clone);
+                    if (cloneGi instanceof Region) {
+                        ((Region) cloneGi).setPrefHeight(23);
                     }
-                    groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, generatorGI.apply(clone));
+                    gcList.add(clone);
+                    groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, cloneGi);
                 });
 
                 MenuItem deleteMenuItem = new MenuItem("Del");
                 deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
-                deleteMenuItem.setOnAction(event1 -> groupListView.getItems().remove(selectedItem));
+                deleteMenuItem.setOnAction(event1 -> {
+                    gcList.remove(selectedItem.getConfig());
+                    groupListView.getItems().remove(selectedItem);
+                });
 
                 final boolean isSystem = selectedItem.getConfig().isSystem();
                 ContextMenu contextMenu;
@@ -103,18 +115,17 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 }
                 // 放入  contextMenu
                 groupListView.setContextMenu(contextMenu);
-            } else if (event.getButton() == MouseButton.PRIMARY) {
-                // 左键点击
-                if (null != selectedItem) {
-                    final GC gc = selectedItem.getConfig();
-                    final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
-                    borderPane.setCenter(region);
-                }
+            }
+            if (null != selectedItem) {
+                final GC gc = selectedItem.getConfig();
+                final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
+                borderPane.setCenter(region);
             }
         });
     }
 
     public void addLeftItems(List<GC> gcList, Function<GC, Node> fistItemsSupplier) {
+        this.gcList = gcList;
         // 展开第一个
         if (!gcList.isEmpty()) {
             borderPane.setCenter(fistItemsSupplier.apply(gcList.get(0)));
@@ -162,6 +173,13 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         }
         textField.setPromptText("分组名称");
         textField.prefWidthProperty().bind(borderPane.prefWidthProperty().subtract(80));
+        // 监听 enter 键
+        textField.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                stringConsumer.accept(textField.getText());
+                stage.close();
+            }
+        });
         HBox nameText = new HBox(10, label, textField);
         nameText.setAlignment(Pos.CENTER);
         borderPane.setCenter(nameText);

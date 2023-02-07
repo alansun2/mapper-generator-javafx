@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -139,6 +140,14 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         try {
             MybatisExportConfig clone = (MybatisExportConfig) super.clone();
             clone.setMybatisOfficialExportConfig(mybatisOfficialExportConfig.clone());
+
+            final List<ExtraFileGroupConfig> extraFileGroupConfigs1 = clone.getExtraFileGroupConfigs();
+            if (null != extraFileGroupConfigs1) {
+                clone.setExtraFileGroupConfigs(extraFileGroupConfigs1.stream().map(ExtraFileGroupConfig::clone).collect(Collectors.toList()));
+            }
+            if (null != clone.getCustomProperties()) {
+                clone.setCustomProperties(new LinkedHashMap<>(clone.getCustomProperties()));
+            }
             // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
         } catch (CloneNotSupportedException e) {

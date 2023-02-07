@@ -31,7 +31,7 @@ import org.springframework.stereotype.Controller;
 import javax.annotation.Resource;
 import java.io.File;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.ResourceBundle;
 
 /**
@@ -184,9 +184,9 @@ public class MainController implements Initializable {
         final File fileScan = FileDirChooserFactory.createFileScan("选择zip文件", BaseConstants.baseFileDir, "配置文件", "*.zip");
         if (null != fileScan) {
             // 先备份
-            ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", StandardCharsets.UTF_8, true);
+            ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
             BaseConstants.baseFileDir = fileScan.getParent();
-            ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), StandardCharsets.UTF_8);
+            ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), Charset.defaultCharset());
             // 弹框
             DialogUtils.successDialog(NodeConstants.primaryStage, "导入成功");
         }
@@ -196,7 +196,7 @@ public class MainController implements Initializable {
     public void exportConfig() {
         final File fileScan = FileDirChooserFactory.createDirectoryScan("导出文件名称", null);
         if (null != fileScan) {
-            ZipUtil.zip(BaseConstants.MG_CONF_HOME, fileScan.getAbsolutePath() + "/config.zip", StandardCharsets.UTF_8, true);
+            ZipUtil.zip(BaseConstants.MG_CONF_HOME, fileScan.getAbsolutePath() + "/config.zip", Charset.defaultCharset(), true);
             Button button = new Button("打开文件夹");
             button.setOnAction(event -> FileUtils.open(fileScan.getAbsolutePath()));
             // 弹框
