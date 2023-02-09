@@ -18,7 +18,7 @@ public interface ${TYPE_NAME_UPPER_CAMEL}GatewayI {
     /**
     * 批量添加${DOMAIN_DESC}
     *
-    * @param ${TYPE_NAME_LOWER_CAMEL}DO {@link ${TYPE_NAME_UPPER_CAMEL}DO}s
+    * @param ${TYPE_NAME_LOWER_CAMEL}DOS {@link ${TYPE_NAME_UPPER_CAMEL}DO}s
     */
     void save${TYPE_NAME_UPPER_CAMEL}Batch(List<${TYPE_NAME_UPPER_CAMEL}DO> ${TYPE_NAME_LOWER_CAMEL}DOS);
 
@@ -44,5 +44,5 @@ public interface ${TYPE_NAME_UPPER_CAMEL}GatewayI {
     * @param isNeedDelete 是否包含已删除
     * @return {@link ${TYPE_NAME_UPPER_CAMEL}DO}s
     */
-    List<${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ByIds(List<Long> ids, boolean isNeedDelete);
+    List<${TYPE_NAME_UPPER_CAMEL}DO> list${TYPE_NAME_UPPER_CAMEL}ByIds(List<Long> ids, boolean isNeedDelete);
 }

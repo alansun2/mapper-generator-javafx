@@ -76,7 +76,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}GatewayImpl implements ${TYPE_NAME_UPPER_CA
     }
 
     @Override
-    public List<${TYPE_NAME_UPPER_CAMEL}DO> get${TYPE_NAME_UPPER_CAMEL}ByIds(List<Long> ids, boolean isNeedDelete) {
+    public List<${TYPE_NAME_UPPER_CAMEL}DO> list${TYPE_NAME_UPPER_CAMEL}ByIds(List<Long> ids, boolean isNeedDelete) {
             final ${TYPE_NAME_UPPER_CAMEL}DOConvertMapper instance = ${TYPE_NAME_UPPER_CAMEL}DOConvertMapper.INSTANCE;
             return ${TYPE_NAME_LOWER_CAMEL}Mapper.select(s -> s.where()
             .and(id, SqlBuilder.isIn(ids))

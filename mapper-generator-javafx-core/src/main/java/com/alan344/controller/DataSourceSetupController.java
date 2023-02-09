@@ -116,9 +116,9 @@ public class DataSourceSetupController implements Initializable {
         final DataSource dataSource = this.packageDateSource();
 
         if (dataSourceService.testConnection(dataSource)) {
-            testConnectionBtn.setStyle("-fx-background-color: green");
+            testConnectionBtn.setStyle("-fx-background-color: #cafdca");
         } else {
-            testConnectionBtn.setStyle("-fx-background-color: #a11111");
+            testConnectionBtn.setStyle("-fx-background-color: #fab5b5");
         }
     }
 

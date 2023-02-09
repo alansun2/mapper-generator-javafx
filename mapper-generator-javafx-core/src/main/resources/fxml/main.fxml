@@ -13,22 +13,22 @@
                 <Menu mnemonicParsing="false" text="文件">
                     <MenuItem mnemonicParsing="false" onAction="#addSource" text="添加数据源">
                         <graphic>
-                            <FontIcon iconLiteral="unil-database:16:BLUE"/>
+                            <FontIcon iconLiteral="unil-database:16:#66CCFF"/>
                         </graphic>
                     </MenuItem>
                     <MenuItem mnemonicParsing="false" onAction="#importConfig" text="导入配置">
                         <graphic>
-                            <FontIcon iconLiteral="unil-file-import:16"/>
+                            <FontIcon iconLiteral="unil-file-import:16:#CCCCFF"/>
                         </graphic>
                     </MenuItem>
                     <MenuItem mnemonicParsing="false" onAction="#exportConfig" text="导出配置">
                         <graphic>
-                            <FontIcon iconLiteral="unil-file-export:16"/>
+                            <FontIcon iconLiteral="unil-file-export:16:#66CCCC"/>
                         </graphic>
                     </MenuItem>
                     <MenuItem mnemonicParsing="false" onAction="#exit" text="退出">
                         <graphic>
-                            <FontIcon iconLiteral="unil-exit:16:RED"/>
+                            <FontIcon iconLiteral="unil-exit:16:#FF9999"/>
                         </graphic>
                     </MenuItem>
                 </Menu>

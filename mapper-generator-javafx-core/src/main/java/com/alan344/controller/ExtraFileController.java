@@ -70,6 +70,16 @@ public class ExtraFileController {
 
             final List<ExtraFileGroupConfig> extraFileGroupConfigs = configService.getExtraFileGroupConfigs();
             linkageBorderPane1.addLeftItems(extraFileGroupConfigs, this::getRightListView);
+            if (CollectionUtils.isNotEmpty(extraFileGroupConfigs)) {
+                linkageBorderPane1.getGroupLeftListView().getItems().stream()
+                        .filter(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig().isEnable()).findFirst()
+                        .ifPresent(extraFileGroupItemHBox -> {
+                            final int i = linkageBorderPane1.getGroupLeftListView().getItems().indexOf(extraFileGroupItemHBox);
+                            linkageBorderPane1.getGroupLeftListView().getSelectionModel().select(i);
+                            linkageBorderPane1.getRightBorderPane().setCenter(this.getRightListView(extraFileGroupItemHBox.getConfig()));
+                        });
+
+            }
             return linkageBorderPane1;
         });
         return linkageBorderPane;
@@ -120,11 +130,14 @@ public class ExtraFileController {
         if (enabledConfig.isPresent()) {
             // selected group
             final ExtraFileGroupConfig extraFileGroupConfig = enabledConfig.get();
+            // 获取模板 id
             final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream()
                     .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
             final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(templateIds);
+
             ConfigConstants.extraTemplateFileConfigs = extraFileGroupConfig.getExtraFileConfigs().stream()
-                    .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable).map(extraFileConfig -> {
+                    .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable)
+                    .map(extraFileConfig -> {
                         final ExtraTemplateFileConfig extraTemplateFileConfig1 = extraFileConfigMap.get(extraFileConfig.getTemplateId());
                         extraTemplateFileConfig1.setOutputPath(extraFileConfig.getOutputPath());
                         extraTemplateFileConfig1.setPackageName(extraFileConfig.getPackageName());
@@ -166,6 +179,7 @@ public class ExtraFileController {
             // 获取所有的配置
             final Map<String, ExtraFileGroupConfig.ExtraFileConfig> templateIdMap = linkageBorderPane.getGroupLeftListView()
                     .getItems().stream()
+                    .filter(extraFileGroupItemHBox -> !extraFileGroupItemHBox.getConfig().isSystem())
                     .flatMap(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig().getList().stream())
                     .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig));
 
