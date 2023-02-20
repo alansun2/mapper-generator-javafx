@@ -12,7 +12,7 @@ import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.CollectionUtils;
-import com.alan344.utils.TreeUtils;
+import com.alan344.factory.TreeItemFactory;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
@@ -155,7 +155,7 @@ public class DataSourceTreeViewInit {
     private void packageTablesAndInertDataSourceTreeItem(List<Table> tables, TreeItem<DataItem> dataSourceTreeItem) {
         if (tables != null && !tables.isEmpty()) {
             tables.forEach(table -> {
-                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(table, dataSourceTreeItem);
                 tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
             });
         }
@@ -278,7 +278,7 @@ public class DataSourceTreeViewInit {
             ObservableList<TreeItem<DataItem>> children = dataSourceTreeItem.getChildren();
             children.remove(0, children.size());
             tables.forEach(table -> {
-                TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(table, dataSourceTreeItem);
+                TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(table, dataSourceTreeItem);
                 tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
             });
         }

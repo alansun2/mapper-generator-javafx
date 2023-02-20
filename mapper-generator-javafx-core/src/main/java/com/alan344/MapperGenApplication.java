@@ -1,5 +1,7 @@
 package com.alan344;
 
+import com.alan344.exception.BizException;
+import com.alan344.factory.DialogFactory;
 import com.alan344.view.MainView;
 import javafx.application.Application;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,12 @@ public class MapperGenApplication {
 
     public static void main(String[] args) {
         // 捕捉未处理的异常
-        Thread.setDefaultUncaughtExceptionHandler((t, e) -> log.error("捕捉到未处理的异常", e));
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            log.error("捕捉到未处理的异常", e);
+            if (!(e instanceof BizException)) {
+                DialogFactory.exceptionDialog(e);
+            }
+        });
         Application.launch(MainView.class, args);
     }
 }

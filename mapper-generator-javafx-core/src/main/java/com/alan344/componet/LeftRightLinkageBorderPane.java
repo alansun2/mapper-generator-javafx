@@ -1,5 +1,6 @@
 package com.alan344.componet;
 
+import cn.hutool.core.util.RandomUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -33,6 +34,8 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
     private final Function<GC, GI> generatorGI;
 
     private List<GC> gcList;
+
+    private Function<GC, Node> rightNodeSupplier;
 
     public LeftRightLinkageBorderPane(Supplier<GC> generatorGC,
                                       Function<GC, GI> generatorGI,
@@ -87,16 +90,19 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 copyMenuItem.setGraphic(new FontIcon("unil-copy:16:GRAY"));
                 copyMenuItem.setOnAction(event1 -> {
                     final GC gc = selectedItem.getConfig();
-
-                    final GC clone = (GC) gc.clone();
-                    clone.setGroupName(clone.getGroupName() + "-COPY");
-                    clone.setSystem(false);
-                    GI cloneGi = generatorGI.apply(clone);
+                    final GC cloneGc = (GC) gc.clone();
+                    cloneGc.setGroupName(this.getGroupName(cloneGc.getGroupName() + "-COPY"));
+                    cloneGc.setSystem(false);
+                    GI cloneGi = generatorGI.apply(cloneGc);
                     if (cloneGi instanceof Region) {
                         ((Region) cloneGi).setPrefHeight(23);
                     }
-                    gcList.add(clone);
+                    gcList.add(cloneGc);
                     groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, cloneGi);
+                    // 选中复制项
+                    groupListView.getSelectionModel().select(groupListView.getSelectionModel().getSelectedIndex() + 1);
+                    // 展开复制项
+                    borderPane.setCenter(rightNodeSupplier.apply(cloneGc));
                 });
 
                 MenuItem deleteMenuItem = new MenuItem("Del");
@@ -124,11 +130,25 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         });
     }
 
-    public void addLeftItems(List<GC> gcList, Function<GC, Node> fistItemsSupplier) {
+    private String getGroupName(String newGroupName) {
+        while (true) {
+            String finalNewGroupName = newGroupName;
+            final boolean isExist = groupListView.getItems().stream().anyMatch(gi -> gi.getName().equals(finalNewGroupName));
+            if (isExist) {
+                newGroupName = newGroupName + RandomUtil.randomLong(1, 999999999);
+            } else {
+                break;
+            }
+        }
+        return newGroupName;
+    }
+
+    public void addLeftItems(List<GC> gcList, Function<GC, Node> rightNodeSupplier) {
         this.gcList = gcList;
+        this.rightNodeSupplier = rightNodeSupplier;
         // 展开第一个
         if (!gcList.isEmpty()) {
-            borderPane.setCenter(fistItemsSupplier.apply(gcList.get(0)));
+            borderPane.setCenter(rightNodeSupplier.apply(gcList.get(0)));
             // this.groupListView.pre
             this.groupListView.getItems().addAll(gcList.stream().map(gc -> {
                 final GI gi = generatorGI.apply(gc);

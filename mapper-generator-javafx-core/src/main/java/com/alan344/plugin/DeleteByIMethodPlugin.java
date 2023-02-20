@@ -59,7 +59,6 @@ public class DeleteByIMethodPlugin extends PluginAdapter {
         deleteByIdMethod.addBodyLine("        .and(isDelete, isEqualTo(BaseConstants.IS_DELETE_0)));");
         interfaze.addMethod(deleteByIdMethod);
 
-
         final FullyQualifiedJavaType type = parameter.getType();
         Method deleteByIdsMethod = new Method("deleteByIds");
         deleteByIdsMethod.addJavaDocLine("/**");
@@ -71,7 +70,7 @@ public class DeleteByIMethodPlugin extends PluginAdapter {
         deleteByIdsMethod.addJavaDocLine(" */");
         deleteByIdsMethod.setDefault(true);
         deleteByIdsMethod.setReturnType(FullyQualifiedJavaType.getIntInstance());
-        deleteByIdsMethod.addParameter(0, new Parameter(new FullyQualifiedJavaType("java.util.List<" + type.getShortName() + ">"), "ids"));
+        deleteByIdsMethod.addParameter(0, new Parameter(new FullyQualifiedJavaType("java.util.Collection<" + type.getShortName() + ">"), "ids"));
         deleteByIdsMethod.addParameter(1, new Parameter(FullyQualifiedJavaType.getStringInstance(), "updateBy_"));
         deleteByIdsMethod.addBodyLine("return update(u -> u.set(isDelete).equalTo(BaseConstants.IS_DELETE_1)");
         deleteByIdsMethod.addBodyLine("        .set(updateBy).equalTo(updateBy_)");

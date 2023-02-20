@@ -5,7 +5,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.constants.BaseConstants;
 import com.alan344.controller.MainController;
 import com.alan344.service.DataSourceService;
-import com.alan344.utils.TreeUtils;
+import com.alan344.factory.TreeItemFactory;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
@@ -52,7 +52,7 @@ public class DataSourceTreeItemInit {
      * @param treeItemDataSourceRoot 根节点
      */
     public void addExpandListenerForDataSource(DataSource dataSource, TreeItem<DataItem> treeItemDataSourceRoot) {
-        TreeItem<DataItem> dataSourceTreeItem = TreeUtils.add2Tree(dataSource, treeItemDataSourceRoot);
+        TreeItem<DataItem> dataSourceTreeItem = TreeItemFactory.add2Tree(dataSource, treeItemDataSourceRoot);
         dataSourceTreeItem.setGraphic(new FontIcon("unil-database:16:#388ce0"));
         // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
         dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {

@@ -1,7 +1,6 @@
 package com.alan344.utils;
 
 import lombok.extern.slf4j.Slf4j;
-import com.alan344.utils.StringUtils;
 
 import java.io.IOException;
 
@@ -10,7 +9,7 @@ import java.io.IOException;
  * @date 2020/7/1 9:38
  */
 @Slf4j
-public class FileUtils {
+public class FileExploreUtils {
     /**
      * 打开输出目录
      */

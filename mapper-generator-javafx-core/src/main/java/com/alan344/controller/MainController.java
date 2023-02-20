@@ -5,13 +5,13 @@ import com.alan344.bean.DataItem;
 import com.alan344.componet.CustomTreeCell;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.factory.DialogUtils;
+import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.init.DataSourceTreeViewInit;
 import com.alan344.init.FindTableInit;
-import com.alan344.utils.FileUtils;
+import com.alan344.utils.FileExploreUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -175,7 +175,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void exit() {
-        DialogUtils.closeDialog(NodeConstants.primaryStage, mainStackPane);
+        DialogFactory.closeDialog(NodeConstants.primaryStage, mainStackPane);
     }
 
     @FXML
@@ -188,7 +188,7 @@ public class MainController implements Initializable {
             BaseConstants.baseFileDir = fileScan.getParent();
             ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), Charset.defaultCharset());
             // 弹框
-            DialogUtils.successDialog(NodeConstants.primaryStage, "导入成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
         }
     }
 
@@ -198,9 +198,9 @@ public class MainController implements Initializable {
         if (null != fileScan) {
             ZipUtil.zip(BaseConstants.MG_CONF_HOME, fileScan.getAbsolutePath() + "/config.zip", Charset.defaultCharset(), true);
             Button button = new Button("打开文件夹");
-            button.setOnAction(event -> FileUtils.open(fileScan.getAbsolutePath()));
+            button.setOnAction(event -> FileExploreUtils.open(fileScan.getAbsolutePath()));
             // 弹框
-            DialogUtils.successDialog(NodeConstants.primaryStage, "导出成功", button);
+            DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
         }
     }
 

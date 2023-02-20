@@ -5,12 +5,11 @@ import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.controller.MainController;
-import com.alan344.utils.TreeUtils;
+import com.alan344.factory.TreeItemFactory;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
@@ -65,7 +63,7 @@ public class FindTableInit {
                         DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
                         List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().contains(tableNamePrefix)).toList();
                         for (Table filteredTable : filteredTables) {
-                            TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                            TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
                             tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                         }
                     }
@@ -76,7 +74,7 @@ public class FindTableInit {
                     dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
                     DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
                     for (Table filteredTable : dataSource.getTables()) {
-                        TreeItem<DataItem> tableTreeItem = TreeUtils.add2Tree(filteredTable, dataSourceTreeItem);
+                        TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
                         tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                     }
                 }

@@ -4,10 +4,12 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.component.MybatisExportController;
+import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
 import com.alan344.service.node.NodeHandler;
+import com.alan344.utils.FileExploreUtils;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -151,6 +153,10 @@ public class MybatisExportSetupController implements Initializable {
         mybatisExportController.validExport();
         final MybatisExportConfig config = mybatisExportController.getConfig(BaseConstants.currentConfig);
         exportService.saveSetup(config);
+        // 保存成功 dialog
+        Button configBtn = new Button("打开配置");
+        configBtn.setOnAction(event -> FileExploreUtils.open(BaseConstants.MG_CONF_HOME));
+        DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
     }
 
     @FXML

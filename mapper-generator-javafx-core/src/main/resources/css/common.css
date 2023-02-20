@@ -65,7 +65,7 @@ StackPane {
 .split-pane:horizontal .split-pane-divider {
     -fx-background-color: #E8E8E8;
     -fx-opacity: 0.5;
-    -fx-pref-width: 5;
+    -fx-pref-width: 4;
 }
 
 /* scroll-bar */

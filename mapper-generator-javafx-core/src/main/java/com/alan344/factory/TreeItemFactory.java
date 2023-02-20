@@ -1,4 +1,4 @@
-package com.alan344.utils;
+package com.alan344.factory;
 
 import javafx.scene.control.TreeItem;
 
@@ -6,7 +6,7 @@ import javafx.scene.control.TreeItem;
  * @author ：AlanSun
  * @date ：2019/8/8 22:27
  */
-public class TreeUtils {
+public class TreeItemFactory {
 
     /**
      * 把 content 包装成 TreeItem，然后放入 parent

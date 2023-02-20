@@ -7,12 +7,14 @@ import com.alan344.componet.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
 import com.alan344.service.ExtraFileConfigService;
 import com.alan344.service.node.NodeHandler;
 import com.alan344.utils.CollectionUtils;
+import com.alan344.utils.FileExploreUtils;
 import com.alan344.utils.Toast;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -149,7 +151,6 @@ public class ExtraFileController {
         exportService.export(BaseConstants.currentConfig);
     }
 
-    @FXML
     public void pre() {
         NodeConstants.borderPaneWrap.setCenter(nodeHandler.getPre());
     }
@@ -157,15 +158,17 @@ public class ExtraFileController {
     /**
      * 添加额外文件
      */
-    @FXML
     public void saveSetup() {
         exportService.saveSetup(BaseConstants.currentConfig);
+        // 保存成功 dialog
+        Button configBtn = new Button("打开配置");
+        configBtn.setOnAction(event -> FileExploreUtils.open(BaseConstants.MG_CONF_HOME));
+        DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
     }
 
     /**
      * 添加额外文件
      */
-    @FXML
     public void openExtraFilePage() {
         extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
             // 获取已经存在的配置
@@ -211,7 +214,6 @@ public class ExtraFileController {
     /**
      * 打开添加自定义属性页面
      */
-    @FXML
     public void openExtraFileCustomProperties() {
         final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
         LinkedHashMap<String, String> customProperties = currentConfig.getCustomProperties();

@@ -3,10 +3,13 @@ package com.alan344.controller;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.componet.*;
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.constants.NodeConstants;
+import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExtraFileConfigService;
+import com.alan344.utils.FileExploreUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
@@ -128,6 +131,11 @@ public class ExtraTemplateFileController {
             // 保存到磁盘
             extraFileConfigService.saveExtraFileConfig(items);
             saveBtn.setDisable(true);
+
+            // 保存成功 dialog
+            Button configBtn = new Button("打开配置");
+            configBtn.setOnAction(event1 -> FileExploreUtils.open(BaseConstants.MG_CONF_HOME));
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
         });
 
         Button addBtn = new Button("添加");

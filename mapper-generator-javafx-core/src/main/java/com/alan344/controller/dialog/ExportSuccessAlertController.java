@@ -2,7 +2,7 @@ package com.alan344.controller.dialog;
 
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.factory.FxmlLoadFactory;
-import com.alan344.utils.FileUtils;
+import com.alan344.utils.FileExploreUtils;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -99,7 +99,7 @@ public class ExportSuccessAlertController {
     @FXML
     public void openFileAfterExport() {
         if (OPEN_FILE_TEXT_SUCCESS.equals(openFileButton.getText())) {
-            FileUtils.open(mybatisExportConfig.getBeanLocation());
+            FileExploreUtils.open(mybatisExportConfig.getBeanLocation());
         }
 
         this.close();

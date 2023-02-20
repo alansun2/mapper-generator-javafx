@@ -1,5 +1,6 @@
 package com.alan344.utils;
 
+import com.alan344.exception.BizException;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import com.alan344.utils.StringUtils;
@@ -20,7 +21,7 @@ public class TextUtils {
         String text = textField.getText();
         if (!StringUtils.isNotEmpty(text)) {
             Toast.makeText(primaryStage, textField.getPromptText() + "不能为空", 3000, 500, 500, 15, 5);
-            throw new RuntimeException(text + "不能为空");
+            throw new BizException(text + "不能为空");
         }
     }
 
