@@ -313,7 +313,7 @@
       },
       {
         "id": "usual-5",
-        "customTemplateDir": "classpath:templates/cola/ServiceImpl.ftl",
+        "customTemplateDir": "classpath:templates/layer/ServiceImpl.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -328,7 +328,7 @@
       },
       {
         "id": "usual-6",
-        "customTemplateDir": "classpath:templates/cola/ServiceI.ftl",
+        "customTemplateDir": "classpath:templates/layer/ServiceI.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -343,7 +343,7 @@
       },
       {
         "id": "usual-7",
-        "customTemplateDir": "classpath:templates\\cola",
+        "customTemplateDir": "classpath:templates\\layer\\Controller.ftl",
         "customTemplateFileName": "Controller.ftl",
         "enable": false,
         "system": true,
