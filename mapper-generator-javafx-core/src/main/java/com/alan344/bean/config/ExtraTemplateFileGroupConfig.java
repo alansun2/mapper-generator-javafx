@@ -18,6 +18,8 @@ public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.
      * 分组名称
      */
     private String groupName;
+
+    private boolean isEnable;
     /**
      * 是否是系统内置的配置
      */

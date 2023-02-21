@@ -21,6 +21,8 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
      * 配置的名称
      */
     private String configName;
+
+    private boolean isEnable;
     /**
      * 是否是系统内置
      */

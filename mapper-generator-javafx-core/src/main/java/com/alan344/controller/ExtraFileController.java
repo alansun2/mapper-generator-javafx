@@ -23,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -119,11 +118,6 @@ public class ExtraFileController {
         return List.of(openExtraPropertyStageBtn, openExtraTemplateFileStageBtn, saveBtn, exportBtn, preBtn);
     }
 
-    /**
-     * 当前选中的分组中
-     */
-    private ExtraFileGroupConfig curExtraFileGroupConfig;
-
     @FXML
     public void export() {
         final Optional<ExtraFileGroupConfig> enabledConfig = linkageBorderPane.getGroupLeftListView().getItems().stream()
@@ -171,6 +165,7 @@ public class ExtraFileController {
      */
     public void openExtraFilePage() {
         extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
+            final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
             // 获取已经存在的配置
             Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = curExtraFileGroupConfig.getExtraFileConfigs();
             if (null == extraFileConfigs) {
@@ -274,15 +269,7 @@ public class ExtraFileController {
     }
 
     private ExtraFileGroupItemHBox convert2ExtraFileGroupItem(ExtraFileGroupConfig extraFileGroupConfig) {
-        final ExtraFileGroupItemHBox extraFileGroupItemHBox1 = new ExtraFileGroupItemHBox(extraFileGroupConfig, mouseEvent -> {
-            // 鼠标点击事件
-            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                final ExtraFileGroupItemHBox extraFileGroupItemHBox = (ExtraFileGroupItemHBox) mouseEvent.getSource();
-                linkageBorderPane.getRightBorderPane().setCenter(this.getRightListView(extraFileGroupItemHBox.getConfig()));
-                this.curExtraFileGroupConfig = extraFileGroupConfig;
-            }
-        });
-        return extraFileGroupItemHBox1;
+        return new ExtraFileGroupItemHBox(extraFileGroupConfig);
     }
 
     private ListView<ExtraFileItemHBox> getRightListView(ExtraFileGroupConfig extraFileGroupConfig) {

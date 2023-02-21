@@ -126,6 +126,8 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 final GC gc = selectedItem.getConfig();
                 final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
                 borderPane.setCenter(region);
+                groupListView.getItems().forEach(gi -> gi.getConfig().setEnable(false));
+                gc.setEnable(true);
             }
         });
     }
@@ -237,6 +239,10 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         boolean isSystem();
 
         void setSystem(boolean isSystem);
+
+        boolean isEnable();
+
+        void setEnable(boolean enable);
 
         Object clone();
     }
