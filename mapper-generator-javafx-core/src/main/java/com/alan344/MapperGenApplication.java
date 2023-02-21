@@ -21,10 +21,11 @@ public class MapperGenApplication {
             if (e instanceof InvocationTargetException) {
                 final Throwable cause = e.getCause();
                 if (!(cause instanceof BizException)) {
-                    DialogFactory.exceptionDialog(e);
-                    log.error("捕捉到未处理的异常", e);
+                    DialogFactory.exceptionDialog(cause);
+                    log.error("捕捉到未处理的异常", cause);
                 }
             } else {
+                DialogFactory.exceptionDialog(e);
                 log.error("捕捉到未处理的异常", e);
             }
         });
