@@ -16,7 +16,7 @@ import <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOM
 import <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.query.${TYPE_NAME_UPPER_CAMEL}PageQryExe;
 
 /**
- * @author AlanSun
+ * @author ${ahtuor}
  * @date ${CUR_DATE_TIME}
  */
 @Service

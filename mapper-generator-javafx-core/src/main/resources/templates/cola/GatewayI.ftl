@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author AlanSun
+ * @author ${ahtuor}
  * @date ${CUR_DATE_TIME}
  */
 public interface ${TYPE_NAME_UPPER_CAMEL}GatewayI {

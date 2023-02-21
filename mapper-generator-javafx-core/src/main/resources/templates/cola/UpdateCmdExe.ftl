@@ -14,7 +14,7 @@ import java.util.Optional;
 import static <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.${TYPE_NAME_UPPER_CAMEL}AddCmdExe.convert;
 
 /**
- * @author AlanSun
+ * @author ${ahtuor}
  * @date ${CUR_DATE_TIME}
  */
 @Service

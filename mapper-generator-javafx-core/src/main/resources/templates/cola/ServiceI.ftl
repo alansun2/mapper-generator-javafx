@@ -7,7 +7,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.$
 import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
 
 /**
- * @author AlanSun
+ * @author ${ahtuor}
  * @date ${CUR_DATE_TIME}
  */
 public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {

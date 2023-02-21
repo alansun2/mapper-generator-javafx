@@ -13,7 +13,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>mapper.${TYPE_NAME_UPPE
 
 import java.util.Optional;
 /**
- * @author AlanSun
+ * @author ${ahtuor}
  * @date ${CUR_DATE_TIME}
  */
 @Service

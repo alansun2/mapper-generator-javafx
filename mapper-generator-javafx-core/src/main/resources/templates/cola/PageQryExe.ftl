@@ -18,7 +18,7 @@ import static org.mybatis.dynamic.sql.SqlBuilder.isLikeWhenPresent;
 import static <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}DynamicSqlSupport.*;
 
 /**
- * @author AlanSun
+ * @author ${ahtuor}
  * @date ${CUR_DATE_TIME}
  */
 @Service
