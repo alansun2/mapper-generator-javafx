@@ -1,14 +1,17 @@
+@import "common.css";
+
 .button {
     -fx-background-insets: 0;
-    -fx-background-color: #FFF;
+    -fx-background-color: #a0ea8d;
     -fx-border-radius: 0em;
-    -fx-border-color: #45adc5;
+    -fx-border-width: 1 1 1 0;
 }
 
 .button:hover {
+    -fx-border-width: 1 1 1 1;
     -fx-border-color: #4dc7e3;
 }
 
 .button:pressed {
-    -fx-border-color: #3992a6;
+    -fx-background-color: #3992a6;
 }

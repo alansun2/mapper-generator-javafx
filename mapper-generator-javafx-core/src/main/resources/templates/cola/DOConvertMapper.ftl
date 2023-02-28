@@ -6,7 +6,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>domain<#if DOMAIN != ""
 import <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.dataobject.${TYPE_NAME_UPPER_CAMEL};
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  * <p>
  * DO 转换

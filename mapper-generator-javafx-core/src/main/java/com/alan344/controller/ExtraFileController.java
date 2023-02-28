@@ -58,38 +58,24 @@ public class ExtraFileController {
     private LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
     private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> cache = new HashMap<>(8);
 
-    public BorderPane getBorderPane(String configName) {
-        linkageBorderPane = cache.computeIfAbsent(configName, mybatisExportConfig1 -> {
+    public BorderPane getBorderPane(MybatisExportConfig mybatisExportConfig) {
+        linkageBorderPane = cache.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
             final LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane1 = new LeftRightLinkageBorderPane<>(
                     ExtraFileGroupConfig::new,
                     this::convert2ExtraFileGroupItem,
                     this::getRightListView,
                     NodeConstants.primaryStage,
-                    this.getBottomBtns(),
+                    this.getBottomBtns(mybatisExportConfig),
                     0.25
             );
 
-            final List<ExtraFileGroupConfig> extraFileGroupConfigs = configService.getExtraFileGroupConfigs();
-            linkageBorderPane1.addLeftItems(extraFileGroupConfigs, this::getRightListView);
-            if (CollectionUtils.isNotEmpty(extraFileGroupConfigs)) {
-                linkageBorderPane1.getGroupLeftListView().getItems().stream()
-                        .filter(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig().isEnable()).findFirst()
-                        .ifPresent(extraFileGroupItemHBox -> {
-                            final int i = linkageBorderPane1.getGroupLeftListView().getItems().indexOf(extraFileGroupItemHBox);
-                            linkageBorderPane1.getGroupLeftListView().getSelectionModel().select(i);
-                            linkageBorderPane1.getRightBorderPane().setCenter(this.getRightListView(extraFileGroupItemHBox.getConfig()));
-                        });
-
-            }
+            linkageBorderPane1.addLeftItems(configService.getExtraFileGroupConfigs(mybatisExportConfig));
             return linkageBorderPane1;
         });
         return linkageBorderPane;
     }
 
-    private List<Button> getBottomBtns() {
-        Button openExtraPropertyStageBtn = new Button("添加额外属性");
-        openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties());
-        openExtraPropertyStageBtn.setPrefWidth(100);
+    private List<Button> getBottomBtns(MybatisExportConfig mybatisExportConfig) {
         Button openExtraTemplateFileStageBtn = new Button("添加额外文件");
         openExtraTemplateFileStageBtn.setOnAction(event -> {
             final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
@@ -104,6 +90,9 @@ public class ExtraFileController {
             }
             this.openExtraFilePage();
         });
+        Button openExtraPropertyStageBtn = new Button("添加额外属性");
+        openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties(mybatisExportConfig));
+        openExtraPropertyStageBtn.setPrefWidth(100);
         openExtraTemplateFileStageBtn.setPrefWidth(100);
         Button saveBtn = new Button("保存配置");
         saveBtn.setOnAction(event -> this.saveSetup());
@@ -115,7 +104,7 @@ public class ExtraFileController {
         Button preBtn = new Button("返回");
         preBtn.setOnAction(event -> this.pre());
         preBtn.setPrefWidth(70);
-        return List.of(openExtraPropertyStageBtn, openExtraTemplateFileStageBtn, saveBtn, exportBtn, preBtn);
+        return List.of(openExtraTemplateFileStageBtn, openExtraPropertyStageBtn, saveBtn, exportBtn, preBtn);
     }
 
     @FXML
@@ -209,12 +198,11 @@ public class ExtraFileController {
     /**
      * 打开添加自定义属性页面
      */
-    public void openExtraFileCustomProperties() {
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        LinkedHashMap<String, String> customProperties = currentConfig.getCustomProperties();
+    public void openExtraFileCustomProperties(MybatisExportConfig mybatisExportConfig) {
+        LinkedHashMap<String, String> customProperties = mybatisExportConfig.getCustomProperties();
         if (null == customProperties) {
             customProperties = new LinkedHashMap<>();
-            currentConfig.setCustomProperties(customProperties);
+            mybatisExportConfig.setCustomProperties(customProperties);
         }
         this.addCustomProperty(customProperties);
     }

@@ -5,6 +5,8 @@ import com.alan344.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 /**
  * @author AlanSun
  * @date 2022/11/3 16:32
@@ -20,10 +22,6 @@ public class ExtraTemplateFileConfig implements Cloneable {
      * 配置是否开启
      */
     private boolean enable;
-    /**
-     * 是否是内置的
-     */
-    private boolean isSystem;
     /**
      * 模板类型
      */
@@ -72,7 +70,9 @@ public class ExtraTemplateFileConfig implements Cloneable {
     public ExtraTemplateFileConfig clone() {
         try {
             // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return (ExtraTemplateFileConfig) super.clone();
+            final ExtraTemplateFileConfig clone = (ExtraTemplateFileConfig) super.clone();
+            clone.setId(UUID.randomUUID().toString());
+            return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

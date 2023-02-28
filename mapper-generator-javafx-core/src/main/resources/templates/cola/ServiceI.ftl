@@ -7,7 +7,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.$
 import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  */
 public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {
@@ -24,7 +24,7 @@ public interface ${TYPE_NAME_UPPER_CAMEL}ServiceI {
      * @param qry {@link ${TYPE_NAME_UPPER_CAMEL}PageQry}
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}PageDTO}s
      */
-    Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry);
+    Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> page${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}PageQry qry);
 
     /**
      * 根据 id 获取${DOMAIN_DESC}

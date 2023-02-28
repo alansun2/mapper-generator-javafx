@@ -1,8 +1,8 @@
 package com.alan344.controller;
 
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.component.TableAdvanceSetupController;
-import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.MapperCheckBoxInit;
 import com.alan344.init.MybatisListViewInit;
 import com.alan344.service.ColumnService;
@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -55,6 +56,8 @@ public class MybatisTableSetupController implements Initializable {
     @Resource
     private MapperCheckBoxInit mapperCheckBoxInit;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
+    @Autowired
+    private MybatisExportSetupController mybatisExportSetup1Controller;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -110,7 +113,9 @@ public class MybatisTableSetupController implements Initializable {
     public void next() {
         Node next = nodeHandler.getNext();
         if (next == null) {
-            next = FxmlLoadFactory.create("/fxml/mybatis-export-setup.fxml", beanFactory);
+
+            // next = FxmlLoadFactory.create("/fxml/mybatis-export-setup.fxml", beanFactory);
+            next = mybatisExportSetup1Controller.getBorderPane(BaseConstants.selectedDateSource.getConfigName());
             // 入栈
             nodeHandler.addNode(next);
         }

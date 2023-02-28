@@ -2,7 +2,6 @@ package com.alan344.componet;
 
 import cn.hutool.core.util.RandomUtil;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -35,7 +34,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
 
     private List<GC> gcList;
 
-    private Function<GC, Node> rightNodeSupplier;
+    private Function<GC, Region> rightNodeSupplier;
 
     public LeftRightLinkageBorderPane(Supplier<GC> generatorGC,
                                       Function<GC, GI> generatorGI,
@@ -45,6 +44,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                                       double... positions) {
         this.stage = stage;
         this.generatorGI = generatorGI;
+        this.rightNodeSupplier = rightNodeFunc;
         this.getStylesheets().add("css/extra-file.css");
 
         SplitPane splitPane = new SplitPane(groupListView, borderPane);
@@ -59,6 +59,9 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         this.setBottom(hBox);
 
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        groupListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.showRight(newValue.getConfig(), rightNodeFunc);
+        });
         groupListView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             final GI selectedItem = groupListView.getSelectionModel().getSelectedItem();
             if (event.getButton() == MouseButton.SECONDARY) {
@@ -76,6 +79,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     }
                     gcList.add(gc);
                     groupListView.getItems().add(gi);
+                    groupListView.getSelectionModel().select(gi);
                 }));
 
                 MenuItem updateMenuItem = new MenuItem("Edit");
@@ -100,9 +104,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     gcList.add(cloneGc);
                     groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, cloneGi);
                     // 选中复制项
-                    groupListView.getSelectionModel().select(groupListView.getSelectionModel().getSelectedIndex() + 1);
-                    // 展开复制项
-                    borderPane.setCenter(rightNodeSupplier.apply(cloneGc));
+                    groupListView.getSelectionModel().select(cloneGi);
                 });
 
                 MenuItem deleteMenuItem = new MenuItem("Del");
@@ -122,14 +124,14 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 // 放入  contextMenu
                 groupListView.setContextMenu(contextMenu);
             }
-            if (null != selectedItem) {
-                final GC gc = selectedItem.getConfig();
-                final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
-                borderPane.setCenter(region);
-                groupListView.getItems().forEach(gi -> gi.getConfig().setEnable(false));
-                gc.setEnable(true);
-            }
         });
+    }
+
+    private void showRight(GC gc, Function<GC, Region> rightNodeFunc) {
+        final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
+        borderPane.setCenter(region);
+        groupListView.getItems().forEach(gi -> gi.getConfig().setEnable(false));
+        gc.setEnable(true);
     }
 
     private String getGroupName(String newGroupName) {
@@ -145,12 +147,11 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         return newGroupName;
     }
 
-    public void addLeftItems(List<GC> gcList, Function<GC, Node> rightNodeSupplier) {
+    public void addLeftItems(List<GC> gcList) {
         this.gcList = gcList;
-        this.rightNodeSupplier = rightNodeSupplier;
         // 展开第一个
         if (!gcList.isEmpty()) {
-            borderPane.setCenter(rightNodeSupplier.apply(gcList.get(0)));
+
             // this.groupListView.pre
             this.groupListView.getItems().addAll(gcList.stream().map(gc -> {
                 final GI gi = generatorGI.apply(gc);
@@ -159,7 +160,20 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 }
                 return gi;
             }).toList());
-            this.groupListView.getSelectionModel().select(0);
+
+            // 打开之前使用的配置
+            final Optional<GI> optionalGI = this.groupListView.getItems().stream()
+                    .filter(gi -> gi.getConfig().isEnable()).findFirst();
+            if (optionalGI.isPresent()) {
+                final GI gi = optionalGI.get();
+                final int i = this.groupListView.getItems().indexOf(gi);
+                this.groupListView.getSelectionModel().select(i);
+                this.borderPane.setCenter(rightNodeSupplier.apply(gi.getConfig()));
+            } else {
+                // 之前没打开过，选择第一个
+                borderPane.setCenter(rightNodeSupplier.apply(gcList.get(0)));
+                this.groupListView.getSelectionModel().select(0);
+            }
         }
     }
 

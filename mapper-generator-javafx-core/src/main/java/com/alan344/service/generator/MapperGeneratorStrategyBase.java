@@ -318,7 +318,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
                 // 添加默认属性
                 generatorUtils.addProperty(table.isJdkSerializable(), tableEl, "jdkSerializable", "true");
-                generatorUtils.addProperty(mybatisExportConfig.isModelOnly(), tableEl, PropertyRegistry.TABLE_MODEL_ONLY, "true");
                 generatorUtils.addProperty(StringUtils.isNotEmpty(mybatisExportConfig.getModelRootClass()), tableEl, PropertyRegistry.ANY_ROOT_CLASS, mybatisExportConfig.getModelRootClass());
                 this.addTableProperty(tableEl, generatorUtils);
             }
@@ -383,7 +382,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 throw new RuntimeException(e);
             }
 
-            MyShellCallback shellCallback = new MyShellCallback(true, mybatisExportConfig.isUseMerge());
+            MyShellCallback shellCallback = new MyShellCallback(true, true);
 
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
             myBatisGenerator.generate(null, null, null);

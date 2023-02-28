@@ -51,7 +51,8 @@ public class ConfigService {
     public void addConfig(MybatisExportConfig mybatisExportConfig) {
         LinkedList<MybatisExportConfig> mybatisExportConfigs = this.loadConfigFromFile();
 
-        LinkedList<MybatisExportConfig> existConfigLinkedList = mybatisExportConfigs.stream().filter(generatorConfig1 -> mybatisExportConfig.getConfigName().equals(generatorConfig1.getConfigName()))
+        LinkedList<MybatisExportConfig> existConfigLinkedList = mybatisExportConfigs.stream()
+                .filter(generatorConfig1 -> mybatisExportConfig.getConfigName().equals(generatorConfig1.getConfigName()))
                 .collect(LinkedList::new, LinkedList::add, List::addAll);
 
         // 配置已存在，如果内容修改，则修改
@@ -63,13 +64,13 @@ public class ConfigService {
                 final int i = mybatisExportConfigs.indexOf(olderConfig);
                 mybatisExportConfigs.remove(olderConfig);
                 mybatisExportConfigs.add(i, mybatisExportConfig);
-                this.saveConfigToFile(mybatisExportConfigs);
+                this.saveConfigToFile();
                 this.configNameConfigMap.put(mybatisExportConfig.getConfigName(), mybatisExportConfig);
             }
         } else {
             // 新配置
             mybatisExportConfigs.addFirst(mybatisExportConfig);
-            this.saveConfigToFile(mybatisExportConfigs);
+            this.saveConfigToFile();
             this.configNameConfigMap.put(mybatisExportConfig.getConfigName(), mybatisExportConfig);
         }
     }
@@ -82,16 +83,15 @@ public class ConfigService {
     public void deleteConfig(MybatisExportConfig mybatisExportConfig) {
         List<MybatisExportConfig> mybatisExportConfigs = this.loadConfigFromFile();
         mybatisExportConfigs.remove(mybatisExportConfig);
-        this.saveConfigToFile(mybatisExportConfigs);
+        this.saveConfigToFile();
         this.configNameConfigMap.remove(mybatisExportConfig.getConfigName());
     }
 
     /**
      * 把配置写入文件
-     *
-     * @param mybatisExportConfigs 配置信息
      */
-    private void saveConfigToFile(List<MybatisExportConfig> mybatisExportConfigs) {
+    public void saveConfigToFile() {
+        final LinkedList<MybatisExportConfig> mybatisExportConfigs = this.loadConfigFromFile();
         if (CollectionUtils.isEmpty(mybatisExportConfigs)) {
             return;
         }
@@ -141,9 +141,8 @@ public class ConfigService {
      *
      * @return {@link ExtraFileGroupConfig}s
      */
-    public List<ExtraFileGroupConfig> getExtraFileGroupConfigs() {
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        List<ExtraFileGroupConfig> extraFileGroupConfigs = currentConfig.getExtraFileGroupConfigs();
+    public List<ExtraFileGroupConfig> getExtraFileGroupConfigs(MybatisExportConfig mybatisExportConfig) {
+        List<ExtraFileGroupConfig> extraFileGroupConfigs = mybatisExportConfig.getExtraFileGroupConfigs();
         final List<ExtraFileGroupConfig> defaults = this.getDefaults();
         if (CollectionUtils.isEmpty(extraFileGroupConfigs)) {
             extraFileGroupConfigs = defaults;

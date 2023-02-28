@@ -11,7 +11,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>bean.request<#if DOMAIN
 import <#if package_prefix != "">${package_prefix}.</#if>bean.request<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  */
 @RestController

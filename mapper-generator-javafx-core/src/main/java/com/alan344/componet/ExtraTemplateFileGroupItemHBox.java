@@ -17,7 +17,7 @@ public class ExtraTemplateFileGroupItemHBox extends HBox implements LeftRightLin
     public ExtraTemplateFileGroupItemHBox(ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig) {
         this.extraTemplateFileGroupConfig = extraTemplateFileGroupConfig;
         label = new Label(extraTemplateFileGroupConfig.getGroupName());
-        label.setPrefWidth(70);
+        label.prefWidthProperty().bind(this.widthProperty().subtract(100));
 
         this.getChildren().addAll(label);
         this.setPrefHeight(20);

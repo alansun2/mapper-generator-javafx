@@ -24,7 +24,7 @@ public class MapperGenApplication {
                     DialogFactory.exceptionDialog(cause);
                     log.error("捕捉到未处理的异常", cause);
                 }
-            } else {
+            } else if (!(e instanceof BizException)) {
                 DialogFactory.exceptionDialog(e);
                 log.error("捕捉到未处理的异常", e);
             }

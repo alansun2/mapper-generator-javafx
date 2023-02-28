@@ -16,7 +16,7 @@ import <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOM
 import <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.query.${TYPE_NAME_UPPER_CAMEL}PageQryExe;
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  */
 @Service
@@ -39,7 +39,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
     }
 
     @Override
-    public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
+    public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> page${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
         return ${TYPE_NAME_LOWER_CAMEL}PageQryExe.execute(qry);
     }
 

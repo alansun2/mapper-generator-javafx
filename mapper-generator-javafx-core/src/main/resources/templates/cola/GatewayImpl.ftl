@@ -22,7 +22,7 @@ import static <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != ""
 import static <#if package_prefix != "">${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}DynamicSqlSupport.isDelete;
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  */
 @Slf4j

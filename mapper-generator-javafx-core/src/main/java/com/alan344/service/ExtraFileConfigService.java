@@ -34,11 +34,17 @@ public class ExtraFileConfigService {
     private List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigs;
 
     public void saveExtraFileConfig(List<ExtraTemplateFileGroupConfig> items) {
+        // 去除系统配置
+        final List<ExtraTemplateFileGroupConfig> extraTemplateFileGroupConfigs = items.stream()
+                .filter(extraTemplateFileGroupConfig -> !extraTemplateFileGroupConfig.isSystem())
+                .collect(Collectors.toList());
+
+        if (extraTemplateFileGroupConfigs.isEmpty()) {
+            return;
+        }
         extraTemplateFileConfigs = items;
         try {
-            // delete internal config
-            items.removeIf(ExtraTemplateFileGroupConfig::isSystem);
-            FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(), JSONArray.toJSONString(this.getExtraTemplateFileGroupConfig(), JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
+            FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(), JSONArray.toJSONString(extraTemplateFileGroupConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

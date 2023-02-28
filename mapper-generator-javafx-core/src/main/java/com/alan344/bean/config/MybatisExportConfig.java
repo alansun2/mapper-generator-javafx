@@ -1,6 +1,9 @@
 package com.alan344.bean.config;
 
 import com.alan344.componet.LeftRightLinkageBorderPane;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,89 +17,319 @@ import java.util.stream.Collectors;
  * @author AlanSun
  * @date 2019/8/13 16:20
  */
-@Getter
-@Setter
 public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName, Cloneable {
     /**
      * 配置的名称
      */
-    private String configName;
+    private SimpleStringProperty configName = new SimpleStringProperty();
 
-    private boolean isEnable;
+    private SimpleBooleanProperty enable = new SimpleBooleanProperty(false);
+
     /**
      * 是否是系统内置
      */
-    private boolean isSystem;
+    private SimpleBooleanProperty system = new SimpleBooleanProperty(false);
+
     /**
      * 类中的作者信息
      */
-    private String author;
-    /**
-     * 是否只生成 model
-     */
-    private boolean modelOnly;
-    /**
-     * 使用支持 merge
-     */
-    private boolean useMerge;
+    private SimpleStringProperty author = new SimpleStringProperty();
+
     /**
      * bean 的导出地址
      */
-    private String beanLocation;
+    private SimpleStringProperty beanLocation = new SimpleStringProperty();
+
     /**
      * bean 包名
      */
-    private String beanPackage;
-    /**
-     * mapper 导出地址
-     */
-    private String mapperLocation;
-    /**
-     * mapperBean 包名
-     */
-    private String mapperPackage;
-    /***
-     * xml导出地址
-     */
-    private String mapperXmlLocation;
-    /**
-     * 使用原来的字段名
-     */
-    private boolean useActualColumnNames;
-    /**
-     * mapper 的统一接口
-     */
-    private String mapperRootInterface;
-    /**
-     * 全局的忽略字段
-     */
-    private String globalIgnoreField;
-    /**
-     * 选择的哪个tab
-     */
-    private int selectTab;
-    /**
-     * 是否导出额外文件
-     */
-    private boolean isExportExtraFile;
-    /**
-     * Mybatis-generator 原生配置
-     */
-    private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
+    private SimpleStringProperty beanPackage = new SimpleStringProperty();
+
     /**
      * model 的父类
      */
-    private String modelRootClass;
+    private SimpleStringProperty modelRootClass = new SimpleStringProperty();
 
+    /**
+     * 开启 model
+     */
+    private SimpleBooleanProperty modelEnable = new SimpleBooleanProperty(true);
+
+    /**
+     * mapper 导出地址
+     */
+    private SimpleStringProperty mapperLocation = new SimpleStringProperty();
+
+    /**
+     * mapperBean 包名
+     */
+    private SimpleStringProperty mapperPackage = new SimpleStringProperty();
+
+    /**
+     * mapper 的统一接口
+     */
+    private SimpleStringProperty mapperRootInterface = new SimpleStringProperty();
+
+    /**
+     * 开启 model
+     */
+    private SimpleBooleanProperty mapperEnable = new SimpleBooleanProperty(true);
+
+    /***
+     * xml导出地址
+     */
+    private SimpleStringProperty mapperXmlLocation = new SimpleStringProperty();
+
+    /**
+     * 开启 model
+     */
+    private SimpleBooleanProperty xmlEnable = new SimpleBooleanProperty(true);
+
+    /**
+     * 全局的忽略字段
+     */
+    private SimpleStringProperty globalIgnoreField = new SimpleStringProperty();
+
+    /**
+     * 使用原来的字段名
+     */
+    private SimpleBooleanProperty useActualColumnNames = new SimpleBooleanProperty(false);
+
+    /**
+     * 选择的哪个tab
+     */
+    private SimpleIntegerProperty selectTab = new SimpleIntegerProperty(0);
+
+    /**
+     * 是否导出额外文件
+     */
+    @Getter
+    @Setter
+    private boolean isExportExtraFile;
+
+    /**
+     * Mybatis-generator 原生配置
+     */
+    @Getter
+    @Setter
+    private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
 
     //---------------------extra file----------------
-
+    @Getter
+    @Setter
     private List<ExtraFileGroupConfig> extraFileGroupConfigs;
 
     /**
      * 自定义属性
      */
+    @Getter
+    @Setter
     private LinkedHashMap<String, String> customProperties;
+
+    public String getConfigName() {
+        return this.configName.getValue();
+    }
+
+    public void setConfigName(String configName) {
+        this.configName.set(configName);
+    }
+
+    public SimpleStringProperty configNameProperty() {
+        return this.configName;
+    }
+
+    public boolean isEnable() {
+        return enable.get();
+    }
+
+    public SimpleBooleanProperty enableProperty() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable.set(enable);
+    }
+
+    public boolean isSystem() {
+        return system.get();
+    }
+
+    public SimpleBooleanProperty systemProperty() {
+        return system;
+    }
+
+    public void setSystem(boolean system) {
+        this.system.set(system);
+    }
+
+    public String getAuthor() {
+        return author.get();
+    }
+
+    public SimpleStringProperty authorProperty() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author.set(author);
+    }
+
+    public String getBeanLocation() {
+        return beanLocation.get();
+    }
+
+    public SimpleStringProperty beanLocationProperty() {
+        return beanLocation;
+    }
+
+    public void setBeanLocation(String beanLocation) {
+        this.beanLocation.set(beanLocation);
+    }
+
+
+    public String getBeanPackage() {
+        return beanPackage.get();
+    }
+
+    public SimpleStringProperty beanPackageProperty() {
+        return beanPackage;
+    }
+
+    public void setBeanPackage(String beanPackage) {
+        this.beanPackage.set(beanPackage);
+    }
+
+    public String getMapperLocation() {
+        return mapperLocation.get();
+    }
+
+    public SimpleStringProperty mapperLocationProperty() {
+        return mapperLocation;
+    }
+
+    public void setMapperLocation(String mapperLocation) {
+        this.mapperLocation.set(mapperLocation);
+    }
+
+    public String getMapperPackage() {
+        return mapperPackage.get();
+    }
+
+    public SimpleStringProperty mapperPackageProperty() {
+        return mapperPackage;
+    }
+
+    public void setMapperPackage(String mapperPackage) {
+        this.mapperPackage.set(mapperPackage);
+    }
+
+    public String getMapperXmlLocation() {
+        return mapperXmlLocation.get();
+    }
+
+    public SimpleStringProperty mapperXmlLocationProperty() {
+        return mapperXmlLocation;
+    }
+
+    public void setMapperXmlLocation(String mapperXmlLocation) {
+        this.mapperXmlLocation.set(mapperXmlLocation);
+    }
+
+    public boolean isModelEnable() {
+        return modelEnable.get();
+    }
+
+    public SimpleBooleanProperty modelEnableProperty() {
+        return modelEnable;
+    }
+
+    public void setModelEnable(boolean modelEnable) {
+        this.modelEnable.set(modelEnable);
+    }
+
+    public boolean isMapperEnable() {
+        return mapperEnable.get();
+    }
+
+    public SimpleBooleanProperty mapperEnableProperty() {
+        return mapperEnable;
+    }
+
+    public void setMapperEnable(boolean mapperEnable) {
+        this.mapperEnable.set(mapperEnable);
+    }
+
+    public boolean isXmlEnable() {
+        return xmlEnable.get();
+    }
+
+    public SimpleBooleanProperty xmlEnableProperty() {
+        return xmlEnable;
+    }
+
+    public void setXmlEnable(boolean xmlEnable) {
+        this.xmlEnable.set(xmlEnable);
+    }
+
+    public boolean isUseActualColumnNames() {
+        return useActualColumnNames.get();
+    }
+
+    public SimpleBooleanProperty useActualColumnNamesProperty() {
+        return useActualColumnNames;
+    }
+
+    public void setUseActualColumnNames(boolean useActualColumnNames) {
+        this.useActualColumnNames.set(useActualColumnNames);
+    }
+
+    public String getMapperRootInterface() {
+        return mapperRootInterface.get();
+    }
+
+    public SimpleStringProperty mapperRootInterfaceProperty() {
+        return mapperRootInterface;
+    }
+
+    public void setMapperRootInterface(String mapperRootInterface) {
+        this.mapperRootInterface.set(mapperRootInterface);
+    }
+
+    public String getGlobalIgnoreField() {
+        return globalIgnoreField.get();
+    }
+
+    public SimpleStringProperty globalIgnoreFieldProperty() {
+        return globalIgnoreField;
+    }
+
+    public void setGlobalIgnoreField(String globalIgnoreField) {
+        this.globalIgnoreField.set(globalIgnoreField);
+    }
+
+    public int getSelectTab() {
+        return selectTab.get();
+    }
+
+    public SimpleIntegerProperty selectTabProperty() {
+        return selectTab;
+    }
+
+    public void setSelectTab(int selectTab) {
+        this.selectTab.set(selectTab);
+    }
+
+    public String getModelRootClass() {
+        return modelRootClass.get();
+    }
+
+    public SimpleStringProperty modelRootClassProperty() {
+        return modelRootClass;
+    }
+
+    public void setModelRootClass(String modelRootClass) {
+        this.modelRootClass.set(modelRootClass);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -119,12 +352,12 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
     @Override
     public String getGroupName() {
-        return this.configName;
+        return this.configName.get();
     }
 
     @Override
     public void setGroupName(String groupName) {
-        this.configName = groupName;
+        this.configName.set(groupName);
     }
 
     @Override
@@ -183,33 +416,118 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         /**
          * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
          */
-        private String targetName;
+        private SimpleStringProperty targetName = new SimpleStringProperty();
+
         /**
          * 是否使用java8
          */
-        private boolean userJava8 = true;
+        private SimpleBooleanProperty userJava8 = new SimpleBooleanProperty(true);
         /**
          * 是否支持 BigDecimal
          * <p>
          * 所有 number 都是用 BigDecimal
          */
-        private boolean useBigDecimal;
+        private SimpleBooleanProperty useBigDecimal = new SimpleBooleanProperty(false);
         /**
          * 使用支持 lombok
          */
-        private boolean useLombokGetSet;
+        private SimpleBooleanProperty useLombokGetSet = new SimpleBooleanProperty(false);
         /**
          * 是否使用 lombok builder
          */
-        private boolean useLombokBuilder;
+        private SimpleBooleanProperty useLombokBuilder = new SimpleBooleanProperty(false);
         /**
          * 使用注释
          */
-        private boolean useComment = true;
+        private SimpleBooleanProperty useComment = new SimpleBooleanProperty(true);
         /**
          * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
          */
-        private boolean enableDomain = false;
+        private SimpleBooleanProperty enableDomain = new SimpleBooleanProperty(false);
+
+        public String getTargetName() {
+            return targetName.get();
+        }
+
+        public SimpleStringProperty targetNameProperty() {
+            return targetName;
+        }
+
+        public void setTargetName(String targetName) {
+            this.targetName.set(targetName);
+        }
+
+        public boolean isUserJava8() {
+            return userJava8.get();
+        }
+
+        public SimpleBooleanProperty userJava8Property() {
+            return userJava8;
+        }
+
+        public void setUserJava8(boolean userJava8) {
+            this.userJava8.set(userJava8);
+        }
+
+        public boolean isUseBigDecimal() {
+            return useBigDecimal.get();
+        }
+
+        public SimpleBooleanProperty useBigDecimalProperty() {
+            return useBigDecimal;
+        }
+
+        public void setUseBigDecimal(boolean useBigDecimal) {
+            this.useBigDecimal.set(useBigDecimal);
+        }
+
+        public boolean isUseLombokGetSet() {
+            return useLombokGetSet.get();
+        }
+
+        public SimpleBooleanProperty useLombokGetSetProperty() {
+            return useLombokGetSet;
+        }
+
+        public void setUseLombokGetSet(boolean useLombokGetSet) {
+            this.useLombokGetSet.set(useLombokGetSet);
+        }
+
+        public boolean isUseLombokBuilder() {
+            return useLombokBuilder.get();
+        }
+
+        public SimpleBooleanProperty useLombokBuilderProperty() {
+            return useLombokBuilder;
+        }
+
+        public void setUseLombokBuilder(boolean useLombokBuilder) {
+            this.useLombokBuilder.set(useLombokBuilder);
+        }
+
+        public boolean isUseComment() {
+            return useComment.get();
+        }
+
+        public SimpleBooleanProperty useCommentProperty() {
+            return useComment;
+        }
+
+        public void setUseComment(boolean useComment) {
+            this.useComment.set(useComment);
+        }
+
+        public boolean isEnableDomain() {
+            return enableDomain.get();
+        }
+
+        public SimpleBooleanProperty enableDomainProperty() {
+            return enableDomain;
+        }
+
+        public void setEnableDomain(boolean enableDomain) {
+            this.enableDomain.set(enableDomain);
+        }
 
         @Override
         public MybatisOfficialExportConfig clone() {

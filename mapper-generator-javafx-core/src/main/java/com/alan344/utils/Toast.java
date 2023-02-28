@@ -1,9 +1,9 @@
 package com.alan344.utils;
 
+import com.alan344.exception.BizException;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -60,9 +60,11 @@ public class Toast {
             fadeOutTimeline.play();
         }))).start());
         fadeInTimeline.play();
+        throw new BizException(message);
     }
 
     public static void makeTextDefault(Stage stage, String message) {
         Toast.makeText(stage, message, 3000, 500, 500, 15, 5);
+        throw new BizException(message);
     }
 }

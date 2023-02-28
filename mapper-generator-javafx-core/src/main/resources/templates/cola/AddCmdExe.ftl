@@ -7,7 +7,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>domain<#if DOMAIN != ""
 import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}Cmd;
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  */
 @Service

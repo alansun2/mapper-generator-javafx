@@ -35,6 +35,30 @@
 /* 文本框 */
 .text-field {
     -fx-background-radius: 0em;
+    -fx-background-color: -fx-text-box-border, -fx-control-inner-background;
+    -fx-border-width: 1;
+}
+
+.text-field:focused {
+    -fx-border-color: #CFDEFC;
+}
+
+.tab-pane {
+    -fx-tab-min-width: 100;
+}
+
+/* tab-pane*/
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #FFF;
+}
+
+.tab-pane .tab-header-area .headers-region {
+    -fx-background-color: #E8E8E8;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #E8E8E8;
+    -fx-background-insets: 0;
 }
 
 /* border-pane */
@@ -62,7 +86,8 @@ StackPane {
     -fx-background-insets: 0;
 }
 
-.split-pane:horizontal .split-pane-divider {
+.split-pane:horizontal .split-pane-divider,
+.split-pane:vertical .split-pane-divider {
     -fx-background-color: #E8E8E8;
     -fx-opacity: 0.5;
     -fx-pref-width: 4;
@@ -125,6 +150,8 @@ StackPane {
 }
 
 .list-cell {
+    /*-fx-padding: 0;*/
+    /*-fx-pref-height: 30;*/
     -fx-alignment: center;
     -fx-background-color: #FFF;
     -fx-background-radius: 5;

@@ -25,9 +25,12 @@ public class ExtraTemplateFileItemHBox extends HBox {
 
     private final boolean showCheckBox;
 
-    public ExtraTemplateFileItemHBox(boolean showCheckBox, ExtraTemplateFileConfig extraTemplateFileConfig) {
+    private final boolean isSystem;
+
+    public ExtraTemplateFileItemHBox(boolean showCheckBox, boolean isSystem, ExtraTemplateFileConfig extraTemplateFileConfig) {
         this.extraTemplateFileConfig = extraTemplateFileConfig;
         this.showCheckBox = showCheckBox;
+        this.isSystem = isSystem;
         int jfxCheckBoxWidth = 30, nameWidth = 130, btnWidth = 64;
 
         jfxCheckBox = new JFXCheckBox();
@@ -58,7 +61,7 @@ public class ExtraTemplateFileItemHBox extends HBox {
         copyBtn.setPrefWidth(btnWidth);
         copyBtn.prefHeightProperty().bind(this.heightProperty());
 
-        this.disable(extraTemplateFileConfig.isSystem());
+        this.disable(isSystem);
         this.getChildren().addAll(jfxCheckBox, nameLabel, extraFileTypeLabel, editButton, deleteButton, copyBtn);
         this.setSpacing(10);
         this.setAlignment(Pos.CENTER);
@@ -91,6 +94,10 @@ public class ExtraTemplateFileItemHBox extends HBox {
 
     public boolean isShowCheckBox() {
         return showCheckBox;
+    }
+
+    public boolean isSystem() {
+        return isSystem;
     }
 
     private void disable(boolean disable) {

@@ -11,7 +11,7 @@ import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.$
 import <#if package_prefix != "">${package_prefix}.</#if>dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
 
 /**
- * @author ${ahtuor}
+ * @author ${author}
  * @date ${CUR_DATE_TIME}
  */
 @RestController
@@ -37,8 +37,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      * @return {@link ${TYPE_NAME_UPPER_CAMEL}PageDTO}s
      */
     @GetMapping(value = "/page")
-    public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
-        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}Page(qry);
+    public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> page${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
+        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.page${TYPE_NAME_UPPER_CAMEL}(qry);
     }
 
     /**
