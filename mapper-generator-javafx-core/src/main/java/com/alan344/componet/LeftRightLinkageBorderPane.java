@@ -34,16 +34,16 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
 
     private List<GC> gcList;
 
-    private Function<GC, Region> rightNodeSupplier;
+    private final Function<GC, Region> rightNodeSupplier;
 
-    public LeftRightLinkageBorderPane(Supplier<GC> generatorGC,
-                                      Function<GC, GI> generatorGI,
+    public LeftRightLinkageBorderPane(Supplier<GC> generatorGc,
+                                      Function<GC, GI> generatorGi,
                                       Function<GC, Region> rightNodeFunc,
                                       Stage stage,
                                       List<Button> bottomBtns,
                                       double... positions) {
         this.stage = stage;
-        this.generatorGI = generatorGI;
+        this.generatorGI = generatorGi;
         this.rightNodeSupplier = rightNodeFunc;
         this.getStylesheets().add("css/extra-file.css");
 
@@ -69,11 +69,11 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 MenuItem addMenuItem = new MenuItem("New");
                 addMenuItem.setGraphic(new FontIcon("unil-plus-circle:16:BLUE"));
                 addMenuItem.setOnAction(event1 -> this.openGroupConfigStage(null, false, groupName -> {
-                    GC gc = generatorGC.get();
+                    GC gc = generatorGc.get();
                     gc.setGroupName(groupName);
                     gc.setSystem(false);
                     gc.setList(new ArrayList<>(3));
-                    GI gi = generatorGI.apply(gc);
+                    GI gi = generatorGi.apply(gc);
                     if (gi instanceof Region) {
                         ((Region) gi).setPrefHeight(23);
                     }
@@ -97,7 +97,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     final GC cloneGc = (GC) gc.clone();
                     cloneGc.setGroupName(this.getGroupName(cloneGc.getGroupName() + "-COPY"));
                     cloneGc.setSystem(false);
-                    GI cloneGi = generatorGI.apply(cloneGc);
+                    GI cloneGi = generatorGi.apply(cloneGc);
                     if (cloneGi instanceof Region) {
                         ((Region) cloneGi).setPrefHeight(23);
                     }
@@ -114,12 +114,12 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     groupListView.getItems().remove(selectedItem);
                 });
 
-                final boolean isSystem = selectedItem.getConfig().isSystem();
-                ContextMenu contextMenu;
-                if (isSystem) {
+                ContextMenu contextMenu = new ContextMenu(addMenuItem, updateMenuItem, copyMenuItem, deleteMenuItem);
+                // 是否是系统内置的配置
+                if (null == selectedItem) {
+                    contextMenu = new ContextMenu(addMenuItem);
+                } else if (selectedItem.getConfig().isSystem()) {
                     contextMenu = new ContextMenu(addMenuItem, copyMenuItem);
-                } else {
-                    contextMenu = new ContextMenu(addMenuItem, updateMenuItem, copyMenuItem, deleteMenuItem);
                 }
                 // 放入  contextMenu
                 groupListView.setContextMenu(contextMenu);
@@ -162,10 +162,10 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
             }).toList());
 
             // 打开之前使用的配置
-            final Optional<GI> optionalGI = this.groupListView.getItems().stream()
+            final Optional<GI> optionalGi = this.groupListView.getItems().stream()
                     .filter(gi -> gi.getConfig().isEnable()).findFirst();
-            if (optionalGI.isPresent()) {
-                final GI gi = optionalGI.get();
+            if (optionalGi.isPresent()) {
+                final GI gi = optionalGi.get();
                 final int i = this.groupListView.getItems().indexOf(gi);
                 this.groupListView.getSelectionModel().select(i);
                 this.borderPane.setCenter(rightNodeSupplier.apply(gi.getConfig()));
@@ -246,9 +246,9 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
 
         void setGroupName(String groupName);
 
-        Collection getList();
+        Collection<?> getList();
 
-        void setList(Collection list);
+        void setList(Collection<?> list);
 
         boolean isSystem();
 

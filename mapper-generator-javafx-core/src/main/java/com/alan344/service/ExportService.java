@@ -35,15 +35,8 @@ public class ExportService {
         this.saveSetupInternal(mybatisExportConfig);
 
         boolean exportSuccess = true;
-        try {
-            // 调用 mybatis generator 生成文件
-            mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
-        } catch (Throwable e) {
-            log.error("export fail", e);
-            exportSuccess = false;
-        }
-
-        // 成功或失败后的弹窗
+        // 调用 mybatis generator 生成文件
+        mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
         exportSuccessAlertController.openTableAdvancedSetup(NodeConstants.primaryStage, exportSuccess, mybatisExportConfig);
     }
 
@@ -57,7 +50,7 @@ public class ExportService {
     }
 
     private void saveSetupInternal(MybatisExportConfig mybatisExportConfig) {
-        //写入文件
+        // 写入文件
         configService.addConfig(mybatisExportConfig);
 
         // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 table 配置（如 insert）文件重写

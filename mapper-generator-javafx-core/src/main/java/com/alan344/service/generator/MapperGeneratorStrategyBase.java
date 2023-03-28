@@ -7,10 +7,7 @@ import com.alan344.bean.Table;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.plugin.DeleteByIMethodPlugin;
-import com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin;
-import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
-import com.alan344.plugin.PluginUtils;
+import com.alan344.plugin.*;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -103,6 +100,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
         // 判断文件夹是否存在，如果不存在则进行创建
         this.checkAndGeneratorDir(mybatisExportConfig);
+
         // 执行创建
         this.generateMyBatis3(doc, mybatisExportConfig);
     }
@@ -129,6 +127,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         }
         // 自定义插件
         generatorUtils.addPlugin(DeleteByIMethodPlugin.class.getName());
+        // 用于控制是否生成对应的 mybatis 文件
+        generatorUtils.addPlugin(MybatisGeneratorPlugin.class.getName());
 
         // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
@@ -193,10 +193,10 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         this.addModelGenerator(generatorUtils, mybatisExportConfig);
 
         // xml 位置配置
-        this.addMapperGenerator(generatorUtils, mybatisExportConfig);
+        this.addXmlGenerator(generatorUtils, mybatisExportConfig);
 
         // mapper （dao） 位置配置
-        this.addXmlGenerator(generatorUtils, mybatisExportConfig);
+        this.addClientGenerator(generatorUtils, mybatisExportConfig);
     }
 
     /**
@@ -218,13 +218,11 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * @param generatorUtils      工具
      * @param mybatisExportConfig 配置信息
      */
-    protected void addMapperGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
+    protected void addXmlGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // xml 位置配置
-        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
-            final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
-            sqlMapGenerator.setAttribute("targetPackage", ".");
-            sqlMapGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
-        }
+        final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
+        sqlMapGenerator.setAttribute("targetPackage", ".");
+        sqlMapGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperXmlLocation().replaceAll("\\\\", "/"));
     }
 
     /**
@@ -233,17 +231,15 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * @param generatorUtils      工具
      * @param mybatisExportConfig 配置信息
      */
-    protected void addXmlGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
+    protected void addClientGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // mapper （dao） 位置配置
-        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperPackage()) && StringUtils.isNotEmpty(mybatisExportConfig.getMapperLocation())) {
-            final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
-            javaClientGenerator.setAttribute("targetPackage", mybatisExportConfig.getMapperPackage());
-            javaClientGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperLocation().replaceAll("\\\\", "/"));
-            javaClientGenerator.setAttribute("type", "XMLMAPPER");
-            // Mapper 接口
-            final String mapperRootInterface = mybatisExportConfig.getMapperRootInterface();
-            generatorUtils.addProperty(StringUtils.isNotEmpty(mapperRootInterface), javaClientGenerator, PropertyRegistry.ANY_ROOT_INTERFACE, mapperRootInterface);
-        }
+        final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
+        javaClientGenerator.setAttribute("targetPackage", mybatisExportConfig.getMapperPackage());
+        javaClientGenerator.setAttribute("targetProject", mybatisExportConfig.getMapperLocation().replaceAll("\\\\", "/"));
+        javaClientGenerator.setAttribute("type", mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType());
+        // Mapper 接口
+        final String mapperRootInterface = mybatisExportConfig.getMapperRootInterface();
+        generatorUtils.addProperty(StringUtils.isNotEmpty(mapperRootInterface), javaClientGenerator, PropertyRegistry.ANY_ROOT_INTERFACE, mapperRootInterface);
     }
 
     /**

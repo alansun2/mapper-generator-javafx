@@ -15,10 +15,12 @@ public class MybatisExportGroupItemHBox extends HBox implements LeftRightLinkage
 
     private final MybatisExportConfig mybatisExportConfig;
 
+
     public MybatisExportGroupItemHBox(MybatisExportConfig extraFileGroupConfig) {
         this.mybatisExportConfig = extraFileGroupConfig;
         label = new Label(extraFileGroupConfig.getGroupName());
         label.prefWidthProperty().bind(this.widthProperty().subtract(30));
+        label.textProperty().bindBidirectional(extraFileGroupConfig.configNameProperty());
         TooltipWrapper.wrap(label, extraFileGroupConfig.getGroupName());
         label.setAlignment(Pos.CENTER);
         this.getChildren().addAll(label);

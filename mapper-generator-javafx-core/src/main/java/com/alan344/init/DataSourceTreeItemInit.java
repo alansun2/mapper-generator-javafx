@@ -4,8 +4,8 @@ import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.constants.BaseConstants;
 import com.alan344.controller.MainController;
-import com.alan344.service.DataSourceService;
 import com.alan344.factory.TreeItemFactory;
+import com.alan344.service.DataSourceService;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
@@ -38,11 +38,6 @@ public class DataSourceTreeItemInit {
 
         // 加载 数据源 和 table
         dataSources.forEach(dataSource -> this.addExpandListenerForDataSource(dataSource, treeItemDataSourceRoot));
-
-        // 如果只有一个数据源，则自动展开
-        if (dataSources.size() == 1) {
-            treeItemDataSourceRoot.getChildren().get(0).setExpanded(true);
-        }
     }
 
     /**

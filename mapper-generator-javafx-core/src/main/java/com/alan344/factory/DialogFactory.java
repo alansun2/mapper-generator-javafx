@@ -39,6 +39,7 @@ public class DialogFactory {
 
     public static void exceptionDialog(Throwable e) {
         ExceptionDialog exceptionDialog = new ExceptionDialog(e);
+        exceptionDialog.setWidth(700);
         exceptionDialog.setHeaderText(e.getMessage());
         exceptionDialog.show();
     }

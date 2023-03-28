@@ -154,6 +154,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
         if (null != customProperties) {
             modelDataMap.putAll(customProperties);
+            modelDataMap.putAll(ConfigConstants.internalGlobalParam);
         }
 
         return modelDataMap;

@@ -56,10 +56,10 @@ public class ExtraFileController {
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
     private final Map<String, ListView<ExtraFileItemHBox>> groupNameListViewMapCache = new HashMap<>();
     private LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
-    private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> cache = new HashMap<>(8);
+    private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> CACHE = new HashMap<>(8);
 
     public BorderPane getBorderPane(MybatisExportConfig mybatisExportConfig) {
-        linkageBorderPane = cache.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
+        linkageBorderPane = CACHE.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
             final LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane1 = new LeftRightLinkageBorderPane<>(
                     ExtraFileGroupConfig::new,
                     this::convert2ExtraFileGroupItem,
@@ -110,8 +110,8 @@ public class ExtraFileController {
     @FXML
     public void export() {
         final Optional<ExtraFileGroupConfig> enabledConfig = linkageBorderPane.getGroupLeftListView().getItems().stream()
-                .filter(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig().isEnable())
-                .map(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig()).findFirst();
+                .map(ExtraFileGroupItemHBox::getConfig)
+                .filter(ExtraFileGroupConfig::isEnable).findFirst();
         if (enabledConfig.isPresent()) {
             // selected group
             final ExtraFileGroupConfig extraFileGroupConfig = enabledConfig.get();

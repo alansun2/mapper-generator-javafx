@@ -202,3 +202,7 @@ StackPane {
 .menu-item .label {
     -fx-text-fill: #000;
 }
+
+.error {
+    -fx-border-color: #d20a0a;
+}

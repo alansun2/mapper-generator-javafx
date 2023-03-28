@@ -1,4 +1,6 @@
 .anchorPane {
     -fx-border-radius: 2;
     -fx-background-image: url("/image/aisi.jpg");
+
+    -fx-text-alignment: center;
 }

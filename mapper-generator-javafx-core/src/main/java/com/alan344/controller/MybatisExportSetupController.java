@@ -5,16 +5,15 @@ import com.alan344.componet.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
 import com.alan344.service.node.NodeHandler;
-import com.alan344.utils.FileExploreUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXComboBox;
+import javafx.collections.FXCollections;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,17 +22,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author AlanSun
@@ -46,18 +43,30 @@ public class MybatisExportSetupController {
     private ConfigService configService;
     @Resource
     private ExportService exportService;
-    @Autowired
+    @Resource
     private ExtraFileController extraFileController;
-    private Map<String, Region> configNameBorderPaneMap = new HashMap<>();
+    private final Map<String, Region> configNameBorderPaneMap = new HashMap<>();
+    private final Map<String, ValidationSupport> configNameValidationMap = new HashMap<>() {
+        @Override
+        public ValidationSupport get(Object key) {
+            ValidationSupport validationSupport = super.get(key);
+            if (validationSupport == null) {
+                validationSupport = new ValidationSupport();
+                validationSupport.validationDecoratorProperty().set(styleClassValidationDecoration);
+                this.put((String) key, validationSupport);
+            }
+            return validationSupport;
+        }
+    };
 
-    private ValidationSupport validationSupport = new ValidationSupport();
+    final StyleClassValidationDecoration styleClassValidationDecoration = new StyleClassValidationDecoration();
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
-    private Map<String, LeftRightLinkageBorderPane<MybatisExportConfig, MybatisExportGroupItemHBox>> cache = new HashMap<>();
+    private final Map<String, LeftRightLinkageBorderPane<MybatisExportConfig, MybatisExportGroupItemHBox>> CACHE = new HashMap<>();
 
     private LeftRightLinkageBorderPane<MybatisExportConfig, MybatisExportGroupItemHBox> linkageBorderPane;
 
     public BorderPane getBorderPane(String configName) {
-        linkageBorderPane = cache.computeIfAbsent(configName, s -> {
+        linkageBorderPane = CACHE.computeIfAbsent(configName, s -> {
             final LeftRightLinkageBorderPane<MybatisExportConfig, MybatisExportGroupItemHBox> linkageBorderPane1 = new LeftRightLinkageBorderPane<>(
                     MybatisExportConfig::new,
                     MybatisExportGroupItemHBox::new,
@@ -102,7 +111,7 @@ public class MybatisExportSetupController {
             Toast.makeTextDefault(NodeConstants.primaryStage, "请先新增配置");
         }
 
-        final MybatisExportConfig config = selectedItem.getConfig();
+        final MybatisExportConfig config = Objects.requireNonNull(selectedItem).getConfig();
         LinkedHashMap<String, String> customProperties = config.getCustomProperties();
         if (null == customProperties) {
             customProperties = new LinkedHashMap<>();
@@ -116,9 +125,11 @@ public class MybatisExportSetupController {
     }
 
     public void next() {
-        this.valid();
         final MybatisExportConfig config = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+        this.valid(config.getConfigName());
         config.setExportExtraFile(true);
+
+        BaseConstants.currentConfig = config;
 
         Node next = extraFileController.getBorderPane(config);
         // 入栈
@@ -130,19 +141,12 @@ public class MybatisExportSetupController {
         ConfigConstants.internalGlobalParam.put("author", config.getAuthor());
     }
 
-    public void saveSetUp() {
-        final MybatisExportConfig config = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
-        exportService.saveSetup(config);
-        // 保存成功 dialog
-        Button configBtn = new Button("打开配置");
-        configBtn.setOnAction(event -> FileExploreUtils.open(BaseConstants.MG_CONF_HOME));
-        DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
-    }
-
     public void export() {
-        this.valid();
         final MybatisExportConfig config = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+        this.valid(config.getConfigName());
         config.setExportExtraFile(false);
+
+        BaseConstants.currentConfig = config;
         exportService.export(config);
     }
 
@@ -160,23 +164,33 @@ public class MybatisExportSetupController {
             TextField configNameText = new TextField(mybatisExportConfig.getConfigName());
             mybatisExportConfig.configNameProperty().bindBidirectional(configNameText.textProperty());
             MybatisExportItemHBox configNameHbox = new MybatisExportItemHBox("配置名称:", configNameText);
-            validationSupport.registerValidator(configNameText, Validator.createEmptyValidator("配置名称必填"));
+            configNameValidationMap.get(s).registerValidator(configNameText, Validator.createEmptyValidator("配置名称必填"));
 
             TextField authorText = new TextField(mybatisExportConfig.getAuthor());
             mybatisExportConfig.authorProperty().bindBidirectional(authorText.textProperty());
             MybatisExportItemHBox authorHbox = new MybatisExportItemHBox("作者名称:", authorText);
-            validationSupport.registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
+            configNameValidationMap.get(s).registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
 
             FileSelectTextToggleHBox beanLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.modelEnableProperty(), mybatisExportConfig.getBeanLocation());
             mybatisExportConfig.beanLocationProperty().bindBidirectional(beanLocationText.getTextField().textProperty());
             beanLocationText.onAction(event -> this.beanDirectoryScan(beanLocationText));
             MybatisExportItemHBox beanLocationHbox = new MybatisExportItemHBox("Bean 地址:", beanLocationText);
+            configNameValidationMap.get(s).registerValidator(beanLocationText.getTextField(), (Validator<String>) (c, s1) -> {
+                boolean condition = mybatisExportConfig.modelEnableProperty().get() && StringUtils.isEmpty(s1);
+                return ValidationResult.fromErrorIf(c, "Bean 地址必填", condition);
+            });
 
             TextField beanPackageText = new TextField(mybatisExportConfig.getBeanPackage());
             mybatisExportConfig.beanPackageProperty().bindBidirectional(beanPackageText.textProperty());
             MybatisExportItemHBox beanPackageHbox = new MybatisExportItemHBox("Bean 包名:", beanPackageText);
 
+            configNameValidationMap.get(s).registerValidator(beanPackageText, (Validator<String>) (c, s1) -> {
+                boolean condition = mybatisExportConfig.modelEnableProperty().get() && StringUtils.isEmpty(s1);
+                return ValidationResult.fromErrorIf(c, "Bean 包名必填", condition);
+            });
+
             TextField beanRootClassText = new TextField(mybatisExportConfig.getModelRootClass());
+            beanRootClassText.setPromptText("非必填，生成的 Model 会继承该类");
             mybatisExportConfig.modelRootClassProperty().bindBidirectional(beanRootClassText.textProperty());
             MybatisExportItemHBox beanRootClassHbox = new MybatisExportItemHBox("Bean 父类:", beanRootClassText);
 
@@ -185,16 +199,25 @@ public class MybatisExportSetupController {
                 beanLocationText.disable(!newValue);
                 beanPackageHbox.setDisable(!newValue);
                 beanRootClassHbox.setDisable(!newValue);
+                configNameValidationMap.get(s).revalidate();
             });
 
             FileSelectTextToggleHBox mapperLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.mapperEnableProperty(), mybatisExportConfig.getMapperLocation());
             mybatisExportConfig.mapperLocationProperty().bindBidirectional(mapperLocationText.getTextField().textProperty());
             mapperLocationText.onAction(event -> this.beanDirectoryScan(mapperLocationText));
             MybatisExportItemHBox mapperLocationHbox = new MybatisExportItemHBox("Mapper 地址:", mapperLocationText);
+            configNameValidationMap.get(s).registerValidator(mapperLocationText.getTextField(), (Validator<String>) (c, s1) -> {
+                boolean condition = mybatisExportConfig.mapperEnableProperty().get() && StringUtils.isEmpty(s1);
+                return ValidationResult.fromErrorIf(c, "Mapper 地址必填", condition);
+            });
 
             TextField mapperPackageText = new TextField(mybatisExportConfig.getMapperPackage());
             mybatisExportConfig.mapperPackageProperty().bindBidirectional(mapperPackageText.textProperty());
             MybatisExportItemHBox mapperPackageHbox = new MybatisExportItemHBox("Mapper 包名:", mapperPackageText);
+            configNameValidationMap.get(s).registerValidator(mapperPackageText, (Validator<String>) (c, s1) -> {
+                boolean condition = mybatisExportConfig.mapperEnableProperty().get() && StringUtils.isEmpty(s1);
+                return ValidationResult.fromErrorIf(c, "Mapper 包名必填", condition);
+            });
 
             TextField mapperRootInterfaceText = new TextField(mybatisExportConfig.getMapperRootInterface());
             mapperRootInterfaceText.setPromptText("非必填，生成的 Mapper 会继承该接口");
@@ -206,16 +229,22 @@ public class MybatisExportSetupController {
                 mapperLocationText.disable(!newValue);
                 mapperPackageHbox.setDisable(!newValue);
                 mapperRootInterfaceHbox.setDisable(!newValue);
+                configNameValidationMap.get(s).revalidate();
             });
 
             FileSelectTextToggleHBox xmlLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.xmlEnableProperty(), mybatisExportConfig.getMapperXmlLocation());
             mybatisExportConfig.mapperXmlLocationProperty().bindBidirectional(xmlLocationText.getTextField().textProperty());
             xmlLocationText.onAction(event -> this.beanDirectoryScan(xmlLocationText));
             MybatisExportItemHBox xmlLocationHbox = new MybatisExportItemHBox("Xml 地址:", xmlLocationText);
+            configNameValidationMap.get(s).registerValidator(xmlLocationText.getTextField(), (Validator<String>) (c, s1) -> {
+                boolean condition = mybatisExportConfig.xmlEnableProperty().get() && StringUtils.isEmpty(s1);
+                return ValidationResult.fromErrorIf(c, "Xml 地址必填", condition);
+            });
 
             mybatisExportConfig.xmlEnableProperty().addListener((observable, oldValue, newValue) -> {
                 xmlLocationHbox.disable(!newValue);
                 xmlLocationText.disable(!newValue);
+                configNameValidationMap.get(s).revalidate();
             });
 
             TextField globalIgnoreFieldText = new TextField();
@@ -264,46 +293,67 @@ public class MybatisExportSetupController {
             mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
 
             Label targetNameLabel = new Label("targetName:");
-            targetNameLabel.setLayoutX(26);
+            targetNameLabel.setLayoutX(27);
             targetNameLabel.setLayoutY(20);
             final int selectTab = mybatisExportConfig.getSelectTab();
             tabPane1.getSelectionModel().select(selectTab);
 
-            ToggleGroup toggleGroup = new ToggleGroup();
-            toggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-                RadioButton radioButton = (RadioButton) newValue;
-                mybatisOfficialExportConfig.setTargetName(radioButton.getText());
-            });
-            JFXRadioButton mybatis3RadioButton = new JFXRadioButton("Mybatis3");
-            mybatis3RadioButton.setSelected(true);
-            mybatis3RadioButton.setUserData("Mybatis3");
-            mybatis3RadioButton.setToggleGroup(toggleGroup);
-            mybatis3RadioButton.setLayoutX(125);
-            mybatis3RadioButton.setLayoutY(20);
-            JFXRadioButton myBatis3SimpleRadioButton = new JFXRadioButton("MyBatis3Simple");
-            myBatis3SimpleRadioButton.setUserData("MyBatis3Simple");
-            myBatis3SimpleRadioButton.setToggleGroup(toggleGroup);
-            myBatis3SimpleRadioButton.setLayoutX(250);
-            myBatis3SimpleRadioButton.setLayoutY(20);
-            JFXRadioButton myBatis3DynamicSqlRadioButton = new JFXRadioButton("MyBatis3DynamicSql");
-            myBatis3DynamicSqlRadioButton.setUserData("MyBatis3DynamicSql");
-            myBatis3DynamicSqlRadioButton.setToggleGroup(toggleGroup);
-            myBatis3DynamicSqlRadioButton.setLayoutX(375);
-            myBatis3DynamicSqlRadioButton.setLayoutY(20);
+            Label javaClientTypeLabel = new Label("javaClientType:");
+            javaClientTypeLabel.setLayoutX(325);
+            javaClientTypeLabel.setLayoutY(20);
+            final JFXComboBox<String> javaClientTypeComboBox = new JFXComboBox<>();
+            javaClientTypeComboBox.setLayoutX(425);
+            javaClientTypeComboBox.setLayoutY(20);
+            javaClientTypeComboBox.getSelectionModel().select(mybatisOfficialExportConfig.getJavaClientType());
+            javaClientTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> mybatisOfficialExportConfig.setJavaClientType(newValue));
 
-            toggleGroup.getToggles().stream()
-                    .filter(toggle -> toggle.getUserData().toString().equals(mybatisOfficialExportConfig.getTargetName()))
-                    .findFirst().ifPresent(toggleGroup::selectToggle);
+            final JFXComboBox<String> stringJFXComboBox = new JFXComboBox<>(FXCollections.observableArrayList(List.of("Mybatis3", "MyBatis3Simple", "MyBatis3DynamicSql", "MyBatis3Kotlin")));
+            stringJFXComboBox.setLayoutX(125);
+            stringJFXComboBox.setLayoutY(20);
+            stringJFXComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                mybatisOfficialExportConfig.setTargetName(newValue);
+                if ("Mybatis3".equals(newValue)) {
+                    javaClientTypeComboBox.setDisable(false);
+                    javaClientTypeComboBox.getItems().clear();
+                    javaClientTypeComboBox.getItems().addAll("XMLMAPPER", "MIXEDMAPPER", "ANNOTATEDMAPPER");
+                    javaClientTypeComboBox.getSelectionModel().select("XMLMAPPER");
+                } else if ("MyBatis3Simple".equals(newValue)) {
+                    javaClientTypeComboBox.setDisable(false);
+                    javaClientTypeComboBox.getItems().clear();
+                    javaClientTypeComboBox.getItems().addAll("XMLMAPPER", "ANNOTATEDMAPPER");
+                    javaClientTypeComboBox.getSelectionModel().select("XMLMAPPER");
+                } else if ("MyBatis3DynamicSql".equals(newValue)) {
+                    // disable javaClientTypeComboBox
+                    this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
+                } else {
+                    // disable javaClientTypeComboBox
+                    this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
+                }
+            });
+            if (StringUtils.isEmpty(mybatisOfficialExportConfig.getTargetName())) {
+                stringJFXComboBox.getSelectionModel().select(0);
+            } else {
+                stringJFXComboBox.getSelectionModel().select(mybatisOfficialExportConfig.getTargetName());
+            }
 
             anchorPane.getChildren().addAll(userJava8CheckBox, useBigDecimalCheckBox, useCommentCheckBox,
-                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, mybatis3RadioButton, myBatis3SimpleRadioButton,
-                    myBatis3DynamicSqlRadioButton);
+                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel, javaClientTypeComboBox, stringJFXComboBox);
             return splitPane;
         });
     }
 
-    public void valid() {
-        if (validationSupport.isInvalid()) {
+    /**
+     * 禁用 javaClientTypeComboBox
+     *
+     * @param javaClientTypeComboBox javaClientTypeComboBox
+     */
+    private void disableJavaClientTypeComboBox(JFXComboBox<String> javaClientTypeComboBox) {
+        javaClientTypeComboBox.setDisable(true);
+        javaClientTypeComboBox.getSelectionModel().clearSelection();
+    }
+
+    public void valid(String configName) {
+        if (configNameValidationMap.get(configName).isInvalid()) {
             Toast.makeTextDefault(NodeConstants.primaryStage, "必填项不能为空");
         }
     }
@@ -314,17 +364,6 @@ public class MybatisExportSetupController {
      * 选择文件夹时，记录上次记录的选择的文件夹，方便用户选择
      */
     private String baseDir;
-
-    /**
-     * bean 文件夹选择器
-     */
-    public void beanDirectoryScan(FileSelectTextHBox fileSelectTextHBox) {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
-        if (directory != null) {
-            fileSelectTextHBox.setText(directory.getPath());
-            this.baseDir = directory.getPath();
-        }
-    }
 
     /**
      * bean 文件夹选择器

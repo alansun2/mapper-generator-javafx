@@ -1,6 +1,7 @@
 package com.alan344.bean.config;
 
 import com.alan344.componet.LeftRightLinkageBorderPane;
+import com.alibaba.fastjson2.JSON;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -372,22 +373,16 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
     @Override
     public MybatisExportConfig clone() {
-        try {
-            MybatisExportConfig clone = (MybatisExportConfig) super.clone();
-            clone.setMybatisOfficialExportConfig(mybatisOfficialExportConfig.clone());
+        final MybatisExportConfig clone = JSON.parseObject(JSON.toJSONString(this), MybatisExportConfig.class);
 
-            final List<ExtraFileGroupConfig> extraFileGroupConfigs1 = clone.getExtraFileGroupConfigs();
-            if (null != extraFileGroupConfigs1) {
-                clone.setExtraFileGroupConfigs(extraFileGroupConfigs1.stream().map(ExtraFileGroupConfig::clone).collect(Collectors.toList()));
-            }
-            if (null != clone.getCustomProperties()) {
-                clone.setCustomProperties(new LinkedHashMap<>(clone.getCustomProperties()));
-            }
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
+        final List<ExtraFileGroupConfig> extraFileGroupConfigs1 = clone.getExtraFileGroupConfigs();
+        if (null != extraFileGroupConfigs1) {
+            clone.setExtraFileGroupConfigs(extraFileGroupConfigs1.stream().map(ExtraFileGroupConfig::clone).collect(Collectors.toList()));
         }
+        if (null != clone.getCustomProperties()) {
+            clone.setCustomProperties(new LinkedHashMap<>(clone.getCustomProperties()));
+        }
+        return clone;
     }
 
     public interface ExportConfig {
@@ -400,6 +395,8 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         boolean isUseComment();
 
         String getTargetName();
+
+        String getJavaClientType();
 
         /**
          * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
@@ -417,6 +414,11 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
          * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
          */
         private SimpleStringProperty targetName = new SimpleStringProperty();
+
+        /**
+         * java client type
+         */
+        private SimpleStringProperty javaClientType = new SimpleStringProperty();
 
         /**
          * 是否使用java8
@@ -445,6 +447,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
          */
         private SimpleBooleanProperty enableDomain = new SimpleBooleanProperty(false);
 
+        @Override
         public String getTargetName() {
             return targetName.get();
         }
@@ -457,6 +460,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
             this.targetName.set(targetName);
         }
 
+        @Override
         public boolean isUserJava8() {
             return userJava8.get();
         }
@@ -469,6 +473,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
             this.userJava8.set(userJava8);
         }
 
+        @Override
         public boolean isUseBigDecimal() {
             return useBigDecimal.get();
         }
@@ -481,6 +486,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
             this.useBigDecimal.set(useBigDecimal);
         }
 
+        @Override
         public boolean isUseLombokGetSet() {
             return useLombokGetSet.get();
         }
@@ -505,6 +511,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
             this.useLombokBuilder.set(useLombokBuilder);
         }
 
+        @Override
         public boolean isUseComment() {
             return useComment.get();
         }
@@ -517,6 +524,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
             this.useComment.set(useComment);
         }
 
+        @Override
         public boolean isEnableDomain() {
             return enableDomain.get();
         }
@@ -530,14 +538,21 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         }
 
         @Override
+        public String getJavaClientType() {
+            return javaClientType.get();
+        }
+
+        public SimpleStringProperty javaClientTypeProperty() {
+            return javaClientType;
+        }
+
+        public void setJavaClientType(String javaClientType) {
+            this.javaClientType.set(javaClientType);
+        }
+
+        @Override
         public MybatisOfficialExportConfig clone() {
-            try {
-                MybatisOfficialExportConfig clone = (MybatisOfficialExportConfig) super.clone();
-                // TODO: copy mutable state here, so the clone can't change the internals of the original
-                return clone;
-            } catch (CloneNotSupportedException e) {
-                throw new AssertionError();
-            }
+            return JSON.parseObject(JSON.toJSONString(this), MybatisOfficialExportConfig.class);
         }
     }
 }

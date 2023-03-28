@@ -27,7 +27,7 @@ public class DeleteByIMethodPlugin extends PluginAdapter {
         if (Objects.equals(targetRuntime, "MyBatis3DynamicSql")) {
             return this.dynamic(interfaze, introspectedTable);
         }
-        return false;
+        return true;
     }
 
     public boolean dynamic(Interface interfaze, IntrospectedTable introspectedTable) {
