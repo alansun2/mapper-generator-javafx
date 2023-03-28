@@ -1,4 +1,4 @@
-package com.alan344.constants;
+package com.alan344.constants.enums;
 
 /**
  * @author AlanSun

@@ -1,9 +1,13 @@
 package com.alan344.bean.config;
 
 import com.alan344.componet.LeftRightLinkageBorderPane;
+import com.alan344.constants.enums.JavaClientTypeEnum;
+import com.alan344.constants.enums.LanguageEnum;
+import com.alan344.constants.enums.TargetNameEnum;
 import com.alibaba.fastjson2.JSON;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,84 +26,99 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     /**
      * 配置的名称
      */
-    private SimpleStringProperty configName = new SimpleStringProperty();
+    private final SimpleStringProperty configName = new SimpleStringProperty();
 
-    private SimpleBooleanProperty enable = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty enable = new SimpleBooleanProperty(false);
 
     /**
      * 是否是系统内置
      */
-    private SimpleBooleanProperty system = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty system = new SimpleBooleanProperty(false);
 
     /**
      * 类中的作者信息
      */
-    private SimpleStringProperty author = new SimpleStringProperty();
+    private final SimpleStringProperty author = new SimpleStringProperty();
 
     /**
-     * bean 的导出地址
+     * 项目地址
      */
-    private SimpleStringProperty beanLocation = new SimpleStringProperty();
+    private final SimpleStringProperty projectDir = new SimpleStringProperty();
+
+    /**
+     * 项目名
+     */
+    private final SimpleStringProperty projectName = new SimpleStringProperty();
+
+    /**
+     * 开发语言
+     */
+    private final SimpleObjectProperty<LanguageEnum> language = new SimpleObjectProperty<>(LanguageEnum.Java);
+
+    /**
+     * bean 地址
+     */
+    private final SimpleStringProperty beanLocation = new SimpleStringProperty();
 
     /**
      * bean 包名
      */
-    private SimpleStringProperty beanPackage = new SimpleStringProperty();
+    private final SimpleStringProperty beanPackage = new SimpleStringProperty();
 
     /**
      * model 的父类
      */
-    private SimpleStringProperty modelRootClass = new SimpleStringProperty();
+    private final SimpleStringProperty modelRootClass = new SimpleStringProperty();
 
     /**
      * 开启 model
      */
-    private SimpleBooleanProperty modelEnable = new SimpleBooleanProperty(true);
+    private final SimpleBooleanProperty modelEnable = new SimpleBooleanProperty(true);
 
     /**
      * mapper 导出地址
      */
-    private SimpleStringProperty mapperLocation = new SimpleStringProperty();
+    private final SimpleStringProperty mapperLocation = new SimpleStringProperty();
 
     /**
      * mapperBean 包名
      */
-    private SimpleStringProperty mapperPackage = new SimpleStringProperty();
+    private final SimpleStringProperty mapperPackage = new SimpleStringProperty();
 
     /**
      * mapper 的统一接口
      */
-    private SimpleStringProperty mapperRootInterface = new SimpleStringProperty();
+    private final SimpleStringProperty mapperRootInterface = new SimpleStringProperty();
 
     /**
      * 开启 model
      */
-    private SimpleBooleanProperty mapperEnable = new SimpleBooleanProperty(true);
+    private final SimpleBooleanProperty mapperEnable = new SimpleBooleanProperty(true);
 
     /***
      * xml导出地址
      */
-    private SimpleStringProperty mapperXmlLocation = new SimpleStringProperty();
+    private final SimpleStringProperty mapperXmlLocation = new SimpleStringProperty();
 
     /**
      * 开启 model
      */
-    private SimpleBooleanProperty xmlEnable = new SimpleBooleanProperty(true);
+    private final SimpleBooleanProperty xmlEnable = new SimpleBooleanProperty(true);
 
     /**
      * 全局的忽略字段
      */
-    private SimpleStringProperty globalIgnoreField = new SimpleStringProperty();
+    private final SimpleStringProperty globalIgnoreField = new SimpleStringProperty();
 
     /**
      * 使用原来的字段名
      */
-    private SimpleBooleanProperty useActualColumnNames = new SimpleBooleanProperty(false);
+    private final SimpleBooleanProperty useActualColumnNames = new SimpleBooleanProperty(false);
 
     /**
      * 选择的哪个tab
      */
-    private SimpleIntegerProperty selectTab = new SimpleIntegerProperty(0);
+    private final SimpleIntegerProperty selectTab = new SimpleIntegerProperty(0);
 
     /**
      * 是否导出额外文件
@@ -116,6 +135,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
 
     //---------------------extra file----------------
+
     @Getter
     @Setter
     private List<ExtraFileGroupConfig> extraFileGroupConfigs;
@@ -139,6 +159,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         return this.configName;
     }
 
+    @Override
     public boolean isEnable() {
         return enable.get();
     }
@@ -147,10 +168,12 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         return enable;
     }
 
+    @Override
     public void setEnable(boolean enable) {
         this.enable.set(enable);
     }
 
+    @Override
     public boolean isSystem() {
         return system.get();
     }
@@ -159,6 +182,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         return system;
     }
 
+    @Override
     public void setSystem(boolean system) {
         this.system.set(system);
     }
@@ -175,6 +199,42 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         this.author.set(author);
     }
 
+    public String getProjectDir() {
+        return projectDir.get();
+    }
+
+    public SimpleStringProperty projectDirProperty() {
+        return projectDir;
+    }
+
+    public void setProjectDir(String projectDir) {
+        this.projectDir.set(projectDir);
+    }
+
+    public String getProjectName() {
+        return projectName.get();
+    }
+
+    public SimpleStringProperty projectNameProperty() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName.set(projectName);
+    }
+
+    public LanguageEnum getLanguage() {
+        return language.get();
+    }
+
+    public SimpleObjectProperty<LanguageEnum> languageProperty() {
+        return language;
+    }
+
+    public void setLanguage(LanguageEnum language) {
+        this.language.set(language);
+    }
+
     public String getBeanLocation() {
         return beanLocation.get();
     }
@@ -186,7 +246,6 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     public void setBeanLocation(String beanLocation) {
         this.beanLocation.set(beanLocation);
     }
-
 
     public String getBeanPackage() {
         return beanPackage.get();
@@ -394,9 +453,9 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
         boolean isUseComment();
 
-        String getTargetName();
+        TargetNameEnum getTargetName();
 
-        String getJavaClientType();
+        JavaClientTypeEnum getJavaClientType();
 
         /**
          * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
@@ -411,14 +470,14 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     @Setter
     public static class MybatisOfficialExportConfig implements ExportConfig, Cloneable {
         /**
-         * Mybatis3，MyBatis3Simple，MyBatis3DynamicSql
+         * @see TargetNameEnum
          */
-        private SimpleStringProperty targetName = new SimpleStringProperty();
+        private SimpleObjectProperty<TargetNameEnum> targetName = new SimpleObjectProperty<>(TargetNameEnum.Mybatis3);
 
         /**
          * java client type
          */
-        private SimpleStringProperty javaClientType = new SimpleStringProperty();
+        private SimpleObjectProperty<JavaClientTypeEnum> javaClientType = new SimpleObjectProperty<>();
 
         /**
          * 是否使用java8
@@ -448,15 +507,15 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         private SimpleBooleanProperty enableDomain = new SimpleBooleanProperty(false);
 
         @Override
-        public String getTargetName() {
+        public TargetNameEnum getTargetName() {
             return targetName.get();
         }
 
-        public SimpleStringProperty targetNameProperty() {
+        public SimpleObjectProperty<TargetNameEnum> targetNameProperty() {
             return targetName;
         }
 
-        public void setTargetName(String targetName) {
+        public void setTargetName(TargetNameEnum targetName) {
             this.targetName.set(targetName);
         }
 
@@ -538,15 +597,15 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         }
 
         @Override
-        public String getJavaClientType() {
+        public JavaClientTypeEnum getJavaClientType() {
             return javaClientType.get();
         }
 
-        public SimpleStringProperty javaClientTypeProperty() {
+        public SimpleObjectProperty<JavaClientTypeEnum> javaClientTypeProperty() {
             return javaClientType;
         }
 
-        public void setJavaClientType(String javaClientType) {
+        public void setJavaClientType(JavaClientTypeEnum javaClientType) {
             this.javaClientType.set(javaClientType);
         }
 

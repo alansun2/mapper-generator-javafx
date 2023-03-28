@@ -1,6 +1,6 @@
 package com.alan344.bean;
 
-import com.alan344.constants.DriverEnum;
+import com.alan344.constants.enums.DriverEnum;
 import com.alan344.utils.StringUtils;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;

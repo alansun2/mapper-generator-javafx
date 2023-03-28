@@ -30,10 +30,6 @@ public class BaseConstants {
      * 额外文件配置
      */
     private static final String MG_EXTRA_CONFIG_FILE = MG_CONF_HOME + "extra-file-config";
-    /**
-     * example export dir
-     */
-    public static final String MG_EXAMPLE_HOME = MG_HOME + "/example-out/";
 
     /**
      * all dataSource

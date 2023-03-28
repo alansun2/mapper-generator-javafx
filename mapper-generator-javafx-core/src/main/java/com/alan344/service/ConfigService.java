@@ -76,18 +76,6 @@ public class ConfigService {
     }
 
     /**
-     * 删除配置
-     *
-     * @param mybatisExportConfig 配置信息
-     */
-    public void deleteConfig(MybatisExportConfig mybatisExportConfig) {
-        List<MybatisExportConfig> mybatisExportConfigs = this.loadConfigFromFile();
-        mybatisExportConfigs.remove(mybatisExportConfig);
-        this.saveConfigToFile();
-        this.configNameConfigMap.remove(mybatisExportConfig.getConfigName());
-    }
-
-    /**
      * 把配置写入文件
      */
     public void saveConfigToFile() {
@@ -143,7 +131,7 @@ public class ConfigService {
      */
     public List<ExtraFileGroupConfig> getExtraFileGroupConfigs(MybatisExportConfig mybatisExportConfig) {
         List<ExtraFileGroupConfig> extraFileGroupConfigs = mybatisExportConfig.getExtraFileGroupConfigs();
-        final List<ExtraFileGroupConfig> defaults = this.getDefaults();
+        final List<ExtraFileGroupConfig> defaults = this.getDefaults(mybatisExportConfig);
         if (CollectionUtils.isEmpty(extraFileGroupConfigs)) {
             extraFileGroupConfigs = defaults;
         } else {
@@ -155,7 +143,7 @@ public class ConfigService {
         return extraFileGroupConfigs;
     }
 
-    private List<ExtraFileGroupConfig> getDefaults() {
+    private List<ExtraFileGroupConfig> getDefaults(MybatisExportConfig mybatisExportConfig) {
         try {
             final InputStream inputStream = resource.getInputStream();
             final List<ExtraFileGroupConfig> extraFileGroupConfigs = JSON.parseArray(inputStream).toList(ExtraFileGroupConfig.class);
@@ -163,7 +151,12 @@ public class ConfigService {
             extraFileGroupConfigs.forEach(extraFileGroupConfig -> {
                 final Collection<ExtraFileGroupConfig.ExtraFileConfig> list = extraFileGroupConfig.getList();
                 list.forEach(extraFileConfig -> {
-                    extraFileConfig.setOutputPath(BaseConstants.MG_EXAMPLE_HOME + extraFileConfig.getOutputPath());
+                    StringBuilder sb = new StringBuilder(mybatisExportConfig.getProjectDir());
+                    sb.append("/");
+                    if (extraFileConfig.getOutputPath().startsWith("-")) {
+                        sb.append(mybatisExportConfig.getProjectName());
+                    }
+                    extraFileConfig.setOutputPath(sb.toString() + extraFileConfig.getOutputPath());
                 });
             });
             return extraFileGroupConfigs;

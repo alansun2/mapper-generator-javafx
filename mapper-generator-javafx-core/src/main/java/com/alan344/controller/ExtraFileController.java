@@ -13,10 +13,9 @@ import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
 import com.alan344.service.ExtraFileConfigService;
 import com.alan344.service.node.NodeHandler;
+import com.alan344.utils.Assert;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.FileExploreUtils;
-import com.alan344.utils.Toast;
-import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -76,19 +75,13 @@ public class ExtraFileController {
     }
 
     private List<Button> getBottomBtns(MybatisExportConfig mybatisExportConfig) {
-        Button openExtraTemplateFileStageBtn = new Button("添加额外文件");
+        Button openExtraTemplateFileStageBtn = new Button("导入额外文件");
         openExtraTemplateFileStageBtn.setOnAction(event -> {
             final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
-            if (null == selectedItem) {
-                Toast.makeText(NodeConstants.primaryStage, "请选择一个分组再添加", 3000, 500, 500, 15, 5);
-                return;
-            }
+            Assert.isTrue(Objects.nonNull(selectedItem), "请选择一个分组再添加", NodeConstants.primaryStage);
             final ExtraFileGroupConfig config = selectedItem.getConfig();
-            if (config.isSystem()) {
-                Toast.makeText(NodeConstants.primaryStage, "不能使用默认分组， 请新建分组后再使用", 3000, 500, 500, 15, 5);
-                return;
-            }
-            this.openExtraFilePage();
+            Assert.isTrue(!config.isSystem(), "不能使用默认分组， 请新建分组后再使用", NodeConstants.primaryStage);
+            this.openExtraFilePage(mybatisExportConfig);
         });
         Button openExtraPropertyStageBtn = new Button("添加额外属性");
         openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties(mybatisExportConfig));
@@ -107,8 +100,7 @@ public class ExtraFileController {
         return List.of(openExtraTemplateFileStageBtn, openExtraPropertyStageBtn, saveBtn, exportBtn, preBtn);
     }
 
-    @FXML
-    public void export() {
+    private void export() {
         final Optional<ExtraFileGroupConfig> enabledConfig = linkageBorderPane.getGroupLeftListView().getItems().stream()
                 .map(ExtraFileGroupItemHBox::getConfig)
                 .filter(ExtraFileGroupConfig::isEnable).findFirst();
@@ -134,14 +126,14 @@ public class ExtraFileController {
         exportService.export(BaseConstants.currentConfig);
     }
 
-    public void pre() {
+    private void pre() {
         NodeConstants.borderPaneWrap.setCenter(nodeHandler.getPre());
     }
 
     /**
      * 添加额外文件
      */
-    public void saveSetup() {
+    private void saveSetup() {
         exportService.saveSetup(BaseConstants.currentConfig);
         // 保存成功 dialog
         Button configBtn = new Button("打开配置");
@@ -152,7 +144,7 @@ public class ExtraFileController {
     /**
      * 添加额外文件
      */
-    public void openExtraFilePage() {
+    private void openExtraFilePage(MybatisExportConfig mybatisExportConfig) {
         extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
             final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
             // 获取已经存在的配置
@@ -166,8 +158,8 @@ public class ExtraFileController {
             // 获取所有的配置
             final Map<String, ExtraFileGroupConfig.ExtraFileConfig> templateIdMap = linkageBorderPane.getGroupLeftListView()
                     .getItems().stream()
-                    .filter(extraFileGroupItemHBox -> !extraFileGroupItemHBox.getConfig().isSystem())
-                    .flatMap(extraFileGroupItemHBox -> extraFileGroupItemHBox.getConfig().getList().stream())
+                    .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
+                    .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
                     .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig));
 
             Collection<ExtraFileGroupConfig.ExtraFileConfig> finalExtraFileConfigs = extraFileConfigs;
@@ -185,6 +177,8 @@ public class ExtraFileController {
                     if (null != original) {
                         extraFileConfigNew.setOutputPath(original.getOutputPath());
                         extraFileConfigNew.setPackageName(original.getPackageName());
+                    } else {
+                        extraFileConfigNew.setOutputPath(mybatisExportConfig.getProjectDir() + "/" + mybatisExportConfig.getBeanLocation());
                     }
                     rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, finalExtraFileConfigs, extraTemplateFileConfig, extraFileConfigNew, curExtraFileGroupConfig));
                     if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
@@ -198,7 +192,7 @@ public class ExtraFileController {
     /**
      * 打开添加自定义属性页面
      */
-    public void openExtraFileCustomProperties(MybatisExportConfig mybatisExportConfig) {
+    private void openExtraFileCustomProperties(MybatisExportConfig mybatisExportConfig) {
         LinkedHashMap<String, String> customProperties = mybatisExportConfig.getCustomProperties();
         if (null == customProperties) {
             customProperties = new LinkedHashMap<>();
@@ -219,11 +213,11 @@ public class ExtraFileController {
         ListView<CustomPropertyHBox> lv = new ListView<>();
 
         customProperties.forEach((key, value) -> {
-            CustomPropertyHBox customPropertyHBox = new CustomPropertyHBox(key, value);
-            customPropertyHBox.delOnAction(event -> {
-                lv.getItems().remove(customPropertyHBox);
+            CustomPropertyHBox customPropertyHbox = new CustomPropertyHBox(key, value);
+            customPropertyHbox.delOnAction(event -> {
+                lv.getItems().remove(customPropertyHbox);
             });
-            lv.getItems().add(customPropertyHBox);
+            lv.getItems().add(customPropertyHbox);
         });
 
         borderPane.setCenter(lv);
@@ -327,8 +321,9 @@ public class ExtraFileController {
             BaseConstants.baseFileDir = extraFileConfig.getOutputPath();
             File directory = FileDirChooserFactory.createDirectoryScan(null, com.alan344.utils.StringUtils.getDefaultIfNull(BaseConstants.baseFileDir, null));
             if (directory != null) {
-                outputPathTextField.setText(directory.getPath());
-                BaseConstants.baseFileDir = directory.getPath();
+                final String path = directory.getPath().replace("\\", "/");
+                outputPathTextField.setText(path);
+                BaseConstants.baseFileDir = path;
             }
         });
         PropertyHBox outputPathHbox = new PropertyHBox("文件输出地址", labelWidth, outputPathTextField);

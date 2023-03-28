@@ -1,6 +1,6 @@
 package com.alan344.bean.config;
 
-import com.alan344.constants.ExtraFileTypeEnum;
+import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.StringUtils;
 import lombok.Getter;
 import lombok.Setter;

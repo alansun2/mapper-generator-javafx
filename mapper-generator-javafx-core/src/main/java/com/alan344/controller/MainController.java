@@ -185,7 +185,7 @@ public class MainController implements Initializable {
         if (null != fileScan) {
             // 先备份
             ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
-            BaseConstants.baseFileDir = fileScan.getParent();
+            BaseConstants.baseFileDir = fileScan.getParent().replace("\\", "/");
             ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), Charset.defaultCharset());
             // 弹框
             DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
@@ -194,11 +194,12 @@ public class MainController implements Initializable {
 
     @FXML
     public void exportConfig() {
-        final File fileScan = FileDirChooserFactory.createDirectoryScan("导出文件名称", null);
-        if (null != fileScan) {
-            ZipUtil.zip(BaseConstants.MG_CONF_HOME, fileScan.getAbsolutePath() + "/config.zip", Charset.defaultCharset(), true);
+        final File directory = FileDirChooserFactory.createDirectoryScan("导出文件名称", null);
+        if (null != directory) {
+            final String absolutePath = directory.getAbsolutePath().replace("\\", "/");
+            ZipUtil.zip(BaseConstants.MG_CONF_HOME, absolutePath + "/config.zip", Charset.defaultCharset(), true);
             Button button = new Button("打开文件夹");
-            button.setOnAction(event -> FileExploreUtils.open(fileScan.getAbsolutePath()));
+            button.setOnAction(event -> FileExploreUtils.open(absolutePath));
             // 弹框
             DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
         }

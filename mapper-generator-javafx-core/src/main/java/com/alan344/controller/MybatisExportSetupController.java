@@ -1,10 +1,14 @@
 package com.alan344.controller;
 
+import cn.hutool.core.io.FileUtil;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.componet.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.constants.enums.JavaClientTypeEnum;
+import com.alan344.constants.enums.LanguageEnum;
+import com.alan344.constants.enums.TargetNameEnum;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
@@ -178,6 +182,26 @@ public class MybatisExportSetupController {
             MybatisExportItemHBox authorHbox = new MybatisExportItemHBox("作者名称:", authorText);
             configNameValidationMap.get(s).registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
 
+            FileSelectTextHBox projectDirText = new FileSelectTextHBox();
+            mybatisExportConfig.projectDirProperty().bindBidirectional(projectDirText.getTextField().textProperty());
+            MybatisExportItemHBox projectDirHbox = new MybatisExportItemHBox("项目地址:", projectDirText);
+            projectDirText.onAction(event -> this.beanDirectoryScan(projectDirText));
+            configNameValidationMap.get(s).registerValidator(projectDirText.getTextField(), Validator.createEmptyValidator("项目地址必填"));
+
+            TextField projectNameText = new TextField(mybatisExportConfig.getProjectName());
+            mybatisExportConfig.projectNameProperty().bindBidirectional(projectNameText.textProperty());
+            MybatisExportItemHBox projectNameHbox = new MybatisExportItemHBox("项目名称:", projectNameText);
+            configNameValidationMap.get(s).registerValidator(projectNameText, Validator.createEmptyValidator("项目名称必填"));
+
+            projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+                if (StringUtils.isNotEmpty(newValue) && StringUtils.isEmpty(projectNameText.getText())) {
+                    projectNameText.setText(FileUtil.getName(newValue));
+                }
+            });
+
+            JFXComboBox<LanguageEnum> languageCombox = new JFXComboBox<>(FXCollections.observableArrayList(LanguageEnum.values()));
+            MybatisExportItemHBox languageHbox = new MybatisExportItemHBox("语言:", languageCombox);
+
             FileSelectTextToggleHBox beanLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.modelEnableProperty(), mybatisExportConfig.getBeanLocation());
             mybatisExportConfig.beanLocationProperty().bindBidirectional(beanLocationText.getTextField().textProperty());
             beanLocationText.onAction(event -> this.beanDirectoryScan(beanLocationText));
@@ -258,8 +282,34 @@ public class MybatisExportSetupController {
             globalIgnoreFieldText.setPromptText("逗号隔开");
             mybatisExportConfig.globalIgnoreFieldProperty().bindBidirectional(globalIgnoreFieldText.textProperty());
             MybatisExportItemHBox globalIgnoreFieldHbox = new MybatisExportItemHBox("全局忽略字段:", globalIgnoreFieldText);
-            hBoxListView.getItems().addAll(configNameHbox, authorHbox, beanLocationHbox, beanPackageHbox, beanRootClassHbox,
-                    mapperLocationHbox, mapperPackageHbox, mapperRootInterfaceHbox, xmlLocationHbox, globalIgnoreFieldHbox);
+
+            // 选择语言时，自动设置 bean 和 mapper 的地址
+            languageCombox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                switch (newValue) {
+                    case Java -> {
+                        if (StringUtils.isEmpty(mybatisExportConfig.getBeanLocation()) || "src/main/kotlin".equals(mybatisExportConfig.getBeanLocation())) {
+                            mybatisExportConfig.setBeanLocation("src/main/java");
+                        }
+                        if (StringUtils.isEmpty(mybatisExportConfig.getMapperLocation()) || "src/main/kotlin".equals(mybatisExportConfig.getMapperLocation())) {
+                            mybatisExportConfig.setMapperLocation("src/main/java");
+                        }
+                    }
+                    case Kotlin -> {
+                        if (StringUtils.isEmpty(mybatisExportConfig.getBeanLocation()) || "src/main/java".equals(mybatisExportConfig.getBeanLocation())) {
+                            mybatisExportConfig.setBeanLocation("src/main/kotlin");
+                        }
+                        if (StringUtils.isEmpty(mybatisExportConfig.getMapperLocation()) || "src/main/java".equals(mybatisExportConfig.getMapperLocation())) {
+                            mybatisExportConfig.setMapperLocation("src/main/kotlin");
+                        }
+                    }
+                }
+            });
+            languageCombox.setValue(mybatisExportConfig.getLanguage());
+            mybatisExportConfig.languageProperty().bindBidirectional(languageCombox.valueProperty());
+
+            hBoxListView.getItems().addAll(configNameHbox, authorHbox, projectDirHbox, projectNameHbox, languageHbox,
+                    beanLocationHbox, beanPackageHbox, beanRootClassHbox, mapperLocationHbox, mapperPackageHbox,
+                    mapperRootInterfaceHbox, xmlLocationHbox, globalIgnoreFieldHbox);
 
             TabPane tabPane1 = new TabPane();
             tabPane1.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
@@ -308,43 +358,37 @@ public class MybatisExportSetupController {
             Label javaClientTypeLabel = new Label("javaClientType:");
             javaClientTypeLabel.setLayoutX(325);
             javaClientTypeLabel.setLayoutY(20);
-            final JFXComboBox<String> javaClientTypeComboBox = new JFXComboBox<>();
+            final JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox = new JFXComboBox<>();
             javaClientTypeComboBox.setLayoutX(425);
             javaClientTypeComboBox.setLayoutY(20);
-            javaClientTypeComboBox.getSelectionModel().select(mybatisOfficialExportConfig.getJavaClientType());
-            javaClientTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> mybatisOfficialExportConfig.setJavaClientType(newValue));
+            javaClientTypeComboBox.setValue(mybatisOfficialExportConfig.getJavaClientType());
+            javaClientTypeComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.javaClientTypeProperty());
 
-            final JFXComboBox<String> stringJFXComboBox = new JFXComboBox<>(FXCollections.observableArrayList(List.of("Mybatis3", "MyBatis3Simple", "MyBatis3DynamicSql", "MyBatis3Kotlin")));
-            stringJFXComboBox.setLayoutX(125);
-            stringJFXComboBox.setLayoutY(20);
-            stringJFXComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                mybatisOfficialExportConfig.setTargetName(newValue);
-                if ("Mybatis3".equals(newValue)) {
-                    javaClientTypeComboBox.setDisable(false);
-                    javaClientTypeComboBox.getItems().clear();
-                    javaClientTypeComboBox.getItems().addAll("XMLMAPPER", "MIXEDMAPPER", "ANNOTATEDMAPPER");
-                    javaClientTypeComboBox.getSelectionModel().select("XMLMAPPER");
-                } else if ("MyBatis3Simple".equals(newValue)) {
-                    javaClientTypeComboBox.setDisable(false);
-                    javaClientTypeComboBox.getItems().clear();
-                    javaClientTypeComboBox.getItems().addAll("XMLMAPPER", "ANNOTATEDMAPPER");
-                    javaClientTypeComboBox.getSelectionModel().select("XMLMAPPER");
-                } else if ("MyBatis3DynamicSql".equals(newValue)) {
-                    // disable javaClientTypeComboBox
-                    this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
-                } else {
-                    // disable javaClientTypeComboBox
-                    this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
+            final JFXComboBox<TargetNameEnum> targetNameJFXComboBox = new JFXComboBox<>(FXCollections.observableArrayList(TargetNameEnum.values()));
+            targetNameJFXComboBox.setLayoutX(125);
+            targetNameJFXComboBox.setLayoutY(20);
+            targetNameJFXComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                switch (newValue) {
+                    case Mybatis3 -> {
+                        javaClientTypeComboBox.setDisable(false);
+                        javaClientTypeComboBox.getItems().clear();
+                        javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.values());
+                        javaClientTypeComboBox.getSelectionModel().select(JavaClientTypeEnum.XMLMAPPER);
+                    }
+                    case MyBatis3Simple -> {
+                        javaClientTypeComboBox.setDisable(false);
+                        javaClientTypeComboBox.getItems().clear();
+                        javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.JAVA_CLIENT_TYPE_ENUMS);
+                        javaClientTypeComboBox.getSelectionModel().select(JavaClientTypeEnum.XMLMAPPER);
+                    }
+                    default -> this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
                 }
             });
-            if (StringUtils.isEmpty(mybatisOfficialExportConfig.getTargetName())) {
-                stringJFXComboBox.getSelectionModel().select(0);
-            } else {
-                stringJFXComboBox.getSelectionModel().select(mybatisOfficialExportConfig.getTargetName());
-            }
+            targetNameJFXComboBox.setValue(mybatisOfficialExportConfig.getTargetName());
+            targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
 
             anchorPane.getChildren().addAll(userJava8CheckBox, useBigDecimalCheckBox, useCommentCheckBox,
-                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel, javaClientTypeComboBox, stringJFXComboBox);
+                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel, javaClientTypeComboBox, targetNameJFXComboBox);
             return splitPane;
         });
     }
@@ -354,7 +398,7 @@ public class MybatisExportSetupController {
      *
      * @param javaClientTypeComboBox javaClientTypeComboBox
      */
-    private void disableJavaClientTypeComboBox(JFXComboBox<String> javaClientTypeComboBox) {
+    private void disableJavaClientTypeComboBox(JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox) {
         javaClientTypeComboBox.setDisable(true);
         javaClientTypeComboBox.getSelectionModel().clearSelection();
     }
@@ -378,8 +422,21 @@ public class MybatisExportSetupController {
     public void beanDirectoryScan(FileSelectTextToggleHBox fileSelectTextHBox) {
         File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
-            fileSelectTextHBox.setText(directory.getPath());
-            this.baseDir = directory.getPath();
+            final String path = directory.getPath().replace("\\", "/");
+            fileSelectTextHBox.setText(path);
+            this.baseDir = path;
+        }
+    }
+
+    /**
+     * bean 文件夹选择器
+     */
+    public void beanDirectoryScan(FileSelectTextHBox fileSelectTextHBox) {
+        File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
+        if (directory != null) {
+            final String path = directory.getPath().replace("\\", "/");
+            fileSelectTextHBox.setText(path);
+            this.baseDir = path;
         }
     }
 }

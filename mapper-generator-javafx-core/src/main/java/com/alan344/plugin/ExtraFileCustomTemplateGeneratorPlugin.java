@@ -5,7 +5,7 @@ import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
-import com.alan344.constants.ExtraFileTypeEnum;
+import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.tokenparse.GenericTokenParser;
 import com.google.common.base.CaseFormat;

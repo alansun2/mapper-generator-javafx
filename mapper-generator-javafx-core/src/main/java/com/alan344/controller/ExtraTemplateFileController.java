@@ -4,8 +4,8 @@ import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.componet.*;
 import com.alan344.constants.BaseConstants;
-import com.alan344.constants.ExtraFileTypeEnum;
 import com.alan344.constants.NodeConstants;
+import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExtraFileConfigService;
@@ -13,13 +13,15 @@ import com.alan344.utils.FileExploreUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.JFXDialog;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
@@ -273,23 +275,25 @@ public class ExtraTemplateFileController {
             // 文件地址
             File filePath = FileDirChooserFactory.createFileScan("freemarker 模板选择器", baseDir, "freemarker 文件", "*.ftl");
             if (filePath != null) {
-                customTemplatePathTextField.setText(filePath.getPath());
-                this.baseDir = filePath.getPath();
+                final String path = filePath.getPath().replace("\\", "/");
+                customTemplatePathTextField.setText(path);
+                this.baseDir = path;
+                BaseConstants.baseFileDir = path;
             }
         });
         customTemplatePathTextField.exportAction(actionEvent -> {
             // 文件地址
-            File filePath = FileDirChooserFactory.createDirectoryScan("模板导出地址", exportDir);
-            if (filePath != null) {
-                this.exportDir = filePath.getPath();
+            File directory = FileDirChooserFactory.createDirectoryScan("模板导出地址", exportDir);
+            if (directory != null) {
+                final String path = directory.getPath().replace("\\", "/");
+                BaseConstants.baseFileDir = path;
+                this.exportDir = path;
                 final Resource resource = resourceLoader.getResource(customTemplatePathTextField.getText());
                 try {
                     final File file = FileUtils.getFile(customTemplatePathTextField.getText());
-                    IOUtils.copy(resource.getInputStream(), new FileOutputStream(filePath.getPath() + "/" + file.getName()));
+                    IOUtils.copy(resource.getInputStream(), new FileOutputStream(path + "/" + file.getName()));
 
-                    JFXDialog jfxDialog = new JFXDialog();
-                    jfxDialog.setContent(new Label("sdfas"));
-                    jfxDialog.show();
+                    DialogFactory.successDialog(addTemplateStage, "导出成功");
                 } catch (IOException e) {
                     log.error("导出文件失败", e);
                 }

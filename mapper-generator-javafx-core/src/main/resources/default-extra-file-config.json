@@ -7,112 +7,112 @@
       {
         "templateId": "cola-1",
         "name": "DTO",
-        "outputPath": "test-cola-project\\client\\src\\main\\java",
+        "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-2",
         "name": "PageDTO",
-        "outputPath": "test-cola-project\\client\\src\\main\\java",
+        "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-3",
         "name": "DO",
-        "outputPath": "test-cola-project\\domain\\src\\main\\java",
+        "outputPath": "-domain/src/main/java",
         "packageName": "com.domain.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-4",
         "name": "Cmd",
-        "outputPath": "test-cola-project\\client\\src\\main\\java",
+        "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-5",
         "name": "PageQry",
-        "outputPath": "test-cola-project\\client\\src\\main\\java",
+        "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-6",
         "name": "AddCmdExe",
-        "outputPath": "test-cola-project\\app\\src\\main\\java",
+        "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor",
         "enable": true
       },
       {
         "templateId": "cola-7",
         "name": "UpdateCmdExe",
-        "outputPath": "test-cola-project\\app\\src\\main\\java",
+        "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor",
         "enable": true
       },
       {
         "templateId": "cola-8",
         "name": "DelByIdCmdExe",
-        "outputPath": "test-cola-project\\app\\src\\main\\java",
+        "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor",
         "enable": true
       },
       {
         "templateId": "cola-9",
         "name": "ByIdQryExe",
-        "outputPath": "test-cola-project\\app\\src\\main\\java",
+        "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor.query",
         "enable": true
       },
       {
         "templateId": "cola-10",
         "name": "PageQryExe",
-        "outputPath": "test-cola-project\\app\\src\\main\\java",
+        "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor.query",
         "enable": true
       },
       {
         "templateId": "cola-11",
         "name": "ServiceImpl",
-        "outputPath": "test-cola-project\\app\\src\\main\\java",
+        "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-12",
         "name": "ServiceI",
-        "outputPath": "test-cola-project\\client\\src\\main\\java",
+        "outputPath": "-client/src/main/java",
         "packageName": "com.api.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-13",
         "name": "Controller",
-        "outputPath": "test-cola-project\\adapter\\src\\main\\java",
+        "outputPath": "-adapter/src/main/java",
         "packageName": "com.web",
         "enable": true
       },
       {
         "templateId": "cola-14",
         "name": "GatewayI",
-        "outputPath": "test-cola-project\\domain\\src\\main\\java",
+        "outputPath": "-domain/src/main/java",
         "packageName": "com.domain.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-15",
         "name": "GatewayImpl",
-        "outputPath": "test-cola-project\\infrastructure\\src\\main\\java",
+        "outputPath": "-infrastructure/src/main/java",
         "packageName": "com.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "cola-16",
         "name": "DOConvertMapper",
-        "outputPath": "test-cola-project\\infrastructure\\src\\main\\java",
+        "outputPath": "-infrastructure/src/main/java",
         "packageName": "com.${DOMAIN}.convert",
         "enable": true
       }
@@ -126,49 +126,49 @@
       {
         "templateId": "usual-1",
         "name": "DTO",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.bean.dto.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "usual-2",
         "name": "PageDTO",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.bean.dto.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "usual-3",
         "name": "Cmd",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.bean.request.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "usual-4",
         "name": "PageQry",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.bean.request.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "usual-5",
         "name": "ServiceImpl",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.service.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "usual-6",
         "name": "ServiceI",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.service.${DOMAIN}",
         "enable": true
       },
       {
         "templateId": "usual-7",
         "name": "Controller",
-        "outputPath": "test-usual-project\\src\\main\\java",
+        "outputPath": "src/main/java",
         "packageName": "com.controller",
         "enable": true
       }

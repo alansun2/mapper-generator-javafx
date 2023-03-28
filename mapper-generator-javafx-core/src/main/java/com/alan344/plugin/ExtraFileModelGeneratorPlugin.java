@@ -2,7 +2,7 @@ package com.alan344.plugin;
 
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.constants.ConfigConstants;
-import com.alan344.constants.ExtraFileTypeEnum;
+import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.tokenparse.GenericTokenParser;
