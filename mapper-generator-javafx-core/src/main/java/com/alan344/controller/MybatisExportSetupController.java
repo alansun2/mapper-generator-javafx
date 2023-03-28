@@ -9,6 +9,7 @@ import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
 import com.alan344.service.node.NodeHandler;
+import com.alan344.utils.Assert;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
@@ -125,7 +126,11 @@ public class MybatisExportSetupController {
     }
 
     public void next() {
-        final MybatisExportConfig config = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+        final MybatisExportGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+        Assert.isTrue(null != selectedItem, "请先新增配置", NodeConstants.primaryStage);
+
+        final MybatisExportConfig config = selectedItem.getConfig();
+
         this.valid(config.getConfigName());
         config.setExportExtraFile(true);
 
@@ -142,7 +147,9 @@ public class MybatisExportSetupController {
     }
 
     public void export() {
-        final MybatisExportConfig config = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+        final MybatisExportGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+        Assert.isTrue(null != selectedItem, "请先新增配置", NodeConstants.primaryStage);
+        final MybatisExportConfig config = selectedItem.getConfig();
         this.valid(config.getConfigName());
         config.setExportExtraFile(false);
 

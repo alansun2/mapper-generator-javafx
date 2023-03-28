@@ -60,7 +60,9 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
 
         groupListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         groupListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            this.showRight(newValue.getConfig(), rightNodeFunc);
+            if (null != newValue) {
+                this.showRight(newValue.getConfig(), rightNodeFunc);
+            }
         });
         groupListView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
             final GI selectedItem = groupListView.getSelectionModel().getSelectedItem();
