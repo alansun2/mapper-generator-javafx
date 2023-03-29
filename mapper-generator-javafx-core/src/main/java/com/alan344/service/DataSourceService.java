@@ -7,7 +7,6 @@ import com.alibaba.fastjson2.JSONObject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -68,18 +67,23 @@ public class DataSourceService {
             return;
         }
 
-        this.deleteDataSourceFile(newDataSource);
+        // 删除旧的数据源文件
+        this.deleteDataSourceFile(oldDataSource);
 
+        // 保存配置
         this.downLoadToFile(newDataSource);
 
+        // 如果配置名或者url不同，需要删除表信息
         if (!oldDataSource.getConfigName().equals(newDataSource.getConfigName()) || !oldDataSource.getUrl().equals(newDataSource.getUrl())) {
-            tableService.deleteTables(newDataSource);
+            tableService.deleteTables(oldDataSource);
         }
 
-        BeanUtils.copyProperties(newDataSource, oldDataSource);
-
-        oldDataSource.setDataSource(null);
-        oldDataSource.setTables(null);
+        // 如果url不同，需要重新创建数据源
+        if (!oldDataSource.getUrl().equals(newDataSource.getUrl())) {
+            newDataSource.closeDataSource();
+            newDataSource.setDataSource(null);
+            newDataSource.setTables(null);
+        }
     }
 
     /**

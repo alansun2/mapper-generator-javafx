@@ -1,11 +1,13 @@
 package com.alan344.controller;
 
 import com.alan344.bean.DataSource;
+import com.alan344.constants.enums.DriverEnum;
 import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.service.DataSourceService;
 import com.alan344.utils.Assert;
-import com.alan344.utils.TextUtils;
+import com.alan344.utils.StringUtils;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -15,6 +17,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
+import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -30,44 +35,71 @@ import java.util.ResourceBundle;
 @Component
 public class DataSourceSetupController implements Initializable {
     @FXML
-    private TextField configName;
+    private TextField configNameTextField;
     @FXML
-    private TextField url;
+    private TextField urlTextField;
     @Getter
     @FXML
-    private TextField user;
+    private TextField userTextField;
     @Getter
     @FXML
-    private TextField password;
+    private TextField passwordTextField;
     @Getter
     @FXML
-    private TextField driveName;
-
-    //-----------------------------------------
-
+    private TextField driveNameTextField;
+    @FXML
+    private JFXComboBox<DriverEnum> driveTypeComboBox;
     @FXML
     private Button testConnectionBtn;
 
-    @Resource
-    private MainController mainController;
+    //-----------------------------------------
 
     @Resource
     private ApplicationContext applicationContext;
-
+    @Resource
+    private MainController mainController;
     @Resource
     private DataSourceService dataSourceService;
-
     @Resource
     private DataSourceTreeItemInit dataSourceTreeItemInit;
-
     private Stage dateSourceStage;
-
+    /**
+     * 判断是添加数据源还是更新数据源
+     */
     private boolean isAdd = true;
-
+    /**
+     * 旧数据源, 用于更新数据源
+     */
     private DataSource oldDataSource;
+    /**
+     * 当前数据源
+     */
+    private DataSource curDataSource;
+
+    private ValidationSupport validationSupport;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        driveTypeComboBox.getItems().addAll(DriverEnum.values());
+        driveTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                if (StringUtils.isEmpty(driveNameTextField.getText())) {
+                    driveNameTextField.setText(newValue.getDriveName());
+                }
+                if (StringUtils.isEmpty(urlTextField.getText())) {
+                    urlTextField.setText(newValue.getDefaultUrl());
+                }
+            }
+        });
+
+
+        validationSupport = new ValidationSupport();
+        validationSupport.setValidationDecorator(new StyleClassValidationDecoration());
+        validationSupport.registerValidator(configNameTextField, Validator.createEmptyValidator("配置名称不能为空"));
+        validationSupport.registerValidator(urlTextField, Validator.createEmptyValidator("url不能为空"));
+        validationSupport.registerValidator(userTextField, Validator.createEmptyValidator("user不能为空"));
+        validationSupport.registerValidator(passwordTextField, Validator.createEmptyValidator("password不能为空"));
+        validationSupport.registerValidator(driveNameTextField, Validator.createEmptyValidator("driveName不能为空"));
     }
 
     /**
@@ -77,23 +109,22 @@ public class DataSourceSetupController implements Initializable {
      */
     @FXML
     public void apply() throws IOException {
-        // 包装数据源
-        final DataSource dataSource = this.packageDateSource();
-
+        Assert.isTrue(!validationSupport.isInvalid(), "请填写完整数据源信息", dateSourceStage);
         if (isAdd) {
             // 判断数据源是否存在
-            Assert.isTrue(!dataSourceService.contains(dataSource), "该数据源已存在", dateSourceStage);
-            // 点击应用后关闭添加数据源页面
-            dateSourceStage.close();
+            Assert.isTrue(!dataSourceService.contains(curDataSource), "该数据源已存在", dateSourceStage);
 
             // 添加数据源
-            dataSourceService.addDataSource(dataSource);
+            dataSourceService.addDataSource(curDataSource);
 
             // 把 dataSource 放入 treeItemRoot
-            dataSourceTreeItemInit.addExpandListenerForDataSource(dataSource, mainController.getTreeItemDataSourceRoot());
+            dataSourceTreeItemInit.addExpandListenerForDataSource(curDataSource, mainController.getTreeItemDataSourceRoot());
+
+            // 点击应用后关闭添加数据源页面
+            dateSourceStage.close();
         } else {
             // 更新数据源
-            dataSourceService.updateDataSource(oldDataSource, dataSource);
+            dataSourceService.updateDataSource(oldDataSource, curDataSource);
 
             // 点击应用后关闭添加数据源页面
             dateSourceStage.close();
@@ -113,10 +144,8 @@ public class DataSourceSetupController implements Initializable {
      */
     @FXML
     public void testConnection() {
-        final DataSource dataSource = this.packageDateSource();
-
-
-        if (dataSourceService.testConnection(dataSource)) {
+        Assert.isTrue(!validationSupport.isInvalid(), "请填写完整数据源信息", dateSourceStage);
+        if (dataSourceService.testConnection(curDataSource)) {
             testConnectionBtn.setStyle("-fx-background-color: #cafdca");
         } else {
             testConnectionBtn.setStyle("-fx-background-color: #fab5b5");
@@ -137,33 +166,18 @@ public class DataSourceSetupController implements Initializable {
         dateSourceStage.initModality(Modality.WINDOW_MODAL);
         dateSourceStage.initOwner(primaryStage);
         if (null != dataSource) {
-            configName.setText(dataSource.getConfigName());
-            url.setText(dataSource.getUrl());
-            user.setText(dataSource.getUser());
-            password.setText(dataSource.getPassword());
-            driveName.setText(dataSource.getDriveName());
             isAdd = false;
-            oldDataSource = dataSource;
+            oldDataSource = dataSource.copy();
         } else {
             isAdd = true;
+            dataSource = new DataSource();
         }
+        curDataSource = dataSource;
+        configNameTextField.textProperty().bindBidirectional(dataSource.configNameProperty());
+        urlTextField.textProperty().bindBidirectional(dataSource.urlProperty());
+        userTextField.textProperty().bindBidirectional(dataSource.userProperty());
+        passwordTextField.textProperty().bindBidirectional(dataSource.passwordProperty());
+        driveNameTextField.textProperty().bindBidirectional(dataSource.driveNameProperty());
         dateSourceStage.show();
-    }
-
-    /**
-     * package DataSource
-     *
-     * @return {@link DataSource}
-     */
-    private DataSource packageDateSource() {
-        TextUtils.checkTextsHasEmpty(dateSourceStage, url, user, password);
-        // jdbc:mysql://ip:port/home_school?
-        DataSource dataSource = new DataSource();
-        dataSource.setConfigName(configName.getText());
-        dataSource.setUrl(url.getText());
-        dataSource.setDriveName(driveName.getText());
-        dataSource.setUser(user.getText());
-        dataSource.setPassword(password.getText());
-        return dataSource;
     }
 }

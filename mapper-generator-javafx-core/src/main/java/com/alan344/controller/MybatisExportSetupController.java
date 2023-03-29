@@ -166,7 +166,8 @@ public class MybatisExportSetupController {
     }
 
     public Region getExportSetupRegion(MybatisExportConfig mybatisExportConfig) {
-        return configNameBorderPaneMap.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
+        final Region region = configNameBorderPaneMap.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
+            final ValidationSupport validationSupport = configNameValidationMap.get(s);
             SplitPane splitPane = new SplitPane();
             splitPane.getStylesheets().add("css/common.css");
             splitPane.setDividerPositions(0.68);
@@ -179,23 +180,23 @@ public class MybatisExportSetupController {
             TextField configNameText = new TextField(mybatisExportConfig.getConfigName());
             mybatisExportConfig.configNameProperty().bindBidirectional(configNameText.textProperty());
             MybatisExportItemHBox configNameHbox = new MybatisExportItemHBox("配置名称:", configNameText);
-            configNameValidationMap.get(s).registerValidator(configNameText, Validator.createEmptyValidator("配置名称必填"));
+            validationSupport.registerValidator(configNameText, Validator.createEmptyValidator("配置名称必填"));
 
             TextField authorText = new TextField(mybatisExportConfig.getAuthor());
             mybatisExportConfig.authorProperty().bindBidirectional(authorText.textProperty());
             MybatisExportItemHBox authorHbox = new MybatisExportItemHBox("作者名称:", authorText);
-            configNameValidationMap.get(s).registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
+            validationSupport.registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
 
             FileSelectTextHBox projectDirText = new FileSelectTextHBox("浏览", mybatisExportConfig.getProjectDir());
             mybatisExportConfig.projectDirProperty().bindBidirectional(projectDirText.getTextField().textProperty());
             MybatisExportItemHBox projectDirHbox = new MybatisExportItemHBox("项目地址:", projectDirText);
             projectDirText.onAction(event -> this.beanDirectoryScan(projectDirText));
-            configNameValidationMap.get(s).registerValidator(projectDirText.getTextField(), Validator.createEmptyValidator("项目地址必填"));
+            validationSupport.registerValidator(projectDirText.getTextField(), Validator.createEmptyValidator("项目地址必填"));
 
             TextField projectNameText = new TextField(mybatisExportConfig.getProjectName());
             mybatisExportConfig.projectNameProperty().bindBidirectional(projectNameText.textProperty());
             MybatisExportItemHBox projectNameHbox = new MybatisExportItemHBox("项目名称:", projectNameText);
-            configNameValidationMap.get(s).registerValidator(projectNameText, Validator.createEmptyValidator("项目名称必填"));
+            validationSupport.registerValidator(projectNameText, Validator.createEmptyValidator("项目名称必填"));
 
             projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
                 if (StringUtils.isNotEmpty(newValue) && StringUtils.isEmpty(projectNameText.getText())) {
@@ -210,7 +211,7 @@ public class MybatisExportSetupController {
             mybatisExportConfig.beanLocationProperty().bindBidirectional(beanLocationText.getTextField().textProperty());
             beanLocationText.onAction(event -> this.beanDirectoryScan(beanLocationText));
             MybatisExportItemHBox beanLocationHbox = new MybatisExportItemHBox("Bean 地址:", beanLocationText);
-            configNameValidationMap.get(s).registerValidator(beanLocationText.getTextField(), (Validator<String>) (c, s1) -> {
+            validationSupport.registerValidator(beanLocationText.getTextField(), (Validator<String>) (c, s1) -> {
                 boolean condition = mybatisExportConfig.modelEnableProperty().get() && StringUtils.isEmpty(s1);
                 return ValidationResult.fromErrorIf(c, "Bean 地址必填", condition);
             });
@@ -219,7 +220,7 @@ public class MybatisExportSetupController {
             mybatisExportConfig.beanPackageProperty().bindBidirectional(beanPackageText.textProperty());
             MybatisExportItemHBox beanPackageHbox = new MybatisExportItemHBox("Bean 包名:", beanPackageText);
 
-            configNameValidationMap.get(s).registerValidator(beanPackageText, (Validator<String>) (c, s1) -> {
+            validationSupport.registerValidator(beanPackageText, (Validator<String>) (c, s1) -> {
                 boolean condition = mybatisExportConfig.modelEnableProperty().get() && StringUtils.isEmpty(s1);
                 return ValidationResult.fromErrorIf(c, "Bean 包名必填", condition);
             });
@@ -234,14 +235,14 @@ public class MybatisExportSetupController {
                 beanLocationText.disable(!newValue);
                 beanPackageHbox.setDisable(!newValue);
                 beanRootClassHbox.setDisable(!newValue);
-                configNameValidationMap.get(s).revalidate();
+                validationSupport.revalidate();
             });
 
             FileSelectTextToggleHBox mapperLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.mapperEnableProperty(), mybatisExportConfig.getMapperLocation());
             mybatisExportConfig.mapperLocationProperty().bindBidirectional(mapperLocationText.getTextField().textProperty());
             mapperLocationText.onAction(event -> this.beanDirectoryScan(mapperLocationText));
             MybatisExportItemHBox mapperLocationHbox = new MybatisExportItemHBox("Mapper 地址:", mapperLocationText);
-            configNameValidationMap.get(s).registerValidator(mapperLocationText.getTextField(), (Validator<String>) (c, s1) -> {
+            validationSupport.registerValidator(mapperLocationText.getTextField(), (Validator<String>) (c, s1) -> {
                 boolean condition = mybatisExportConfig.mapperEnableProperty().get() && StringUtils.isEmpty(s1);
                 return ValidationResult.fromErrorIf(c, "Mapper 地址必填", condition);
             });
@@ -249,7 +250,7 @@ public class MybatisExportSetupController {
             TextField mapperPackageText = new TextField(mybatisExportConfig.getMapperPackage());
             mybatisExportConfig.mapperPackageProperty().bindBidirectional(mapperPackageText.textProperty());
             MybatisExportItemHBox mapperPackageHbox = new MybatisExportItemHBox("Mapper 包名:", mapperPackageText);
-            configNameValidationMap.get(s).registerValidator(mapperPackageText, (Validator<String>) (c, s1) -> {
+            validationSupport.registerValidator(mapperPackageText, (Validator<String>) (c, s1) -> {
                 boolean condition = mybatisExportConfig.mapperEnableProperty().get() && StringUtils.isEmpty(s1);
                 return ValidationResult.fromErrorIf(c, "Mapper 包名必填", condition);
             });
@@ -264,14 +265,14 @@ public class MybatisExportSetupController {
                 mapperLocationText.disable(!newValue);
                 mapperPackageHbox.setDisable(!newValue);
                 mapperRootInterfaceHbox.setDisable(!newValue);
-                configNameValidationMap.get(s).revalidate();
+                validationSupport.revalidate();
             });
 
             FileSelectTextToggleHBox xmlLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.xmlEnableProperty(), mybatisExportConfig.getMapperXmlLocation());
             mybatisExportConfig.mapperXmlLocationProperty().bindBidirectional(xmlLocationText.getTextField().textProperty());
             xmlLocationText.onAction(event -> this.beanDirectoryScan(xmlLocationText));
             MybatisExportItemHBox xmlLocationHbox = new MybatisExportItemHBox("Xml 地址:", xmlLocationText);
-            configNameValidationMap.get(s).registerValidator(xmlLocationText.getTextField(), (Validator<String>) (c, s1) -> {
+            validationSupport.registerValidator(xmlLocationText.getTextField(), (Validator<String>) (c, s1) -> {
                 boolean condition = mybatisExportConfig.xmlEnableProperty().get() && StringUtils.isEmpty(s1);
                 return ValidationResult.fromErrorIf(c, "Xml 地址必填", condition);
             });
@@ -279,7 +280,7 @@ public class MybatisExportSetupController {
             mybatisExportConfig.xmlEnableProperty().addListener((observable, oldValue, newValue) -> {
                 xmlLocationHbox.disable(!newValue);
                 xmlLocationText.disable(!newValue);
-                configNameValidationMap.get(s).revalidate();
+                validationSupport.revalidate();
             });
 
             TextField globalIgnoreFieldText = new TextField();
@@ -398,6 +399,8 @@ public class MybatisExportSetupController {
                     useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel, javaClientTypeComboBox, targetNameJFXComboBox);
             return splitPane;
         });
+
+        return region;
     }
 
     /**

@@ -1,35 +1,27 @@
 package com.alan344.constants.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author AlanSun
  * @date 2020/9/30 10:43
  */
+@Getter
+@AllArgsConstructor
 public enum DriverEnum {
 
     /**
      * mysql 8.0.16 版本
      */
-    MYSQL_8_0_16("com.mysql.cj.jdbc.Driver", "3306"),
+    MYSQL_8("com.mysql.cj.jdbc.Driver", "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT%2B8"),
     /**
      * oracle 11g
      */
-    ORACLE_11("oracle.jdbc.OracleDriver", "1521"),
+    ORACLE_11("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:orcl"),
     ;
 
-    private final String drive;
+    private final String driveName;
 
-    private final String defaultPort;
-
-    public String getDrive() {
-        return drive;
-    }
-
-    public String getDefaultPort() {
-        return defaultPort;
-    }
-
-    DriverEnum(String drive, String defaultPort) {
-        this.drive = drive;
-        this.defaultPort = defaultPort;
-    }
+    private final String defaultUrl;
 }

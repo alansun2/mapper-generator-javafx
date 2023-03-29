@@ -5,7 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane fx:id="borderPane" managed="false" visible="false"
-            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
             stylesheets="@../css/mybatis-table-setup.css"
             fx:controller="com.alan344.controller.MybatisTableSetupController">
     <top>

@@ -10,8 +10,9 @@
 }
 
 .button:pressed {
-    -fx-border-color: #9D9C9C;
     /*-fx-effect: dropshadow(three-pass-box, #9d9c9c, 10.0, 0, 2, 2);*/
+    -fx-opacity: 0.4;
+    /*-fx-background-color: #CFDEFC;*/
 }
 
 .mf-scan, .mf-add {
@@ -205,4 +206,8 @@ StackPane {
 
 .error {
     -fx-border-color: #d20a0a;
+}
+
+.info {
+    -fx-border-color: #0a8dd2;
 }

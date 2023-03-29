@@ -3,28 +3,28 @@ package com.alan344.bean;
 import com.alan344.constants.enums.DriverEnum;
 import com.alan344.utils.StringUtils;
 import com.zaxxer.hikari.HikariDataSource;
+import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
  * @author ：AlanSun
  * @date ：2019/8/8 21:33
  */
-@Getter
-@Setter
 public class DataSource implements DataItem {
-    private String configName;
-    private String url;
-    private String driveName;
-    private String user;
-    private String password;
-
+    private final SimpleStringProperty configName = new SimpleStringProperty();
+    private final SimpleStringProperty url = new SimpleStringProperty();
+    private final SimpleStringProperty driveName = new SimpleStringProperty();
+    private final SimpleStringProperty user = new SimpleStringProperty();
+    private final SimpleStringProperty password = new SimpleStringProperty();
+    @Getter
+    @Setter
     private transient List<Table> tables;
 
+    @Setter
     private transient javax.sql.DataSource dataSource;
 
     public javax.sql.DataSource getDataSource() {
@@ -32,10 +32,10 @@ public class DataSource implements DataItem {
             return dataSource;
         }
         HikariDataSource hikariDataSource = new HikariDataSource();
-        hikariDataSource.setUsername(this.user);
-        hikariDataSource.setPassword(this.password);
-        hikariDataSource.setJdbcUrl(this.url);
-        hikariDataSource.setDriverClassName(this.driveName);
+        hikariDataSource.setUsername(this.getUser());
+        hikariDataSource.setPassword(this.getPassword());
+        hikariDataSource.setJdbcUrl(this.getUrl());
+        hikariDataSource.setDriverClassName(this.getDriveName());
         Properties props = new Properties();
         // 设置可以获取remarks信息
         props.setProperty("remarks", "true");
@@ -46,17 +46,22 @@ public class DataSource implements DataItem {
         return hikariDataSource;
     }
 
+    public void closeDataSource() {
+        ((HikariDataSource) dataSource).close();
+    }
+
     public boolean isSame(DataSource dataSource) {
-        return this.configName.equals(dataSource.getConfigName()) && this.url.equals(dataSource.getUrl())
-                && this.user.equals(dataSource.getUser()) && this.password.equals(dataSource.getPassword())
-                && this.driveName.equals(dataSource.getDriveName());
+        return this.getConfigName().equals(dataSource.getConfigName()) && this.getUrl().equals(dataSource.getUrl())
+                && this.getUser().equals(dataSource.getUser()) && this.getPassword().equals(dataSource.getPassword())
+                && this.getDriveName().equals(dataSource.getDriveName());
 
     }
 
     public String getScheme() {
         final DriverEnum driver = this.getDriver();
-        if (driver.equals(DriverEnum.MYSQL_8_0_16)) {
+        if (driver.equals(DriverEnum.MYSQL_8)) {
             // jdbc:mysql://mysql_dev.tuoyang.vip:3306/school_safety
+            String url = this.getUrl();
             final int startIndex = url.indexOf("/", 13);
             if (url.contains("?")) {
                 final int endIndex = url.indexOf("?", 13);
@@ -65,15 +70,15 @@ public class DataSource implements DataItem {
                 return url.substring(startIndex + 1);
             }
         } else if (driver.equals(DriverEnum.ORACLE_11)) {
-            return user;
+            return this.getUser();
         }
         return null;
     }
 
     public DriverEnum getDriver() {
-        final String lo = url.toLowerCase();
+        final String lo = this.getUrl().toLowerCase();
         if (lo.contains("mysql")) {
-            return DriverEnum.MYSQL_8_0_16;
+            return DriverEnum.MYSQL_8;
         } else if (lo.contains("oracle")) {
             return DriverEnum.ORACLE_11;
         }
@@ -82,25 +87,81 @@ public class DataSource implements DataItem {
 
     @Override
     public String toString() {
-        if (StringUtils.isNotEmpty(configName)) {
-            return configName;
+        if (StringUtils.isNotEmpty(this.getConfigName())) {
+            return this.getConfigName();
         }
 
         return "空";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DataSource that = (DataSource) o;
-
-        return Objects.equals(configName, that.configName);
+    public String getConfigName() {
+        return configName.get();
     }
 
-    @Override
-    public int hashCode() {
-        return configName != null ? configName.hashCode() : 0;
+    public SimpleStringProperty configNameProperty() {
+        return configName;
+    }
+
+    public void setConfigName(String configName) {
+        this.configName.set(configName);
+    }
+
+    public String getUrl() {
+        return url.get();
+    }
+
+    public SimpleStringProperty urlProperty() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url.set(url);
+    }
+
+    public String getDriveName() {
+        return driveName.get();
+    }
+
+    public SimpleStringProperty driveNameProperty() {
+        return driveName;
+    }
+
+    public void setDriveName(String driveName) {
+        this.driveName.set(driveName);
+    }
+
+    public String getUser() {
+        return user.get();
+    }
+
+    public SimpleStringProperty userProperty() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user.set(user);
+    }
+
+    public String getPassword() {
+        return password.get();
+    }
+
+    public SimpleStringProperty passwordProperty() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password.set(password);
+    }
+
+
+    public DataSource copy() {
+        DataSource dataSource = new DataSource();
+        dataSource.setConfigName(this.getConfigName());
+        dataSource.setUrl(this.getUrl());
+        dataSource.setDriveName(this.getDriveName());
+        dataSource.setUser(this.getUser());
+        dataSource.setPassword(this.getPassword());
+        return dataSource;
     }
 }

@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXComboBox?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
-<AnchorPane prefHeight="308.0" prefWidth="710.0" stylesheets="@../css/datasource-setup.css"
-            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml"
+<AnchorPane prefHeight="282.0" prefWidth="626.0" stylesheets="@../css/datasource-setup.css"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.alan344.controller.DataSourceSetupController">
-    <Label layoutX="16.0" layoutY="19.0" text="配置名称："/>
-    <Label layoutX="11.0" layoutY="65.0" text="DriveName："/>
-    <Label layoutX="17.0" layoutY="106.0" text="Url:"/>
-    <Label layoutX="17.0" layoutY="151.0" text="User:"/>
-    <Label layoutX="17.0" layoutY="196.0" text="Password："/>
+    <Label layoutX="16.0" layoutY="21.0" text="配置名称："/>
+    <Label layoutX="413.0" layoutY="21.0" text="驱动类型: "/>
+    <Label layoutX="17.0" layoutY="58.0" text="DriveName："/>
+    <Label layoutX="17.0" layoutY="94.0" text="Url:"/>
+    <Label layoutX="17.0" layoutY="128.0" text="User:"/>
+    <Label layoutX="17.0" layoutY="165.0" text="Password："/>
 
-    <TextField fx:id="configName" layoutX="107.0" layoutY="14.0" prefHeight="30.0" prefWidth="590.0"
+    <TextField fx:id="configNameTextField" layoutX="92.0" layoutY="14.0" prefHeight="30.0" prefWidth="288.0"
                promptText="配置名称"/>
-    <TextField fx:id="driveName" layoutX="107.0" layoutY="60.0" prefHeight="30.0" prefWidth="590.0"
+    <TextField fx:id="driveNameTextField" layoutX="92.0" layoutY="50.0" prefHeight="30.0" prefWidth="525.0"
                promptText="driveName"/>
-    <TextField fx:id="url" layoutX="107.0" layoutY="106.0" prefHeight="30.0" prefWidth="590.0" promptText="url"/>
-    <TextField fx:id="user" layoutX="107.0" layoutY="151.0" prefHeight="30.0" prefWidth="590.0" promptText="user"/>
-    <PasswordField fx:id="password" layoutX="107.0" layoutY="196.0" prefHeight="30.0" prefWidth="590.0"
+    <TextField fx:id="urlTextField" layoutX="92.0" layoutY="86.0" prefHeight="30.0" prefWidth="525.0" promptText="url"/>
+    <TextField fx:id="userTextField" layoutX="92.0" layoutY="122.0" prefHeight="30.0" prefWidth="525.0"
+               promptText="user"/>
+    <PasswordField fx:id="passwordTextField" layoutX="92.0" layoutY="158.0" prefHeight="30.0" prefWidth="525.0"
                    promptText="password"/>
 
-    <Button layoutX="562.0" layoutY="259.0" mnemonicParsing="false" onAction="#close" prefWidth="64.0" text="取消"/>
-    <Button layoutX="637.0" layoutY="259.0" mnemonicParsing="false" onAction="#apply" prefWidth="64.0" text="应用"/>
+    <Button layoutX="480.0" layoutY="250.0" mnemonicParsing="false" onAction="#close" prefWidth="64.0" text="取消"/>
+    <Button layoutX="555.0" layoutY="250.0" mnemonicParsing="false" onAction="#apply" prefWidth="64.0" text="应用"/>
 
-    <Button fx:id="testConnectionBtn" layoutX="18.0" layoutY="259.0" mnemonicParsing="false"
-            onAction="#testConnection" prefHeight="30.0"
-            prefWidth="160.0" text="Test Connection"/>
+    <Button fx:id="testConnectionBtn" layoutX="17.0" layoutY="244.0" mnemonicParsing="false" onAction="#testConnection"
+            prefHeight="30.0" prefWidth="160.0" text="Test Connection"/>
+    <JFXComboBox fx:id="driveTypeComboBox" layoutX="489.0" layoutY="14.0" prefHeight="30.0" prefWidth="127.0"/>
 </AnchorPane>

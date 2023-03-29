@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <AnchorPane styleClass="anchorPane" prefHeight="200.0" prefWidth="380.0"
-            xmlns="http://javafx.com/javafx/17"
+            xmlns="http://javafx.com/javafx"
             stylesheets="@../css/about.css">
     <Label alignment="CENTER" layoutX="135.0" layoutY="132.0" prefHeight="49.0" prefWidth="110.0" text="作者：AlanSun"
            textFill="#fff">
