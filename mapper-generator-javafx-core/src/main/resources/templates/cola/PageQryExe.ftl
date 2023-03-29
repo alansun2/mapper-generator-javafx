@@ -1,3 +1,4 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import org.mybatis.dynamic.sql.SqlBuilder;
@@ -31,7 +32,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
                     final SelectStatementProvider render = SqlBuilder.select(${TYPE_NAME_UPPER_CAMEL}Mapper.selectList)
                             .from(${TYPE_NAME_LOWER_CAMEL})
                             .where()
-                            .and(username, isLikeWhenPresent(qry.getUsername()).map(s -> PageRequest.getLike(qry.getUsername())))
+                            // .and(username, isLikeWhenPresent(qry.getUsername()).map(s -> PageRequest.getLike(qry.getUsername())))
                             .build().render(RenderingStrategies.MYBATIS3);
                     return ${TYPE_NAME_LOWER_CAMEL}Mapper.selectMany(render);
                 },
@@ -40,10 +41,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
     }
 
     private ${TYPE_NAME_UPPER_CAMEL}PageDTO convert(${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
-        ${TYPE_NAME_UPPER_CAMEL}PageDTO ${TYPE_NAME_LOWER_CAMEL}PageDTO = new ${TYPE_NAME_UPPER_CAMEL}PageDTO();
-        <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}PageDTO.set${item}(${TYPE_NAME_LOWER_CAMEL}.get${item}());
-        </#list>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}" "PageDTO" "null" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}PageDTO;
     }
 }

@@ -9,6 +9,7 @@ import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;
 import com.alan344.constants.enums.TargetNameEnum;
+import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
@@ -92,7 +93,10 @@ public class MybatisExportSetupController {
         openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties());
         openExtraPropertyStageBtn.setPrefWidth(100);
         Button saveBtn = new Button("保存配置");
-        saveBtn.setOnAction(event -> configService.saveConfigToFile());
+        saveBtn.setOnAction(event -> {
+            configService.saveConfigToFile();
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
+        });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
         exportBtn.getStyleClass().add("export");
@@ -182,7 +186,7 @@ public class MybatisExportSetupController {
             MybatisExportItemHBox authorHbox = new MybatisExportItemHBox("作者名称:", authorText);
             configNameValidationMap.get(s).registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
 
-            FileSelectTextHBox projectDirText = new FileSelectTextHBox();
+            FileSelectTextHBox projectDirText = new FileSelectTextHBox("浏览", mybatisExportConfig.getProjectDir());
             mybatisExportConfig.projectDirProperty().bindBidirectional(projectDirText.getTextField().textProperty());
             MybatisExportItemHBox projectDirHbox = new MybatisExportItemHBox("项目地址:", projectDirText);
             projectDirText.onAction(event -> this.beanDirectoryScan(projectDirText));
@@ -285,6 +289,9 @@ public class MybatisExportSetupController {
 
             // 选择语言时，自动设置 bean 和 mapper 的地址
             languageCombox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (StringUtils.isEmpty(mybatisExportConfig.getMapperXmlLocation()) && !"src/main/resources/mapper".equals(mybatisExportConfig.getMapperXmlLocation())) {
+                    mybatisExportConfig.setMapperXmlLocation("src/main/resources/mapper");
+                }
                 switch (newValue) {
                     case Java -> {
                         if (StringUtils.isEmpty(mybatisExportConfig.getBeanLocation()) || "src/main/kotlin".equals(mybatisExportConfig.getBeanLocation())) {

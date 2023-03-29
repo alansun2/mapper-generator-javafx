@@ -62,7 +62,7 @@ public class ExtraTemplateFileConfig implements Cloneable {
 
     public void setModelIgnoreColumns(String modelIgnoreColumns) {
         if (StringUtils.isNotEmpty(modelIgnoreColumns)) {
-            this.modelIgnoreColumns = modelIgnoreColumns.trim().replaceAll(" ", "");
+            this.modelIgnoreColumns = modelIgnoreColumns.trim().replace(" ", "");
         }
     }
 

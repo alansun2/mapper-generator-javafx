@@ -1,3 +1,4 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}ByIdQryExe {
         return this.convert(${TYPE_NAME_LOWER_CAMEL}DoOpt.get());
     }
 
-    private ${TYPE_NAME_UPPER_CAMEL}DTO convert(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO) {
-        ${TYPE_NAME_UPPER_CAMEL}DTO ${TYPE_NAME_LOWER_CAMEL}DTO = new ${TYPE_NAME_UPPER_CAMEL}DTO();
-        <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}DTO.set${item}(${TYPE_NAME_LOWER_CAMEL}DO.get${item}());
-        </#list>
+    private ${TYPE_NAME_UPPER_CAMEL}DTO convert(${TYPE_NAME_UPPER_CAMEL}DO do) {
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}DTO" "do" "DTO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}DTO;
     }
 }

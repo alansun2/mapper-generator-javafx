@@ -7,8 +7,11 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
+import com.alan344.utils.StringUtils;
 import com.alan344.utils.tokenparse.GenericTokenParser;
 import com.google.common.base.CaseFormat;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -75,7 +78,11 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         /**
          * 字段
          */
-        FIELDS_UPPER_CAMELS
+        FIELDS_UPPER_CAMELS,
+        /**
+         * 被忽略的字段
+         */
+        IGNORE_FIELDS_MAP
     }
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
@@ -92,37 +99,48 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         return true;
     }
 
+    private final MybatisExportConfig mybatisExportConfig = BaseConstants.currentConfig;
+    final LinkedHashMap<String, String> customProperties = mybatisExportConfig.getCustomProperties();
+    final Map<String, List<String>> modelSuffixIgnoreColumsMap = ConfigConstants.extraTemplateFileConfigs.stream()
+            .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
+            .filter(extraFileConfig -> StringUtils.isNotEmpty(extraFileConfig.getModelIgnoreColumns()))
+            .collect(Collectors.toMap(ExtraTemplateFileConfig::getModelSuffix, extraTemplateFileConfig -> {
+                return Arrays.stream(extraTemplateFileConfig.getModelIgnoreColumns().split(","))
+                        .map(s -> s.replace("_", "")).distinct().toList();
+            }, (o, o2) -> o));
+
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
         if (CollectionUtils.isEmpty(ConfigConstants.extraTemplateFileConfigs)) {
             return Collections.emptyList();
         }
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-        final LinkedHashMap<String, String> customProperties = currentConfig.getCustomProperties();
+        final MybatisExportConfig mybatisExportConfig = BaseConstants.currentConfig;
         ConfigConstants.extraTemplateFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.CUSTOM_TEMPLATE))
-                .forEach(extraFileConfig -> this.process(introspectedTable, extraFileConfig, customProperties));
+                .forEach(extraFileConfig -> this.process(introspectedTable, mybatisExportConfig, extraFileConfig, customProperties));
         return Collections.emptyList();
     }
 
-    private void process(IntrospectedTable introspectedTable, ExtraTemplateFileConfig extraTemplateFileConfig, LinkedHashMap<String, String> customProperties) {
+    private void process(IntrospectedTable introspectedTable, MybatisExportConfig mybatisExportConfig,
+                         ExtraTemplateFileConfig extraTemplateFileConfig, LinkedHashMap<String, String> customProperties) {
         final Configuration cfg = this.getConfig(extraTemplateFileConfig.getCustomTemplateDir());
         final Template template = this.getTemplate(cfg, extraTemplateFileConfig.getCustomTemplateDir());
         try {
             // 数据
             final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraTemplateFileConfig, customProperties);
-            FileWriterWithEncoding fileWriterWithEncoding = new FileWriterWithEncoding(this.getFileName(extraTemplateFileConfig, modelData), StandardCharsets.UTF_8);
+            final String fileName = this.getFileName(mybatisExportConfig, extraTemplateFileConfig, modelData);
+            FileWriterWithEncoding fileWriterWithEncoding = new FileWriterWithEncoding(fileName, StandardCharsets.UTF_8);
             template.process(modelData, fileWriterWithEncoding);
         } catch (IOException | TemplateException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getFileName(ExtraTemplateFileConfig extraTemplateFileConfig, Map<String, Object> modelData) {
+    private String getFileName(MybatisExportConfig mybatisExportConfig, ExtraTemplateFileConfig extraTemplateFileConfig, Map<String, Object> modelData) {
         final String upperCamel = modelData.get(TYPE_NAME_UPPER_CAMEL.name()).toString();
 
         final String packageName = modelData.get(PACKAGE.name()).toString();
-        final String outPathFromPackage = packageName.replaceAll("\\.", "/");
+        final String outPathFromPackage = packageName.replace(".", "/");
 
         String outputPath = extraTemplateFileConfig.getOutputPath();
         outputPath = outputPath.endsWith("/") ? outputPath : outputPath + "/";
@@ -147,8 +165,10 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         modelDataMap.put(DOMAIN_UPPER_CAMEL.name(), CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, domain.getD()));
         modelDataMap.put(DOMAIN_DESC.name(), domain.getDd());
         modelDataMap.put(PACKAGE.name(), this.getPackage(extraTemplateFileConfig, domain));
+        modelDataMap.put(IGNORE_FIELDS_MAP.name(), modelSuffixIgnoreColumsMap);
         final List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
-        final List<String> fieldUpperCamels = allColumns.stream().map(introspectedColumn -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, introspectedColumn.getActualColumnName()))
+        final List<String> fieldUpperCamels = allColumns.stream()
+                .map(introspectedColumn -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, introspectedColumn.getActualColumnName()))
                 .collect(Collectors.toList());
         modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
 
@@ -170,7 +190,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
     private String getPackage(ExtraTemplateFileConfig extraTemplateFileConfig, PluginUtils.Domain domain) {
         String packageName = extraTemplateFileConfig.getPackageName();
         packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
-        packageName = packageName.replaceAll("\\.\\.", "\\.");
+        packageName = packageName.replace("..", ".");
         return packageName;
     }
 
@@ -195,7 +215,10 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
             // plain directory for it, but non-file-system sources are possible too:
             ResourceLoader resourceLoader = new DefaultResourceLoader();
 
-            cfg.setTemplateLoader(new SpringTemplateLoader(resourceLoader, dir));
+            final SpringTemplateLoader ftl1 = new SpringTemplateLoader(resourceLoader, dir);
+            final SpringTemplateLoader ftl2 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/common/");
+            TemplateLoader[] loaders = new TemplateLoader[]{ftl1, ftl2};
+            cfg.setTemplateLoader(new MultiTemplateLoader(loaders));
 
             // From here we will set the settings recommended for new projects. These
             // aren't the defaults for backward compatibilty.

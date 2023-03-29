@@ -98,7 +98,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     /***
      * xml导出地址
      */
-    private final SimpleStringProperty mapperXmlLocation = new SimpleStringProperty();
+    private final SimpleStringProperty mapperXmlLocation = new SimpleStringProperty("src/main/resources/mapper");
 
     /**
      * 开启 model

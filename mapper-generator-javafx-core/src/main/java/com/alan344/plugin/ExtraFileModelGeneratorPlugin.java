@@ -90,7 +90,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
     /**
      * 获取包名
      *
-     * @param remarks         备注
+     * @param remarks                 备注
      * @param extraTemplateFileConfig 配置文件
      * @return 包名
      */
@@ -99,7 +99,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
 
         final PluginUtils.Domain domain = PluginUtils.getDomainFromRemarks(remarks, true);
         packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
-        packageName = packageName.replaceAll("\\.\\.", "\\.");
+        packageName = packageName.replace("..", ".");
         return packageName;
     }
 

@@ -15,7 +15,7 @@
         "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "DTO",
         "name": "DTO",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
       },
       {
@@ -30,7 +30,7 @@
         "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "PageDTO",
         "name": "PageDTO",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
       },
       {
@@ -45,7 +45,7 @@
         "modelIgnoreColumns": "create_by,create_time,update_by,update_time",
         "modelSuffix": "DO",
         "name": "DO",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-domain\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-domain/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.domain.${DOMAIN}"
       },
       {
@@ -60,7 +60,7 @@
         "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "Cmd",
         "name": "Cmd",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}"
       },
       {
@@ -75,7 +75,7 @@
         "modelIgnoreColumns": "id,is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "PageQry",
         "name": "PageQry",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}",
         "superClass": "vip.tuoyang.base.core.bean.request.PageRequest"
       },
@@ -91,7 +91,7 @@
         "lombokToString": false,
         "modelSuffix": "AddCmdExe",
         "name": "AddCmdExe",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor"
       },
       {
@@ -106,7 +106,7 @@
         "lombokToString": false,
         "modelSuffix": "UpdateCmdExe",
         "name": "UpdateCmdExe",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor"
       },
       {
@@ -121,7 +121,7 @@
         "lombokToString": false,
         "modelSuffix": "DelByIdCmdExe",
         "name": "DelByIdCmdExe",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor"
       },
       {
@@ -136,7 +136,7 @@
         "lombokToString": false,
         "modelSuffix": "ByIdQryExe",
         "name": "ByIdQryExe",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor.query"
       },
       {
@@ -151,7 +151,7 @@
         "lombokToString": false,
         "modelSuffix": "PageQryExe",
         "name": "PageQryExe",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor.query"
       },
       {
@@ -166,7 +166,7 @@
         "lombokToString": false,
         "modelSuffix": "ServiceImpl",
         "name": "ServiceImpl",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}"
       },
       {
@@ -181,7 +181,7 @@
         "lombokToString": false,
         "modelSuffix": "ServiceI",
         "name": "ServiceI",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.api.${DOMAIN}"
       },
       {
@@ -196,7 +196,7 @@
         "lombokToString": false,
         "modelSuffix": "Controller",
         "name": "Controller",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-adapter\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-adapter/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.web"
       },
       {
@@ -211,7 +211,7 @@
         "lombokToString": false,
         "modelSuffix": "GatewayI",
         "name": "GatewayI",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-domain\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-domain/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.domain.${DOMAIN}"
       },
       {
@@ -226,7 +226,7 @@
         "lombokToString": false,
         "modelSuffix": "GatewayImpl",
         "name": "GatewayImpl",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-infrastructure\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-infrastructure/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}"
       },
       {
@@ -241,7 +241,7 @@
         "lombokToString": false,
         "modelSuffix": "DOConvertMapper",
         "name": "DOConvertMapper",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-infrastructure\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-infrastructure/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.convert"
       }
     ]
@@ -262,7 +262,7 @@
         "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "DTO",
         "name": "DTO",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
       },
       {
@@ -277,7 +277,7 @@
         "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "PageDTO",
         "name": "PageDTO",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
       },
       {
@@ -292,7 +292,7 @@
         "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "Cmd",
         "name": "Cmd",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}"
       },
       {
@@ -307,7 +307,7 @@
         "modelIgnoreColumns": "id,is_delete,create_by,create_time,update_by,update_time",
         "modelSuffix": "PageQry",
         "name": "PageQry",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}",
         "superClass": "vip.tuoyang.base.core.bean.request.PageRequest"
       },
@@ -323,7 +323,7 @@
         "lombokToString": false,
         "modelSuffix": "ServiceImpl",
         "name": "ServiceImpl",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-app\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}"
       },
       {
@@ -338,12 +338,12 @@
         "lombokToString": false,
         "modelSuffix": "ServiceI",
         "name": "ServiceI",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-client\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.api.${DOMAIN}"
       },
       {
         "id": "usual-7",
-        "customTemplateDir": "classpath:templates\\layer\\Controller.ftl",
+        "customTemplateDir": "classpath:templates/layer/Controller.ftl",
         "customTemplateFileName": "Controller.ftl",
         "enable": false,
         "system": true,
@@ -354,7 +354,7 @@
         "lombokToString": false,
         "modelSuffix": "Controller",
         "name": "Controller",
-        "outputPath": "D:\\project\\jszn\\重构\\backend-tuoyang-school-safety-service\\backend-tuoyang-school-safety-service-adapter\\src\\main\\java",
+        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-adapter/src/main/java",
         "packageName": "vip.tuoyang.schoolsafe.service.web"
       }
     ]

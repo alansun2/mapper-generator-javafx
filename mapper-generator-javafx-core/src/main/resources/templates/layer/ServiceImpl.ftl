@@ -1,3 +1,4 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,26 +70,17 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
     }
 
     private ${TYPE_NAME_UPPER_CAMEL} convert(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
-        ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}DO = new ${TYPE_NAME_UPPER_CAMEL}();
-        <#list FIELDS_UPPER_CAMELS as item>
-            ${TYPE_NAME_LOWER_CAMEL}.set${item}(cmd.get${item}());
-        </#list>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}" "${TYPE_NAME_LOWER_CAMEL}" "cmd" "null" "Cmd" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL};
     }
 
     private ${TYPE_NAME_UPPER_CAMEL}PageDTO convert(${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
-        ${TYPE_NAME_UPPER_CAMEL}PageDTO ${TYPE_NAME_LOWER_CAMEL}PageDTO = new ${TYPE_NAME_UPPER_CAMEL}PageDTO();
-        <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}PageDTO.set${item}(${TYPE_NAME_LOWER_CAMEL}.get${item}());
-        </#list>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}" "PageDTO" "null" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}PageDTO;
     }
 
-    private ${TYPE_NAME_UPPER_CAMEL}DTO convertToDTO(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}) {
-        ${TYPE_NAME_UPPER_CAMEL}DTO ${TYPE_NAME_LOWER_CAMEL}DTO = new ${TYPE_NAME_UPPER_CAMEL}DTO();
-        <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}DTO.set${item}(${TYPE_NAME_LOWER_CAMEL}.get${item}());
-        </#list>
+    private ${TYPE_NAME_UPPER_CAMEL}DTO convertToDTO(${TYPE_NAME_UPPER_CAMEL}DO do) {
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}DTO" "do" "DTO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}DTO;
     }
 }

@@ -99,7 +99,7 @@ public class ExportSuccessAlertController {
     @FXML
     public void openFileAfterExport() {
         if (OPEN_FILE_TEXT_SUCCESS.equals(openFileButton.getText())) {
-            FileExploreUtils.open(mybatisExportConfig.getBeanLocation());
+            FileExploreUtils.open(mybatisExportConfig.getProjectDir());
         }
 
         this.close();

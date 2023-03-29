@@ -1,3 +1,4 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}AddCmdExe {
     }
 
     static ${TYPE_NAME_UPPER_CAMEL}DO convert(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
-        ${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}DO = new ${TYPE_NAME_UPPER_CAMEL}DO();
-        <#list FIELDS_UPPER_CAMELS as item>
-        ${TYPE_NAME_LOWER_CAMEL}DO.set${item}(cmd.get${item}());
-        </#list>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DO" "${TYPE_NAME_LOWER_CAMEL}DO" "cmd" "DO" "Cmd" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}DO;
     }
 }
