@@ -5,9 +5,13 @@ import com.alan344.bean.ColumnOverride;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.bean.config.MybatisExportConfig;
+import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.plugin.*;
+import com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin;
+import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
+import com.alan344.plugin.MybatisGeneratorPlugin;
+import com.alan344.plugin.PluginUtils;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -34,6 +38,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.alan344.plugin.PluginUtils.Domain.DOMAIN;
 
@@ -52,6 +57,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
     private Element context;
 
+    private List<MybatisPluginConfig> mybatisPluginConfigs;
+
     static {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
@@ -61,8 +68,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         }
     }
 
-    public MapperGeneratorStrategyBase(MybatisExportConfig.ExportConfig exportConfig) {
+    public MapperGeneratorStrategyBase(MybatisExportConfig.ExportConfig exportConfig, List<MybatisPluginConfig> mybatisPluginConfigs) {
         this.exportConfig = exportConfig;
+        this.mybatisPluginConfigs = mybatisPluginConfigs;
     }
 
     @Override
@@ -117,6 +125,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * 添加插件
      */
     protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
+        // 添加自定义插件
+        Optional.ofNullable(this.mybatisPluginConfigs).ifPresent(mybatisPluginConfigs -> {
+            for (MybatisPluginConfig mybatisPluginConfig : mybatisPluginConfigs) {
+                generatorUtils.addPlugin(mybatisPluginConfig.getClassName());
+            }
+        });
         // 添加序列化接口插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
         if (mybatisExportConfig.isExportExtraFile()) {
@@ -125,8 +139,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             // 额外的模板文件生成插件
             generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
         }
-        // 自定义插件
-        generatorUtils.addPlugin(DeleteByIMethodPlugin.class.getName());
         // 用于控制是否生成对应的 mybatis 文件
         generatorUtils.addPlugin(MybatisGeneratorPlugin.class.getName());
 

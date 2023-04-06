@@ -32,7 +32,7 @@ public class DataSourceService {
      * 用户判断数据源是否重复
      */
     @Getter
-    private final Set<DataSource> dataSourceSet = new HashSet<>();
+    private final Set<DataSource> dataSourceSet = new LinkedHashSet<>();
 
     /**
      * 添加数据源
@@ -125,7 +125,7 @@ public class DataSourceService {
      * 从文件加载数据源至pane
      */
     public List<DataSource> loadDataSourceFromFile() {
-        File file1 = new File(BaseConstants.MG_DATA_HOME);
+        File file1 = new File(BaseConstants.DATASOURCE_DIR);
         if (!file1.exists()) {
             return Collections.emptyList();
         }
@@ -135,12 +135,10 @@ public class DataSourceService {
         }
 
         try {
-            for (File file : files) {
-                if (file.getName().endsWith("datasource")) {
-                    DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
-
-                    dataSourceSet.add(dataSource);
-                }
+            final List<File> files1 = files.stream().sorted(Comparator.comparing(File::getName)).toList();
+            for (File file : files1) {
+                DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
+                dataSourceSet.add(dataSource);
             }
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);

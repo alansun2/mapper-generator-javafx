@@ -141,6 +141,13 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     private List<ExtraFileGroupConfig> extraFileGroupConfigs;
 
     /**
+     * mybatis 插件 id 列表
+     */
+    @Getter
+    @Setter
+    private List<String> pluginIds;
+
+    /**
      * 自定义属性
      */
     @Getter

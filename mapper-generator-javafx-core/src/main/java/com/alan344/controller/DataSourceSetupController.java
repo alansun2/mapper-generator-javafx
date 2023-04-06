@@ -83,15 +83,14 @@ public class DataSourceSetupController implements Initializable {
         driveTypeComboBox.getItems().addAll(DriverEnum.values());
         driveTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                if (StringUtils.isEmpty(driveNameTextField.getText())) {
+                if (StringUtils.isEmpty(driveNameTextField.getText()) || DriverEnum.DRIVER_NAMES.contains(driveNameTextField.getText())) {
                     driveNameTextField.setText(newValue.getDriveName());
                 }
-                if (StringUtils.isEmpty(urlTextField.getText())) {
-                    urlTextField.setText(newValue.getDefaultUrl());
+                if (StringUtils.isEmpty(urlTextField.getText()) || DriverEnum.URLS.contains(urlTextField.getText())) {
+                    urlTextField.setText(newValue.getUrl());
                 }
             }
         });
-
 
         validationSupport = new ValidationSupport();
         validationSupport.setValidationDecorator(new StyleClassValidationDecoration());

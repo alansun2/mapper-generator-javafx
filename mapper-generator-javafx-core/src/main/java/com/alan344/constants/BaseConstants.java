@@ -19,9 +19,13 @@ import java.util.Map;
  * @date ：2019/8/8 21:43
  */
 public class BaseConstants {
-    public static final String MG_HOME = System.getProperty("user.home") + "/AppData/Local/MapperGeneratorV2";
+    public static final String MG_HOME = System.getProperty("user.home").replace("\\", "/") + "/AppData/Local/MapperGeneratorV2";
     public static final String MG_DATA_HOME = MG_HOME + "/data/";
     public static final String MG_CONF_HOME = MG_HOME + "/config/";
+    /**
+     * 数据源地址
+     */
+    public static final String DATASOURCE_DIR = MG_CONF_HOME + "datasource/";
     /**
      * 基础配置
      */
@@ -30,6 +34,14 @@ public class BaseConstants {
      * 额外文件配置
      */
     private static final String MG_EXTRA_CONFIG_FILE = MG_CONF_HOME + "extra-file-config";
+    /**
+     * 插件配置
+     */
+    public static final String PLUGIN_DIR = MG_CONF_HOME + "plugin/";
+    /**
+     * 插件配置文件名称
+     */
+    public static final String PLUGIN_CONFIG_FILE = MG_CONF_HOME + "plugin/config.json";
 
     /**
      * all dataSource
@@ -88,7 +100,7 @@ public class BaseConstants {
     }
 
     public static File getDataSourceFile(DataSource dataSource) {
-        return new File(MG_DATA_HOME + dataSource.toString() + "_datasource");
+        return new File(DATASOURCE_DIR + dataSource.toString() + "_datasource");
     }
 
     /**

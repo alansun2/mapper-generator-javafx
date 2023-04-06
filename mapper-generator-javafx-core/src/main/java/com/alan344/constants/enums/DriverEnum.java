@@ -3,6 +3,10 @@ package com.alan344.constants.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  * @author AlanSun
  * @date 2020/9/30 10:43
@@ -23,5 +27,8 @@ public enum DriverEnum {
 
     private final String driveName;
 
-    private final String defaultUrl;
+    private final String url;
+
+    public final static Set<String> DRIVER_NAMES = Arrays.stream(DriverEnum.values()).map(DriverEnum::getDriveName).collect(Collectors.toSet());
+    public final static Set<String> URLS = Arrays.stream(DriverEnum.values()).map(DriverEnum::getUrl).collect(Collectors.toSet());
 }

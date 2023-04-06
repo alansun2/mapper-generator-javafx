@@ -32,6 +32,8 @@ import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
+import org.kordamp.ikonli.javafx.FontIcon;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -51,6 +53,9 @@ public class MybatisExportSetupController {
     private ExportService exportService;
     @Resource
     private ExtraFileController extraFileController;
+    @Autowired
+    private MybatisAdvanceSetController mybatisAdvanceSetController;
+
     private final Map<String, Region> configNameBorderPaneMap = new HashMap<>();
     private final Map<String, ValidationSupport> configNameValidationMap = new HashMap<>() {
         @Override
@@ -359,21 +364,29 @@ public class MybatisExportSetupController {
 
             Label targetNameLabel = new Label("targetName:");
             targetNameLabel.setLayoutX(27);
-            targetNameLabel.setLayoutY(20);
+            targetNameLabel.setLayoutY(25);
             final int selectTab = mybatisExportConfig.getSelectTab();
             tabPane1.getSelectionModel().select(selectTab);
 
             Label javaClientTypeLabel = new Label("javaClientType:");
-            javaClientTypeLabel.setLayoutX(325);
-            javaClientTypeLabel.setLayoutY(20);
+            javaClientTypeLabel.setLayoutX(300);
+            javaClientTypeLabel.setLayoutY(25);
             final JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox = new JFXComboBox<>();
-            javaClientTypeComboBox.setLayoutX(425);
+            javaClientTypeComboBox.setPrefWidth(160);
+            javaClientTypeComboBox.setLayoutX(400);
             javaClientTypeComboBox.setLayoutY(20);
             javaClientTypeComboBox.setValue(mybatisOfficialExportConfig.getJavaClientType());
             javaClientTypeComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.javaClientTypeProperty());
 
+            Button advanceSetButton = new Button();
+            advanceSetButton.setOnAction(event -> mybatisAdvanceSetController.openAdvanceSetStage(mybatisExportConfig));
+            advanceSetButton.setGraphic(new FontIcon("unil-setting:16:BLUE"));
+            advanceSetButton.setLayoutX(600);
+            advanceSetButton.setLayoutY(20);
+
             final JFXComboBox<TargetNameEnum> targetNameJFXComboBox = new JFXComboBox<>(FXCollections.observableArrayList(TargetNameEnum.values()));
-            targetNameJFXComboBox.setLayoutX(125);
+            targetNameJFXComboBox.setPrefWidth(160);
+            targetNameJFXComboBox.setLayoutX(115);
             targetNameJFXComboBox.setLayoutY(20);
             targetNameJFXComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 switch (newValue) {
@@ -396,7 +409,8 @@ public class MybatisExportSetupController {
             targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
 
             anchorPane.getChildren().addAll(userJava8CheckBox, useBigDecimalCheckBox, useCommentCheckBox,
-                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel, javaClientTypeComboBox, targetNameJFXComboBox);
+                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel,
+                    javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
             return splitPane;
         });
 

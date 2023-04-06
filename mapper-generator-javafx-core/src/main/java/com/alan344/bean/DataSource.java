@@ -164,4 +164,19 @@ public class DataSource implements DataItem {
         dataSource.setPassword(this.getPassword());
         return dataSource;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DataSource that = (DataSource) o;
+
+        return configName.get().equals(that.configName.get());
+    }
+
+    @Override
+    public int hashCode() {
+        return configName.get().hashCode();
+    }
 }
