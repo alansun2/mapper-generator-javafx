@@ -135,8 +135,7 @@ public class DataSourceService {
         }
 
         try {
-            final List<File> files1 = files.stream().sorted(Comparator.comparing(File::getName)).toList();
-            for (File file : files1) {
+            for (File file : files) {
                 DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
                 dataSourceSet.add(dataSource);
             }

@@ -7,6 +7,7 @@ import cn.hutool.core.util.ClassLoaderUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
+import com.alan344.utils.CollectionUtils;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -96,6 +98,9 @@ public class MybatisPluginService {
     }
 
     public List<MybatisPluginConfig> getByIds(List<String> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Collections.emptyList();
+        }
         final List<MybatisPluginConfig> allPlugin = getAllPlugin();
         return allPlugin.stream().filter(mybatisPluginConfig -> ids.contains(mybatisPluginConfig.getId())).collect(Collectors.toList());
     }

@@ -1,6 +1,9 @@
 package com.alan344.plugin;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
+import com.alan344.bean.config.MybatisExportConfig;
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
@@ -38,6 +41,8 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
         if (CollectionUtils.isEmpty(ConfigConstants.extraTemplateFileConfigs)) {
             return Collections.emptyList();
         }
+
+        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
 
         return ConfigConstants.extraTemplateFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
@@ -83,7 +88,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                         }
                     }
 
-                    return new GeneratedJavaFile(topLevelClass, extraFileConfig.getOutputPath(), context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
+                    return new GeneratedJavaFile(topLevelClass, StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath(), context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
                 }).collect(Collectors.toList());
     }
 

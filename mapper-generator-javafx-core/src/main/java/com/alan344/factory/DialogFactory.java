@@ -4,6 +4,7 @@ import com.alan344.componet.SuccessDialog;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -40,6 +41,7 @@ public class DialogFactory {
     public static void exceptionDialog(Throwable e) {
         ExceptionDialog exceptionDialog = new ExceptionDialog(e);
         exceptionDialog.setWidth(700);
+        exceptionDialog.setGraphic(new ImageView("/image/icon.png"));
         exceptionDialog.setHeaderText(e.getMessage());
         exceptionDialog.show();
     }

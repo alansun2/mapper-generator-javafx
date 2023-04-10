@@ -1,5 +1,6 @@
 package com.alan344.service.generator;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.Column;
 import com.alan344.bean.ColumnOverride;
 import com.alan344.bean.DataSource;
@@ -221,7 +222,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // model 位置配置
         final Element javaModelGenerator = generatorUtils.addElement(context, "javaModelGenerator");
         javaModelGenerator.setAttribute("targetPackage", mybatisExportConfig.getBeanPackage());
-        javaModelGenerator.setAttribute("targetProject", (mybatisExportConfig.getProjectDir() + "/" + mybatisExportConfig.getBeanLocation()).replace("\\", "/"));
+        javaModelGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation()).replace("\\", "/"));
     }
 
     /**
@@ -234,7 +235,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // xml 位置配置
         final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
         sqlMapGenerator.setAttribute("targetPackage", ".");
-        sqlMapGenerator.setAttribute("targetProject", (mybatisExportConfig.getProjectDir() + "/" + mybatisExportConfig.getMapperXmlLocation()).replace("\\", "/"));
+        sqlMapGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), "/") + mybatisExportConfig.getMapperXmlLocation()).replace("\\", "/"));
     }
 
     /**
@@ -247,7 +248,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // mapper （dao） 位置配置
         final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
         javaClientGenerator.setAttribute("targetPackage", mybatisExportConfig.getMapperPackage());
-        javaClientGenerator.setAttribute("targetProject", (mybatisExportConfig.getProjectDir() + "/" + mybatisExportConfig.getMapperLocation()).replace("\\", "/"));
+        javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace("\\", "/"));
         if (null != mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType()) {
             javaClientGenerator.setAttribute("type", mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType().name());
         }
@@ -352,24 +353,25 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      * 判断文件夹是否存在，如果不存在则进行创建
      */
     private void checkAndGeneratorDir(MybatisExportConfig mybatisExportConfig) {
+        final String prefix = StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH);
         if (StringUtils.isNotEmpty(mybatisExportConfig.getBeanLocation())) {
-            File beanFile = new File(mybatisExportConfig.getBeanLocation());
+            File beanFile = new File(prefix + mybatisExportConfig.getBeanLocation());
             if (!beanFile.exists() && !beanFile.mkdirs()) {
-                log.error("创建bean文件夹：{} 失败", mybatisExportConfig.getBeanLocation());
+                log.error("创建bean文件夹：{} 失败", prefix + mybatisExportConfig.getBeanLocation());
             }
         }
 
         if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperLocation())) {
-            File mapperFile = new File(mybatisExportConfig.getMapperLocation());
+            File mapperFile = new File(prefix + mybatisExportConfig.getMapperLocation());
             if (!mapperFile.exists() && !mapperFile.mkdirs()) {
-                log.error("创建mapper文件夹：{} 失败", mybatisExportConfig.getMapperLocation());
+                log.error("创建mapper文件夹：{} 失败", prefix + mybatisExportConfig.getMapperLocation());
             }
         }
 
         if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
-            File xmlFile = new File(mybatisExportConfig.getMapperXmlLocation());
+            File xmlFile = new File(prefix + mybatisExportConfig.getMapperXmlLocation());
             if (!xmlFile.exists() && !xmlFile.mkdirs()) {
-                log.error("创建xml文件夹：{} 失败", mybatisExportConfig.getMapperXmlLocation());
+                log.error("创建xml文件夹：{} 失败", prefix + mybatisExportConfig.getMapperXmlLocation());
             }
         }
     }

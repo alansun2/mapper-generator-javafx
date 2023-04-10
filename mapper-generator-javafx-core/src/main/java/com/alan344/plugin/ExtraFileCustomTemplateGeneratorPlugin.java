@@ -1,6 +1,7 @@
 package com.alan344.plugin;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
@@ -104,10 +105,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
     final Map<String, List<String>> modelSuffixIgnoreColumsMap = ConfigConstants.extraTemplateFileConfigs.stream()
             .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
             .filter(extraFileConfig -> StringUtils.isNotEmpty(extraFileConfig.getModelIgnoreColumns()))
-            .collect(Collectors.toMap(ExtraTemplateFileConfig::getModelSuffix, extraTemplateFileConfig -> {
-                return Arrays.stream(extraTemplateFileConfig.getModelIgnoreColumns().split(","))
-                        .map(s -> s.replace("_", "")).distinct().toList();
-            }, (o, o2) -> o));
+            .collect(Collectors.toMap(ExtraTemplateFileConfig::getModelSuffix,
+                    extraTemplateFileConfig -> Arrays.stream(extraTemplateFileConfig.getModelIgnoreColumns().split(","))
+                            .map(s -> s.replace("_", "")).distinct().toList(), (o, o2) -> o));
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
@@ -140,15 +140,14 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         final String upperCamel = modelData.get(TYPE_NAME_UPPER_CAMEL.name()).toString();
 
         final String packageName = modelData.get(PACKAGE.name()).toString();
-        final String outPathFromPackage = packageName.replace(".", "/");
+        final String outPathFromPackage = packageName.replace(StrUtil.DOT, StrUtil.SLASH);
 
-        String outputPath = extraTemplateFileConfig.getOutputPath();
-        outputPath = outputPath.endsWith("/") ? outputPath : outputPath + "/";
-        final File file = new File(outputPath + outPathFromPackage + "/");
+        String outputPath = StrUtil.addSuffixIfNot(extraTemplateFileConfig.getOutputPath(), StrUtil.SLASH);
+        final File file = new File(StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + outputPath + outPathFromPackage + StrUtil.SLASH);
         if (!file.exists()) {
             file.mkdirs();
         }
-        return outputPath + outPathFromPackage + "/" + upperCamel + extraTemplateFileConfig.getModelSuffix() + ".java";
+        return file.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH) + StrUtil.SLASH + upperCamel + extraTemplateFileConfig.getModelSuffix() + ".java";
     }
 
     private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable,

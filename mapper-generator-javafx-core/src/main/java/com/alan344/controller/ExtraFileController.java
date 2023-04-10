@@ -1,5 +1,6 @@
 package com.alan344.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
@@ -178,7 +179,7 @@ public class ExtraFileController {
                         extraFileConfigNew.setOutputPath(original.getOutputPath());
                         extraFileConfigNew.setPackageName(original.getPackageName());
                     } else {
-                        extraFileConfigNew.setOutputPath(mybatisExportConfig.getProjectDir() + "/" + mybatisExportConfig.getBeanLocation());
+                        extraFileConfigNew.setOutputPath(StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation());
                     }
                     rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, finalExtraFileConfigs, extraTemplateFileConfig, extraFileConfigNew, curExtraFileGroupConfig));
                     if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
