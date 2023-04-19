@@ -1,5 +1,6 @@
 package com.alan344.plugin;
 
+import com.alan344.constants.ConfigConstants;
 import com.alan344.utils.StringUtils;
 import com.alibaba.fastjson2.JSON;
 import com.google.common.base.CaseFormat;
@@ -10,6 +11,8 @@ import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.PropertyRegistry;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -17,6 +20,8 @@ import java.util.Properties;
  * @date 2020/12/3 15:33
  */
 public class PluginUtils {
+
+    private final static Map<String, Domain> DOMAIN_MAP = new HashMap<>();
 
     public static String getRootClass(IntrospectedTable introspectedTable, Context context) {
         String rootClass = introspectedTable.getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_CLASS);
@@ -83,6 +88,16 @@ public class PluginUtils {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, upperCamel);
     }
 
+    public static String parse(String content, Domain domain) {
+        return ConfigConstants.GENERIC_TOKEN_PARSER.parse(content, key -> {
+            if ("domain".equals(key)) {
+                return domain.getD();
+            } else {
+                return ConfigConstants.globalParam.getOrDefault(key, key);
+            }
+        });
+    }
+
     /**
      * 从备注中获取领域
      *
@@ -96,14 +111,18 @@ public class PluginUtils {
         if (!org.springframework.util.StringUtils.hasText(remarks)) {
             return Domain.DOMAIN;
         }
-        final int start = remarks.indexOf("{");
-        final int end = remarks.lastIndexOf("}");
-        if (start >= 0 && end >= 0) {
-            final String substring = remarks.substring(start, end + 1);
-            return JSON.parseObject(substring, Domain.class);
-        } else {
-            return Domain.DOMAIN;
-        }
+
+        return DOMAIN_MAP.computeIfAbsent(remarks, k -> {
+            final int start = remarks.indexOf("{");
+            final int end = remarks.lastIndexOf("}");
+            if (start >= 0 && end >= 0) {
+                final String substring = remarks.substring(start, end + 1);
+                return JSON.parseObject(substring, Domain.class);
+            } else {
+                return Domain.DOMAIN;
+            }
+        });
+
     }
 
     @Getter

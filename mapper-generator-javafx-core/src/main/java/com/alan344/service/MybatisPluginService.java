@@ -97,6 +97,7 @@ public class MybatisPluginService {
         this.isLoad = true;
     }
 
+
     public List<MybatisPluginConfig> getByIds(List<String> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return Collections.emptyList();
@@ -112,6 +113,11 @@ public class MybatisPluginService {
                 mybatisPluginConfig.setEnable(true);
             }
         }).collect(Collectors.toList());
+    }
+
+    public MybatisPluginConfig getByClassName(String className) {
+        final List<MybatisPluginConfig> allPlugin = this.getAllPlugin();
+        return allPlugin.stream().filter(it -> it.getClassName().equals(className)).findFirst().orElseThrow();
     }
 
     public static void main(String[] args) throws ClassNotFoundException {

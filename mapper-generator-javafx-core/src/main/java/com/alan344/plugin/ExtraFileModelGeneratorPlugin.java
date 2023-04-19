@@ -8,7 +8,6 @@ import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.StringUtils;
-import com.alan344.utils.tokenparse.GenericTokenParser;
 import org.mybatis.generator.api.*;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -29,7 +28,6 @@ import static org.mybatis.generator.internal.util.JavaBeansUtil.getJavaBeansFiel
  * @date 2022/11/4 13:13
  **/
 public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
-    private static final GenericTokenParser GENERIC_TOKEN_PARSER = new GenericTokenParser("${", "}");
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -103,7 +101,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
         String packageName = extraTemplateFileConfig.getPackageName();
 
         final PluginUtils.Domain domain = PluginUtils.getDomainFromRemarks(remarks, true);
-        packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
+        packageName = PluginUtils.parse(packageName, domain);
         packageName = packageName.replace("..", ".");
         return packageName;
     }

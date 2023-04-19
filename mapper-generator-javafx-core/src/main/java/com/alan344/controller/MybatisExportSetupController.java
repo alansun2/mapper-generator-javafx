@@ -156,7 +156,7 @@ public class MybatisExportSetupController {
         NodeConstants.borderPaneWrap.setCenter(next);
 
         // 把作者名称放入全局变量
-        ConfigConstants.internalGlobalParam.put("author", config.getAuthor());
+        ConfigConstants.globalParam.put("author", config.getAuthor());
     }
 
     public void export() {
@@ -167,11 +167,15 @@ public class MybatisExportSetupController {
         config.setExportExtraFile(false);
 
         BaseConstants.currentConfig = config;
+
+        if(null != config.getCustomProperties()){
+            ConfigConstants.globalParam.putAll(config.getCustomProperties());
+        }
         exportService.export(config);
     }
 
     public Region getExportSetupRegion(MybatisExportConfig mybatisExportConfig) {
-        final Region region = configNameBorderPaneMap.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
+        return configNameBorderPaneMap.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
             final ValidationSupport validationSupport = configNameValidationMap.get(s);
             SplitPane splitPane = new SplitPane();
             splitPane.getStylesheets().add("css/common.css");
@@ -413,8 +417,6 @@ public class MybatisExportSetupController {
                     javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
             return splitPane;
         });
-
-        return region;
     }
 
     /**

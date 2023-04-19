@@ -9,7 +9,6 @@ import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.StringUtils;
-import com.alan344.utils.tokenparse.GenericTokenParser;
 import com.google.common.base.CaseFormat;
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -88,8 +87,6 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
 
-    private static final GenericTokenParser GENERIC_TOKEN_PARSER = new GenericTokenParser("${", "}");
-
     @Override
     public void setProperties(Properties properties) {
         super.setProperties(properties);
@@ -100,8 +97,6 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         return true;
     }
 
-    private final MybatisExportConfig mybatisExportConfig = BaseConstants.currentConfig;
-    final LinkedHashMap<String, String> customProperties = mybatisExportConfig.getCustomProperties();
     final Map<String, List<String>> modelSuffixIgnoreColumsMap = ConfigConstants.extraTemplateFileConfigs.stream()
             .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
             .filter(extraFileConfig -> StringUtils.isNotEmpty(extraFileConfig.getModelIgnoreColumns()))
@@ -117,17 +112,17 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         final MybatisExportConfig mybatisExportConfig = BaseConstants.currentConfig;
         ConfigConstants.extraTemplateFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.CUSTOM_TEMPLATE))
-                .forEach(extraFileConfig -> this.process(introspectedTable, mybatisExportConfig, extraFileConfig, customProperties));
+                .forEach(extraFileConfig -> this.process(introspectedTable, mybatisExportConfig, extraFileConfig));
         return Collections.emptyList();
     }
 
     private void process(IntrospectedTable introspectedTable, MybatisExportConfig mybatisExportConfig,
-                         ExtraTemplateFileConfig extraTemplateFileConfig, LinkedHashMap<String, String> customProperties) {
+                         ExtraTemplateFileConfig extraTemplateFileConfig) {
         final Configuration cfg = this.getConfig(extraTemplateFileConfig.getCustomTemplateDir());
         final Template template = this.getTemplate(cfg, extraTemplateFileConfig.getCustomTemplateDir());
         try {
             // 数据
-            final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraTemplateFileConfig, customProperties);
+            final Map<String, Object> modelData = this.prepareModelData(introspectedTable, extraTemplateFileConfig);
             final String fileName = this.getFileName(mybatisExportConfig, extraTemplateFileConfig, modelData);
             FileWriterWithEncoding fileWriterWithEncoding = new FileWriterWithEncoding(fileName, StandardCharsets.UTF_8);
             template.process(modelData, fileWriterWithEncoding);
@@ -151,8 +146,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
     }
 
     private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable,
-                                                 ExtraTemplateFileConfig extraTemplateFileConfig,
-                                                 LinkedHashMap<String, String> customProperties) {
+                                                 ExtraTemplateFileConfig extraTemplateFileConfig) {
         HashMap<String, Object> modelDataMap = new HashMap<>(16);
         final String upperCamel = PluginUtils.getUpperCamel(introspectedTable);
         modelDataMap.put(TYPE_NAME_UPPER_CAMEL.name(), upperCamel);
@@ -171,10 +165,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
                 .collect(Collectors.toList());
         modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
 
-        if (null != customProperties) {
-            modelDataMap.putAll(customProperties);
-            modelDataMap.putAll(ConfigConstants.internalGlobalParam);
-        }
+        modelDataMap.putAll(ConfigConstants.globalParam);
 
         return modelDataMap;
     }
@@ -188,7 +179,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
      */
     private String getPackage(ExtraTemplateFileConfig extraTemplateFileConfig, PluginUtils.Domain domain) {
         String packageName = extraTemplateFileConfig.getPackageName();
-        packageName = GENERIC_TOKEN_PARSER.parse(packageName, var1 -> domain.getD());
+        packageName = PluginUtils.parse(packageName, domain);
         packageName = packageName.replace("..", ".");
         return packageName;
     }

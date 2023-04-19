@@ -1,6 +1,7 @@
 package com.alan344.constants;
 
 import com.alan344.bean.config.ExtraTemplateFileConfig;
+import com.alan344.utils.tokenparse.GenericTokenParser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -16,5 +17,7 @@ public class ConfigConstants {
      */
     public static List<ExtraTemplateFileConfig> extraTemplateFileConfigs;
 
-    public static Map<String, String> internalGlobalParam = new HashMap<>();
+    public static Map<String, String> globalParam = new HashMap<>();
+
+    public static final GenericTokenParser GENERIC_TOKEN_PARSER = new GenericTokenParser("${", "}");
 }

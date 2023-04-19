@@ -28,3 +28,4 @@ target
 *.iml
 
 generatorConfig.xml
+rebel.xml

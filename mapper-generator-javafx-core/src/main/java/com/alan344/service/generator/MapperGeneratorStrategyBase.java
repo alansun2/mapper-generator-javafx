@@ -9,10 +9,7 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
-import com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin;
-import com.alan344.plugin.ExtraFileModelGeneratorPlugin;
-import com.alan344.plugin.MybatisGeneratorPlugin;
-import com.alan344.plugin.PluginUtils;
+import com.alan344.plugin.*;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -142,6 +139,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         }
         // 用于控制是否生成对应的 mybatis 文件
         generatorUtils.addPlugin(MybatisGeneratorPlugin.class.getName());
+
+        // 修改 domain 类名
+        generatorUtils.addPlugin(DomainPlugin.class.getName());
 
         // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
@@ -368,7 +368,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             }
         }
 
-        if (StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
+        if (!mybatisExportConfig.getMapperXmlLocation().contains("${") && StringUtils.isNotEmpty(mybatisExportConfig.getMapperXmlLocation())) {
             File xmlFile = new File(prefix + mybatisExportConfig.getMapperXmlLocation());
             if (!xmlFile.exists() && !xmlFile.mkdirs()) {
                 log.error("创建xml文件夹：{} 失败", prefix + mybatisExportConfig.getMapperXmlLocation());
@@ -394,7 +394,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 throw new RuntimeException(e);
             }
 
-            MyShellCallback shellCallback = new MyShellCallback(true, true);
+            MyShellCallback shellCallback = new MyShellCallback(true, false);
 
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
             myBatisGenerator.generate(null, null, null);

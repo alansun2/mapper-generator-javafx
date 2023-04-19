@@ -93,7 +93,7 @@ public class ExtraFileController {
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
         exportBtn.getStyleClass().add("export");
-        exportBtn.setOnAction(event -> this.export());
+        exportBtn.setOnAction(event -> this.export(mybatisExportConfig));
         exportBtn.setPrefWidth(70);
         Button preBtn = new Button("返回");
         preBtn.setOnAction(event -> this.pre());
@@ -101,7 +101,7 @@ public class ExtraFileController {
         return List.of(openExtraTemplateFileStageBtn, openExtraPropertyStageBtn, saveBtn, exportBtn, preBtn);
     }
 
-    private void export() {
+    private void export(MybatisExportConfig mybatisExportConfig) {
         final Optional<ExtraFileGroupConfig> enabledConfig = linkageBorderPane.getGroupLeftListView().getItems().stream()
                 .map(ExtraFileGroupItemHBox::getConfig)
                 .filter(ExtraFileGroupConfig::isEnable).findFirst();
@@ -123,6 +123,10 @@ public class ExtraFileController {
                     }).toList();
         } else {
             ConfigConstants.extraTemplateFileConfigs = null;
+        }
+
+        if (null != mybatisExportConfig.getCustomProperties()) {
+            ConfigConstants.globalParam.putAll(mybatisExportConfig.getCustomProperties());
         }
         exportService.export(BaseConstants.currentConfig);
     }
