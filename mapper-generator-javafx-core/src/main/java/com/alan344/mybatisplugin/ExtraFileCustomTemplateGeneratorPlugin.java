@@ -1,4 +1,4 @@
-package com.alan344.plugin;
+package com.alan344.mybatisplugin;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.alan344.plugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.*;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.*;
 
 /**
  * @author AlanSun

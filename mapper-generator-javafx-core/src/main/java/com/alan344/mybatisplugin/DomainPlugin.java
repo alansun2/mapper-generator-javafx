@@ -1,4 +1,4 @@
-package com.alan344.plugin;
+package com.alan344.mybatisplugin;
 
 import com.alan344.utils.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;

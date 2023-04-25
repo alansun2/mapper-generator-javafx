@@ -10,6 +10,7 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.utils.CollectionUtils;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
  * @author AlanSun
  * @date 2023/4/6 10:12
  */
+
+@Slf4j
 @Service
 public class MybatisPluginService {
 
@@ -58,7 +61,8 @@ public class MybatisPluginService {
             try {
                 final String canonicalPath = file.getCanonicalPath().replace("\\", "/");
                 if (!pathSet.contains(canonicalPath)) {
-                    file.delete();
+                    final boolean delete = file.delete();
+                    log.info("删除plugin文件, fileName: [{}], 状态: [{}]", file.getName(), delete);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -118,12 +122,5 @@ public class MybatisPluginService {
     public MybatisPluginConfig getByClassName(String className) {
         final List<MybatisPluginConfig> allPlugin = this.getAllPlugin();
         return allPlugin.stream().filter(it -> it.getClassName().equals(className)).findFirst().orElseThrow();
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException {
-        final ClassLoader compile = CompilerUtil.getCompiler(MybatisPluginService.class.getClassLoader())
-                .addSource(new File("D:\\data\\simple-data-test\\test-usual-project\\src\\main\\java\\com\\controller\\InspectionTaskConfigItemTemplateController.java"))
-                .compile();
-        final Class<?> aClass = compile.loadClass("InspectionTaskConfigItemTemplateController");
     }
 }

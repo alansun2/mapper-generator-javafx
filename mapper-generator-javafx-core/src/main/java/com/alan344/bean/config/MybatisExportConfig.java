@@ -483,7 +483,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         JavaClientTypeEnum getJavaClientType();
 
         /**
-         * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
+         * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.mybatisplugin.PluginUtils.Domain}
          */
         boolean isEnableDomain();
     }
@@ -527,7 +527,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
          */
         private SimpleBooleanProperty useComment = new SimpleBooleanProperty(true);
         /**
-         * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.plugin.PluginUtils.Domain}
+         * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.mybatisplugin.PluginUtils.Domain}
          */
         private SimpleBooleanProperty enableDomain = new SimpleBooleanProperty(false);
 

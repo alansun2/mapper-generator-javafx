@@ -22,7 +22,7 @@ public class MapperGeneratorStrategyContext {
         final List<MybatisPluginConfig> byIds = mybatisPluginService.getByIds(mybatisExportConfig.getPluginIds());
         switch (selectTab) {
             default:
-                return new MyMybatisGeneratorService(mybatisExportConfig.getMybatisOfficialExportConfig(), byIds);
+                return new ServiceMybatisGenerator(mybatisExportConfig.getMybatisOfficialExportConfig(), byIds);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.alan344.plugin;
+package com.alan344.mybatisplugin;
 
 import com.alan344.constants.BaseConstants;
 import org.mybatis.generator.api.GeneratedXmlFile;

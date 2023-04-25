@@ -10,7 +10,7 @@ import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
-import com.alan344.plugin.*;
+import com.alan344.mybatisplugin.*;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import static com.alan344.plugin.PluginUtils.Domain.DOMAIN;
+import static com.alan344.mybatisplugin.PluginUtils.Domain.DOMAIN;
 
 /**
  * @author AlanSun

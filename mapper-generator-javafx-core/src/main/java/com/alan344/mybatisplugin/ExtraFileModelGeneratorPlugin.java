@@ -1,4 +1,4 @@
-package com.alan344.plugin;
+package com.alan344.mybatisplugin;
 
 import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;

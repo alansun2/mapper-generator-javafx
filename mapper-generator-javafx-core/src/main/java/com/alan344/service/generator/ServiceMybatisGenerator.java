@@ -11,8 +11,8 @@ import java.util.List;
  * @date 2019/8/9 16:19
  */
 @Slf4j
-public class MyMybatisGeneratorService extends MapperGeneratorStrategyBase {
-    public MyMybatisGeneratorService(MybatisExportConfig.ExportConfig exportConfig, List<MybatisPluginConfig> mybatisPluginConfigs) {
+public class ServiceMybatisGenerator extends MapperGeneratorStrategyBase {
+    public ServiceMybatisGenerator(MybatisExportConfig.ExportConfig exportConfig, List<MybatisPluginConfig> mybatisPluginConfigs) {
         super(exportConfig, mybatisPluginConfigs);
     }
 }
