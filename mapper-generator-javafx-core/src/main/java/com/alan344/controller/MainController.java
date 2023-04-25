@@ -24,8 +24,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 
 import javax.annotation.Resource;
@@ -105,9 +103,6 @@ public class MainController implements Initializable {
     @Resource
     private FindTableInit findTableInit;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     //--------------------------------init----------------------------------------------------------------------//
 
     @SneakyThrows
@@ -120,7 +115,7 @@ public class MainController implements Initializable {
         menuBar.setOnMouseDragged(this::handleMouseDragged);
 
         tableFindTextField = TextFields.createClearableTextField();
-        tableFindTextField.setStyle("-fx-background-color: #FFF;");
+        tableFindTextField.setStyle("-fx-background-color: #FFF;-fx-border-width: 0;-fx-border-color: #FFF;");
         tableFindTextField.setPromptText("Table Filter");
         tableFindTextField.setFocusTraversable(false);
         tableFindTextFieldHbox.getChildren().add(tableFindTextField);

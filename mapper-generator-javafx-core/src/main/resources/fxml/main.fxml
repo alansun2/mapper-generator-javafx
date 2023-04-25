@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
-<StackPane fx:id="mainStackPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/main.css"
+<StackPane fx:id="mainStackPane" stylesheets="@../css/main.css"
            xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            style="-fx-background-color: #F7F8FA;"

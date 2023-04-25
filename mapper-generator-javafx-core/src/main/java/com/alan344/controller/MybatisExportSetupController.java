@@ -6,6 +6,7 @@ import com.alan344.componet.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;
 import com.alan344.constants.enums.TargetNameEnum;
@@ -168,7 +169,7 @@ public class MybatisExportSetupController {
 
         BaseConstants.currentConfig = config;
 
-        if(null != config.getCustomProperties()){
+        if (null != config.getCustomProperties()) {
             ConfigConstants.globalParam.putAll(config.getCustomProperties());
         }
         exportService.export(config);
@@ -195,6 +196,15 @@ public class MybatisExportSetupController {
             mybatisExportConfig.authorProperty().bindBidirectional(authorText.textProperty());
             MybatisExportItemHBox authorHbox = new MybatisExportItemHBox("作者名称:", authorText);
             validationSupport.registerValidator(authorText, Validator.createEmptyValidator("作者名称必填"));
+
+            JFXComboBox<String> writeFileComBox = new JFXComboBox<>(FXCollections.observableArrayList(FileWriteModeEnum.valuesToString()));
+            writeFileComBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                if (null != newValue) {
+                    mybatisExportConfig.setWriteMode(FileWriteModeEnum.getEnum(newValue));
+                }
+            });
+            writeFileComBox.setValue(mybatisExportConfig.getWriteMode().getValue());
+            MybatisExportItemHBox writeFileHbox = new MybatisExportItemHBox("文件写入模式:", writeFileComBox);
 
             FileSelectTextHBox projectDirText = new FileSelectTextHBox("浏览", mybatisExportConfig.getProjectDir());
             mybatisExportConfig.projectDirProperty().bindBidirectional(projectDirText.getTextField().textProperty());
@@ -324,7 +334,7 @@ public class MybatisExportSetupController {
             languageCombox.setValue(mybatisExportConfig.getLanguage());
             mybatisExportConfig.languageProperty().bindBidirectional(languageCombox.valueProperty());
 
-            hBoxListView.getItems().addAll(configNameHbox, authorHbox, projectDirHbox, projectNameHbox, languageHbox,
+            hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox, languageHbox,
                     beanLocationHbox, beanPackageHbox, beanRootClassHbox, mapperLocationHbox, mapperPackageHbox,
                     mapperRootInterfaceHbox, xmlLocationHbox, globalIgnoreFieldHbox);
 

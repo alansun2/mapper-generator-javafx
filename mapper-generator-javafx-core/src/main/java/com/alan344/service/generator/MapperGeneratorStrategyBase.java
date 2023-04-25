@@ -9,6 +9,7 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.plugin.*;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
@@ -160,7 +161,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
         commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
-        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, exportConfig.isUseComment() + "");
+        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, String.valueOf(exportConfig.isUseComment()));
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
     }
@@ -394,7 +395,10 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 throw new RuntimeException(e);
             }
 
-            MyShellCallback shellCallback = new MyShellCallback(true, false);
+            MyShellCallback shellCallback = new MyShellCallback(false, true);
+            if (mybatisExportConfig.getWriteMode().equals(FileWriteModeEnum.OVERWRITE)) {
+                shellCallback = new MyShellCallback(true, false);
+            }
 
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);
             myBatisGenerator.generate(null, null, null);

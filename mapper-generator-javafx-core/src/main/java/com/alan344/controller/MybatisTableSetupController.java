@@ -18,7 +18,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -51,8 +50,6 @@ public class MybatisTableSetupController implements Initializable {
     private ColumnService columnService;
     @Resource
     private MybatisListViewInit mybatisListViewInit;
-    @Resource
-    private BeanFactory beanFactory;
     @Resource
     private MapperCheckBoxInit mapperCheckBoxInit;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
@@ -111,14 +108,9 @@ public class MybatisTableSetupController implements Initializable {
 
     @FXML
     public void next() {
-        Node next = nodeHandler.getNext();
-        if (next == null) {
-
-            // next = FxmlLoadFactory.create("/fxml/mybatis-export-setup.fxml", beanFactory);
-            next = mybatisExportSetup1Controller.getBorderPane(BaseConstants.selectedDateSource.getConfigName());
-            // 入栈
-            nodeHandler.addNode(next);
-        }
+        Node next = mybatisExportSetup1Controller.getBorderPane(BaseConstants.selectedDateSource.getConfigName());
+        // 入栈
+        nodeHandler.addNode(next);
 
         NodeConstants.borderPaneWrap.setCenter(next);
     }

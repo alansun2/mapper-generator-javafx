@@ -90,7 +90,7 @@ public class PluginUtils {
 
     public static String parse(String content, Domain domain) {
         return ConfigConstants.GENERIC_TOKEN_PARSER.parse(content, key -> {
-            if ("domain".equals(key)) {
+            if ("DOMAIN".equals(key)) {
                 return domain.getD();
             } else {
                 return ConfigConstants.globalParam.getOrDefault(key, key);

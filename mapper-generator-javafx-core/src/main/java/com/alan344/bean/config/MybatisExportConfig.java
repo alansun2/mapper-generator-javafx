@@ -1,6 +1,7 @@
 package com.alan344.bean.config;
 
 import com.alan344.componet.LeftRightLinkageBorderPane;
+import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;
 import com.alan344.constants.enums.TargetNameEnum;
@@ -39,6 +40,11 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
      * 类中的作者信息
      */
     private final SimpleStringProperty author = new SimpleStringProperty();
+
+    /**
+     * 文件写入模式
+     */
+    private final SimpleObjectProperty<FileWriteModeEnum> writeMode = new SimpleObjectProperty<>(FileWriteModeEnum.MERGE);
 
     /**
      * 项目地址
@@ -192,6 +198,18 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     @Override
     public void setSystem(boolean system) {
         this.system.set(system);
+    }
+
+    public FileWriteModeEnum getWriteMode() {
+        return writeMode.get();
+    }
+
+    public SimpleObjectProperty<FileWriteModeEnum> writeModeProperty() {
+        return writeMode;
+    }
+
+    public void setWriteMode(FileWriteModeEnum writeMode) {
+        this.writeMode.set(writeMode);
     }
 
     public String getAuthor() {

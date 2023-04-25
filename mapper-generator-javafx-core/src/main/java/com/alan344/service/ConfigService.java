@@ -151,12 +151,11 @@ public class ConfigService {
             extraFileGroupConfigs.forEach(extraFileGroupConfig -> {
                 final Collection<ExtraFileGroupConfig.ExtraFileConfig> list = extraFileGroupConfig.getList();
                 list.forEach(extraFileConfig -> {
-                    StringBuilder sb = new StringBuilder(mybatisExportConfig.getProjectDir());
-                    sb.append("/");
+                    StringBuilder sb = new StringBuilder();
                     if (extraFileConfig.getOutputPath().startsWith("-")) {
                         sb.append(mybatisExportConfig.getProjectName());
                     }
-                    extraFileConfig.setOutputPath(sb.toString() + extraFileConfig.getOutputPath());
+                    extraFileConfig.setOutputPath(sb + extraFileConfig.getOutputPath());
                 });
             });
             return extraFileGroupConfigs;
