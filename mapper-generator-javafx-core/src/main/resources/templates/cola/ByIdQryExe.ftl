@@ -28,8 +28,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}ByIdQryExe {
         return this.convert(${TYPE_NAME_LOWER_CAMEL}DoOpt.get());
     }
 
-    private ${TYPE_NAME_UPPER_CAMEL}DTO convert(${TYPE_NAME_UPPER_CAMEL}DO do) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}DTO" "do" "DTO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
+    private ${TYPE_NAME_UPPER_CAMEL}DTO convert(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}do) {
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}do" "DTO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}DTO;
     }
 }
