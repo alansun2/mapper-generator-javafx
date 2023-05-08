@@ -157,6 +157,7 @@ public class MybatisExportSetupController {
         NodeConstants.borderPaneWrap.setCenter(next);
 
         // 把作者名称放入全局变量
+        ConfigConstants.globalParam.clear();
         ConfigConstants.globalParam.put("author", config.getAuthor());
     }
 
@@ -217,14 +218,10 @@ public class MybatisExportSetupController {
             MybatisExportItemHBox projectNameHbox = new MybatisExportItemHBox("项目名称:", projectNameText);
             validationSupport.registerValidator(projectNameText, Validator.createEmptyValidator("项目名称必填"));
 
-            projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
-                if (StringUtils.isNotEmpty(newValue) && StringUtils.isEmpty(projectNameText.getText())) {
-                    projectNameText.setText(FileUtil.getName(newValue));
-                }
-            });
+            projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> projectNameText.setText(FileUtil.getName(newValue)));
 
-            JFXComboBox<LanguageEnum> languageCombox = new JFXComboBox<>(FXCollections.observableArrayList(LanguageEnum.values()));
-            MybatisExportItemHBox languageHbox = new MybatisExportItemHBox("语言:", languageCombox);
+            JFXComboBox<LanguageEnum> languageComboBox = new JFXComboBox<>(FXCollections.observableArrayList(LanguageEnum.values()));
+            MybatisExportItemHBox languageHbox = new MybatisExportItemHBox("语言:", languageComboBox);
 
             FileSelectTextToggleHBox beanLocationText = new FileSelectTextToggleHBox("浏览", mybatisExportConfig.modelEnableProperty(), mybatisExportConfig.getBeanLocation());
             mybatisExportConfig.beanLocationProperty().bindBidirectional(beanLocationText.getTextField().textProperty());
@@ -308,7 +305,7 @@ public class MybatisExportSetupController {
             MybatisExportItemHBox globalIgnoreFieldHbox = new MybatisExportItemHBox("全局忽略字段:", globalIgnoreFieldText);
 
             // 选择语言时，自动设置 bean 和 mapper 的地址
-            languageCombox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            languageComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (StringUtils.isEmpty(mybatisExportConfig.getMapperXmlLocation()) && !"src/main/resources/mapper".equals(mybatisExportConfig.getMapperXmlLocation())) {
                     mybatisExportConfig.setMapperXmlLocation("src/main/resources/mapper");
                 }
@@ -331,8 +328,8 @@ public class MybatisExportSetupController {
                     }
                 }
             });
-            languageCombox.setValue(mybatisExportConfig.getLanguage());
-            mybatisExportConfig.languageProperty().bindBidirectional(languageCombox.valueProperty());
+            languageComboBox.setValue(mybatisExportConfig.getLanguage());
+            mybatisExportConfig.languageProperty().bindBidirectional(languageComboBox.valueProperty());
 
             hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox, languageHbox,
                     beanLocationHbox, beanPackageHbox, beanRootClassHbox, mapperLocationHbox, mapperPackageHbox,

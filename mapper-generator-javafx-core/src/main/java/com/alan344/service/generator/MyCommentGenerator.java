@@ -2,6 +2,7 @@ package com.alan344.service.generator;
 
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.JavaElement;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
@@ -116,6 +117,11 @@ public class MyCommentGenerator extends DefaultCommentGenerator {
         topLevelClass.addJavaDocLine(" * <p>");
         topLevelClass.addJavaDocLine(" * " + introspectedTable.getRemarks() + "对应表:" + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName());
         topLevelClass.addJavaDocLine(" */");
+    }
+
+    @Override
+    public void addJavaFileComment(CompilationUnit compilationUnit) {
+        super.addJavaFileComment(compilationUnit);
     }
 
     @Override

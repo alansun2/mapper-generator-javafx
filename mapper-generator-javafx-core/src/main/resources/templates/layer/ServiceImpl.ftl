@@ -53,7 +53,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update${TYPE_NAME_UPPER_CAMEL}ById(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
-        final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Mapper.selectByPrimaryKey(id);
+        final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Mapper.selectByPrimaryKey(cmd.getId());
         AssertUtils.isTrue(${TYPE_NAME_LOWER_CAMEL}Opt.isPresent() && ${TYPE_NAME_LOWER_CAMEL}Opt.get().getIsDelete() == BaseConstants.IS_DELETE_0,
             "记录不存在", HttpStatus.NOT_FOUND.value());
         final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL} = this.convert(cmd);
@@ -79,8 +79,8 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
         return ${TYPE_NAME_LOWER_CAMEL}PageDTO;
     }
 
-    private ${TYPE_NAME_UPPER_CAMEL}DTO convertToDTO(${TYPE_NAME_UPPER_CAMEL}DO ${TYPE_NAME_LOWER_CAMEL}do) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}do" "DTO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
+    private ${TYPE_NAME_UPPER_CAMEL}DTO convertToDTO(${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}DTO" "${TYPE_NAME_LOWER_CAMEL}" "DTO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
         return ${TYPE_NAME_LOWER_CAMEL}DTO;
     }
 }
