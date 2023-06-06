@@ -2,8 +2,8 @@
 
 ![](https://img.shields.io/badge/JavaFx-8-green.svg)
 ![](https://img.shields.io/badge/SpringBoot-2.1.5-blue.svg)
-![](https://img.shields.io/badge/version-1.0.0-orange.svg)
-[![](https://img.shields.io/badge/downloads-1.0.0-brightgreen)](https://github.com/alansun2/mapper-generator-javafx/releases)
+![](https://img.shields.io/badge/version-4.0.0-orange.svg)
+[![](https://img.shields.io/badge/downloads-4.0.0-brightgreen)](https://github.com/alansun2/mapper-generator-javafx/releases)
 
 这是一个由 `JavaFX`，`SpringBoot` 开发的 mybatis-mapper-generator 小工具。可以让你快速生成数据库对应的实体类以及 Mybatis
 Mapper。目前本工具只支持 `MySQL`和与`MySQL`兼容的数据库(例如，`MariaDB`，`POLARDB`等)。如果有需求可以在 issue 上提，谢谢！
@@ -24,17 +24,20 @@ Mapper。目前本工具只支持 `MySQL`和与`MySQL`兼容的数据库(例如�
 
 ### VERSION UPDATE
 
-* 1.1.0
-  增加表搜索功能，左边列表区域使用键盘输入就可以使用
+* v4.0.0
+    1. 重构代码，优化UI
+    2. 新增模板功能
+* v2.1.0
+    1. 增加 tk.mybatis 的生成策略
+    2. 增加 mybatis 生成策略（MyBatis3Simple，MyBatis3DynamicSql）
+    3. 优化代码
 * v2.0.0
     1. 增加可选择的实现 Serializable 接口的功能
     2. 重构代码
     3. 优化搜索
     4. 修改一些bug
-* v2.1.0
-    1. 增加 tk.mybatis 的生成策略
-    2. 增加 mybatis 生成策略（MyBatis3Simple，MyBatis3DynamicSql）
-    3. 优化代码
+* 1.1.0
+  增加表搜索功能，左边列表区域使用键盘输入就可以使用
 
 ### 1. 使用步骤介绍
 

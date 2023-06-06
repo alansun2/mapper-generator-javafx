@@ -17,6 +17,11 @@
                             <FontIcon iconLiteral="unil-database:16:#66CCFF"/>
                         </graphic>
                     </MenuItem>
+                    <MenuItem mnemonicParsing="false" onAction="#openConfigDir" text="打开配置目录">
+                        <graphic>
+                            <FontIcon iconLiteral="unil-folder-open:16:#B6FF77"/>
+                        </graphic>
+                    </MenuItem>
                     <MenuItem mnemonicParsing="false" onAction="#importConfig" text="导入配置">
                         <graphic>
                             <FontIcon iconLiteral="unil-file-import:16:#CCCCFF"/>

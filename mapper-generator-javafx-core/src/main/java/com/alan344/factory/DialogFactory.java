@@ -1,5 +1,6 @@
 package com.alan344.factory;
 
+import com.alan344.componet.FileOpenAndSuccessDialog;
 import com.alan344.componet.SuccessDialog;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -36,6 +37,10 @@ public class DialogFactory {
 
     public static void successDialog(Stage primaryStage, String textContent) {
         SuccessDialog successDialog = new SuccessDialog(primaryStage, textContent);
+    }
+
+    public static void successAndOpenFileDialog(Stage primaryStage, String textContent, String path) {
+        FileOpenAndSuccessDialog successDialog = new FileOpenAndSuccessDialog(primaryStage, textContent, path);
     }
 
     public static void exceptionDialog(Throwable e) {

@@ -134,15 +134,18 @@ public class DataSourceService {
             return Collections.emptyList();
         }
 
+        List<DataSource> result = new ArrayList<>();
         try {
             for (File file : files) {
                 DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
-                dataSourceSet.add(dataSource);
+                if (dataSourceSet.add(dataSource)) {
+                    result.add(dataSource);
+                }
             }
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
         }
-        return new ArrayList<>(dataSourceSet);
+        return result;
     }
 
     /**

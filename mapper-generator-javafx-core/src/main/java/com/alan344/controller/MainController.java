@@ -1,5 +1,6 @@
 package com.alan344.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.componet.CustomTreeCell;
@@ -11,6 +12,7 @@ import com.alan344.factory.FxmlLoadFactory;
 import com.alan344.init.DataSourceTreeItemInit;
 import com.alan344.init.DataSourceTreeViewInit;
 import com.alan344.init.FindTableInit;
+import com.alan344.utils.Assert;
 import com.alan344.utils.FileExploreUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -174,29 +176,37 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    public void openConfigDir() {
+        FileExploreUtils.open(BaseConstants.MG_CONF_HOME);
+    }
+
+    @FXML
     public void importConfig() {
         // 选择文件
         final File fileScan = FileDirChooserFactory.createFileScan("选择zip文件", BaseConstants.baseFileDir, "配置文件", "*.zip");
         if (null != fileScan) {
             // 先备份
-            ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
+            if (FileUtil.exist(BaseConstants.MG_CONF_HOME)) {
+                ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
+            }
             BaseConstants.baseFileDir = fileScan.getParent().replace("\\", "/");
             ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), Charset.defaultCharset());
             // 弹框
             DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
+            // 从文件加载数据源至pane
+            dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
         }
     }
 
     @FXML
     public void exportConfig() {
+        Assert.isTrue(FileUtil.exist(BaseConstants.MG_CONF_HOME), "暂无可以导出的配置", NodeConstants.primaryStage);
         final File directory = FileDirChooserFactory.createDirectoryScan("导出文件名称", null);
         if (null != directory) {
             final String absolutePath = directory.getAbsolutePath().replace("\\", "/");
             ZipUtil.zip(BaseConstants.MG_CONF_HOME, absolutePath + "/config.zip", Charset.defaultCharset(), true);
-            Button button = new Button("打开文件夹");
-            button.setOnAction(event -> FileExploreUtils.open(absolutePath));
             // 弹框
-            DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
+            DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出成功", absolutePath);
         }
     }
 
