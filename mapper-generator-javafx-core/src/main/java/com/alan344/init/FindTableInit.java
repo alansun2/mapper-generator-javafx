@@ -1,5 +1,6 @@
 package com.alan344.init;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
@@ -54,6 +55,7 @@ public class FindTableInit {
      * @param treeViewDataSourceRoot treeViewDataSourceRoot
      */
     private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot, boolean isDelete) {
+        String tableNameReg = tableNamePrefix.replaceAll("(.)", ".*$1") + ".*";
         final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
         for (TreeItem<DataItem> dataSourceTreeItem : children) {
             if (dataSourceTreeItem.isExpanded()) {
@@ -61,14 +63,14 @@ public class FindTableInit {
                     if (isDelete) {
                         dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
                         DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
-                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().contains(tableNamePrefix)).toList();
+                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().matches(tableNameReg)).toList();
                         for (Table filteredTable : filteredTables) {
                             TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
                             tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                         }
                     }
                     final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
-                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().contains(tableNamePrefix));
+                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().matches(tableNameReg));
 
                 } else {
                     dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
