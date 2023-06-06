@@ -181,7 +181,7 @@ public class MybatisExportSetupController {
             final ValidationSupport validationSupport = configNameValidationMap.get(s);
             SplitPane splitPane = new SplitPane();
             splitPane.getStylesheets().add("css/common.css");
-            splitPane.setDividerPositions(0.68);
+            splitPane.setDividerPositions(0.69);
             splitPane.setOrientation(Orientation.VERTICAL);
             ListView<HBox> hBoxListView = new ListView<>();
             hBoxListView.prefWidthProperty().bind(splitPane.widthProperty());

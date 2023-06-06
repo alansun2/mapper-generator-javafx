@@ -1,7 +1,9 @@
 package com.alan344.utils;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ParseResult;
+import cn.hutool.core.io.FileUtil;
+import com.alan344.exception.BizException;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
@@ -9,6 +11,9 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
+import com.github.javaparser.ast.visitor.ModifierVisitor;
+import com.github.javaparser.printer.configuration.DefaultConfigurationOption;
+import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.config.MergeConstants;
 import org.mybatis.generator.exception.ShellException;
@@ -55,25 +60,17 @@ public class MyShellCallback extends DefaultShellCallback {
     }
 
     private String getNewJavaFile(String newFileSource, String existingFileFullPath) throws FileNotFoundException {
-        JavaParser javaParser = new JavaParser();
-        ParseResult<CompilationUnit> newCompilationUnitParse = javaParser.parse(newFileSource);
-        CompilationUnit newCompilationUnit;
-        if (newCompilationUnitParse.isSuccessful() && newCompilationUnitParse.getResult().isPresent()) {
-            newCompilationUnit = newCompilationUnitParse.getResult().get();
-        } else {
-            log.error("解析 newFileSource 失败， {}", newCompilationUnitParse.getProblem(0).toString());
-            return newFileSource;
-        }
+        CompilationUnit newCompilationUnit = StaticJavaParser.parse(newFileSource);
 
-        ParseResult<CompilationUnit> existingCompilationUnitParse = javaParser.parse(new File(existingFileFullPath));
-        CompilationUnit existingCompilationUnit;
-        if (existingCompilationUnitParse.isSuccessful() && existingCompilationUnitParse.getResult().isPresent()) {
-            existingCompilationUnit = existingCompilationUnitParse.getResult().get();
-        } else {
-            log.error("解析 existingFileFullPath 失败， {}", existingCompilationUnitParse.getProblem(0).toString());
-            return newFileSource;
-        }
-        return mergerFile(existingCompilationUnit, newCompilationUnit).toString();
+        final String code = FileUtil.readUtf8String(existingFileFullPath);
+        CompilationUnit existingCompilationUnit = StaticJavaParser.parse(code);
+
+        DefaultPrinterConfiguration configuration = new DefaultPrinterConfiguration();
+        configuration.addOption(new DefaultConfigurationOption(DefaultPrinterConfiguration.ConfigOption.COLUMN_ALIGN_FIRST_METHOD_CHAIN, true));
+        ModifierVisitor<Void> modifierVisitor = new ModifierVisitor<>();
+        final CompilationUnit compilationUnit = this.mergerFile(existingCompilationUnit, newCompilationUnit, modifierVisitor);
+
+        return compilationUnit.toString(configuration);
     }
 
     /**
@@ -83,7 +80,7 @@ public class MyShellCallback extends DefaultShellCallback {
      * @param newCompilationUnit      新的
      * @return merge 后的
      */
-    private CompilationUnit mergerFile(CompilationUnit existingCompilationUnit, CompilationUnit newCompilationUnit) {
+    private CompilationUnit mergerFile(CompilationUnit existingCompilationUnit, CompilationUnit newCompilationUnit, ModifierVisitor<Void> modifierVisitor) {
         CompilationUnit finalCompilationUnit = new CompilationUnit();
 
         // 修改包名为新类的包名
@@ -102,7 +99,7 @@ public class MyShellCallback extends DefaultShellCallback {
         finalCompilationUnit.setImports(imports);
 
         // 合并topLevelClass
-        finalCompilationUnit.setTypes(this.mergeTypes(existingCompilationUnit.getTypes(), newCompilationUnit.getTypes()));
+        finalCompilationUnit.setTypes(this.mergeTypes(existingCompilationUnit.getTypes(), newCompilationUnit.getTypes(), modifierVisitor));
 
         return finalCompilationUnit;
     }
@@ -110,7 +107,7 @@ public class MyShellCallback extends DefaultShellCallback {
     /**
      * 合并Java类（一个Java文件可能有多个类）
      */
-    private NodeList<TypeDeclaration<?>> mergeTypes(NodeList<TypeDeclaration<?>> oldTypes, NodeList<TypeDeclaration<?>> newTypes) {
+    private NodeList<TypeDeclaration<?>> mergeTypes(NodeList<TypeDeclaration<?>> oldTypes, NodeList<TypeDeclaration<?>> newTypes, ModifierVisitor<Void> modifierVisitor) {
         Map<String, TypeDeclaration<?>> finalTypes = newTypes.stream()
                 .collect(Collectors.toMap(NodeWithSimpleName::getNameAsString, Function.identity(), (a, b) -> b, LinkedHashMap::new));
 
@@ -118,10 +115,10 @@ public class MyShellCallback extends DefaultShellCallback {
             // 对于旧CompilationUnit中的每一个TopLevelClass
             if (finalTypes.containsKey(oldType.getNameAsString())) {
                 // 如果存在同名类则合并
-                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString())));
+                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString()), modifierVisitor));
             } else if (!isGeneratedNode(oldType)) {
                 // 如果不存在同名类且不是生成的类
-                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString())));
+                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString()), modifierVisitor));
             }
         }
 
@@ -131,7 +128,7 @@ public class MyShellCallback extends DefaultShellCallback {
     /**
      * 合并两个同名类
      */
-    private TypeDeclaration<?> mergeType(TypeDeclaration<?> oldType, TypeDeclaration<?> newType) {
+    private TypeDeclaration<?> mergeType(TypeDeclaration<?> oldType, TypeDeclaration<?> newType, ModifierVisitor<Void> modifierVisitor) {
         TypeDeclaration<?> finalTypeDeclaration;
         if (newType.isClassOrInterfaceDeclaration() && oldType.isClassOrInterfaceDeclaration()) {
             finalTypeDeclaration = new ClassOrInterfaceDeclaration();
@@ -176,6 +173,7 @@ public class MyShellCallback extends DefaultShellCallback {
 
             // 合并Method
             for (MethodDeclaration methodDeclaration : mergeMethods(oldClass.getMethods(), newClass.getMethods())) {
+                modifierVisitor.visit(methodDeclaration, null);
                 finalTypeDeclaration.addMember(methodDeclaration);
             }
 
@@ -199,7 +197,7 @@ public class MyShellCallback extends DefaultShellCallback {
                     // System.out.println("新内部类修饰符：" + bodyDeclaration.asTypeDeclaration().getModifiers());
                 }
             }
-            for (TypeDeclaration<?> typeDeclaration : mergeTypes(oldTypes, newTypes)) {
+            for (TypeDeclaration<?> typeDeclaration : mergeTypes(oldTypes, newTypes, modifierVisitor)) {
                 finalTypeDeclaration.addMember(typeDeclaration);
             }
 
@@ -209,7 +207,7 @@ public class MyShellCallback extends DefaultShellCallback {
         } else if (newType.isAnnotationDeclaration() && oldType.isAnnotationDeclaration()) {
             return newType;
         } else {
-            throw new RuntimeException(String.format("新类和旧类的类型不一样，无法判断该以何种方式合并，请删除旧文件或者将旧文件更改为正确的类型 (类名：%s)", newType.getNameAsString()));
+            throw new BizException(String.format("新类和旧类的类型不一样，无法判断该以何种方式合并，请删除旧文件或者将旧文件更改为正确的类型 (类名：%s)", newType.getNameAsString()));
         }
     }
 
@@ -264,6 +262,7 @@ public class MyShellCallback extends DefaultShellCallback {
      * @param newMethods 新方法
      */
     private List<MethodDeclaration> mergeMethods(List<MethodDeclaration> oldMethods, List<MethodDeclaration> newMethods) {
+
         Map<String, MethodDeclaration> methodDeclarationMap = new LinkedHashMap<>();
         for (MethodDeclaration newMethod : newMethods) {
             methodDeclarationMap.put(newMethod.getDeclarationAsString(false, false, false), newMethod);
