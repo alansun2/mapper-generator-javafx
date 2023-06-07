@@ -169,15 +169,17 @@
 ## 6. 如何自定义开发自己的功能？
 
 该项目大概8000多行代码，很简单的代码。但您事先得有`JavaFX`
-的基础，这里给 [B 站的可爱阿婆主《JavaFX没人看系列》](https://space.bilibili.com/5096022/video?tid=36&page=8&keyword=&order=pubdate)
+的基础，如果您不熟悉 `JavaFX`
+这里给 [B 站的可爱阿婆主《JavaFX没人看系列》](https://space.bilibili.com/5096022/video?tid=36&page=8&keyword=&order=pubdate)
 做一波广告（哈哈哈）。
 
 ### 6.1 构建
 
 该项目使用 [JavaPackager](https://github.com/fvarrui/JavaPackager) 打包，使用 maven 构建，使用 jdk17，如果您想自己构建，可以按照以下步骤：
 
-1. ```mvn clean package 生成 lib```
-2. 可以在 target/mybatis-friend 目录下找到 `mybatis-friend.exe`，双击即可运行
+1. 执行```mvn clean package```
+2. 在 [mapper-generator-javafx-core](mapper-generator-javafx-core)/target/mybatis-friend 目录下找到 `mybatis-friend.exe`
+   ，双击即可运行
 
 ## 7. 下载
 
@@ -203,7 +205,7 @@
     1. 例如: `com.example.demo.{DOMAIN}`, DOMAIN = 'order', 最终的包名会是 `com.example.demo.order`。
 2. 自定义模板中的占位符替换, 具体请看 `FreeMarker`
 
-#### 8.1.2.那么问题来了, `DOMAIN` 从哪里来呢？
+#### 8.1.2. 那么问题来了, `DOMAIN` 从哪里来呢？
 
 `DOMAIN` 是从数据表的备注获取的, 所以想要使用 `DOMAIN`, 备注需要符合一定的格式, 格式为 json, 如下:
 
