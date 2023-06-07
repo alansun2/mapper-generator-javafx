@@ -1,9 +1,0 @@
-@import "common.css";
-
-#text {
-    -fx-font-size: 20;
-}
-
-AnchorPane {
-    -fx-background-color: #F7F8FA;
-}

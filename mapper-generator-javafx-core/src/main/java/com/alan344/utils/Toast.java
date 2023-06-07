@@ -24,35 +24,35 @@ public class Toast {
         toastStage.setResizable(false);
         toastStage.initStyle(StageStyle.TRANSPARENT);
         Text text = new Text(message);
-        text.setFont(Font.font("Verdana", size));
+        text.setFont(Font.font(size));
         text.setFill(Color.RED);
         StackPane root = new StackPane(text);
-        root.setStyle("-fx-background-radius: 20; -fx-background-color: rgba(0, 0, 0, 0.2); -fx-padding: 50px;");
+        root.setStyle("-fx-background-radius: 5; -fx-background-color: rgb(232,232,232, 0.5); -fx-padding: 10px;");
         root.setOpacity(opacity);
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         toastStage.setScene(scene);
         toastStage.show();
         Timeline fadeInTimeline = new Timeline();
-        Duration var10002 = Duration.millis(fadeInDelay);
+        Duration duration1 = Duration.millis(fadeInDelay);
         KeyValue[] var10003 = new KeyValue[1];
         Scene var10008 = toastStage.getScene();
         var10003[0] = new KeyValue(var10008.getRoot().opacityProperty(), 1);
-        KeyFrame fadeInKey1 = new KeyFrame(var10002, var10003);
+        KeyFrame fadeInKey1 = new KeyFrame(duration1, var10003);
         fadeInTimeline.getKeyFrames().add(fadeInKey1);
         fadeInTimeline.setOnFinished(event -> (new Thread((() -> {
             try {
                 Thread.sleep(displayTime);
-            } catch (InterruptedException var3) {
-                var3.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
             Timeline fadeOutTimeline = new Timeline();
-            Duration var100021 = Duration.millis(fadeOutDelay);
+            Duration duration = Duration.millis(fadeOutDelay);
             KeyValue[] var100031 = new KeyValue[1];
-            Scene var100081 = toastStage.getScene();
-            var100031[0] = new KeyValue(var100081.getRoot().opacityProperty(), 0);
-            KeyFrame fadeOutKey1 = new KeyFrame(var100021, var100031);
+            Scene scene1 = toastStage.getScene();
+            var100031[0] = new KeyValue(scene1.getRoot().opacityProperty(), 0);
+            KeyFrame fadeOutKey1 = new KeyFrame(duration, var100031);
             fadeOutTimeline.getKeyFrames().add(fadeOutKey1);
             fadeOutTimeline.setOnFinished(event1 -> {
                 toastStage.close();
@@ -64,7 +64,7 @@ public class Toast {
     }
 
     public static void makeTextDefault(Stage stage, String message) {
-        Toast.makeText(stage, message, 3000, 500, 500, 15, 5);
+        Toast.makeText(stage, message, 3000, 500, 500, 12, 5);
         throw new BizException(message);
     }
 }

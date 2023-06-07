@@ -2,7 +2,7 @@ package com.alan344.service;
 
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.NodeConstants;
-import com.alan344.controller.dialog.ExportSuccessAlertController;
+import com.alan344.factory.DialogFactory;
 import com.alan344.service.generator.MapperGeneratorStrategyContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,6 @@ public class ExportService {
     private ColumnService columnService;
     @Autowired
     private ConfigService configService;
-    @Resource
-    private ExportSuccessAlertController exportSuccessAlertController;
 
     /**
      * 导出
@@ -34,10 +32,11 @@ public class ExportService {
     public void export(MybatisExportConfig mybatisExportConfig) {
         this.saveSetupInternal(mybatisExportConfig);
 
-        boolean exportSuccess = true;
         // 调用 mybatis generator 生成文件
         mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
-        exportSuccessAlertController.openTableAdvancedSetup(NodeConstants.primaryStage, exportSuccess, mybatisExportConfig);
+
+        // 弹框
+        DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
     }
 
     /**

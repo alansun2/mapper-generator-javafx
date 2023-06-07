@@ -164,6 +164,7 @@ public class MybatisExportSetupController {
     public void export() {
         final MybatisExportGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
         Assert.isTrue(null != selectedItem, "请先新增配置", NodeConstants.primaryStage);
+        assert selectedItem != null;
         final MybatisExportConfig config = selectedItem.getConfig();
         this.valid(config.getConfigName());
         config.setExportExtraFile(false);

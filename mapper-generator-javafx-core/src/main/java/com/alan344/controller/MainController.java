@@ -192,7 +192,7 @@ public class MainController implements Initializable {
             BaseConstants.baseFileDir = fileScan.getParent().replace("\\", "/");
             ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), Charset.defaultCharset());
             // 弹框
-            DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "导入成功");
             // 从文件加载数据源至pane
             dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
         }
