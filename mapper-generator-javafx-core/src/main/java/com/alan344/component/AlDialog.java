@@ -1,4 +1,4 @@
-package com.alan344.componet;
+package com.alan344.component;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

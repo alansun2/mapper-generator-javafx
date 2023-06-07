@@ -3,9 +3,11 @@ package com.alan344.init;
 import com.alan344.bean.Column;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
+import com.alan344.component.MyCheckBoxTableCell;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.cells.editors.base.GenericEditableTableCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -245,16 +247,19 @@ public class MybatisListViewInit {
      */
     public void expandTableViewColumns(VBox selectedVBox) {
         HBox hBox = new HBox();
+        hBox.prefWidthProperty().bind(selectedVBox.widthProperty().subtract(100));
         hBox.setAlignment(Pos.CENTER);
+        hBox.getStylesheets().add("css/common.css");
 
         String columnStyleClass = "myColumn";
 
         String tableName = ((Label) (((HBox) selectedVBox.getChildren().get(0))).getChildren().get(0)).getText();
         TableView<Column> columnTableView = new TableView<>(FXCollections.observableArrayList(BaseConstants.selectedTableNameTableMap.get(tableName).getColumns()));
         columnTableView.setEditable(true);
-        columnTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        columnTableView.prefWidthProperty().bind(hBox.widthProperty().subtract(100));
+        // columnTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        ReadOnlyDoubleProperty widthBind = hBox.widthProperty();
+        ReadOnlyDoubleProperty widthBind = columnTableView.widthProperty();
 
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
@@ -290,6 +295,7 @@ public class MybatisListViewInit {
         javaType.prefWidthProperty().bind(widthBind.multiply(0.2));
         javaType.getStyleClass().setAll(columnStyleClass);
 
+        // type handler
         TableColumn<Column, String> typeHandler = new TableColumn<>("type handler");
         typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
         typeHandler.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getTypeHandler()));
@@ -298,11 +304,12 @@ public class MybatisListViewInit {
             BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
         });
         typeHandler.setSortable(false);
-        typeHandler.prefWidthProperty().bind(widthBind.multiply(0.22));
+        typeHandler.prefWidthProperty().bind(widthBind.multiply(0.21));
         typeHandler.getStyleClass().setAll(columnStyleClass);
 
+        // 是否忽略
         TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
-        ignoreCheckBox.setCellFactory(CheckBoxTableCell.forTableColumn(param -> {
+        ignoreCheckBox.setCellFactory(MyCheckBoxTableCell.forTableColumn(param -> {
             final Column column = columnTableView.getItems().get(param);
             column.ignoreProperty().addListener((observable, oldValue, newValue) -> {
                 column.setIgnore(newValue);
@@ -311,7 +318,7 @@ public class MybatisListViewInit {
             return column.ignoreProperty();
         }));
         ignoreCheckBox.setSortable(false);
-        ignoreCheckBox.prefWidthProperty().bind(widthBind.multiply(0.1));
+        ignoreCheckBox.prefWidthProperty().bind(columnTableView.widthProperty().multiply(0.1));
         ignoreCheckBox.getStyleClass().setAll(columnStyleClass);
 
         columnTableView.getColumns().add(tcColumnNam);

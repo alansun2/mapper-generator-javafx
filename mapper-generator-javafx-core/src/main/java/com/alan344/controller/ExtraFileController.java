@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.componet.*;
+import com.alan344.component.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;

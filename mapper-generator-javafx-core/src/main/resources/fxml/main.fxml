@@ -57,7 +57,7 @@
                 <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
                     <top>
                         <HBox fx:id="tableFindTextFieldHbox"
-                              style="-fx-pref-height: 25; -fx-padding: 0 0 0 6; -fx-border-width: 0 0 2 0; -fx-border-color: #cacbd0">
+                              style="-fx-pref-height: 25; -fx-padding: 0 0 0 6; -fx-border-width: 0 0 2 0; -fx-border-color: #E8E8E8">
                             <Label fx:id="searchLabel">
                                 <graphic>
                                     <FontIcon iconLiteral="unil-search:16:#CACBD0"/>

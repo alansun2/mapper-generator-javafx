@@ -1,4 +1,4 @@
-package com.alan344.componet;
+package com.alan344.component;
 
 import cn.hutool.core.util.RandomUtil;
 import javafx.geometry.Pos;

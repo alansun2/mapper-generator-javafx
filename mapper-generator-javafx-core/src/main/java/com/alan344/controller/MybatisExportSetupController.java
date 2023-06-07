@@ -2,7 +2,7 @@ package com.alan344.controller;
 
 import cn.hutool.core.io.FileUtil;
 import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.componet.*;
+import com.alan344.component.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;

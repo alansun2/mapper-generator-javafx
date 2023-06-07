@@ -7,12 +7,12 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.controller.DataSourceSetupController;
 import com.alan344.controller.MainController;
+import com.alan344.factory.TreeItemFactory;
 import com.alan344.service.ColumnService;
 import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.CollectionUtils;
-import com.alan344.factory.TreeItemFactory;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
@@ -297,7 +297,7 @@ public class DataSourceTreeViewInit {
         dataSourceTreeItem.setExpanded(false);
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
         dataSourceTreeItem.getChildren().clear();
-        dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, dataSource);
+        dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, treeViewDataSource, dataSource);
     }
 
     /**

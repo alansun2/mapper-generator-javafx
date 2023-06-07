@@ -61,13 +61,13 @@ public class FindTableInit {
      * @param treeViewDataSourceRoot treeViewDataSourceRoot
      */
     private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot, boolean isDelete) {
-        System.out.println("a = " + (System.currentTimeMillis() - lastUpdateTime));
+        // System.out.println("a = " + (System.currentTimeMillis() - lastUpdateTime));
         tableNamePrefix = tableNamePrefix.toLowerCase().replaceAll("'", "");
         String tableNameFilterInit = tableNameFilter;
         final long now = System.currentTimeMillis();
         if (!isDelete) {
             final long l = now - lastUpdateTime;
-            System.out.println("l = " + l);
+            // System.out.println("l = " + l);
             if (l > 500) {
                 tableNameFilterInit = tableNameFilterInit + tableNamePrefix.replace(tableNamePrefixCache, "") + ".*";
             } else {
@@ -94,7 +94,7 @@ public class FindTableInit {
                         dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
                         DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
                         String finalTableNameFilterInit = tableNameFilterInit;
-                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().matches(finalTableNameFilterInit)).toList();
+                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().toLowerCase().matches(finalTableNameFilterInit)).toList();
                         for (Table filteredTable : filteredTables) {
                             TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
                             tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
@@ -102,7 +102,7 @@ public class FindTableInit {
                     }
                     final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
                     String finalTableNameFilterInit1 = tableNameFilterInit;
-                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().matches(finalTableNameFilterInit1));
+                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().toLowerCase().matches(finalTableNameFilterInit1));
 
 
                 } else {

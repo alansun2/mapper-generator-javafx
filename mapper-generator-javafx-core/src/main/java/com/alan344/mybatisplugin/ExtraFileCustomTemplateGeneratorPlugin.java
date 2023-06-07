@@ -64,10 +64,6 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
          */
         DOMAIN,
         /**
-         * 首字母大写驼峰格式的类名
-         */
-        DOMAIN_UPPER_CAMEL,
-        /**
          * 领域描述
          */
         DOMAIN_DESC,
@@ -155,7 +151,6 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         modelDataMap.put(CUR_DATE_TIME.name(), LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         final PluginUtils.Domain domain = PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true);
         modelDataMap.put(DOMAIN.name(), domain.getD());
-        modelDataMap.put(DOMAIN_UPPER_CAMEL.name(), CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, domain.getD()));
         modelDataMap.put(DOMAIN_DESC.name(), domain.getDd());
         modelDataMap.put(PACKAGE.name(), this.getPackage(extraTemplateFileConfig, domain));
         modelDataMap.put(IGNORE_FIELDS_MAP.name(), modelSuffixIgnoreColumsMap);

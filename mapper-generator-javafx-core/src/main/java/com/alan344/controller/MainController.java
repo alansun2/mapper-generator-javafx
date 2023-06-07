@@ -3,7 +3,7 @@ package com.alan344.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.alan344.bean.DataItem;
-import com.alan344.componet.CustomTreeCell;
+import com.alan344.component.CustomTreeCell;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.DialogFactory;
@@ -164,7 +164,7 @@ public class MainController implements Initializable {
      */
     @FXML
     public void addSource() {
-        dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, null);
+        dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, treeViewDataSource, null);
     }
 
     /**

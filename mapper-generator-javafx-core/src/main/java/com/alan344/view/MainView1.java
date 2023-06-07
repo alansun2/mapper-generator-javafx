@@ -3,7 +3,7 @@ package com.alan344.view;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
-import com.alan344.componet.CustomTreeCell1;
+import com.alan344.component.CustomTreeCell1;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.TreeItem;

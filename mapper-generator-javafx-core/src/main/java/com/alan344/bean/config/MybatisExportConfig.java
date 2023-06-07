@@ -1,6 +1,6 @@
 package com.alan344.bean.config;
 
-import com.alan344.componet.LeftRightLinkageBorderPane;
+import com.alan344.component.LeftRightLinkageBorderPane;
 import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;

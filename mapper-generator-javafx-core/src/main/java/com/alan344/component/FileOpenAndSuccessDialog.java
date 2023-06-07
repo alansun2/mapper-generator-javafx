@@ -1,4 +1,4 @@
-package com.alan344.componet;
+package com.alan344.component;
 
 import com.alan344.utils.FileExploreUtils;
 import javafx.geometry.Pos;

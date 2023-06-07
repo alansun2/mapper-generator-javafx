@@ -1,5 +1,6 @@
 package com.alan344.controller;
 
+import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.constants.enums.DriverEnum;
 import com.alan344.factory.FxmlLoadFactory;
@@ -12,7 +13,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -43,7 +46,7 @@ public class DataSourceSetupController implements Initializable {
     private TextField userTextField;
     @Getter
     @FXML
-    private TextField passwordTextField;
+    private PasswordField passwordTextField;
     @Getter
     @FXML
     private TextField driveNameTextField;
@@ -77,6 +80,8 @@ public class DataSourceSetupController implements Initializable {
     private DataSource curDataSource;
 
     private ValidationSupport validationSupport;
+
+    private TreeView<DataItem> treeViewDataSource;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -127,6 +132,9 @@ public class DataSourceSetupController implements Initializable {
 
             // 点击应用后关闭添加数据源页面
             dateSourceStage.close();
+
+            // 刷新 treeView
+            treeViewDataSource.refresh();
         }
     }
 
@@ -156,14 +164,17 @@ public class DataSourceSetupController implements Initializable {
      *
      * @param primaryStage 主窗口
      */
-    public void openDataSourceSetUp(Stage primaryStage, DataSource dataSource) {
-        dateSourceStage = new Stage();
-        dateSourceStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/datasource-setup.fxml", applicationContext)));
-        dateSourceStage.setResizable(false);
-        dateSourceStage.getIcons().add(new Image("/image/icon.png"));
-        dateSourceStage.setTitle("设置数据源");
-        dateSourceStage.initModality(Modality.WINDOW_MODAL);
-        dateSourceStage.initOwner(primaryStage);
+    public void openDataSourceSetUp(Stage primaryStage, TreeView<DataItem> treeViewDataSource, DataSource dataSource) {
+        this.treeViewDataSource = treeViewDataSource;
+        if (dateSourceStage == null) {
+            dateSourceStage = new Stage();
+            dateSourceStage.setScene(new Scene(FxmlLoadFactory.create("/fxml/datasource-setup.fxml", applicationContext)));
+            dateSourceStage.setResizable(false);
+            dateSourceStage.getIcons().add(new Image("/image/icon.png"));
+            dateSourceStage.setTitle("设置数据源");
+            dateSourceStage.initModality(Modality.WINDOW_MODAL);
+            dateSourceStage.initOwner(primaryStage);
+        }
         if (null != dataSource) {
             isAdd = false;
             oldDataSource = dataSource.copy();
@@ -173,10 +184,13 @@ public class DataSourceSetupController implements Initializable {
         }
         curDataSource = dataSource;
         configNameTextField.textProperty().bindBidirectional(dataSource.configNameProperty());
-        urlTextField.textProperty().bindBidirectional(dataSource.urlProperty());
         userTextField.textProperty().bindBidirectional(dataSource.userProperty());
         passwordTextField.textProperty().bindBidirectional(dataSource.passwordProperty());
+        urlTextField.textProperty().bindBidirectional(dataSource.urlProperty());
         driveNameTextField.textProperty().bindBidirectional(dataSource.driveNameProperty());
+        if (isAdd) {
+            driveTypeComboBox.getSelectionModel().select(0);
+        }
         dateSourceStage.show();
     }
 }

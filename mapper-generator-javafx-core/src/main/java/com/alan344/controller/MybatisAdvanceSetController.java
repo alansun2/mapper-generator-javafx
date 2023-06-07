@@ -3,7 +3,7 @@ package com.alan344.controller;
 import cn.hutool.core.util.IdUtil;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.bean.config.MybatisPluginConfig;
-import com.alan344.componet.MybatisPluginItemHBox;
+import com.alan344.component.MybatisPluginItemHBox;
 import com.alan344.constants.NodeConstants;
 import com.alan344.service.MybatisPluginService;
 import com.jfoenix.controls.JFXCheckBox;

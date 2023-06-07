@@ -2,7 +2,7 @@ package com.alan344.controller;
 
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
-import com.alan344.componet.*;
+import com.alan344.component.*;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
@@ -230,7 +230,7 @@ public class ExtraTemplateFileController {
         JFXCheckBox checkBox = new JFXCheckBox();
         checkBox.setDisable(isSystem);
         checkBox.setSelected(extraTemplateFileConfig.isGenerateValidAnnotation());
-        PropertyHBox modelValidSuffixHbox = new PropertyHBox("是否开启 Validate 注解", labelWidth, checkBox);
+        PropertyHBox modelValidSuffixHbox = new PropertyHBox("Validate 注解", labelWidth, checkBox);
         vBox.getChildren().add(modelValidSuffixHbox);
 
         // lombok @Getter

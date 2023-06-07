@@ -1,6 +1,9 @@
-package com.alan344.componet;
+package com.alan344.component;
 
+import com.jfoenix.controls.JFXToggleButton;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -13,28 +16,28 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/8/21 15:01
  */
-public class FileSelectTextHBox extends HBox {
+public class FileSelectTextToggleHBox extends HBox {
 
     private final TextField textField;
     private final Button button;
 
-    public FileSelectTextHBox() {
-        this("浏览", null);
-    }
-
-
-    public FileSelectTextHBox(String btnName, String initText) {
-        textField = new TextField(initText);
-        textField.prefHeightProperty().bind(this.heightProperty());
-        textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
+    public FileSelectTextToggleHBox(String btnName, SimpleBooleanProperty curToggle, String initText) {
+        JFXToggleButton jfxToggleButton = new JFXToggleButton();
+        jfxToggleButton.setSize(7);
+        jfxToggleButton.setPadding(new Insets(-25, 0, -25, 0));
+        jfxToggleButton.setSelected(curToggle.get());
+        jfxToggleButton.setStyle("-fx-background-color: blue; -fx-border-width: 1");
+        curToggle.bind(jfxToggleButton.selectedProperty());
 
         button = new Button(btnName);
-        button.getStylesheets().add("css/common.css");
-        button.getStyleClass().add("mf-scan");
         button.setPrefWidth(64);
         button.prefHeightProperty().bind(this.heightProperty());
 
-        this.getChildren().addAll(textField, button);
+        textField = new TextField(initText);
+        textField.prefHeightProperty().bind(this.heightProperty());
+        textField.prefWidthProperty().bind(this.widthProperty().subtract(64 + 28));
+
+        this.getChildren().addAll(textField, button, jfxToggleButton);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-border-width: 0; -fx-background-insets:0; -fx-background-color: #FFF");
 
@@ -67,5 +70,10 @@ public class FileSelectTextHBox extends HBox {
 
     public final void setTextTooltip(String textTooltip) {
         this.textField.setTooltip(new Tooltip(textTooltip));
+    }
+
+    public final void disable(boolean disable) {
+        this.textField.setDisable(disable);
+        this.button.setDisable(disable);
     }
 }
