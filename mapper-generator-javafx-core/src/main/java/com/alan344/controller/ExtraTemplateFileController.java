@@ -13,13 +13,13 @@ import com.alan344.utils.FileExploreUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXComboBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -205,7 +205,7 @@ public class ExtraTemplateFileController {
         vBox.getChildren().add(nameHbox);
 
         // 文件类型
-        ChoiceBox<ExtraFileTypeEnum> fileTypeCb = new ChoiceBox<>(FXCollections.observableArrayList(ExtraFileTypeEnum.MODEL, ExtraFileTypeEnum.CUSTOM_TEMPLATE));
+        JFXComboBox<ExtraFileTypeEnum> fileTypeCb = new JFXComboBox<>(FXCollections.observableArrayList(ExtraFileTypeEnum.MODEL, ExtraFileTypeEnum.CUSTOM_TEMPLATE));
         fileTypeCb.getItems().addAll();
         fileTypeCb.setValue(extraTemplateFileConfig.getExtraFileType());
         fileTypeCb.setDisable(isEdit || isSystem);

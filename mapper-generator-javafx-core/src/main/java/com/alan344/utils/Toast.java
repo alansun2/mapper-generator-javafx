@@ -27,7 +27,7 @@ public class Toast {
         text.setFont(Font.font(size));
         text.setFill(Color.RED);
         StackPane root = new StackPane(text);
-        root.setStyle("-fx-background-radius: 5; -fx-background-color: rgb(232,232,232, 0.5); -fx-padding: 10px;");
+        root.setStyle("-fx-background-radius: 5; -fx-background-color: rgb(232,232,232); -fx-padding: 10px;");
         root.setOpacity(opacity);
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
@@ -64,7 +64,7 @@ public class Toast {
     }
 
     public static void makeTextDefault(Stage stage, String message) {
-        Toast.makeText(stage, message, 3000, 500, 500, 12, 5);
+        Toast.makeText(stage, message, 1500, 500, 500, 12, 5);
         throw new BizException(message);
     }
 }
