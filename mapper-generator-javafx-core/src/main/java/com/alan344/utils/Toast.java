@@ -6,12 +6,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -31,9 +30,8 @@ public class Toast {
         HBox hBox = new HBox(1);
         final String[] split = StrUtil.split(message, 1);
         for (String s : split) {
-            Text text = new Text(s);
-            text.setFont(Font.font(null, FontWeight.BOLD, size));
-            text.setFill(Color.RED);
+            Label text = new Label(s);
+            text.setStyle("-fx-font-weight: bold; -fx-text-fill: #f17e7e; -fx-font-size: " + size + "px;");
             hBox.getChildren().add(text);
         }
         StackPane root = new StackPane(hBox);

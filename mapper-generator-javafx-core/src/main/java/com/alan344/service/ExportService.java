@@ -36,7 +36,7 @@ public class ExportService {
         mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
 
         // 弹框
-        DialogFactory.successDialog(NodeConstants.primaryStage, "导出成功");
+        DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出成功", mybatisExportConfig.getProjectDir());
     }
 
     /**

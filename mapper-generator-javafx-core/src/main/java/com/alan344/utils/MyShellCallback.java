@@ -3,7 +3,6 @@ package com.alan344.utils;
 import cn.hutool.core.io.FileUtil;
 import com.alan344.exception.BizException;
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
@@ -12,8 +11,11 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.visitor.ModifierVisitor;
+import com.github.javaparser.printer.DefaultPrettyPrinter;
+import com.github.javaparser.printer.Printer;
 import com.github.javaparser.printer.configuration.DefaultConfigurationOption;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
+import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.config.MergeConstants;
 import org.mybatis.generator.exception.ShellException;
@@ -66,11 +68,12 @@ public class MyShellCallback extends DefaultShellCallback {
         CompilationUnit existingCompilationUnit = StaticJavaParser.parse(code);
 
         DefaultPrinterConfiguration configuration = new DefaultPrinterConfiguration();
-        configuration.addOption(new DefaultConfigurationOption(DefaultPrinterConfiguration.ConfigOption.COLUMN_ALIGN_FIRST_METHOD_CHAIN, true));
-        ModifierVisitor<Void> modifierVisitor = new ModifierVisitor<>();
-        final CompilationUnit compilationUnit = this.mergerFile(existingCompilationUnit, newCompilationUnit, modifierVisitor);
+        // configuration.addOption(new DefaultConfigurationOption(DefaultPrinterConfiguration.ConfigOption.COLUMN_ALIGN_FIRST_METHOD_CHAIN, true));
+        Printer printer = new DefaultPrettyPrinter(MyVisitor::new, configuration);
+        final CompilationUnit compilationUnit = this.mergerFile(existingCompilationUnit, newCompilationUnit);
 
-        return compilationUnit.toString(configuration);
+        final CompilationUnit printer1 = compilationUnit.printer(printer);
+        return printer1.toString();
     }
 
     /**
@@ -80,7 +83,7 @@ public class MyShellCallback extends DefaultShellCallback {
      * @param newCompilationUnit      新的
      * @return merge 后的
      */
-    private CompilationUnit mergerFile(CompilationUnit existingCompilationUnit, CompilationUnit newCompilationUnit, ModifierVisitor<Void> modifierVisitor) {
+    private CompilationUnit mergerFile(CompilationUnit existingCompilationUnit, CompilationUnit newCompilationUnit) {
         CompilationUnit finalCompilationUnit = new CompilationUnit();
 
         // 修改包名为新类的包名
@@ -99,7 +102,7 @@ public class MyShellCallback extends DefaultShellCallback {
         finalCompilationUnit.setImports(imports);
 
         // 合并topLevelClass
-        finalCompilationUnit.setTypes(this.mergeTypes(existingCompilationUnit.getTypes(), newCompilationUnit.getTypes(), modifierVisitor));
+        finalCompilationUnit.setTypes(this.mergeTypes(existingCompilationUnit.getTypes(), newCompilationUnit.getTypes()));
 
         return finalCompilationUnit;
     }
@@ -107,7 +110,7 @@ public class MyShellCallback extends DefaultShellCallback {
     /**
      * 合并Java类（一个Java文件可能有多个类）
      */
-    private NodeList<TypeDeclaration<?>> mergeTypes(NodeList<TypeDeclaration<?>> oldTypes, NodeList<TypeDeclaration<?>> newTypes, ModifierVisitor<Void> modifierVisitor) {
+    private NodeList<TypeDeclaration<?>> mergeTypes(NodeList<TypeDeclaration<?>> oldTypes, NodeList<TypeDeclaration<?>> newTypes) {
         Map<String, TypeDeclaration<?>> finalTypes = newTypes.stream()
                 .collect(Collectors.toMap(NodeWithSimpleName::getNameAsString, Function.identity(), (a, b) -> b, LinkedHashMap::new));
 
@@ -115,10 +118,10 @@ public class MyShellCallback extends DefaultShellCallback {
             // 对于旧CompilationUnit中的每一个TopLevelClass
             if (finalTypes.containsKey(oldType.getNameAsString())) {
                 // 如果存在同名类则合并
-                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString()), modifierVisitor));
+                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString())));
             } else if (!isGeneratedNode(oldType)) {
                 // 如果不存在同名类且不是生成的类
-                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString()), modifierVisitor));
+                finalTypes.put(oldType.getNameAsString(), this.mergeType(oldType, finalTypes.get(oldType.getNameAsString())));
             }
         }
 
@@ -128,7 +131,7 @@ public class MyShellCallback extends DefaultShellCallback {
     /**
      * 合并两个同名类
      */
-    private TypeDeclaration<?> mergeType(TypeDeclaration<?> oldType, TypeDeclaration<?> newType, ModifierVisitor<Void> modifierVisitor) {
+    private TypeDeclaration<?> mergeType(TypeDeclaration<?> oldType, TypeDeclaration<?> newType) {
         TypeDeclaration<?> finalTypeDeclaration;
         if (newType.isClassOrInterfaceDeclaration() && oldType.isClassOrInterfaceDeclaration()) {
             finalTypeDeclaration = new ClassOrInterfaceDeclaration();
@@ -173,7 +176,6 @@ public class MyShellCallback extends DefaultShellCallback {
 
             // 合并Method
             for (MethodDeclaration methodDeclaration : mergeMethods(oldClass.getMethods(), newClass.getMethods())) {
-                modifierVisitor.visit(methodDeclaration, null);
                 finalTypeDeclaration.addMember(methodDeclaration);
             }
 
@@ -197,7 +199,7 @@ public class MyShellCallback extends DefaultShellCallback {
                     // System.out.println("新内部类修饰符：" + bodyDeclaration.asTypeDeclaration().getModifiers());
                 }
             }
-            for (TypeDeclaration<?> typeDeclaration : mergeTypes(oldTypes, newTypes, modifierVisitor)) {
+            for (TypeDeclaration<?> typeDeclaration : mergeTypes(oldTypes, newTypes)) {
                 finalTypeDeclaration.addMember(typeDeclaration);
             }
 

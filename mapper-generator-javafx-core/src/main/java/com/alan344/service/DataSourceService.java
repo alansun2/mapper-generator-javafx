@@ -156,7 +156,7 @@ public class DataSourceService {
      */
     public boolean testConnection(DataSource dataSource) {
         try (final Connection connection = dataSource.getDataSource().getConnection()) {
-            connection.isReadOnly();
+            connection.getAutoCommit();
         } catch (Exception e) {
             return false;
         }
