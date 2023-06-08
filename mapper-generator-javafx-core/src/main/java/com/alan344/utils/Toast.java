@@ -1,13 +1,18 @@
 package com.alan344.utils;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.exception.BizException;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -23,10 +28,15 @@ public class Toast {
         toastStage.initOwner(stage);
         toastStage.setResizable(false);
         toastStage.initStyle(StageStyle.TRANSPARENT);
-        Text text = new Text(message);
-        text.setFont(Font.font(size));
-        text.setFill(Color.RED);
-        StackPane root = new StackPane(text);
+        HBox hBox = new HBox(1);
+        final String[] split = StrUtil.split(message, 1);
+        for (String s : split) {
+            Text text = new Text(s);
+            text.setFont(Font.font(null, FontWeight.BOLD, size));
+            text.setFill(Color.RED);
+            hBox.getChildren().add(text);
+        }
+        StackPane root = new StackPane(hBox);
         root.setStyle("-fx-background-radius: 5; -fx-background-color: rgb(232,232,232); -fx-padding: 10px;");
         root.setOpacity(opacity);
         Scene scene = new Scene(root);
@@ -64,7 +74,7 @@ public class Toast {
     }
 
     public static void makeTextDefault(Stage stage, String message) {
-        Toast.makeText(stage, message, 1500, 500, 500, 12, 5);
+        Toast.makeText(stage, message, 1000, 500, 500, 9, 5);
         throw new BizException(message);
     }
 }
