@@ -4,10 +4,9 @@ import cn.hutool.core.util.IdUtil;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.component.MybatisPluginItemHBox;
+import com.alan344.component.SelectBtnBarHBox;
 import com.alan344.constants.NodeConstants;
 import com.alan344.service.MybatisPluginService;
-import com.jfoenix.controls.JFXCheckBox;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -97,54 +96,47 @@ public class MybatisAdvanceSetController {
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefWidth(700);
         borderPane.setPrefHeight(400);
-        borderPane.setStyle("-fx-padding: 10");
+        // borderPane.setStyle("-fx-padding: 10");
         borderPane.getStylesheets().add("/css/common.css");
 
-        ListView<MybatisPluginItemHBox> jfxListView = new ListView<>();
+        // center
+        ListView<MybatisPluginItemHBox> pluginItemHboxListView = new ListView<>();
+        pluginItemHboxListView.prefWidthProperty().bind(borderPane.widthProperty());
         // 初始化
         final List<String> pluginIds = mybatisExportConfig.getPluginIds();
         final List<MybatisPluginConfig> withEnable = mybatisPluginService.getWithEnable(pluginIds);
-        withEnable.forEach(mybatisPluginConfig -> jfxListView.getItems().add(this.getMybatisPluginItemHbox(mybatisPluginConfig, stage, jfxListView)));
-        jfxListView.prefWidthProperty().bind(borderPane.widthProperty());
-        borderPane.setCenter(jfxListView);
+        withEnable.forEach(mybatisPluginConfig -> pluginItemHboxListView.getItems().add(this.getMybatisPluginItemHbox(mybatisPluginConfig, stage, pluginItemHboxListView)));
 
-        // 按钮
-        HBox hBox = new HBox(10);
-        JFXCheckBox allCheckBox = new JFXCheckBox("全选");
-        allCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            final ObservableList<MybatisPluginItemHBox> items = jfxListView.getItems();
-            items.forEach(it -> it.setSelected(newValue));
-        });
-        JFXCheckBox reverseCheckBox = new JFXCheckBox("反选");
-        reverseCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            final ObservableList<MybatisPluginItemHBox> items = jfxListView.getItems();
-            items.forEach(MybatisPluginItemHBox::setReverseSelected);
-        });
+        // top 创建全选，全不选, 反选按钮
+        final SelectBtnBarHBox selectBtnBarHBox = new SelectBtnBarHBox(withEnable);
+
+        // bottom 按钮
         Button add = new Button("添加");
         add.setOnAction(event -> {
             // 添加插件
             final MybatisPluginConfig mybatisPluginConfig = new MybatisPluginConfig();
             mybatisPluginConfig.setId(IdUtil.fastSimpleUUID());
-            final MybatisPluginItemHBox mybatisPluginItemHbox = this.getMybatisPluginItemHbox(mybatisPluginConfig, stage, jfxListView);
-            jfxListView.getItems().add(mybatisPluginItemHbox);
+            final MybatisPluginItemHBox mybatisPluginItemHbox = this.getMybatisPluginItemHbox(mybatisPluginConfig, stage, pluginItemHboxListView);
+            pluginItemHboxListView.getItems().add(mybatisPluginItemHbox);
         });
-
         Button save = new Button("保存");
         save.setOnAction(event -> {
-            mybatisPluginService.save(jfxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig).toList());
-            final List<String> pluginIds1 = jfxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig)
+            mybatisPluginService.save(pluginItemHboxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig).toList());
+            final List<String> pluginIds1 = pluginItemHboxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig)
                     .filter(MybatisPluginConfig::isEnable)
                     .map(MybatisPluginConfig::getId).filter(Objects::nonNull).toList();
             mybatisExportConfig.setPluginIds(pluginIds1);
         });
-
         Button close = new Button("关闭");
         close.setOnAction(event -> stage.close());
 
-        hBox.setAlignment(Pos.BASELINE_RIGHT);
-        hBox.getChildren().addAll(allCheckBox, reverseCheckBox, add, save, close);
-        borderPane.setBottom(hBox);
+        HBox hBox = new HBox(10, add, save, close);
+        hBox.setStyle("-fx-padding: 5 10 5 0; -fx-background-color: #F7F8FA");
+        hBox.setAlignment(Pos.CENTER_RIGHT);
 
+        borderPane.setTop(selectBtnBarHBox);
+        borderPane.setCenter(pluginItemHboxListView);
+        borderPane.setBottom(hBox);
         return borderPane;
     }
 

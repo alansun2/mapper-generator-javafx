@@ -110,6 +110,12 @@ public class MybatisPluginService {
         return allPlugin.stream().filter(mybatisPluginConfig -> ids.contains(mybatisPluginConfig.getId())).collect(Collectors.toList());
     }
 
+    /**
+     * 返回所有插件，如果ids不为空，则将对应插件enable设置为true
+     *
+     * @param ids 当前配置中的插件
+     * @return 所有插件
+     */
     public List<MybatisPluginConfig> getWithEnable(List<String> ids) {
         final List<MybatisPluginConfig> allPlugin = getAllPlugin();
         return allPlugin.stream().peek(mybatisPluginConfig -> {

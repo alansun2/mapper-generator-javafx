@@ -184,7 +184,7 @@ public class MybatisPluginItemHBox extends HBox {
 
         vBox.getChildren().addAll(hBox, hBox1, classNameHbox);
 
-        // 按钮
+        // 点击确定按钮,新增插件
         HBox btnHbox = new HBox(10);
         Button save = new Button("确定");
         save.setOnAction(event -> {

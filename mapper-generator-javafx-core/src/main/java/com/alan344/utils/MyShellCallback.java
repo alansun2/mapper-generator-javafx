@@ -1,7 +1,6 @@
 package com.alan344.utils;
 
 import cn.hutool.core.io.FileUtil;
-import com.alan344.exception.BizException;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
@@ -10,12 +9,9 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
-import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.printer.DefaultPrettyPrinter;
 import com.github.javaparser.printer.Printer;
-import com.github.javaparser.printer.configuration.DefaultConfigurationOption;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
-import com.github.javaparser.printer.lexicalpreservation.LexicalPreservingPrinter;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.config.MergeConstants;
 import org.mybatis.generator.exception.ShellException;
@@ -62,13 +58,17 @@ public class MyShellCallback extends DefaultShellCallback {
     }
 
     private String getNewJavaFile(String newFileSource, String existingFileFullPath) throws FileNotFoundException {
-        CompilationUnit newCompilationUnit = StaticJavaParser.parse(newFileSource);
+        CompilationUnit newCompilationUnit;
+        try {
+            newCompilationUnit = StaticJavaParser.parse(newFileSource);
+        } catch (Exception e) {
+            throw new RuntimeException("合并解析java文件失败，请检查包名或路径中的占位符是否正确");
+        }
 
         final String code = FileUtil.readUtf8String(existingFileFullPath);
         CompilationUnit existingCompilationUnit = StaticJavaParser.parse(code);
 
         DefaultPrinterConfiguration configuration = new DefaultPrinterConfiguration();
-        // configuration.addOption(new DefaultConfigurationOption(DefaultPrinterConfiguration.ConfigOption.COLUMN_ALIGN_FIRST_METHOD_CHAIN, true));
         Printer printer = new DefaultPrettyPrinter(MyVisitor::new, configuration);
         final CompilationUnit compilationUnit = this.mergerFile(existingCompilationUnit, newCompilationUnit);
 
@@ -209,7 +209,7 @@ public class MyShellCallback extends DefaultShellCallback {
         } else if (newType.isAnnotationDeclaration() && oldType.isAnnotationDeclaration()) {
             return newType;
         } else {
-            throw new BizException(String.format("新类和旧类的类型不一样，无法判断该以何种方式合并，请删除旧文件或者将旧文件更改为正确的类型 (类名：%s)", newType.getNameAsString()));
+            throw new RuntimeException(String.format("新类和旧类的类型不一样，无法判断该以何种方式合并，请删除旧文件或者将旧文件更改为正确的类型 (类名：%s)", newType.getNameAsString()));
         }
     }
 

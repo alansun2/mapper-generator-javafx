@@ -1,4 +1,4 @@
-package com.alan344.component;
+package com.alan344.component.dialog;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;

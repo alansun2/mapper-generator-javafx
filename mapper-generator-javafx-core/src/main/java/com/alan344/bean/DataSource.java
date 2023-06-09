@@ -47,7 +47,9 @@ public class DataSource implements DataItem {
     }
 
     public void closeDataSource() {
-        ((HikariDataSource) dataSource).close();
+        if (dataSource != null) {
+            ((HikariDataSource) dataSource).close();
+        }
     }
 
     public boolean isSame(DataSource dataSource) {

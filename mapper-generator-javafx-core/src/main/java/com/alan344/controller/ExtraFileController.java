@@ -12,11 +12,11 @@ import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ConfigService;
 import com.alan344.service.ExportService;
-import com.alan344.service.ExtraFileConfigService;
+import com.alan344.service.ExtraTemplateFileConfigService;
 import com.alan344.service.node.NodeHandler;
 import com.alan344.utils.Assert;
 import com.alan344.utils.CollectionUtils;
-import com.alan344.utils.FileExploreUtils;
+import com.alan344.utils.Toast;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -28,12 +28,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
+import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -52,9 +54,9 @@ public class ExtraFileController {
     @Autowired
     private ExtraTemplateFileController extraTemplateFileController;
     @Autowired
-    private ExtraFileConfigService extraFileConfigService;
+    private ExtraTemplateFileConfigService extraTemplateFileConfigService;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
-    private final Map<String, ListView<ExtraFileItemHBox>> groupNameListViewMapCache = new HashMap<>();
+    private final Map<String, BorderPane> groupNameBorderPaneMapCache = new HashMap<>();
     private LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
     private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> CACHE = new HashMap<>(8);
 
@@ -63,7 +65,7 @@ public class ExtraFileController {
             final LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane1 = new LeftRightLinkageBorderPane<>(
                     ExtraFileGroupConfig::new,
                     this::convert2ExtraFileGroupItem,
-                    this::getRightListView,
+                    this::getRightBorderPane,
                     NodeConstants.primaryStage,
                     this.getBottomBtns(mybatisExportConfig),
                     0.25
@@ -93,7 +95,17 @@ public class ExtraFileController {
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
         exportBtn.getStyleClass().add("export");
-        exportBtn.setOnAction(event -> this.export(mybatisExportConfig));
+        exportBtn.setOnAction(event -> {
+            final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+            final Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = selectedItem.getConfig().getExtraFileConfigs();
+            final String s = extraFileConfigs.stream().filter(extraFileConfig -> StrUtil.hasEmpty(extraFileConfig.getOutputPath(), extraFileConfig.getPackageName()))
+                    .map(ExtraFileGroupConfig.ExtraFileConfig::getName).collect(Collectors.joining(","));
+            if (StrUtil.isNotEmpty(s)) {
+                Toast.makeTextDefault(NodeConstants.primaryStage, s + ", 未设置输出路径或包名");
+                return;
+            }
+            this.export(mybatisExportConfig);
+        });
         exportBtn.setPrefWidth(70);
         Button preBtn = new Button("返回");
         preBtn.setOnAction(event -> this.pre());
@@ -111,7 +123,7 @@ public class ExtraFileController {
             // 获取模板 id
             final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream()
                     .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
-            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(templateIds);
+            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
 
             ConfigConstants.extraTemplateFileConfigs = extraFileGroupConfig.getExtraFileConfigs().stream()
                     .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable)
@@ -136,13 +148,12 @@ public class ExtraFileController {
     }
 
     /**
-     * 添加额外文件
+     * 保存额外文件
      */
     private void saveSetup() {
         exportService.saveSetup(BaseConstants.currentConfig);
+
         // 保存成功 dialog
-        Button configBtn = new Button("打开配置");
-        configBtn.setOnAction(event -> FileExploreUtils.open(BaseConstants.MG_CONF_HOME));
         DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
     }
 
@@ -150,48 +161,60 @@ public class ExtraFileController {
      * 添加额外文件
      */
     private void openExtraFilePage(MybatisExportConfig mybatisExportConfig) {
-        extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null, extraTemplateFileConfigs -> {
-            final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
-            // 获取已经存在的配置
-            Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = curExtraFileGroupConfig.getExtraFileConfigs();
-            if (null == extraFileConfigs) {
-                extraFileConfigs = new ArrayList<>();
-                curExtraFileGroupConfig.setExtraFileConfigs(extraFileConfigs);
-            }
-            final ListView<ExtraFileItemHBox> rightListView = this.getRightListView(curExtraFileGroupConfig);
-
-            // 获取所有的配置
-            final Map<String, ExtraFileGroupConfig.ExtraFileConfig> templateIdMap = linkageBorderPane.getGroupLeftListView()
-                    .getItems().stream()
-                    .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
-                    .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
-                    .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig));
-
-            Collection<ExtraFileGroupConfig.ExtraFileConfig> finalExtraFileConfigs = extraFileConfigs;
-            final Set<String> templateIdSet = finalExtraFileConfigs.stream().map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).collect(Collectors.toSet());
-            extraTemplateFileConfigs.forEach(extraTemplateFileConfig -> {
-                ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew = new ExtraFileGroupConfig.ExtraFileConfig();
-                extraFileConfigNew.setTemplateId(extraTemplateFileConfig.getId());
-                extraFileConfigNew.setName(extraTemplateFileConfig.getName());
-                extraFileConfigNew.setEnable(true);
-
-                if (!templateIdSet.contains(extraTemplateFileConfig.getId())) {
-                    finalExtraFileConfigs.add(extraFileConfigNew);
-                    // 填充文件输出地址和包名防止重复填写
-                    final ExtraFileGroupConfig.ExtraFileConfig original = templateIdMap.get(extraTemplateFileConfig.getId());
-                    if (null != original) {
-                        extraFileConfigNew.setOutputPath(original.getOutputPath());
-                        extraFileConfigNew.setPackageName(original.getPackageName());
-                    } else {
-                        extraFileConfigNew.setOutputPath(StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation());
+        extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null
+                , extraTemplateFileConfigs -> {
+                    // 获取选中的分组
+                    final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+                    // 获取已经存在的配置
+                    Collection<ExtraFileGroupConfig.ExtraFileConfig> existExtraFileConfigs = curExtraFileGroupConfig.getExtraFileConfigs();
+                    if (null == existExtraFileConfigs) {
+                        // 不存在则创建
+                        existExtraFileConfigs = new ArrayList<>();
+                        curExtraFileGroupConfig.setExtraFileConfigs(existExtraFileConfigs);
                     }
-                    rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, finalExtraFileConfigs, extraTemplateFileConfig, extraFileConfigNew, curExtraFileGroupConfig));
-                    if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
-                        linkageBorderPane.getRightBorderPane().setCenter(rightListView);
+
+                    // 获取已经存在的模板 id, 防止重复添加
+                    final Set<String> existTemplateIdSet = existExtraFileConfigs.stream()
+                            .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).collect(Collectors.toSet());
+
+                    // 根据分组获取所有的配置，用于用户少写配置
+                    final Map<String, ExtraFileGroupConfig.ExtraFileConfig> allExistTemplateIdMap = linkageBorderPane.getGroupLeftListView()
+                            .getItems().stream()
+                            .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
+                            .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
+                            .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig));
+
+                    // 获取当前选中的 listView
+                    ListView<ExtraFileItemHBox> rightListView = ((ListView<ExtraFileItemHBox>) this.getRightBorderPane(curExtraFileGroupConfig).getCenter());
+
+                    // 添加新的模板
+                    final List<ExtraTemplateFileConfig> add = extraTemplateFileConfigs.stream()
+                            .filter(extraTemplateFileConfig -> !existTemplateIdSet.contains(extraTemplateFileConfig.getId())).toList();
+                    final int curSerialNumber = existTemplateIdSet.size();
+                    for (int i = 0; i < add.size(); i++) {
+                        ExtraTemplateFileConfig extraTemplateFileConfig = add.get(i);
+                        ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew = new ExtraFileGroupConfig.ExtraFileConfig();
+                        extraFileConfigNew.setExtraFileType(extraTemplateFileConfig.getExtraFileType().name());
+                        extraFileConfigNew.setSerialNumber(String.valueOf(curSerialNumber + i + 1));
+                        extraFileConfigNew.setTemplateId(extraTemplateFileConfig.getId());
+                        extraFileConfigNew.setName(extraTemplateFileConfig.getName());
+                        extraFileConfigNew.setEnable(true);
+                        existExtraFileConfigs.add(extraFileConfigNew);
+                        // 填充文件输出地址和包名防止重复填写
+                        final ExtraFileGroupConfig.ExtraFileConfig original = allExistTemplateIdMap.get(extraTemplateFileConfig.getId());
+                        if (null != original) {
+                            extraFileConfigNew.setOutputPath(original.getOutputPath());
+                            extraFileConfigNew.setPackageName(original.getPackageName());
+                        } else {
+                            extraFileConfigNew.setOutputPath(StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation());
+                        }
+                        rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, existExtraFileConfigs,
+                                extraFileConfigNew, curExtraFileGroupConfig));
+                        if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
+                            linkageBorderPane.getRightBorderPane().setCenter(rightListView);
+                        }
                     }
-                }
-            });
-        });
+                });
     }
 
     /**
@@ -203,216 +226,147 @@ public class ExtraFileController {
             customProperties = new LinkedHashMap<>();
             mybatisExportConfig.setCustomProperties(customProperties);
         }
-        this.addCustomProperty(customProperties);
-    }
-
-    private void addCustomProperty(LinkedHashMap<String, String> customProperties) {
-        Stage stage = new Stage();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add("border-pane-padding");
-        borderPane.getStylesheets().add("css/common.css");
-        borderPane.setPrefWidth(400);
-        borderPane.setPrefHeight(400);
-
-        ListView<CustomPropertyHBox> lv = new ListView<>();
-
-        customProperties.forEach((key, value) -> {
-            CustomPropertyHBox customPropertyHbox = new CustomPropertyHBox(key, value);
-            customPropertyHbox.delOnAction(event -> {
-                lv.getItems().remove(customPropertyHbox);
-            });
-            lv.getItems().add(customPropertyHbox);
-        });
-
-        borderPane.setCenter(lv);
-
-        // 按钮
-        Button addBtn = new Button("添加");
-        addBtn.setOnAction(event -> this.addCustomProperty(customPropertyHBox -> {
-            lv.getItems().add(customPropertyHBox);
-            customPropertyHBox.delOnAction(event1 -> lv.getItems().remove(customPropertyHBox));
-        }));
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setOnAction(event -> stage.close());
-        Button applyBtn = new Button("应用");
-        applyBtn.setOnAction(event -> {
-            customProperties.clear();
-            lv.getItems().forEach(customPropertyHBox -> customProperties.put(customPropertyHBox.getKey(), customPropertyHBox.getValue()));
-            stage.close();
-        });
-        HBox btnHbox = new HBox(10, addBtn, cancelBtn, applyBtn);
-        btnHbox.setAlignment(Pos.CENTER_RIGHT);
-
-        borderPane.setBottom(btnHbox);
-
-        stage.setScene(new Scene(borderPane));
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle("设置自定义属性");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
-        stage.show();
+        PropertyPane.open(customProperties);
     }
 
     private ExtraFileGroupItemHBox convert2ExtraFileGroupItem(ExtraFileGroupConfig extraFileGroupConfig) {
         return new ExtraFileGroupItemHBox(extraFileGroupConfig);
     }
 
-    private ListView<ExtraFileItemHBox> getRightListView(ExtraFileGroupConfig extraFileGroupConfig) {
-        final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream()
-                .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
-        return groupNameListViewMapCache.computeIfAbsent(extraFileGroupConfig.getGroupName(), s -> {
-            ListView<ExtraFileItemHBox> extraFileItemHBoxListView = new ListView<>();
+    private BorderPane getRightBorderPane(ExtraFileGroupConfig extraFileGroupConfig) {
+        return groupNameBorderPaneMapCache.computeIfAbsent(extraFileGroupConfig.getGroupName(), s -> {
+            BorderPane borderPane = new BorderPane();
 
-            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraFileConfigService.getExtraFileConfigMap(templateIds);
+            ListView<ExtraFileItemHBox> extraFileItemHboxListView = new ListView<>();
+
+            // 根据 id 获取模板列表
+            final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream().map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
+            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
             final Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = extraFileGroupConfig.getExtraFileConfigs();
             if (CollectionUtils.isNotEmpty(extraFileConfigs)) {
-                extraFileConfigs.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getTemplateId()))
-                        .forEach(extraFileConfig -> extraFileItemHBoxListView.getItems().add(this.convert2ExtraFileItem(
-                                extraFileItemHBoxListView,
-                                extraFileConfigs,
-                                extraFileConfigMap.get(extraFileConfig.getTemplateId()),
-                                extraFileConfig,
-                                extraFileGroupConfig)));
+                final List<ExtraFileGroupConfig.ExtraFileConfig> list = extraFileConfigs.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getTemplateId())).toList();
+                for (int i = 0; i < list.size(); i++) {
+                    ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = list.get(i);
+                    extraFileConfig.setSerialNumber(String.valueOf(i + 1));
+                    extraFileItemHboxListView.getItems().add(this.convert2ExtraFileItem(
+                            extraFileItemHboxListView,
+                            extraFileConfigs,
+                            extraFileConfig,
+                            extraFileGroupConfig));
+                }
+
             }
-            return extraFileItemHBoxListView;
+
+            // top 创建全选，全不选, 反选按钮
+            final SelectBtnBarHBox selectBtnBarHbox = new SelectBtnBarHBox(extraFileItemHboxListView.getItems());
+            borderPane.setTop(selectBtnBarHbox);
+            borderPane.setCenter(extraFileItemHboxListView);
+            return borderPane;
         });
     }
 
     private ExtraFileItemHBox convert2ExtraFileItem(ListView<ExtraFileItemHBox> listView,
-                                                    Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigSet,
-                                                    ExtraTemplateFileConfig extraTemplateFileConfig,
-                                                    ExtraFileGroupConfig.ExtraFileConfig extraFileConfig,
+                                                    Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigCollection,
+                                                    ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew,
                                                     ExtraFileGroupConfig extraFileGroupConfig) {
-        ExtraFileItemHBox extraFileLabel = new ExtraFileItemHBox(extraTemplateFileConfig.getName(), extraTemplateFileConfig.getExtraFileType(),
-                extraFileConfig.isEnable(), extraFileConfig::setEnable);
+        ExtraFileItemHBox extraFileLabel = new ExtraFileItemHBox(extraFileConfigNew);
         extraFileLabel.disable(extraFileGroupConfig.isSystem());
         extraFileLabel.setAlignment(Pos.CENTER);
-        extraFileLabel.setExtraFileConfig(extraTemplateFileConfig);
         extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(25));
         // 编辑
         extraFileLabel.onEditAction(actionEvent -> {
-            this.openEdit(extraFileConfig, extraFileGroupConfig.isSystem());
+            this.openEdit(extraFileConfigNew, extraFileGroupConfig.isSystem());
         });
         // 删除
         extraFileLabel.onDelAction(actionEvent -> {
             listView.getItems().remove(extraFileLabel);
-            extraFileConfigSet.remove(extraFileConfig);
+            extraFileConfigCollection.remove(extraFileConfigNew);
+            extraFileConfigCollection.forEach(extraFileConfig1 -> {
+                if (Integer.parseInt(extraFileConfig1.getSerialNumber()) > Integer.parseInt(extraFileConfigNew.getSerialNumber())) {
+                    extraFileConfig1.setSerialNumber(String.valueOf(Integer.parseInt(extraFileConfig1.getSerialNumber()) - 1));
+                }
+            });
         });
 
         return extraFileLabel;
     }
 
+    private Stage stage;
+    private FileSelectTextHBox outputPathTextField;
+    private TextField packageNameTextField;
+    private Button applyBtn;
+    private final StyleClassValidationDecoration styleClassValidationDecoration = new StyleClassValidationDecoration();
+    ValidationSupport validationSupport = new ValidationSupport();
+
     private void openEdit(ExtraFileGroupConfig.ExtraFileConfig extraFileConfig, boolean isSystem) {
-        Stage stage = new Stage();
+        if (stage == null) {
+            validationSupport.setValidationDecorator(styleClassValidationDecoration);
+            stage = new Stage();
+            stage.setResizable(false);
+            stage.getIcons().add(new Image("/image/icon.png"));
+            stage.setTitle("编辑");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(NodeConstants.primaryStage);
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add("border-pane-padding");
-        borderPane.getStylesheets().add("css/common.css");
-        borderPane.setPrefWidth(400);
-        borderPane.setPrefHeight(150);
+            BorderPane borderPane = new BorderPane();
+            borderPane.getStyleClass().add("border-pane-padding");
+            borderPane.getStylesheets().add("css/common.css");
+            borderPane.setPrefWidth(400);
+            borderPane.setPrefHeight(150);
+            stage.setScene(new Scene(borderPane));
 
-        int labelWidth = 80;
+            int labelWidth = 80;
 
-        VBox vBox = new VBox();
-        vBox.setSpacing(10);
-        // 文件地址
-        FileSelectTextHBox outputPathTextField = new FileSelectTextHBox("浏览", extraFileConfig.getOutputPath());
-        outputPathTextField.setPromptText("文件输出地址");
-        outputPathTextField.setTextTooltip("不包含包名的路径");
-        outputPathTextField.onAction(actionEvent -> {
-            // 文件导出地址
-            BaseConstants.baseFileDir = extraFileConfig.getOutputPath();
-            File directory = FileDirChooserFactory.createDirectoryScan(null, com.alan344.utils.StringUtils.getDefaultIfNull(BaseConstants.baseFileDir, null));
-            if (directory != null) {
-                final String path = directory.getPath().replace("\\", "/");
-                outputPathTextField.setText(path);
-                BaseConstants.baseFileDir = path;
-            }
-        });
-        PropertyHBox outputPathHbox = new PropertyHBox("文件输出地址", labelWidth, outputPathTextField);
-        vBox.getChildren().add(outputPathHbox);
+            VBox vBox = new VBox();
+            vBox.setSpacing(10);
+            // 文件地址
+            outputPathTextField = new FileSelectTextHBox("浏览", extraFileConfig.getOutputPath());
+            outputPathTextField.setPromptText("文件输出地址");
+            outputPathTextField.setTextTooltip("不包含包名的路径");
+            outputPathTextField.onAction(actionEvent -> {
+                // 文件导出地址
+                BaseConstants.baseFileDir = extraFileConfig.getOutputPath();
+                File directory = FileDirChooserFactory.createDirectoryScan(null, BaseConstants.baseFileDir);
+                if (directory != null) {
+                    final String path = directory.getPath().replace("\\", "/");
+                    outputPathTextField.setText(path);
+                    BaseConstants.baseFileDir = path;
+                }
+            });
+            PropertyHBox outputPathHbox = new PropertyHBox("文件输出地址", labelWidth, outputPathTextField);
+            validationSupport.registerValidator(outputPathTextField.getTextField(), Validator.createEmptyValidator("文件输出地址不能为空"));
+            vBox.getChildren().add(outputPathHbox);
 
-        // 包名
-        TextField packageNameTextField = new TextField(extraFileConfig.getPackageName());
-        packageNameTextField.setPromptText("包名");
-        PropertyHBox packageNameHbox = new PropertyHBox("包名", labelWidth, packageNameTextField);
-        vBox.getChildren().add(packageNameHbox);
+            // 包名
+            packageNameTextField = new TextField(extraFileConfig.getPackageName());
+            packageNameTextField.setPromptText("包名");
+            PropertyHBox packageNameHbox = new PropertyHBox("包名", labelWidth, packageNameTextField);
+            validationSupport.registerValidator(packageNameTextField, Validator.createEmptyValidator("包名不能为空"));
+            vBox.getChildren().add(packageNameHbox);
 
-        borderPane.setCenter(vBox);
+            borderPane.setCenter(vBox);
 
-        // 按钮
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setOnAction(event -> stage.close());
-        Button applyBtn = new Button("应用");
+            // 按钮
+            Button cancelBtn = new Button("取消");
+            cancelBtn.setOnAction(event -> stage.close());
+            applyBtn = new Button("应用");
+            applyBtn.setDisable(isSystem);
+            applyBtn.setOnAction(event -> {
+                if (validationSupport.isInvalid()) {
+                    return;
+                }
+                extraFileConfig.setOutputPath(outputPathTextField.getText());
+                extraFileConfig.setPackageName(packageNameTextField.getText());
+                stage.close();
+            });
+            HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
+            btnHbox.setAlignment(Pos.CENTER_RIGHT);
+            borderPane.setBottom(btnHbox);
+        }
+
+        outputPathTextField.setText(extraFileConfig.getOutputPath());
+        packageNameTextField.setText(extraFileConfig.getPackageName());
         applyBtn.setDisable(isSystem);
-        applyBtn.setOnAction(event -> {
-            extraFileConfig.setOutputPath(outputPathTextField.getText());
-            extraFileConfig.setPackageName(packageNameTextField.getText());
-            stage.close();
-        });
-        HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
-        btnHbox.setAlignment(Pos.CENTER_RIGHT);
-        borderPane.setBottom(btnHbox);
-
-        stage.setScene(new Scene(borderPane));
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle("编辑");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
-        stage.show();
-    }
-
-    private void addCustomProperty(Consumer<CustomPropertyHBox> consumer) {
-        Stage stage = new Stage();
-
-        BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add("border-pane-padding");
-        borderPane.getStylesheets().add("css/common.css");
-        borderPane.setPrefWidth(400);
-        borderPane.setPrefHeight(150);
-
-        int labelWidth = 80;
-
-        VBox vBox = new VBox();
-        vBox.setSpacing(10);
-
-        // key
-        TextField keyTextField = new TextField();
-        keyTextField.setPromptText("key");
-        PropertyHBox keyHbox = new PropertyHBox("key", labelWidth, keyTextField);
-        vBox.getChildren().add(keyHbox);
-
-        // value
-        TextField valueTextField = new TextField();
-        valueTextField.setPromptText("value");
-        PropertyHBox valueHbox = new PropertyHBox("value", labelWidth, valueTextField);
-        vBox.getChildren().add(valueHbox);
-
-        borderPane.setCenter(vBox);
-
-        // 按钮
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setOnAction(event -> stage.close());
-        Button applyBtn = new Button("应用");
-        applyBtn.setOnAction(event -> {
-            CustomPropertyHBox customPropertyHBox = new CustomPropertyHBox(keyTextField.getText(), valueTextField.getText());
-            consumer.accept(customPropertyHBox);
-            stage.close();
-        });
-        HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
-        btnHbox.setAlignment(Pos.CENTER_RIGHT);
-
-        borderPane.setBottom(btnHbox);
-
-        stage.setScene(new Scene(borderPane));
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle("编辑");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
         stage.show();
     }
 }

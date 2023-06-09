@@ -89,11 +89,16 @@ public class PluginUtils {
     }
 
     public static String parse(String content, Domain domain) {
+
         return ConfigConstants.GENERIC_TOKEN_PARSER.parse(content, key -> {
             if ("DOMAIN".equals(key)) {
                 return domain.getD();
             } else {
-                return ConfigConstants.globalParam.getOrDefault(key, key);
+                final String s = ConfigConstants.globalParam.get(key);
+                if (s == null) {
+                    throw new RuntimeException("占位符解析失败: 未在 " + content + " 中找到占位符: " + key);
+                }
+                return s;
             }
         });
     }

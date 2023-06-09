@@ -127,18 +127,23 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         }
     }
 
-    private String getFileName(MybatisExportConfig mybatisExportConfig, ExtraTemplateFileConfig extraTemplateFileConfig, Map<String, Object> modelData) {
+    private String getFileName(MybatisExportConfig mybatisExportConfig, ExtraTemplateFileConfig extraTemplateFileConfig, Map<String, Object> modelData) throws IOException {
         final String upperCamel = modelData.get(TYPE_NAME_UPPER_CAMEL.name()).toString();
 
-        final String packageName = modelData.get(PACKAGE.name()).toString();
-        final String outPathFromPackage = packageName.replace(StrUtil.DOT, StrUtil.SLASH);
+        final String outPathFromPackage = modelData.get(PACKAGE.name()).toString().replace(StrUtil.DOT, StrUtil.SLASH);
 
         String outputPath = StrUtil.addSuffixIfNot(extraTemplateFileConfig.getOutputPath(), StrUtil.SLASH);
-        final File file = new File(StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + outputPath + outPathFromPackage + StrUtil.SLASH);
-        if (!file.exists()) {
-            file.mkdirs();
+
+        String suffix = outputPath.contains(":") ? "" : StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH);
+
+        final File dir = new File(suffix + outputPath + outPathFromPackage + StrUtil.SLASH);
+        if (!dir.exists()) {
+            final boolean mkdir = dir.mkdirs();
+            if (!mkdir) {
+                throw new RuntimeException("创建文件夹失败: " + dir.getCanonicalPath());
+            }
         }
-        return file.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH) + StrUtil.SLASH + upperCamel + extraTemplateFileConfig.getModelSuffix() + ".java";
+        return dir.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH) + StrUtil.SLASH + upperCamel + extraTemplateFileConfig.getModelSuffix() + ".java";
     }
 
     private Map<String, Object> prepareModelData(IntrospectedTable introspectedTable,
@@ -188,9 +193,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
     }
 
     private Configuration getConfig(String filePath) {
-        Configuration cfg = CONFIGURATION_HASH_MAP.get(filePath);
+        final String dir = FileUtils.getFile(filePath).getParent().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
+        Configuration cfg = CONFIGURATION_HASH_MAP.get(dir);
         if (null == cfg) {
-            final String dir = FileUtils.getFile(filePath).getParent();
             // Create your Configuration instance, and specify if up to what FreeMarker
             // version (here 2.3.29) do you want to apply the fixes that are not 100%
             // backward-compatible. See the Configuration JavaDoc for details.
@@ -200,7 +205,7 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
             // plain directory for it, but non-file-system sources are possible too:
             ResourceLoader resourceLoader = new DefaultResourceLoader();
 
-            final SpringTemplateLoader ftl1 = new SpringTemplateLoader(resourceLoader, dir);
+            final SpringTemplateLoader ftl1 = new SpringTemplateLoader(resourceLoader, "file:" + dir);
             final SpringTemplateLoader ftl2 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/common/");
             TemplateLoader[] loaders = new TemplateLoader[]{ftl1, ftl2};
             cfg.setTemplateLoader(new MultiTemplateLoader(loaders));

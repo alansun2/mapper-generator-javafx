@@ -1,5 +1,6 @@
 package com.alan344.controller;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.component.*;
@@ -8,8 +9,7 @@ import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
-import com.alan344.service.ExtraFileConfigService;
-import com.alan344.utils.FileExploreUtils;
+import com.alan344.service.ExtraTemplateFileConfigService;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
@@ -40,9 +40,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -54,33 +52,33 @@ import java.util.stream.Collectors;
 @Service
 public class ExtraTemplateFileController {
     @Autowired
-    private ExtraFileConfigService extraFileConfigService;
+    private ExtraTemplateFileConfigService extraTemplateFileConfigService;
     @Autowired
     private ResourceLoader resourceLoader;
     private Stage stage;
     private Button saveBtn;
+    private final Map<String, BorderPane> groupNameBorderPaneMapCache = new HashMap<>();
     private LeftRightLinkageBorderPane<ExtraTemplateFileGroupConfig, ExtraTemplateFileGroupItemHBox> linkageBorderPane;
+    private ListView<ExtraTemplateFileItemHBox> listView;
 
     public void openExtraFilePageInternal(boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
-        if (null != stage) {
-            stage.show();
-            return;
+        if (null == stage) {
+            stage = new Stage();
+            stage.setResizable(false);
+            stage.getIcons().add(new Image("/image/icon.png"));
+            stage.setTitle("额外文件配置");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(NodeConstants.primaryStage);
+            stage.setScene(new Scene(this.getBorderPane(showCheckBox, consumer)));
         }
-        stage = new Stage();
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle("额外文件配置");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
-        stage.setScene(new Scene(this.getBorderPane(showCheckBox, consumer)));
         stage.show();
     }
 
-    public BorderPane getBorderPane(boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
+    private BorderPane getBorderPane(boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
         linkageBorderPane = new LeftRightLinkageBorderPane<>(
                 ExtraTemplateFileGroupConfig::new,
                 ExtraTemplateFileGroupItemHBox::new,
-                groupConfig -> this.getCenterListView(showCheckBox, groupConfig),
+                groupConfig -> this.getCenterBorderPane(showCheckBox, groupConfig),
                 NodeConstants.primaryStage,
                 this.getBottomBtns(stage, showCheckBox, consumer),
                 0.25
@@ -88,16 +86,27 @@ public class ExtraTemplateFileController {
         linkageBorderPane.setPrefHeight(550);
         linkageBorderPane.setPrefWidth(800);
 
-        linkageBorderPane.addLeftItems(extraFileConfigService.getExtraTemplateFileGroupConfig());
+        linkageBorderPane.addLeftItems(extraTemplateFileConfigService.getExtraTemplateFileGroupConfig());
         return linkageBorderPane;
     }
 
-    private ListView<ExtraTemplateFileItemHBox> getCenterListView(boolean showCheckBox, ExtraTemplateFileGroupConfig groupConfig) {
-        ListView<ExtraTemplateFileItemHBox> listView = new ListView<>();
-        groupConfig.getExtraTemplateFileConfigList()
-                .forEach(extraFileConfig ->
-                        listView.getItems().add(this.packageextrafilelabel(showCheckBox, groupConfig.isSystem(), extraFileConfig)));
-        return listView;
+    private BorderPane getCenterBorderPane(boolean showCheckBox, ExtraTemplateFileGroupConfig groupConfig) {
+        final BorderPane borderPane1 = groupNameBorderPaneMapCache.computeIfAbsent(groupConfig.getGroupName(), s -> {
+            ListView<ExtraTemplateFileItemHBox> listView = new ListView<>();
+            groupConfig.getExtraTemplateFileConfigList().forEach(extraFileConfig ->
+                    listView.getItems().add(this.packageExtraFileLabel(showCheckBox, groupConfig.isSystem(), extraFileConfig, groupConfig.getExtraTemplateFileConfigList())));
+
+            // top 创建全选，全不选, 反选按钮
+            final SelectBtnBarHBox selectBtnBarHbox = new SelectBtnBarHBox(listView.getItems());
+            BorderPane borderPane = new BorderPane();
+
+            borderPane.setTop(selectBtnBarHbox);
+            borderPane.setCenter(listView);
+            return borderPane;
+        });
+
+        listView = (ListView<ExtraTemplateFileItemHBox>) borderPane1.getCenter();
+        return borderPane1;
     }
 
     private List<Button> getBottomBtns(Stage stage, boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
@@ -106,23 +115,22 @@ public class ExtraTemplateFileController {
         importBtn.setDisable(!showCheckBox);
         importBtn.setPrefWidth(btnWidth);
         importBtn.setOnAction(event -> {
-            final ObservableList<ExtraTemplateFileItemHBox> items
-                    = ((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).getItems();
+            final ObservableList<ExtraTemplateFileItemHBox> items = listView.getItems();
             if (items.isEmpty()) {
-                Toast.makeText(stage, "请先添加", 3000, 500, 500, 15, 5);
+                Toast.makeTextDefault(stage, "请先添加");
                 return;
             }
 
             final List<ExtraTemplateFileItemHBox> selectedList = items.stream().filter(ExtraTemplateFileItemHBox::isSelected).toList();
             if (selectedList.isEmpty()) {
-                Toast.makeText(stage, "至少选择一条导入", 3000, 500, 500, 15, 5);
+                Toast.makeTextDefault(stage, "至少选择一条导入");
                 return;
             }
             final List<ExtraTemplateFileGroupConfig> groupConfigs = linkageBorderPane.getGroupLeftListView().getItems().stream()
                     .map(ExtraTemplateFileGroupItemHBox::getConfig).collect(Collectors.toCollection(ArrayList::new));
             // 保存到磁盘
-            extraFileConfigService.saveExtraFileConfig(groupConfigs);
-            saveBtn.setDisable(true);
+            extraTemplateFileConfigService.saveExtraFileConfig(groupConfigs);
+            // saveBtn.setDisable(true);
             final List<ExtraTemplateFileConfig> extraTemplateFileConfigs = selectedList.stream()
                     .map(ExtraTemplateFileItemHBox::getExtraTemplateFileConfig).collect(Collectors.toList());
             consumer.accept(extraTemplateFileConfigs);
@@ -134,12 +142,10 @@ public class ExtraTemplateFileController {
             final List<ExtraTemplateFileGroupConfig> items = linkageBorderPane.getGroupLeftListView().getItems().stream()
                     .map(ExtraTemplateFileGroupItemHBox::getConfig).toList();
             // 保存到磁盘
-            extraFileConfigService.saveExtraFileConfig(items);
-            saveBtn.setDisable(true);
+            extraTemplateFileConfigService.saveExtraFileConfig(items);
+            // saveBtn.setDisable(true);
 
             // 保存成功 dialog
-            Button configBtn = new Button("打开配置");
-            configBtn.setOnAction(event1 -> FileExploreUtils.open(BaseConstants.MG_CONF_HOME));
             DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
         });
 
@@ -148,21 +154,21 @@ public class ExtraTemplateFileController {
         addBtn.setOnAction(event -> {
             final ExtraTemplateFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
             if (null == selectedItem) {
-                Toast.makeText(stage, "请选择一个分组再添加", 3000, 500, 500, 15, 5);
+                Toast.makeTextDefault(stage, "请选择一个分组再添加");
                 return;
             }
             final ExtraTemplateFileGroupConfig config = selectedItem.getConfig();
             if (config.isSystem()) {
-                Toast.makeText(stage, "不能使用默认分组， 请新建分组后再使用", 3000, 500, 500, 15, 5);
+                Toast.makeTextDefault(stage, "不能使用默认分组， 请新建分组后再使用");
                 return;
             }
             ExtraTemplateFileConfig extraTemplateFileConfig = new ExtraTemplateFileConfig();
             this.openExtraFileSetup(extraTemplateFileConfig, false, config.isSystem(), extraFileConfig1 -> {
-                ((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).getItems()
-                        .add(this.packageextrafilelabel(showCheckBox, config.isSystem(), extraFileConfig1));
-                saveBtn.setDisable(false);
+                listView.getItems().add(this.packageExtraFileLabel(showCheckBox, config.isSystem(), extraFileConfig1, config.getExtraTemplateFileConfigList()));
+                config.getExtraTemplateFileConfigList().add(extraFileConfig1);
+                // saveBtn.setDisable(false);
             });
-            saveBtn.setDisable(false);
+            // saveBtn.setDisable(false);
         });
 
         Button cancelBtn = new Button("关闭");
@@ -188,11 +194,10 @@ public class ExtraTemplateFileController {
         Stage addTemplateStage = new Stage();
         BorderPane borderPane = new BorderPane();
         borderPane.getStylesheets().add("/css/common.css");
-        VBox vBox = new VBox(5);
-        vBox.setPrefWidth(500);
-        borderPane.setCenter(vBox);
         borderPane.setPadding(new Insets(10));
 
+        VBox vBox = new VBox(5);
+        vBox.setPrefWidth(500);
         int labelWidth = 130;
         // 属性名称
         final TextField nameTextField = new TextField(extraTemplateFileConfig.getName());
@@ -342,7 +347,6 @@ public class ExtraTemplateFileController {
         HBox btnHbox = new HBox(10, cancelButton, submitButton);
         btnHbox.setStyle("-fx-padding: 10 0 0 0");
         btnHbox.setAlignment(Pos.CENTER_RIGHT);
-        borderPane.setBottom(btnHbox);
 
         // ESC 监听
         vBox.setOnKeyPressed(event -> {
@@ -350,6 +354,10 @@ public class ExtraTemplateFileController {
                 addTemplateStage.close();
             }
         });
+
+        borderPane.setCenter(vBox);
+        borderPane.setBottom(btnHbox);
+
         addTemplateStage.setScene(new Scene(borderPane));
         addTemplateStage.setResizable(false);
         addTemplateStage.getIcons().add(new Image("/image/icon.png"));
@@ -360,15 +368,15 @@ public class ExtraTemplateFileController {
     }
 
     private void checkConfig(ExtraTemplateFileConfig extraTemplateFileConfig) {
+        if (StringUtils.isEmpty(extraTemplateFileConfig.getName())) {
+            Toast.makeTextDefault(NodeConstants.primaryStage, extraTemplateFileConfig.getName() + "配置中，配置名称必填");
+        }
+
+        if (StringUtils.isEmpty(extraTemplateFileConfig.getModelSuffix())) {
+            Toast.makeTextDefault(NodeConstants.primaryStage, extraTemplateFileConfig.getName() + "配置中，model 后缀必填");
+        }
+
         final ExtraFileTypeEnum templateType = extraTemplateFileConfig.getExtraFileType();
-        if (StringUtils.isEmpty(extraTemplateFileConfig.getOutputPath())) {
-            Toast.makeTextDefault(NodeConstants.primaryStage, extraTemplateFileConfig.getName() + "配置中，文件地址必填");
-            return;
-        }
-        if (StringUtils.isEmpty(extraTemplateFileConfig.getPackageName())) {
-            Toast.makeTextDefault(NodeConstants.primaryStage, extraTemplateFileConfig.getName() + "配置中，包名必填");
-            return;
-        }
         if (templateType == ExtraFileTypeEnum.CUSTOM_TEMPLATE) {
             if (StringUtils.isEmpty(extraTemplateFileConfig.getCustomTemplateDir())) {
                 Toast.makeTextDefault(NodeConstants.primaryStage, extraTemplateFileConfig.getName() + "配置中，自定义模板路径必填");
@@ -412,37 +420,53 @@ public class ExtraTemplateFileController {
         }
     }
 
-    private void copyItem(ExtraTemplateFileItemHBox old) {
+    private void copyItem(ExtraTemplateFileItemHBox old, Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
         final ExtraTemplateFileConfig extraTemplateFileConfigSource = old.getExtraTemplateFileConfig();
         final ExtraTemplateFileConfig clone = extraTemplateFileConfigSource.clone();
         clone.setId(UUID.randomUUID().toString());
-        clone.setName(clone.getName() + "COPY");
-        final ExtraTemplateFileItemHBox extraTemplateFileItemHBox = this.packageextrafilelabel(old.isShowCheckBox(), old.isSystem(), clone);
-        final int i = ((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).getItems().indexOf(old);
-        ((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).getItems().add(i + 1, extraTemplateFileItemHBox);
+        clone.setName(this.getName(clone.getName() + "-COPY", extraTemplateFileConfigList));
+        final ExtraTemplateFileItemHBox extraTemplateFileItemHbox = this.packageExtraFileLabel(old.isShowCheckBox(), old.isSystem(), clone, extraTemplateFileConfigList);
+        final int i = listView.getItems().indexOf(old);
+        listView.getItems().add(i + 1, extraTemplateFileItemHbox);
+        ((List) extraTemplateFileConfigList).add(i + 1, clone);
     }
 
-    private ExtraTemplateFileItemHBox packageextrafilelabel(boolean showCheckBox, boolean isSystem, ExtraTemplateFileConfig extraTemplateFileConfig) {
-        ExtraTemplateFileItemHBox extraTemplateFileItemHBox = new ExtraTemplateFileItemHBox(showCheckBox, isSystem, extraTemplateFileConfig);
-        extraTemplateFileItemHBox.setAlignment(Pos.CENTER);
-        extraTemplateFileItemHBox.prefWidthProperty().bind(linkageBorderPane.getRightBorderPane().widthProperty().subtract(25));
+    private String getName(String newGroupName, Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
+        while (true) {
+            String finalNewGroupName = newGroupName;
+            final boolean isExist = extraTemplateFileConfigList.stream().anyMatch(gi -> gi.getName().equals(finalNewGroupName));
+            if (isExist) {
+                newGroupName = newGroupName + RandomUtil.randomLong(1, 999999999);
+            } else {
+                break;
+            }
+        }
+        return newGroupName;
+    }
+
+    private ExtraTemplateFileItemHBox packageExtraFileLabel(boolean showCheckBox, boolean isSystem, ExtraTemplateFileConfig extraTemplateFileConfig,
+                                                            Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
+        ExtraTemplateFileItemHBox extraTemplateFileItemHbox = new ExtraTemplateFileItemHBox(showCheckBox, isSystem, extraTemplateFileConfig);
+        extraTemplateFileItemHbox.setAlignment(Pos.CENTER);
+        extraTemplateFileItemHbox.prefWidthProperty().bind(linkageBorderPane.getRightBorderPane().widthProperty().subtract(50));
         // 编辑
-        extraTemplateFileItemHBox.onEditAction(actionEvent -> this.openExtraFileSetup(extraTemplateFileConfig, true, isSystem,
+        extraTemplateFileItemHbox.onEditAction(actionEvent -> this.openExtraFileSetup(extraTemplateFileConfig, true, isSystem,
                 extraFileConfig1 -> {
-                    extraTemplateFileItemHBox.setLabelText(extraFileConfig1.getName());
-                    saveBtn.setDisable(false);
+                    extraTemplateFileItemHbox.setLabelText(extraFileConfig1.getName());
+                    // saveBtn.setDisable(false);
                 }));
         // 删除
-        extraTemplateFileItemHBox.onDelAction(actionEvent -> {
-            ((ListView<ExtraTemplateFileItemHBox>) linkageBorderPane.getRightBorderPane().getCenter()).getItems().remove(extraTemplateFileItemHBox);
-            saveBtn.setDisable(false);
+        extraTemplateFileItemHbox.onDelAction(actionEvent -> {
+            listView.getItems().remove(extraTemplateFileItemHbox);
+            extraTemplateFileConfigList.remove(extraTemplateFileItemHbox.getExtraTemplateFileConfig());
+            // saveBtn.setDisable(false);
         });
         // 复制
-        extraTemplateFileItemHBox.onCopyAction(actionEvent -> {
-            this.copyItem(extraTemplateFileItemHBox);
-            saveBtn.setDisable(false);
+        extraTemplateFileItemHbox.onCopyAction(actionEvent -> {
+            this.copyItem(extraTemplateFileItemHbox, extraTemplateFileConfigList);
+            // saveBtn.setDisable(false);
         });
 
-        return extraTemplateFileItemHBox;
+        return extraTemplateFileItemHbox;
     }
 }

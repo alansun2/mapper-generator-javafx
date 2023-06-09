@@ -9,112 +9,128 @@
         "name": "DTO",
         "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "cola-2",
         "name": "PageDTO",
         "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "cola-3",
         "name": "DO",
         "outputPath": "-domain/src/main/java",
         "packageName": "com.domain.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "cola-4",
         "name": "Cmd",
         "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "cola-5",
         "name": "PageQry",
         "outputPath": "-client/src/main/java",
         "packageName": "com.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "cola-6",
         "name": "AddCmdExe",
         "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-7",
         "name": "UpdateCmdExe",
         "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-8",
         "name": "DelByIdCmdExe",
         "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-9",
         "name": "ByIdQryExe",
         "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor.query",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-10",
         "name": "PageQryExe",
         "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}.executor.query",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-11",
         "name": "ServiceImpl",
         "outputPath": "-app/src/main/java",
         "packageName": "com.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-12",
         "name": "ServiceI",
         "outputPath": "-client/src/main/java",
         "packageName": "com.api.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-13",
         "name": "Controller",
         "outputPath": "-adapter/src/main/java",
         "packageName": "com.web",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-14",
         "name": "GatewayI",
         "outputPath": "-domain/src/main/java",
         "packageName": "com.domain.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-15",
         "name": "GatewayImpl",
         "outputPath": "-infrastructure/src/main/java",
         "packageName": "com.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "cola-16",
         "name": "DOConvertMapper",
         "outputPath": "-infrastructure/src/main/java",
         "packageName": "com.${DOMAIN}.convert",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       }
     ]
   },
@@ -128,49 +144,56 @@
         "name": "DTO",
         "outputPath": "src/main/java",
         "packageName": "com.bean.dto.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "usual-2",
         "name": "PageDTO",
         "outputPath": "src/main/java",
         "packageName": "com.bean.dto.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "usual-3",
         "name": "Cmd",
         "outputPath": "src/main/java",
         "packageName": "com.bean.request.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "usual-4",
         "name": "PageQry",
         "outputPath": "src/main/java",
         "packageName": "com.bean.request.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "MODEL"
       },
       {
         "templateId": "usual-5",
         "name": "ServiceImpl",
         "outputPath": "src/main/java",
         "packageName": "com.service.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "usual-6",
         "name": "ServiceI",
         "outputPath": "src/main/java",
         "packageName": "com.service.${DOMAIN}",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       },
       {
         "templateId": "usual-7",
         "name": "Controller",
         "outputPath": "src/main/java",
         "packageName": "com.controller",
-        "enable": true
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
       }
     ]
   }

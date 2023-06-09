@@ -1,6 +1,7 @@
 package com.alan344.bean.config;
 
 import cn.hutool.core.util.IdUtil;
+import com.alan344.component.SelectBtnBarHBox;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MybatisPluginConfig {
+public class MybatisPluginConfig implements SelectBtnBarHBox.Selected {
 
     private String id;
 
@@ -87,5 +88,15 @@ public class MybatisPluginConfig {
         mybatisPluginConfig.setClassName(className.get());
         mybatisPluginConfig.setClazz(clazz);
         return mybatisPluginConfig;
+    }
+
+    @Override
+    public boolean isSelected() {
+        return enable.get();
+    }
+
+    @Override
+    public void setSelect(boolean select) {
+        enable.set(select);
     }
 }

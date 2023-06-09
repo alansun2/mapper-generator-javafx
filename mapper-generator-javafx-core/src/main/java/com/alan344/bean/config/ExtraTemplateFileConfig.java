@@ -2,6 +2,7 @@ package com.alan344.bean.config;
 
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.StringUtils;
+import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -68,14 +69,9 @@ public class ExtraTemplateFileConfig implements Cloneable {
 
     @Override
     public ExtraTemplateFileConfig clone() {
-        try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            final ExtraTemplateFileConfig clone = (ExtraTemplateFileConfig) super.clone();
-            clone.setId(UUID.randomUUID().toString());
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        final ExtraTemplateFileConfig extraTemplateFileConfig = JSON.parseObject(JSON.toJSONString(this), ExtraTemplateFileConfig.class);
+        extraTemplateFileConfig.setId(UUID.randomUUID().toString());
+        return extraTemplateFileConfig;
     }
 
     @Override

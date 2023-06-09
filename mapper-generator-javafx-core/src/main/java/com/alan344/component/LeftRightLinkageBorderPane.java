@@ -16,7 +16,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -28,7 +31,6 @@ import java.util.function.Supplier;
 public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.GroupName, GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {
     private final ListView<GI> groupListView = new ListView<>();
     private final BorderPane borderPane = new BorderPane();
-    private final Map<String, Region> listViewCache = new HashMap<>();
     private final Stage stage;
     private final Function<GC, GI> generatorGI;
 
@@ -77,7 +79,10 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     gc.setList(new ArrayList<>(3));
                     GI gi = generatorGi.apply(gc);
                     if (gi instanceof Region) {
-                        ((Region) gi).setPrefHeight(23);
+                        ((Region) gi).setPrefHeight(25);
+                    }
+                    if (gi instanceof Control) {
+                        ((Control) gi).setTooltip(new Tooltip(gc.getGroupName()));
                     }
                     gcList.add(gc);
                     groupListView.getItems().add(gi);
@@ -101,10 +106,17 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     cloneGc.setSystem(false);
                     GI cloneGi = generatorGi.apply(cloneGc);
                     if (cloneGi instanceof Region) {
-                        ((Region) cloneGi).setPrefHeight(23);
+                        ((Region) cloneGi).setPrefHeight(25);
                     }
-                    gcList.add(cloneGc);
-                    groupListView.getItems().add(groupListView.getSelectionModel().getSelectedIndex() + 1, cloneGi);
+                    if (cloneGi instanceof Control) {
+                        ((Control) cloneGi).setTooltip(new Tooltip(gc.getGroupName()));
+                    }
+                    int index = groupListView.getSelectionModel().getSelectedIndex() + 1;
+                    if (gc.isSystem()) {
+                        index = groupListView.getItems().size();
+                    }
+                    gcList.add(index, cloneGc);
+                    groupListView.getItems().add(index, cloneGi);
                     // 选中复制项
                     groupListView.getSelectionModel().select(cloneGi);
                 });
@@ -130,7 +142,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
     }
 
     private void showRight(GC gc, Function<GC, Region> rightNodeFunc) {
-        final Region region = listViewCache.computeIfAbsent(gc.getGroupName(), s -> rightNodeFunc.apply(gc));
+        final Region region = rightNodeFunc.apply(gc);
         borderPane.setCenter(region);
         groupListView.getItems().forEach(gi -> gi.getConfig().setEnable(false));
         gc.setEnable(true);
@@ -159,6 +171,9 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 final GI gi = generatorGI.apply(gc);
                 if (gi instanceof Region) {
                     ((Region) gi).setPrefHeight(25);
+                }
+                if (gi instanceof Control) {
+                    ((Control) gi).setTooltip(new Tooltip(gc.getGroupName()));
                 }
                 return gi;
             }).toList());

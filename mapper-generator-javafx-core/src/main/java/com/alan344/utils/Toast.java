@@ -72,7 +72,7 @@ public class Toast {
     }
 
     public static void makeTextDefault(Stage stage, String message) {
-        Toast.makeText(stage, message, 1000, 500, 500, 9, 5);
+        Toast.makeText(stage, message, 1000, 500, 500, 15, 5);
         throw new BizException(message);
     }
 }

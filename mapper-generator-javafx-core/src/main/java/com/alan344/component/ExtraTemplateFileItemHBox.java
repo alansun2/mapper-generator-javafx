@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @date 2022/8/21 15:01
  */
-public class ExtraTemplateFileItemHBox extends HBox {
+public class ExtraTemplateFileItemHBox extends HBox implements SelectBtnBarHBox.Selected {
     private final Button editButton;
     private final Button deleteButton;
     private final Button copyBtn;
@@ -31,7 +31,7 @@ public class ExtraTemplateFileItemHBox extends HBox {
         this.extraTemplateFileConfig = extraTemplateFileConfig;
         this.showCheckBox = showCheckBox;
         this.isSystem = isSystem;
-        int jfxCheckBoxWidth = 30, nameWidth = 130, btnWidth = 64;
+        int jfxCheckBoxWidth = 30, extraFileTypeWidth = 130, btnWidth = 64;
 
         jfxCheckBox = new JFXCheckBox();
         jfxCheckBox.setDisable(!showCheckBox);
@@ -39,12 +39,12 @@ public class ExtraTemplateFileItemHBox extends HBox {
 
         nameLabel = new Label(extraTemplateFileConfig.getName());
         nameLabel.setStyle("-fx-background-insets: 0");
-        nameLabel.setPrefWidth(nameWidth);
         nameLabel.prefHeightProperty().bind(this.heightProperty());
+        nameLabel.prefWidthProperty().bind(this.widthProperty().subtract(jfxCheckBoxWidth + extraFileTypeWidth + (btnWidth * 3)));
 
         Label extraFileTypeLabel = new Label(extraTemplateFileConfig.getExtraFileType().name());
         extraFileTypeLabel.setStyle("-fx-background-insets: 0");
-        extraFileTypeLabel.prefWidthProperty().bind(this.widthProperty().subtract(jfxCheckBoxWidth + nameWidth + (btnWidth * 3)));
+        extraFileTypeLabel.setPrefWidth(extraFileTypeWidth);
 
         editButton = new Button("Edit");
         editButton.setStyle("-fx-background-insets: 0; -fx-background-color: #7070fd; -fx-text-fill: white");
@@ -88,8 +88,14 @@ public class ExtraTemplateFileItemHBox extends HBox {
         return this.extraTemplateFileConfig;
     }
 
+    @Override
     public boolean isSelected() {
         return this.jfxCheckBox.isSelected();
+    }
+
+    @Override
+    public void setSelect(boolean select) {
+        this.jfxCheckBox.setSelected(select);
     }
 
     public boolean isShowCheckBox() {

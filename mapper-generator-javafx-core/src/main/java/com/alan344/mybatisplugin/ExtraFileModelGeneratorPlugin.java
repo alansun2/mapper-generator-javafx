@@ -1,5 +1,6 @@
 package com.alan344.mybatisplugin;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
@@ -86,7 +87,13 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                         }
                     }
 
-                    return new GeneratedJavaFile(topLevelClass, StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath(), context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
+                    final String dir = StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath();
+                    if (!FileUtil.exist(dir)) {
+                        FileUtil.mkdir(dir);
+                    }
+                    return new GeneratedJavaFile(topLevelClass,
+                            dir,
+                            context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
                 }).collect(Collectors.toList());
     }
 

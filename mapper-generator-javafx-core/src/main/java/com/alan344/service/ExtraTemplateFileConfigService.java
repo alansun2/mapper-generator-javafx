@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-public class ExtraFileConfigService {
+public class ExtraTemplateFileConfigService {
     @Value("classpath:default-extra-template-file-config.json")
     private Resource resource;
 
@@ -39,10 +39,6 @@ public class ExtraFileConfigService {
                 .filter(extraTemplateFileGroupConfig -> !extraTemplateFileGroupConfig.isSystem())
                 .collect(Collectors.toList());
 
-        if (extraTemplateFileGroupConfigs.isEmpty()) {
-            return;
-        }
-        extraTemplateFileConfigs = items;
         try {
             FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(), JSONArray.toJSONString(extraTemplateFileGroupConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
         } catch (IOException e) {

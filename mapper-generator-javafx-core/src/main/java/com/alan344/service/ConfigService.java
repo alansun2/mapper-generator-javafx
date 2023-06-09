@@ -134,6 +134,7 @@ public class ConfigService {
         final List<ExtraFileGroupConfig> defaults = this.getDefaults(mybatisExportConfig);
         if (CollectionUtils.isEmpty(extraFileGroupConfigs)) {
             extraFileGroupConfigs = defaults;
+            mybatisExportConfig.setExtraFileGroupConfigs(defaults);
         } else {
             for (int i = 0; i < defaults.size(); i++) {
                 extraFileGroupConfigs.add(i, defaults.get(i));

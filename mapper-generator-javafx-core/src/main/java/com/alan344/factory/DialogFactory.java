@@ -1,7 +1,7 @@
 package com.alan344.factory;
 
-import com.alan344.component.FileOpenAndSuccessDialog;
-import com.alan344.component.SuccessDialog;
+import com.alan344.component.dialog.FileOpenAndSuccessDialog;
+import com.alan344.component.dialog.SuccessDialog;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.scene.control.Button;

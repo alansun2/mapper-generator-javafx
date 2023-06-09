@@ -1,11 +1,13 @@
 package com.alan344.bean.config;
 
 import com.alan344.component.LeftRightLinkageBorderPane;
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * @author AlanSun
@@ -29,14 +31,10 @@ public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.
 
     @Override
     public ExtraTemplateFileGroupConfig clone() {
-        try {
-            ExtraTemplateFileGroupConfig clone = (ExtraTemplateFileGroupConfig) super.clone();
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            clone.setExtraTemplateFileConfigList(extraTemplateFileConfigList.stream().map(ExtraTemplateFileConfig::clone).toList());
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
+        final ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig = JSON.parseObject(JSON.toJSONString(this), ExtraTemplateFileGroupConfig.class);
+        final Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList1 = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
+        extraTemplateFileConfigList1.forEach(extraTemplateFileConfig -> extraTemplateFileConfig.setId(UUID.randomUUID().toString()));
+        return extraTemplateFileGroupConfig;
     }
 
     @JSONField(serialize = false, deserialize = false)
