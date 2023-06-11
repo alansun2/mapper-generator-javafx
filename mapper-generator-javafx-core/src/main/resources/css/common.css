@@ -232,3 +232,8 @@ StackPane {
 .info {
     -fx-border-color: #0a8dd2;
 }
+
+.apply-btn {
+    -fx-background-color: #CFDEFC;
+    /*-fx-text-fill: #FFF;*/
+}

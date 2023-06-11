@@ -22,6 +22,9 @@ public class DataSource implements DataItem {
     private final SimpleStringProperty password = new SimpleStringProperty();
     @Getter
     @Setter
+    private Long sort;
+    @Getter
+    @Setter
     private transient List<Table> tables;
 
     @Setter
@@ -180,5 +183,10 @@ public class DataSource implements DataItem {
     @Override
     public int hashCode() {
         return configName.get().hashCode();
+    }
+
+    @Override
+    public String getName() {
+        return this.getConfigName();
     }
 }

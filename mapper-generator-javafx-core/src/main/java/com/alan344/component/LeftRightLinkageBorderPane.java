@@ -1,6 +1,6 @@
 package com.alan344.component;
 
-import cn.hutool.core.util.RandomUtil;
+import com.alan344.utils.NameUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -102,7 +102,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 copyMenuItem.setOnAction(event1 -> {
                     final GC gc = selectedItem.getConfig();
                     final GC cloneGc = (GC) gc.clone();
-                    cloneGc.setGroupName(this.getGroupName(cloneGc.getGroupName() + "-COPY"));
+                    cloneGc.setGroupName(NameUtils.generatorName(cloneGc.getGroupName(), groupListView.getItems()));
                     cloneGc.setSystem(false);
                     GI cloneGi = generatorGi.apply(cloneGc);
                     if (cloneGi instanceof Region) {
@@ -146,19 +146,6 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         borderPane.setCenter(region);
         groupListView.getItems().forEach(gi -> gi.getConfig().setEnable(false));
         gc.setEnable(true);
-    }
-
-    private String getGroupName(String newGroupName) {
-        while (true) {
-            String finalNewGroupName = newGroupName;
-            final boolean isExist = groupListView.getItems().stream().anyMatch(gi -> gi.getName().equals(finalNewGroupName));
-            if (isExist) {
-                newGroupName = newGroupName + RandomUtil.randomLong(1, 999999999);
-            } else {
-                break;
-            }
-        }
-        return newGroupName;
     }
 
     public void addLeftItems(List<GC> gcList) {
@@ -241,6 +228,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         Button cancelBtn = new Button("取消");
         cancelBtn.setOnAction(event -> stage.close());
         Button applyBtn = new Button("应用");
+        applyBtn.getStyleClass().add("apply-btn");
         applyBtn.setOnAction(event -> {
             stringConsumer.accept(textField.getText());
             stage.close();
@@ -278,7 +266,8 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
         Object clone();
     }
 
-    public interface Item<G> {
+    public interface Item<G> extends NameUtils.CheckNameRepeat {
+        @Override
         String getName();
 
         void setName(String name);

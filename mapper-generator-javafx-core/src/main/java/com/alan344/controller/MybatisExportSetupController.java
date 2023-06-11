@@ -215,6 +215,8 @@ public class MybatisExportSetupController {
             validationSupport.registerValidator(projectDirText.getTextField(), Validator.createEmptyValidator("项目地址必填"));
 
             TextField projectNameText = new TextField(mybatisExportConfig.getProjectName());
+            projectNameText.setEditable(false);
+            projectNameText.setStyle("-fx-background-color: #f4f4f4;");
             mybatisExportConfig.projectNameProperty().bindBidirectional(projectNameText.textProperty());
             MybatisExportItemHBox projectNameHbox = new MybatisExportItemHBox("项目名称:", projectNameText);
             validationSupport.registerValidator(projectNameText, Validator.createEmptyValidator("项目名称必填"));
@@ -390,6 +392,7 @@ public class MybatisExportSetupController {
             javaClientTypeComboBox.setValue(mybatisOfficialExportConfig.getJavaClientType());
             javaClientTypeComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.javaClientTypeProperty());
 
+            // 高级设置按钮
             Button advanceSetButton = new Button();
             advanceSetButton.setOnAction(event -> mybatisAdvanceSetController.openAdvanceSetStage(mybatisExportConfig));
             advanceSetButton.setGraphic(new FontIcon("unil-setting:16:BLUE"));

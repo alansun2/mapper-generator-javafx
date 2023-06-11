@@ -1,5 +1,6 @@
 package com.alan344.service;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.constants.BaseConstants;
@@ -69,6 +70,13 @@ public class ExtraTemplateFileConfigService {
         } else {
             try {
                 extraTemplateFileConfigs = JSONArray.parseArray(FileUtils.readFileToString(extraFileConfigFile, StandardCharsets.UTF_8)).toList(ExtraTemplateFileGroupConfig.class);
+                extraTemplateFileConfigs.forEach(extraTemplateFileGroupConfig -> {
+                    // 防止空指针
+                    final Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
+                    if (CollectionUtil.isEmpty(extraTemplateFileConfigList)) {
+                        extraTemplateFileGroupConfig.setExtraTemplateFileConfigList(new ArrayList<>());
+                    }
+                });
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -14,8 +14,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -38,23 +36,25 @@ public class MybatisAdvanceSetController {
     private Stage mainStage;
 
     public void openAdvanceSetStage(MybatisExportConfig mybatisExportConfig) {
-        if (mainStage != null) {
-            mainStage.show();
-            return;
-        }
-        mainStage = new Stage();
-        mainStage.setTitle("高级设置");
-        mainStage.setResizable(false);
-        mainStage.getIcons().add(new Image("/image/icon.png"));
-        mainStage.initModality(Modality.APPLICATION_MODAL);
-        mainStage.initOwner(NodeConstants.primaryStage);
-        mainStage.setScene(new Scene(this.getAdvanceSetPane(mybatisExportConfig)));
-        mainStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-            if (KeyCode.ESCAPE.equals(event.getCode())) {
-                mainStage.close();
-            }
-        });
-        mainStage.show();
+        // 如果后面其他的设置，可以放开这段代码
+        // if (mainStage != null) {
+        //     mainStage.show();
+        //     return;
+        // }
+        // mainStage = new Stage();
+        // mainStage.setTitle("高级设置");
+        // mainStage.setResizable(false);
+        // mainStage.getIcons().add(new Image("/image/icon.png"));
+        // mainStage.initModality(Modality.APPLICATION_MODAL);
+        // mainStage.initOwner(NodeConstants.primaryStage);
+        // mainStage.setScene(new Scene(this.getAdvanceSetPane(mybatisExportConfig)));
+        // mainStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+        //     if (KeyCode.ESCAPE.equals(event.getCode())) {
+        //         mainStage.close();
+        //     }
+        // });
+        // mainStage.show();
+        this.openPluginStage(mybatisExportConfig);
     }
 
     private Parent getAdvanceSetPane(MybatisExportConfig mybatisExportConfig) {
@@ -81,13 +81,17 @@ public class MybatisAdvanceSetController {
         return borderPane;
     }
 
+    private Stage stage;
+
     private void openPluginStage(MybatisExportConfig mybatisExportConfig) {
-        final Stage stage = new Stage();
-        stage.setTitle("插件");
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(mainStage);
+        if (stage == null) {
+            stage = new Stage();
+            stage.setTitle("插件");
+            stage.setResizable(false);
+            stage.getIcons().add(new Image("/image/icon.png"));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(NodeConstants.primaryStage);
+        }
         stage.setScene(new Scene(this.getPluginPane(mybatisExportConfig, stage)));
         stage.show();
     }
@@ -96,7 +100,6 @@ public class MybatisAdvanceSetController {
         BorderPane borderPane = new BorderPane();
         borderPane.setPrefWidth(700);
         borderPane.setPrefHeight(400);
-        // borderPane.setStyle("-fx-padding: 10");
         borderPane.getStylesheets().add("/css/common.css");
 
         // center
@@ -108,7 +111,7 @@ public class MybatisAdvanceSetController {
         withEnable.forEach(mybatisPluginConfig -> pluginItemHboxListView.getItems().add(this.getMybatisPluginItemHbox(mybatisPluginConfig, stage, pluginItemHboxListView)));
 
         // top 创建全选，全不选, 反选按钮
-        final SelectBtnBarHBox selectBtnBarHBox = new SelectBtnBarHBox(withEnable);
+        final SelectBtnBarHBox selectBtnBarHbox = new SelectBtnBarHBox(withEnable);
 
         // bottom 按钮
         Button add = new Button("添加");
@@ -116,25 +119,35 @@ public class MybatisAdvanceSetController {
             // 添加插件
             final MybatisPluginConfig mybatisPluginConfig = new MybatisPluginConfig();
             mybatisPluginConfig.setId(IdUtil.fastSimpleUUID());
-            final MybatisPluginItemHBox mybatisPluginItemHbox = this.getMybatisPluginItemHbox(mybatisPluginConfig, stage, pluginItemHboxListView);
-            pluginItemHboxListView.getItems().add(mybatisPluginItemHbox);
+            MybatisPluginItemHBox.openEdItStage(true, stage, mybatisPluginConfig, mybatisPluginConfig1 -> {
+                mybatisPluginService.load(mybatisPluginConfig1);
+                final MybatisPluginItemHBox mybatisPluginItemHbox = this.getMybatisPluginItemHbox(mybatisPluginConfig1, stage, pluginItemHboxListView);
+                pluginItemHboxListView.getItems().add(mybatisPluginItemHbox);
+            });
         });
-        Button save = new Button("保存");
-        save.setOnAction(event -> {
-            mybatisPluginService.save(pluginItemHboxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig).toList());
+
+        Button close = new Button("取消");
+        close.setOnAction(event -> stage.close());
+        Button apply = new Button("应用");
+        apply.getStyleClass().add("apply-btn");
+        apply.setOnAction(event -> {
+            // 保存插件
+            final List<MybatisPluginConfig> list = pluginItemHboxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig).toList();
+            mybatisPluginService.save(list);
+            // 保存插件id至当前配置
             final List<String> pluginIds1 = pluginItemHboxListView.getItems().stream().map(MybatisPluginItemHBox::getPluginConfig)
                     .filter(MybatisPluginConfig::isEnable)
                     .map(MybatisPluginConfig::getId).filter(Objects::nonNull).toList();
             mybatisExportConfig.setPluginIds(pluginIds1);
+            stage.close();
         });
-        Button close = new Button("关闭");
-        close.setOnAction(event -> stage.close());
 
-        HBox hBox = new HBox(10, add, save, close);
-        hBox.setStyle("-fx-padding: 5 10 5 0; -fx-background-color: #F7F8FA");
+
+        HBox hBox = new HBox(10, add, close, apply);
+        hBox.setStyle("-fx-padding: 10 10 10 0; -fx-background-color: #F7F8FA");
         hBox.setAlignment(Pos.CENTER_RIGHT);
 
-        borderPane.setTop(selectBtnBarHBox);
+        borderPane.setTop(selectBtnBarHbox);
         borderPane.setCenter(pluginItemHboxListView);
         borderPane.setBottom(hBox);
         return borderPane;
@@ -145,7 +158,6 @@ public class MybatisAdvanceSetController {
                 mybatisPluginConfig1 -> mybatisPluginService.load(mybatisPluginConfig1));
         mybatisPluginItemHbox.prefWidthProperty().bind(listView.widthProperty().subtract(30));
         mybatisPluginItemHbox.onDelAction(actionEvent -> listView.getItems().remove(mybatisPluginItemHbox));
-        mybatisPluginItemHbox.onCopyAction(actionEvent -> listView.getItems().add(this.getMybatisPluginItemHbox(mybatisPluginConfig.copy(), ownerStage, listView)));
         return mybatisPluginItemHbox;
     }
 }

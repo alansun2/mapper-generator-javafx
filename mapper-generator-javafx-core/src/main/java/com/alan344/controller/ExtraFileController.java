@@ -23,6 +23,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -162,7 +164,7 @@ public class ExtraFileController {
      */
     private void openExtraFilePage(MybatisExportConfig mybatisExportConfig) {
         extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null
-                , extraTemplateFileConfigs -> {
+                , (extraTemplateFileGroupConfig, extraTemplateFileConfigs) -> {
                     // 获取选中的分组
                     final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
                     // 获取已经存在的配置
@@ -197,7 +199,7 @@ public class ExtraFileController {
                         extraFileConfigNew.setExtraFileType(extraTemplateFileConfig.getExtraFileType().name());
                         extraFileConfigNew.setSerialNumber(String.valueOf(curSerialNumber + i + 1));
                         extraFileConfigNew.setTemplateId(extraTemplateFileConfig.getId());
-                        extraFileConfigNew.setName(extraTemplateFileConfig.getName());
+                        extraFileConfigNew.setName(extraTemplateFileGroupConfig.getGroupName() + "-" + extraTemplateFileConfig.getName());
                         extraFileConfigNew.setEnable(true);
                         existExtraFileConfigs.add(extraFileConfigNew);
                         // 填充文件输出地址和包名防止重复填写
@@ -206,7 +208,7 @@ public class ExtraFileController {
                             extraFileConfigNew.setOutputPath(original.getOutputPath());
                             extraFileConfigNew.setPackageName(original.getPackageName());
                         } else {
-                            extraFileConfigNew.setOutputPath(StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation());
+                            extraFileConfigNew.setOutputPath(mybatisExportConfig.getBeanLocation());
                         }
                         rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, existExtraFileConfigs,
                                 extraFileConfigNew, curExtraFileGroupConfig));
@@ -313,6 +315,11 @@ public class ExtraFileController {
             borderPane.getStylesheets().add("css/common.css");
             borderPane.setPrefWidth(400);
             borderPane.setPrefHeight(150);
+            borderPane.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+                if (event.getCode() == KeyCode.ESCAPE) {
+                    stage.close();
+                }
+            });
             stage.setScene(new Scene(borderPane));
 
             int labelWidth = 80;
@@ -324,11 +331,10 @@ public class ExtraFileController {
             outputPathTextField.setPromptText("文件输出地址");
             outputPathTextField.setTextTooltip("不包含包名的路径");
             outputPathTextField.onAction(actionEvent -> {
-                // 文件导出地址
-                BaseConstants.baseFileDir = extraFileConfig.getOutputPath();
-                File directory = FileDirChooserFactory.createDirectoryScan(null, BaseConstants.baseFileDir);
+                // 文件输出地址
+                File directory = FileDirChooserFactory.createDirectoryScan("文件输出地址", BaseConstants.baseFileDir);
                 if (directory != null) {
-                    final String path = directory.getPath().replace("\\", "/");
+                    final String path = directory.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
                     outputPathTextField.setText(path);
                     BaseConstants.baseFileDir = path;
                 }
@@ -350,15 +356,7 @@ public class ExtraFileController {
             Button cancelBtn = new Button("取消");
             cancelBtn.setOnAction(event -> stage.close());
             applyBtn = new Button("应用");
-            applyBtn.setDisable(isSystem);
-            applyBtn.setOnAction(event -> {
-                if (validationSupport.isInvalid()) {
-                    return;
-                }
-                extraFileConfig.setOutputPath(outputPathTextField.getText());
-                extraFileConfig.setPackageName(packageNameTextField.getText());
-                stage.close();
-            });
+            applyBtn.getStyleClass().add("apply-btn");
             HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
             btnHbox.setAlignment(Pos.CENTER_RIGHT);
             borderPane.setBottom(btnHbox);
@@ -366,6 +364,14 @@ public class ExtraFileController {
 
         outputPathTextField.setText(extraFileConfig.getOutputPath());
         packageNameTextField.setText(extraFileConfig.getPackageName());
+        applyBtn.setOnAction(event -> {
+            if (validationSupport.isInvalid()) {
+                return;
+            }
+            extraFileConfig.setOutputPath(outputPathTextField.getText());
+            extraFileConfig.setPackageName(packageNameTextField.getText());
+            stage.close();
+        });
         applyBtn.setDisable(isSystem);
         stage.show();
     }

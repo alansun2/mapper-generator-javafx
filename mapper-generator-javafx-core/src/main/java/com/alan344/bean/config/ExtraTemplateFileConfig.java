@@ -1,6 +1,7 @@
 package com.alan344.bean.config;
 
 import com.alan344.constants.enums.ExtraFileTypeEnum;
+import com.alan344.utils.NameUtils;
 import com.alan344.utils.StringUtils;
 import com.alibaba.fastjson2.JSON;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.UUID;
  */
 @Getter
 @Setter
-public class ExtraTemplateFileConfig implements Cloneable {
+public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Cloneable {
 
     private String id;
 

@@ -112,7 +112,7 @@ public class DataSourceSetupController implements Initializable {
      * @throws IOException e
      */
     @FXML
-    public void apply() throws IOException {
+    public void apply() {
         Assert.isTrue(!validationSupport.isInvalid(), "请填写完整数据源信息", dateSourceStage);
         if (isAdd) {
             // 判断数据源是否存在
@@ -181,6 +181,7 @@ public class DataSourceSetupController implements Initializable {
         } else {
             isAdd = true;
             dataSource = new DataSource();
+            dataSource.setSort(dataSourceService.getMaxSort() + 1);
         }
         curDataSource = dataSource;
         configNameTextField.textProperty().bindBidirectional(dataSource.configNameProperty());
@@ -191,6 +192,8 @@ public class DataSourceSetupController implements Initializable {
         if (isAdd) {
             driveTypeComboBox.getSelectionModel().select(0);
         }
+
+        testConnectionBtn.setStyle("-fx-background-color: #FFF");
         dateSourceStage.show();
     }
 }

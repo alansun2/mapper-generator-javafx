@@ -25,7 +25,8 @@
                    promptText="password"/>
 
     <Button layoutX="480.0" layoutY="250.0" mnemonicParsing="false" onAction="#close" prefWidth="64.0" text="取消"/>
-    <Button layoutX="555.0" layoutY="250.0" mnemonicParsing="false" onAction="#apply" prefWidth="64.0" text="应用"/>
+    <Button layoutX="555.0" styleClass="apply-btn" layoutY="250.0" mnemonicParsing="false" onAction="#apply"
+            prefWidth="64.0" text="应用"/>
 
     <Button fx:id="testConnectionBtn" layoutX="17.0" layoutY="244.0" mnemonicParsing="false" onAction="#testConnection"
             prefHeight="30.0" prefWidth="160.0" text="Test Connection"/>

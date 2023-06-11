@@ -5,6 +5,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -33,6 +35,12 @@ public class AlDialog extends BorderPane {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.getIcons().add(new Image("image/icon.png"));
         stage.initOwner(stage1);
+
+        this.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                stage.close();
+            }
+        });
     }
 
     public void setActions(Button... buttons) {

@@ -49,6 +49,11 @@
                             <FontIcon iconLiteral="unil-github:16"/>
                         </graphic>
                     </MenuItem>
+                    <MenuItem mnemonicParsing="false" onAction="#openSponsor" text="赞助">
+                        <graphic>
+                            <FontIcon iconLiteral="unil-paypal:16:#FFB466"/>
+                        </graphic>
+                    </MenuItem>
                 </Menu>
             </MenuBar>
         </top>

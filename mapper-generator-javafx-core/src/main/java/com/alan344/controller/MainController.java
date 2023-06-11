@@ -4,6 +4,7 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.component.CustomTreeCell;
+import com.alan344.component.SponsorStage;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.DialogFactory;
@@ -190,7 +191,8 @@ public class MainController implements Initializable {
                 ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
             }
             BaseConstants.baseFileDir = fileScan.getParent().replace("\\", "/");
-            ZipUtil.unzip(fileScan, new File(BaseConstants.MG_HOME), Charset.defaultCharset());
+            final File importFIle = new File(BaseConstants.MG_HOME);
+            ZipUtil.unzip(fileScan, importFIle, Charset.defaultCharset());
             // 弹框
             DialogFactory.successDialog(NodeConstants.primaryStage, "导入成功");
             // 从文件加载数据源至pane
@@ -216,6 +218,14 @@ public class MainController implements Initializable {
     @FXML
     public void openGithub() {
         NodeConstants.hostServices.showDocument("https://github.com/alansun2/mapper-generator-javafx");
+    }
+
+    /**
+     * 打开赞助
+     */
+    @FXML
+    public void openSponsor() {
+        new SponsorStage(NodeConstants.primaryStage);
     }
 
     /**

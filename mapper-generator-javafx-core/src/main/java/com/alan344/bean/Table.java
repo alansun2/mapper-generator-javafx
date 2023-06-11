@@ -63,4 +63,9 @@ public class Table implements DataItem {
     public int hashCode() {
         return Objects.hash(tableName);
     }
+
+    @Override
+    public String getName() {
+        return this.getTableName();
+    }
 }

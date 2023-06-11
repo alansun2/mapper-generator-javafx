@@ -24,7 +24,7 @@ public class DialogFactory {
         jfxDialogLayout.setPrefHeight(130);
         jfxDialogLayout.getStylesheets().add("css/common.css");
         jfxDialogLayout.setStyle("-fx-background-color: #f1efef");
-        jfxDialogLayout.setBody(new Text("确定关闭吗？"));
+        jfxDialogLayout.setBody(new Text("确定取消吗？"));
         Button button = new Button("确定");
         button.setOnAction(event -> stage.close());
         jfxDialogLayout.setActions(button);

@@ -4,6 +4,7 @@ import com.alan344.bean.DataSource;
 import com.alan344.constants.BaseConstants;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.JSONWriter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -38,10 +39,13 @@ public class DataSourceService {
      * 添加数据源
      *
      * @param dataSource 数据源信息
-     * @throws IOException e
      */
-    public void addDataSource(DataSource dataSource) throws IOException {
-        this.downLoadToFile(dataSource);
+    public void addDataSource(DataSource dataSource) {
+        try {
+            this.downLoadToFile(dataSource);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         dataSourceSet.add(dataSource);
     }
@@ -60,9 +64,8 @@ public class DataSourceService {
      * 修改数据源
      *
      * @param newDataSource 数据源信息
-     * @throws IOException e
      */
-    public void updateDataSource(DataSource oldDataSource, DataSource newDataSource) throws IOException {
+    public void updateDataSource(DataSource oldDataSource, DataSource newDataSource) {
         if (oldDataSource.isSame(newDataSource)) {
             return;
         }
@@ -71,7 +74,11 @@ public class DataSourceService {
         this.deleteDataSourceFile(oldDataSource);
 
         // 保存配置
-        this.downLoadToFile(newDataSource);
+        try {
+            this.downLoadToFile(newDataSource);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // 如果配置名或者url不同，需要删除表信息
         if (!oldDataSource.getConfigName().equals(newDataSource.getConfigName()) || !oldDataSource.getUrl().equals(newDataSource.getUrl())) {
@@ -104,7 +111,7 @@ public class DataSourceService {
      */
     @Async
     void downLoadToFile(DataSource dataSource) throws IOException {
-        String datasourceStr = JSON.toJSONString(dataSource);
+        String datasourceStr = JSON.toJSONString(dataSource, JSONWriter.Feature.PrettyFormat);
 
         FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr, StandardCharsets.UTF_8.toString());
     }
@@ -145,6 +152,7 @@ public class DataSourceService {
         } catch (IOException e) {
             log.error("加载dataSource文件失败", e);
         }
+        result.sort(Comparator.comparing(DataSource::getSort));
         return result;
     }
 
@@ -161,5 +169,18 @@ public class DataSourceService {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 获取最大的sort
+     */
+    public long getMaxSort() {
+        long maxSort = 0;
+        for (DataSource dataSource : dataSourceSet) {
+            if (dataSource.getSort() != null && dataSource.getSort() > maxSort) {
+                maxSort = dataSource.getSort();
+            }
+        }
+        return maxSort;
     }
 }

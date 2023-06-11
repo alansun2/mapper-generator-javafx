@@ -1,5 +1,6 @@
 package com.alan344.controller;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.RandomUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
@@ -10,6 +11,7 @@ import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExtraTemplateFileConfigService;
+import com.alan344.utils.NameUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
@@ -41,6 +43,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -61,7 +64,7 @@ public class ExtraTemplateFileController {
     private LeftRightLinkageBorderPane<ExtraTemplateFileGroupConfig, ExtraTemplateFileGroupItemHBox> linkageBorderPane;
     private ListView<ExtraTemplateFileItemHBox> listView;
 
-    public void openExtraFilePageInternal(boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
+    public void openExtraFilePageInternal(boolean showCheckBox, BiConsumer<ExtraTemplateFileGroupConfig, List<ExtraTemplateFileConfig>> consumer) {
         if (null == stage) {
             stage = new Stage();
             stage.setResizable(false);
@@ -74,7 +77,7 @@ public class ExtraTemplateFileController {
         stage.show();
     }
 
-    private BorderPane getBorderPane(boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
+    private BorderPane getBorderPane(boolean showCheckBox, BiConsumer<ExtraTemplateFileGroupConfig, List<ExtraTemplateFileConfig>> consumer) {
         linkageBorderPane = new LeftRightLinkageBorderPane<>(
                 ExtraTemplateFileGroupConfig::new,
                 ExtraTemplateFileGroupItemHBox::new,
@@ -109,15 +112,15 @@ public class ExtraTemplateFileController {
         return borderPane1;
     }
 
-    private List<Button> getBottomBtns(Stage stage, boolean showCheckBox, Consumer<List<ExtraTemplateFileConfig>> consumer) {
+    private List<Button> getBottomBtns(Stage stage, boolean showCheckBox, BiConsumer<ExtraTemplateFileGroupConfig, List<ExtraTemplateFileConfig>> consumer) {
         int btnWidth = 70;
         Button importBtn = new Button("导入");
         importBtn.setDisable(!showCheckBox);
         importBtn.setPrefWidth(btnWidth);
         importBtn.setOnAction(event -> {
             final ObservableList<ExtraTemplateFileItemHBox> items = listView.getItems();
-            if (items.isEmpty()) {
-                Toast.makeTextDefault(stage, "请先添加");
+            if (CollectionUtil.isEmpty(items)) {
+                Toast.makeTextDefault(stage, "当前模板列表为空, 请先添加");
                 return;
             }
 
@@ -130,10 +133,13 @@ public class ExtraTemplateFileController {
                     .map(ExtraTemplateFileGroupItemHBox::getConfig).collect(Collectors.toCollection(ArrayList::new));
             // 保存到磁盘
             extraTemplateFileConfigService.saveExtraFileConfig(groupConfigs);
+
+            final ExtraTemplateFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+
             // saveBtn.setDisable(true);
             final List<ExtraTemplateFileConfig> extraTemplateFileConfigs = selectedList.stream()
                     .map(ExtraTemplateFileItemHBox::getExtraTemplateFileConfig).collect(Collectors.toList());
-            consumer.accept(extraTemplateFileConfigs);
+            consumer.accept(selectedItem.getConfig(), extraTemplateFileConfigs);
         });
 
         saveBtn = new Button("保存配置");
@@ -171,7 +177,7 @@ public class ExtraTemplateFileController {
             // saveBtn.setDisable(false);
         });
 
-        Button cancelBtn = new Button("关闭");
+        Button cancelBtn = new Button("取消");
         cancelBtn.setPrefWidth(btnWidth);
         cancelBtn.setOnAction(event -> stage.hide());
         return List.of(importBtn, saveBtn, addBtn, cancelBtn);
@@ -186,7 +192,7 @@ public class ExtraTemplateFileController {
      * 打开额外文件设置
      *
      * @param extraTemplateFileConfig 额外文件配置
-     * @param submitBtnAction         确定按钮操作
+     * @param submitBtnAction         应用按钮操作
      * @param isEdit                  true:编辑,false:添加
      */
     private void openExtraFileSetup(ExtraTemplateFileConfig extraTemplateFileConfig, boolean isEdit,
@@ -322,10 +328,11 @@ public class ExtraTemplateFileController {
         Button cancelButton = new Button("取消");
         cancelButton.setPrefWidth(50);
         cancelButton.setOnAction(actionEvent -> addTemplateStage.close());
-        Button submitButton = new Button("确定");
-        submitButton.setDisable(isSystem);
-        submitButton.setPrefWidth(50);
-        submitButton.setOnAction(actionEvent -> {
+        Button applyBtn = new Button("应用");
+        applyBtn.getStyleClass().add("apply-btn");
+        applyBtn.setDisable(isSystem);
+        applyBtn.setPrefWidth(50);
+        applyBtn.setOnAction(actionEvent -> {
             extraTemplateFileConfig.setId(UUID.randomUUID().toString());
             extraTemplateFileConfig.setName(nameTextField.getText());
             extraTemplateFileConfig.setExtraFileType(fileTypeCb.getSelectionModel().getSelectedItem());
@@ -344,7 +351,7 @@ public class ExtraTemplateFileController {
             submitBtnAction.accept(extraTemplateFileConfig);
             addTemplateStage.close();
         });
-        HBox btnHbox = new HBox(10, cancelButton, submitButton);
+        HBox btnHbox = new HBox(10, cancelButton, applyBtn);
         btnHbox.setStyle("-fx-padding: 10 0 0 0");
         btnHbox.setAlignment(Pos.CENTER_RIGHT);
 
@@ -424,7 +431,7 @@ public class ExtraTemplateFileController {
         final ExtraTemplateFileConfig extraTemplateFileConfigSource = old.getExtraTemplateFileConfig();
         final ExtraTemplateFileConfig clone = extraTemplateFileConfigSource.clone();
         clone.setId(UUID.randomUUID().toString());
-        clone.setName(this.getName(clone.getName() + "-COPY", extraTemplateFileConfigList));
+        clone.setName(NameUtils.generatorName(clone.getName(), extraTemplateFileConfigList));
         final ExtraTemplateFileItemHBox extraTemplateFileItemHbox = this.packageExtraFileLabel(old.isShowCheckBox(), old.isSystem(), clone, extraTemplateFileConfigList);
         final int i = listView.getItems().indexOf(old);
         listView.getItems().add(i + 1, extraTemplateFileItemHbox);

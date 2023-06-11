@@ -207,7 +207,9 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
             final SpringTemplateLoader ftl1 = new SpringTemplateLoader(resourceLoader, "file:" + dir);
             final SpringTemplateLoader ftl2 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/common/");
-            TemplateLoader[] loaders = new TemplateLoader[]{ftl1, ftl2};
+            final SpringTemplateLoader ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/cola/");
+            final SpringTemplateLoader ftl4 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/layer/");
+            TemplateLoader[] loaders = new TemplateLoader[]{ftl1, ftl2, ftl3, ftl4};
             cfg.setTemplateLoader(new MultiTemplateLoader(loaders));
 
             // From here we will set the settings recommended for new projects. These

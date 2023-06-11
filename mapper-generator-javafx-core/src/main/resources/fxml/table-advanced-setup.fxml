@@ -9,8 +9,9 @@
             fx:controller="com.alan344.controller.component.TableAdvanceSetupController">
     <JFXCheckBox fx:id="serializableCheckBox" layoutX="93.0" layoutY="59.0" mnemonicParsing="false"
                  text="实现 Serializable"/>
-    <Button layoutX="232.0" layoutY="113.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="54.0"
-            text="应用"/>
     <Button layoutX="172.0" layoutY="113.0" mnemonicParsing="false" onAction="#cancel" prefHeight="23.0"
             prefWidth="54.0" text="取消"/>
+    <Button layoutX="232.0" layoutY="113.0" styleClass="apply-btn" mnemonicParsing="false" onAction="#apply"
+            prefHeight="23.0" prefWidth="54.0"
+            text="应用"/>
 </AnchorPane>

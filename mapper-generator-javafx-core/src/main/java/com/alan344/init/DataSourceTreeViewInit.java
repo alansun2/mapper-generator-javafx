@@ -13,6 +13,7 @@ import com.alan344.service.DataSourceService;
 import com.alan344.service.TableService;
 import com.alan344.utils.Assert;
 import com.alan344.utils.CollectionUtils;
+import com.alan344.utils.NameUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
@@ -24,12 +25,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,8 +48,12 @@ public class DataSourceTreeViewInit {
     private MybatisListViewInit mybatisListViewInit;
     @Resource
     private MainController mainController;
+    @Autowired
+    private DataSourceTreeItemInit dataSourceTreeItemInit;
     @Resource
     private DataSourceSetupController dataSourceSetupController;
+
+    private Map<Integer, ContextMenu> contextMenuMap = new HashMap<>();
 
     /**
      * treeView init
@@ -65,30 +69,54 @@ public class DataSourceTreeViewInit {
                     ContextMenu contextMenu;
                     // open context menu on current screen position
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
-                        MenuItem connectMenuItem = new MenuItem("连接");
-                        connectMenuItem.setGraphic(new FontIcon("unil-cloud-data-connection:16:BLUE"));
-                        connectMenuItem.setOnAction(actionEvent -> this.initDataSourceItem(treeViewDataSource));
-                        MenuItem updateMenuItem = new MenuItem("编辑");
-                        updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
-                        updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
-                        MenuItem exportMenuItem = new MenuItem("导出");
-                        exportMenuItem.setGraphic(new FontIcon("unil-export:16:GREEN"));
-                        exportMenuItem.setOnAction(event1 -> this.export(treeViewDataSource));
-                        MenuItem refreshMenuItem = new MenuItem("刷新");
-                        refreshMenuItem.setGraphic(new FontIcon("unis-refresh:16:GRAY"));
-                        refreshMenuItem.setOnAction(event1 -> refreshDataSource(treeViewDataSource));
-                        MenuItem deleteMenuItem = new MenuItem("删除数据源");
-                        deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
-                        deleteMenuItem.setOnAction(this::deleteDataSource);
-
-                        contextMenu = new ContextMenu(connectMenuItem, updateMenuItem, exportMenuItem, refreshMenuItem, deleteMenuItem);
+                        final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+                        if (selectedDataSourceItem.isExpanded()) {
+                            contextMenu = contextMenuMap.computeIfAbsent(1, integer -> {
+                                MenuItem closeMenuItem = new MenuItem("关闭");
+                                closeMenuItem.setGraphic(new FontIcon("unil-padlock:16:GRAY"));
+                                closeMenuItem.setOnAction(event1 -> this.close(treeViewDataSource));
+                                MenuItem updateMenuItem = new MenuItem("编辑");
+                                updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
+                                updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
+                                MenuItem exportMenuItem = new MenuItem("导出所有");
+                                exportMenuItem.setGraphic(new FontIcon("unil-export:16:GREEN"));
+                                exportMenuItem.setOnAction(event1 -> this.export(treeViewDataSource));
+                                MenuItem copyMenuItem = new MenuItem("复制");
+                                copyMenuItem.setGraphic(new FontIcon("unil-copy:16:BLUE"));
+                                copyMenuItem.setOnAction(event1 -> this.copy(treeViewDataSource));
+                                MenuItem refreshMenuItem = new MenuItem("刷新");
+                                refreshMenuItem.setGraphic(new FontIcon("unis-refresh:16:GRAY"));
+                                refreshMenuItem.setOnAction(event1 -> refreshDataSource(treeViewDataSource));
+                                MenuItem deleteMenuItem = new MenuItem("删除数据源");
+                                deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
+                                deleteMenuItem.setOnAction(this::deleteDataSource);
+                                return new ContextMenu(closeMenuItem, updateMenuItem, exportMenuItem, copyMenuItem, refreshMenuItem, deleteMenuItem);
+                            });
+                        } else {
+                            contextMenu = contextMenuMap.computeIfAbsent(2, integer -> {
+                                MenuItem connectMenuItem = new MenuItem("连接");
+                                connectMenuItem.setGraphic(new FontIcon("unil-cloud-data-connection:16:BLUE"));
+                                connectMenuItem.setOnAction(actionEvent -> this.initDataSourceItem(treeViewDataSource));
+                                MenuItem updateMenuItem = new MenuItem("编辑");
+                                updateMenuItem.setGraphic(new FontIcon("unil-file-edit-alt:16:ORANGE"));
+                                updateMenuItem.setOnAction(event1 -> updateDataSource(treeViewDataSource));
+                                MenuItem copyMenuItem = new MenuItem("复制");
+                                copyMenuItem.setGraphic(new FontIcon("unil-copy:16:BLUE"));
+                                copyMenuItem.setOnAction(event1 -> this.copy(treeViewDataSource));
+                                MenuItem deleteMenuItem = new MenuItem("删除数据源");
+                                deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
+                                deleteMenuItem.setOnAction(this::deleteDataSource);
+                                return new ContextMenu(connectMenuItem, updateMenuItem, copyMenuItem, deleteMenuItem);
+                            });
+                        }
                     } else {
                         // 只有一个导出按钮
-                        MenuItem exportMenuItem = new MenuItem("导出");
-                        exportMenuItem.setGraphic(new FontIcon("unil-export:16:GREEN"));
-                        exportMenuItem.setOnAction(event1 -> export(treeViewDataSource));
-
-                        contextMenu = new ContextMenu(exportMenuItem);
+                        contextMenu = contextMenuMap.computeIfAbsent(3, integer -> {
+                            MenuItem exportMenuItem = new MenuItem("导出");
+                            exportMenuItem.setGraphic(new FontIcon("unil-export:16:GREEN"));
+                            exportMenuItem.setOnAction(event1 -> export(treeViewDataSource));
+                            return new ContextMenu(exportMenuItem);
+                        });
                     }
                     // 放入  contextMenu
                     treeViewDataSource.setContextMenu(contextMenu);
@@ -125,8 +153,7 @@ public class DataSourceTreeViewInit {
     private void initDataSourceItem(TreeView<DataItem> treeViewDataSource) {
         final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         final DataItem value = selectedDataSourceItem.getValue();
-        if (value instanceof DataSource) {
-            final DataSource dataSource = (DataSource) value;
+        if (value instanceof DataSource dataSource) {
             if (!selectedDataSourceItem.getChildren().isEmpty()) {
                 return;
             }
@@ -194,8 +221,7 @@ public class DataSourceTreeViewInit {
             TreeItem<DataItem> lastParent = null;
             for (TreeItem<DataItem> selectedItem : selectedItems) {
                 DataItem dataItem = selectedItem.getValue();
-                if (dataItem instanceof Table) {
-                    final Table table = (Table) dataItem;
+                if (dataItem instanceof Table table) {
                     if (lastParent == null) {
                         lastParent = selectedItem.getParent();
                         dataSource = ((DataSource) selectedItem.getParent().getValue());
@@ -255,7 +281,7 @@ public class DataSourceTreeViewInit {
 
         DataSource dataSource = (DataSource) dataItemTreeItem.getValue();
 
-        // 关闭右边的 Border 展示
+        // 取消右边的 Border 展示
         this.rightBorderShowClose(dataSource);
 
         // 删除对应的文件
@@ -288,15 +314,44 @@ public class DataSourceTreeViewInit {
     }
 
     /**
+     * 关闭数据源
+     *
+     * @param treeViewDataSource 被选中的数据源
+     */
+    private void copy(TreeView<DataItem> treeViewDataSource) {
+        TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+        final DataItem value = dataSourceTreeItem.getValue();
+        final DataSource dataSourceCopy = ((DataSource) value).copy();
+        dataSourceCopy.setSort(dataSourceService.getMaxSort() + 1);
+        final List<DataItem> dataItemList = treeViewDataSource.getRoot().getChildren().stream().map(TreeItem::getValue).toList();
+        dataSourceCopy.setConfigName(NameUtils.generatorName(dataSourceCopy.getConfigName(), dataItemList));
+        // 添加数据源
+        dataSourceService.addDataSource(dataSourceCopy);
+
+        // 把 dataSource 放入 treeItemRoot
+        dataSourceTreeItemInit.addExpandListenerForDataSource(dataSourceCopy, treeViewDataSource.getRoot());
+    }
+
+    /**
+     * 关闭数据源
+     *
+     * @param treeViewDataSource 被选中的数据源
+     */
+    private void close(TreeView<DataItem> treeViewDataSource) {
+        TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
+        dataSourceTreeItem.setExpanded(false);
+        dataSourceTreeItem.getChildren().clear();
+    }
+
+    /**
      * 跟新数据源
      *
      * @param treeViewDataSource 被选中的数据源
      */
     private void updateDataSource(TreeView<DataItem> treeViewDataSource) {
+        this.close(treeViewDataSource);
         TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
-        dataSourceTreeItem.setExpanded(false);
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
-        dataSourceTreeItem.getChildren().clear();
         dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, treeViewDataSource, dataSource);
     }
 

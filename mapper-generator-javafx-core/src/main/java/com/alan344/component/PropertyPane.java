@@ -12,6 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.controlsfx.validation.ValidationSupport;
+import org.controlsfx.validation.Validator;
+import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
 
 import java.util.LinkedHashMap;
 import java.util.function.Consumer;
@@ -22,103 +25,128 @@ import java.util.function.Consumer;
  */
 public class PropertyPane extends BorderPane {
 
+    private static Stage stage;
+
+    private static BorderPane borderPane;
+
+    private static Button addBtn, applyBtn;
+
     public static void open(LinkedHashMap<String, String> customProperties) {
-        Stage stage = new Stage();
+        if (stage == null) {
+            stage = new Stage();
+            // 按钮
+            addBtn = new Button("添加");
+            Button cancelBtn = new Button("取消");
+            cancelBtn.setOnAction(event -> stage.close());
+            applyBtn = new Button("应用");
+            applyBtn.getStyleClass().add("apply-btn");
+            HBox btnHbox = new HBox(10, addBtn, cancelBtn, applyBtn);
+            btnHbox.setStyle("-fx-background-color: #F7F8FA;");
+            btnHbox.setAlignment(Pos.CENTER_RIGHT);
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add("border-pane-padding");
-        borderPane.getStylesheets().add("css/common.css");
-        borderPane.setPrefWidth(400);
-        borderPane.setPrefHeight(400);
+            borderPane = new BorderPane();
+            borderPane.getStyleClass().add("border-pane-padding");
+            borderPane.getStylesheets().add("css/common.css");
+            borderPane.setPrefWidth(400);
+            borderPane.setPrefHeight(400);
+            borderPane.setBottom(btnHbox);
 
+            stage.setScene(new Scene(borderPane));
+            stage.setResizable(false);
+            stage.getIcons().add(new Image("/image/icon.png"));
+            stage.setTitle("设置自定义属性");
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(NodeConstants.primaryStage);
+        }
         ListView<CustomPropertyHBox> lv = new ListView<>();
-
         customProperties.forEach((key, value) -> {
-            CustomPropertyHBox customPropertyHBox = new CustomPropertyHBox(key, value);
-            customPropertyHBox.delOnAction(event -> {
-                lv.getItems().remove(customPropertyHBox);
+            CustomPropertyHBox customPropertyHbox = new CustomPropertyHBox(key, value);
+            customPropertyHbox.delOnAction(event -> {
+                lv.getItems().remove(customPropertyHbox);
             });
-            lv.getItems().add(customPropertyHBox);
+            lv.getItems().add(customPropertyHbox);
         });
-
         borderPane.setCenter(lv);
 
-        // 按钮
-        Button addBtn = new Button("添加");
-        addBtn.setOnAction(event -> addCustomProperty(customPropertyHBox -> {
-            lv.getItems().add(customPropertyHBox);
-            customPropertyHBox.delOnAction(event1 -> lv.getItems().remove(customPropertyHBox));
+
+        addBtn.setOnAction(event -> addCustomProperty(customPropertyHbox -> {
+            lv.getItems().add(customPropertyHbox);
+            customPropertyHbox.delOnAction(event1 -> lv.getItems().remove(customPropertyHbox));
         }));
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setOnAction(event -> stage.close());
-        Button applyBtn = new Button("应用");
+
         applyBtn.setOnAction(event -> {
             customProperties.clear();
-            lv.getItems().forEach(customPropertyHBox -> customProperties.put(customPropertyHBox.getKey(), customPropertyHBox.getValue()));
+            lv.getItems().forEach(customPropertyHbox -> customProperties.put(customPropertyHbox.getKey(), customPropertyHbox.getValue()));
             stage.close();
         });
-        HBox btnHbox = new HBox(10, addBtn, cancelBtn, applyBtn);
-        btnHbox.setAlignment(Pos.CENTER_RIGHT);
-
-        borderPane.setBottom(btnHbox);
-
-        stage.setScene(new Scene(borderPane));
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle("设置自定义属性");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
         stage.show();
     }
 
+    private static Stage stage1;
+
+    private static TextField keyTextField, valueTextField;
+
+    private static Button applyBtn1;
+
+    private static final ValidationSupport validationSupport = new ValidationSupport();
+
     private static void addCustomProperty(Consumer<CustomPropertyHBox> consumer) {
-        Stage stage = new Stage();
+        if (stage1 == null) {
+            validationSupport.setValidationDecorator(new StyleClassValidationDecoration());
+            stage1 = new Stage();
 
-        BorderPane borderPane = new BorderPane();
-        borderPane.getStyleClass().add("border-pane-padding");
-        borderPane.getStylesheets().add("css/common.css");
-        borderPane.setPrefWidth(400);
-        borderPane.setPrefHeight(150);
+            int labelWidth = 80;
 
-        int labelWidth = 80;
+            VBox vBox = new VBox();
+            vBox.setSpacing(10);
 
-        VBox vBox = new VBox();
-        vBox.setSpacing(10);
+            // key
+            keyTextField = new TextField();
+            keyTextField.setPromptText("key");
+            PropertyHBox keyHbox = new PropertyHBox("key", labelWidth, keyTextField);
+            validationSupport.registerValidator(keyTextField, Validator.createEmptyValidator("key不能为空"));
+            vBox.getChildren().add(keyHbox);
 
-        // key
-        TextField keyTextField = new TextField();
-        keyTextField.setPromptText("key");
-        PropertyHBox keyHbox = new PropertyHBox("key", labelWidth, keyTextField);
-        vBox.getChildren().add(keyHbox);
+            // value
+            valueTextField = new TextField();
+            valueTextField.setPromptText("value");
+            PropertyHBox valueHbox = new PropertyHBox("value", labelWidth, valueTextField);
+            validationSupport.registerValidator(valueTextField, Validator.createEmptyValidator("value不能为空"));
+            vBox.getChildren().add(valueHbox);
 
-        // value
-        TextField valueTextField = new TextField();
-        valueTextField.setPromptText("value");
-        PropertyHBox valueHbox = new PropertyHBox("value", labelWidth, valueTextField);
-        vBox.getChildren().add(valueHbox);
+            // 按钮
+            Button cancelBtn = new Button("取消");
+            cancelBtn.setOnAction(event -> stage1.close());
+            applyBtn1 = new Button("应用");
+            applyBtn1.getStyleClass().add("apply-btn");
+            HBox btnHbox = new HBox(10, cancelBtn, applyBtn1);
+            btnHbox.setAlignment(Pos.CENTER_RIGHT);
 
-        borderPane.setCenter(vBox);
+            BorderPane borderPane = new BorderPane();
+            borderPane.getStyleClass().add("border-pane-padding");
+            borderPane.getStylesheets().add("css/common.css");
+            borderPane.setPrefWidth(400);
+            borderPane.setPrefHeight(150);
+            borderPane.setCenter(vBox);
+            borderPane.setBottom(btnHbox);
 
-        // 按钮
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setOnAction(event -> stage.close());
-        Button applyBtn = new Button("应用");
-        applyBtn.setOnAction(event -> {
-            CustomPropertyHBox customPropertyHBox = new CustomPropertyHBox(keyTextField.getText(), valueTextField.getText());
-            consumer.accept(customPropertyHBox);
-            stage.close();
+            stage1.setScene(new Scene(borderPane));
+            stage1.setResizable(false);
+            stage1.getIcons().add(new Image("/image/icon.png"));
+            stage1.setTitle("新增");
+            stage1.initModality(Modality.WINDOW_MODAL);
+            stage1.initOwner(NodeConstants.primaryStage);
+        }
+        keyTextField.setText(null);
+        valueTextField.setText(null);
+        applyBtn1.setOnAction(event -> {
+            if (validationSupport.isInvalid()) {
+                return;
+            }
+            CustomPropertyHBox customPropertyHbox = new CustomPropertyHBox(keyTextField.getText(), valueTextField.getText());
+            consumer.accept(customPropertyHbox);
+            stage1.close();
         });
-        HBox btnHbox = new HBox(10, cancelBtn, applyBtn);
-        btnHbox.setAlignment(Pos.CENTER_RIGHT);
-
-        borderPane.setBottom(btnHbox);
-
-        stage.setScene(new Scene(borderPane));
-        stage.setResizable(false);
-        stage.getIcons().add(new Image("/image/icon.png"));
-        stage.setTitle("编辑");
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(NodeConstants.primaryStage);
-        stage.show();
+        stage1.show();
     }
 }

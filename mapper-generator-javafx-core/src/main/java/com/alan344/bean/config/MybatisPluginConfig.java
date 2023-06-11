@@ -2,6 +2,7 @@ package com.alan344.bean.config;
 
 import cn.hutool.core.util.IdUtil;
 import com.alan344.component.SelectBtnBarHBox;
+import com.alan344.utils.NameUtils;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MybatisPluginConfig implements SelectBtnBarHBox.Selected {
+public class MybatisPluginConfig implements SelectBtnBarHBox.Selected, NameUtils.CheckNameRepeat {
 
     private String id;
 
@@ -41,6 +42,7 @@ public class MybatisPluginConfig implements SelectBtnBarHBox.Selected {
 
     private transient Class<?> clazz;
 
+    @Override
     public String getName() {
         return name.get();
     }
