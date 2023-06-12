@@ -1,5 +1,6 @@
 package com.alan344.constants;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
@@ -19,9 +20,9 @@ import java.util.Map;
  * @date ：2019/8/8 21:43
  */
 public class BaseConstants {
-    public static final String MG_HOME = System.getProperty("user.home").replace("\\", "/") + "/AppData/Local/MapperGeneratorV2";
-    public static final String MG_DATA_HOME = MG_HOME + "/data/";
+    public static final String MG_HOME = System.getProperty("user.home").replace(StrUtil.BACKSLASH, StrUtil.SLASH) + "/AppData/Local/MapperGeneratorV2";
     public static final String MG_CONF_HOME = MG_HOME + "/config/";
+    public static final String MG_DATA_HOME = MG_CONF_HOME + "/data/";
     /**
      * 数据源地址
      */

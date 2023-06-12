@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.component.*;
 import com.alan344.constants.BaseConstants;
@@ -100,7 +101,7 @@ public class MybatisExportSetupController {
         openExtraPropertyStageBtn.setPrefWidth(100);
         Button saveBtn = new Button("保存配置");
         saveBtn.setOnAction(event -> {
-            configService.saveConfigToFile();
+            exportService.saveSetup();
             DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
         });
         saveBtn.setPrefWidth(70);
@@ -170,10 +171,6 @@ public class MybatisExportSetupController {
         config.setExportExtraFile(false);
 
         BaseConstants.currentConfig = config;
-
-        if (null != config.getCustomProperties()) {
-            ConfigConstants.globalParam.putAll(config.getCustomProperties());
-        }
         exportService.export(config);
     }
 
@@ -459,7 +456,7 @@ public class MybatisExportSetupController {
     public void beanDirectoryScan(FileSelectTextToggleHBox fileSelectTextHBox) {
         File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
-            final String path = directory.getPath().replace("\\", "/");
+            final String path = directory.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
             fileSelectTextHBox.setText(path);
             this.baseDir = path;
         }
@@ -471,7 +468,7 @@ public class MybatisExportSetupController {
     public void beanDirectoryScan(FileSelectTextHBox fileSelectTextHBox) {
         File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ? null : this.baseDir);
         if (directory != null) {
-            final String path = directory.getPath().replace("\\", "/");
+            final String path = directory.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
             fileSelectTextHBox.setText(path);
             this.baseDir = path;
         }

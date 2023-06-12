@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.alan344.bean.Table;
 import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
@@ -93,11 +94,17 @@ public class ExtraFileController {
         openExtraPropertyStageBtn.setPrefWidth(100);
         openExtraTemplateFileStageBtn.setPrefWidth(100);
         Button saveBtn = new Button("保存配置");
-        saveBtn.setOnAction(event -> this.saveSetup());
+        saveBtn.setOnAction(event -> {
+            exportService.saveSetup();
+
+            // 保存成功 dialog
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
+        });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
         exportBtn.getStyleClass().add("export");
         exportBtn.setOnAction(event -> {
+            // 判断是否有未设置的
             final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
             final Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = selectedItem.getConfig().getExtraFileConfigs();
             final String s = extraFileConfigs.stream().filter(extraFileConfig -> StrUtil.hasEmpty(extraFileConfig.getOutputPath(), extraFileConfig.getPackageName()))
@@ -106,7 +113,8 @@ public class ExtraFileController {
                 Toast.makeTextDefault(NodeConstants.primaryStage, s + ", 未设置输出路径或包名");
                 return;
             }
-            this.export(mybatisExportConfig);
+
+            this.export();
         });
         exportBtn.setPrefWidth(70);
         Button preBtn = new Button("返回");
@@ -115,10 +123,12 @@ public class ExtraFileController {
         return List.of(openExtraTemplateFileStageBtn, openExtraPropertyStageBtn, saveBtn, exportBtn, preBtn);
     }
 
-    private void export(MybatisExportConfig mybatisExportConfig) {
+    private void export() {
+        // 获取启用的分组
         final Optional<ExtraFileGroupConfig> enabledConfig = linkageBorderPane.getGroupLeftListView().getItems().stream()
                 .map(ExtraFileGroupItemHBox::getConfig)
                 .filter(ExtraFileGroupConfig::isEnable).findFirst();
+
         if (enabledConfig.isPresent()) {
             // selected group
             final ExtraFileGroupConfig extraFileGroupConfig = enabledConfig.get();
@@ -135,13 +145,25 @@ public class ExtraFileController {
                         extraTemplateFileConfig1.setPackageName(extraFileConfig.getPackageName());
                         return extraTemplateFileConfig1;
                     }).toList();
+
+            // 整理每个文件的包名，用于模板文件的导入
+
+            Map<String, String> nameImportMap = new HashMap<>(64);
+            Collection<Table> tables = BaseConstants.selectedTableNameTableMap.values();
+            for (Table table : tables) {
+                final String camelCaseTableName = StrUtil.toCamelCase(table.getTableName());
+                for (ExtraTemplateFileConfig extraTemplateFileConfig : ConfigConstants.extraTemplateFileConfigs) {
+                    final String packageName = extraTemplateFileConfig.getPackageName();
+                    nameImportMap.put(camelCaseTableName + extraTemplateFileConfig.getModelSuffix(), packageName + "." + camelCaseTableName + extraTemplateFileConfig.getModelSuffix());
+                }
+            }
+
+            ConfigConstants.globalParam.putAll(nameImportMap);
         } else {
             ConfigConstants.extraTemplateFileConfigs = null;
         }
 
-        if (null != mybatisExportConfig.getCustomProperties()) {
-            ConfigConstants.globalParam.putAll(mybatisExportConfig.getCustomProperties());
-        }
+        // 导出
         exportService.export(BaseConstants.currentConfig);
     }
 
@@ -150,73 +172,64 @@ public class ExtraFileController {
     }
 
     /**
-     * 保存额外文件
-     */
-    private void saveSetup() {
-        exportService.saveSetup(BaseConstants.currentConfig);
-
-        // 保存成功 dialog
-        DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
-    }
-
-    /**
      * 添加额外文件
      */
     private void openExtraFilePage(MybatisExportConfig mybatisExportConfig) {
-        extraTemplateFileController.openExtraFilePageInternal(linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem() != null
-                , (extraTemplateFileGroupConfig, extraTemplateFileConfigs) -> {
-                    // 获取选中的分组
-                    final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
-                    // 获取已经存在的配置
-                    Collection<ExtraFileGroupConfig.ExtraFileConfig> existExtraFileConfigs = curExtraFileGroupConfig.getExtraFileConfigs();
-                    if (null == existExtraFileConfigs) {
-                        // 不存在则创建
-                        existExtraFileConfigs = new ArrayList<>();
-                        curExtraFileGroupConfig.setExtraFileConfigs(existExtraFileConfigs);
-                    }
+        extraTemplateFileController.openExtraFilePageInternal((extraTemplateFileGroupConfig, extraTemplateFileConfigs) -> {
+            // 获取选中的分组
+            final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+            // 获取已经存在的配置
+            Collection<ExtraFileGroupConfig.ExtraFileConfig> existExtraFileConfigs = curExtraFileGroupConfig.getExtraFileConfigs();
+            if (null == existExtraFileConfigs) {
+                // 不存在则创建
+                existExtraFileConfigs = new ArrayList<>();
+                curExtraFileGroupConfig.setExtraFileConfigs(existExtraFileConfigs);
+            }
 
-                    // 获取已经存在的模板 id, 防止重复添加
-                    final Set<String> existTemplateIdSet = existExtraFileConfigs.stream()
-                            .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).collect(Collectors.toSet());
+            // 获取已经存在的模板 id, 防止重复添加
+            final Set<String> existTemplateIdSet = existExtraFileConfigs.stream()
+                    .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).collect(Collectors.toSet());
 
-                    // 根据分组获取所有的配置，用于用户少写配置
-                    final Map<String, ExtraFileGroupConfig.ExtraFileConfig> allExistTemplateIdMap = linkageBorderPane.getGroupLeftListView()
-                            .getItems().stream()
-                            .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
-                            .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
-                            .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig));
+            // 根据分组获取所有的配置，用于用户少写配置
+            final Map<String, ExtraFileGroupConfig.ExtraFileConfig> allExistTemplateIdMap = linkageBorderPane.getGroupLeftListView()
+                    .getItems().stream()
+                    .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
+                    .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
+                    .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig2));
 
-                    // 获取当前选中的 listView
-                    ListView<ExtraFileItemHBox> rightListView = ((ListView<ExtraFileItemHBox>) this.getRightBorderPane(curExtraFileGroupConfig).getCenter());
+            // 获取当前选中的 listView
+            ListView<ExtraFileItemHBox> rightListView = ((ListView<ExtraFileItemHBox>) this.getRightBorderPane(curExtraFileGroupConfig).getCenter());
 
-                    // 添加新的模板
-                    final List<ExtraTemplateFileConfig> add = extraTemplateFileConfigs.stream()
-                            .filter(extraTemplateFileConfig -> !existTemplateIdSet.contains(extraTemplateFileConfig.getId())).toList();
-                    final int curSerialNumber = existTemplateIdSet.size();
-                    for (int i = 0; i < add.size(); i++) {
-                        ExtraTemplateFileConfig extraTemplateFileConfig = add.get(i);
-                        ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew = new ExtraFileGroupConfig.ExtraFileConfig();
-                        extraFileConfigNew.setExtraFileType(extraTemplateFileConfig.getExtraFileType().name());
-                        extraFileConfigNew.setSerialNumber(String.valueOf(curSerialNumber + i + 1));
-                        extraFileConfigNew.setTemplateId(extraTemplateFileConfig.getId());
-                        extraFileConfigNew.setName(extraTemplateFileGroupConfig.getGroupName() + "-" + extraTemplateFileConfig.getName());
-                        extraFileConfigNew.setEnable(true);
-                        existExtraFileConfigs.add(extraFileConfigNew);
-                        // 填充文件输出地址和包名防止重复填写
-                        final ExtraFileGroupConfig.ExtraFileConfig original = allExistTemplateIdMap.get(extraTemplateFileConfig.getId());
-                        if (null != original) {
-                            extraFileConfigNew.setOutputPath(original.getOutputPath());
-                            extraFileConfigNew.setPackageName(original.getPackageName());
-                        } else {
-                            extraFileConfigNew.setOutputPath(mybatisExportConfig.getBeanLocation());
-                        }
-                        rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, existExtraFileConfigs,
-                                extraFileConfigNew, curExtraFileGroupConfig));
-                        if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
-                            linkageBorderPane.getRightBorderPane().setCenter(rightListView);
-                        }
-                    }
-                });
+            // 添加新的模板
+            final List<ExtraTemplateFileConfig> add = extraTemplateFileConfigs.stream()
+                    .filter(extraTemplateFileConfig -> !existTemplateIdSet.contains(extraTemplateFileConfig.getId())).toList();
+            final String sameFromPackage = configService.getSameFromPackage(mybatisExportConfig);
+            final String projectName = mybatisExportConfig.getProjectName();
+            final int curSerialNumber = existTemplateIdSet.size();
+            for (int i = 0; i < add.size(); i++) {
+                ExtraTemplateFileConfig extraTemplateFileConfig = add.get(i);
+                ExtraFileGroupConfig.ExtraFileConfig extraFileConfigNew = new ExtraFileGroupConfig.ExtraFileConfig();
+                extraFileConfigNew.setExtraFileType(extraTemplateFileConfig.getExtraFileType().name());
+                extraFileConfigNew.setSerialNumber(String.valueOf(curSerialNumber + i + 1));
+                extraFileConfigNew.setTemplateId(extraTemplateFileConfig.getId());
+                extraFileConfigNew.setName(extraTemplateFileGroupConfig.getGroupName() + "-" + extraTemplateFileConfig.getName());
+                extraFileConfigNew.setEnable(true);
+                existExtraFileConfigs.add(extraFileConfigNew);
+                // 填充文件输出地址和包名防止重复填写
+                final ExtraFileGroupConfig.ExtraFileConfig original = allExistTemplateIdMap.get(extraTemplateFileConfig.getId());
+                if (null != original) {
+                    extraFileConfigNew.setOutputPath(original.getOutputPath());
+                    extraFileConfigNew.setPackageName(original.getPackageName());
+                } else {
+                    configService.fillOutputPathAndPackageName(extraFileConfigNew, extraTemplateFileConfig, mybatisExportConfig, sameFromPackage);
+                }
+                rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, existExtraFileConfigs,
+                        extraFileConfigNew, curExtraFileGroupConfig));
+                if (linkageBorderPane.getRightBorderPane().getCenter() == null) {
+                    linkageBorderPane.getRightBorderPane().setCenter(rightListView);
+                }
+            }
+        });
     }
 
     /**

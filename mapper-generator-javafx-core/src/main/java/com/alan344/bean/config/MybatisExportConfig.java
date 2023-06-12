@@ -1,5 +1,6 @@
 package com.alan344.bean.config;
 
+import cn.hutool.core.util.StrUtil;
 import com.alan344.component.LeftRightLinkageBorderPane;
 import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
@@ -260,7 +261,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     }
 
     public String getBeanLocation() {
-        return beanLocation.get();
+        return StrUtil.removeSuffix(StrUtil.removePrefix(beanLocation.get(), StrUtil.SLASH), StrUtil.SLASH);
     }
 
     public SimpleStringProperty beanLocationProperty() {

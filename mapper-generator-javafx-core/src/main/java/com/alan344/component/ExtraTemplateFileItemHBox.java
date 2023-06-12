@@ -23,18 +23,14 @@ public class ExtraTemplateFileItemHBox extends HBox implements SelectBtnBarHBox.
 
     private final JFXCheckBox jfxCheckBox;
 
-    private final boolean showCheckBox;
-
     private final boolean isSystem;
 
-    public ExtraTemplateFileItemHBox(boolean showCheckBox, boolean isSystem, ExtraTemplateFileConfig extraTemplateFileConfig) {
+    public ExtraTemplateFileItemHBox(boolean isSystem, ExtraTemplateFileConfig extraTemplateFileConfig) {
         this.extraTemplateFileConfig = extraTemplateFileConfig;
-        this.showCheckBox = showCheckBox;
         this.isSystem = isSystem;
         int jfxCheckBoxWidth = 30, extraFileTypeWidth = 130, btnWidth = 64;
 
         jfxCheckBox = new JFXCheckBox();
-        jfxCheckBox.setDisable(!showCheckBox);
         jfxCheckBox.setPrefWidth(jfxCheckBoxWidth);
 
         nameLabel = new Label(extraTemplateFileConfig.getName());
@@ -96,10 +92,6 @@ public class ExtraTemplateFileItemHBox extends HBox implements SelectBtnBarHBox.
     @Override
     public void setSelect(boolean select) {
         this.jfxCheckBox.setSelected(select);
-    }
-
-    public boolean isShowCheckBox() {
-        return showCheckBox;
     }
 
     public boolean isSystem() {

@@ -1,6 +1,7 @@
 package com.alan344.service;
 
 import com.alan344.bean.config.MybatisExportConfig;
+import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.factory.DialogFactory;
 import com.alan344.service.generator.MapperGeneratorStrategyContext;
@@ -30,8 +31,10 @@ public class ExportService {
      * 导出
      */
     public void export(MybatisExportConfig mybatisExportConfig) {
-        this.saveSetupInternal(mybatisExportConfig);
+        this.saveSetupInternal();
 
+        // 放入全局参数
+        ConfigConstants.globalParam.putAll(mybatisExportConfig.getCustomProperties());
         // 调用 mybatis generator 生成文件
         mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
 
@@ -41,16 +44,14 @@ public class ExportService {
 
     /**
      * 保存配置
-     *
-     * @param mybatisExportConfig {@link MybatisExportConfig}
      */
-    public void saveSetup(MybatisExportConfig mybatisExportConfig) {
-        this.saveSetupInternal(mybatisExportConfig);
+    public void saveSetup() {
+        this.saveSetupInternal();
     }
 
-    private void saveSetupInternal(MybatisExportConfig mybatisExportConfig) {
+    private void saveSetupInternal() {
         // 写入文件
-        configService.addConfig(mybatisExportConfig);
+        configService.saveConfigToFile();
 
         // 导出时，如果 tableNameIsOverrideRecodeMap 不为空，则把 table 配置（如 insert）文件重写
         tableService.downLoadTableIfOverrideModify();

@@ -17,6 +17,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -27,7 +29,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -108,15 +109,13 @@ public class DataSourceSetupController implements Initializable {
 
     /**
      * 应用后 添加数据源
-     *
-     * @throws IOException e
      */
     @FXML
     public void apply() {
         Assert.isTrue(!validationSupport.isInvalid(), "请填写完整数据源信息", dateSourceStage);
         if (isAdd) {
-            // 判断数据源是否存在
-            Assert.isTrue(!dataSourceService.contains(curDataSource), "该数据源已存在", dateSourceStage);
+            // 判断配置名称是否已经存在
+            Assert.isTrue(!dataSourceService.contains(curDataSource), "该配置名称已存在", dateSourceStage);
 
             // 添加数据源
             dataSourceService.addDataSource(curDataSource);
@@ -127,6 +126,11 @@ public class DataSourceSetupController implements Initializable {
             // 点击应用后关闭添加数据源页面
             dateSourceStage.close();
         } else {
+            // 判断配置名称是否已经存在
+            if (!oldDataSource.getConfigName().equals(curDataSource.getConfigName())) {
+                Assert.isTrue(!dataSourceService.contains(curDataSource), "该配置名称已存在", dateSourceStage);
+            }
+
             // 更新数据源
             dataSourceService.updateDataSource(oldDataSource, curDataSource);
 
@@ -174,6 +178,11 @@ public class DataSourceSetupController implements Initializable {
             dateSourceStage.setTitle("设置数据源");
             dateSourceStage.initModality(Modality.WINDOW_MODAL);
             dateSourceStage.initOwner(primaryStage);
+            dateSourceStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
+                if (KeyCode.ENTER == event.getCode()) {
+                    dateSourceStage.close();
+                }
+            });
         }
         if (null != dataSource) {
             isAdd = false;

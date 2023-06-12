@@ -59,7 +59,7 @@ public class MybatisPluginService {
         final List<File> files = FileUtil.loopFiles(BaseConstants.PLUGIN_DIR, pathname -> !pathname.getName().endsWith(".json"));
         for (File file : files) {
             try {
-                final String canonicalPath = file.getCanonicalPath().replace("\\", "/");
+                final String canonicalPath = file.getCanonicalPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
                 if (!pathSet.contains(canonicalPath)) {
                     final boolean delete = file.delete();
                     log.info("删除plugin文件, fileName: [{}], 状态: [{}]", file.getName(), delete);

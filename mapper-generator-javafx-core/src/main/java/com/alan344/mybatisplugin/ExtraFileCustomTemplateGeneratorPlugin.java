@@ -83,6 +83,8 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
 
+    private static final Map<String, String> NAME_PACKAGE_MAP = new HashMap<>();
+
     @Override
     public void setProperties(Properties properties) {
         super.setProperties(properties);
@@ -184,6 +186,13 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         return packageName;
     }
 
+    /**
+     * 根据模板名称获取模板
+     *
+     * @param cfg          配置
+     * @param templateName 模板名称
+     * @return 模板
+     */
     private Template getTemplate(Configuration cfg, String templateName) {
         try {
             return cfg.getTemplate(FileUtil.getName(templateName));

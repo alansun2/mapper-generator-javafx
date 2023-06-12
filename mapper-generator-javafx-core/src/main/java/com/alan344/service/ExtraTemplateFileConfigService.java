@@ -48,10 +48,14 @@ public class ExtraTemplateFileConfigService {
     }
 
     public Map<String, ExtraTemplateFileConfig> getExtraFileConfigMap(List<String> templateIds) {
+        if (CollectionUtil.isEmpty(templateIds)) {
+            return Collections.emptyMap();
+        }
         final List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigList = this.getExtraTemplateFileGroupConfig();
         if (CollectionUtils.isEmpty(extraTemplateFileConfigList)) {
             return Collections.emptyMap();
         }
+
 
         final Set<String> templateIdSet = new HashSet<>(templateIds);
         return extraTemplateFileConfigList.stream().flatMap(extraTemplateFileGroupConfig -> extraTemplateFileGroupConfig.getList().stream())

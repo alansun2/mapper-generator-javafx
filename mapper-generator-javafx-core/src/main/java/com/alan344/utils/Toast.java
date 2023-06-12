@@ -10,9 +10,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -72,7 +69,7 @@ public class Toast {
     }
 
     public static void makeTextDefault(Stage stage, String message) {
-        Toast.makeText(stage, message, 1000, 500, 500, 15, 5);
+        Toast.makeText(stage, message, 2000, 500, 500, 15, 5);
         throw new BizException(message);
     }
 }

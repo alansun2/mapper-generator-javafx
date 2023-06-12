@@ -80,9 +80,14 @@ public class DataSourceService {
             throw new RuntimeException(e);
         }
 
-        // 如果配置名或者url不同，需要删除表信息
-        if (!oldDataSource.getConfigName().equals(newDataSource.getConfigName()) || !oldDataSource.getUrl().equals(newDataSource.getUrl())) {
+        // url不同，需要删除表信息
+        if (!oldDataSource.getUrl().equals(newDataSource.getUrl())) {
             tableService.deleteTables(oldDataSource);
+        }
+
+        // 如果配置名不同，修改文件夹名称，因为表的加载是根据文件夹名称来的
+        if (!oldDataSource.getConfigName().equals(newDataSource.getConfigName())) {
+            tableService.updateTableAndColumnName(oldDataSource, newDataSource);
         }
 
         // 如果url不同，需要重新创建数据源

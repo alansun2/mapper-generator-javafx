@@ -223,7 +223,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // model 位置配置
         final Element javaModelGenerator = generatorUtils.addElement(context, "javaModelGenerator");
         javaModelGenerator.setAttribute("targetPackage", mybatisExportConfig.getBeanPackage());
-        javaModelGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation()).replace("\\", "/"));
+        javaModelGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
     }
 
     /**
@@ -236,7 +236,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // xml 位置配置
         final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
         sqlMapGenerator.setAttribute("targetPackage", ".");
-        sqlMapGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), "/") + mybatisExportConfig.getMapperXmlLocation()).replace("\\", "/"));
+        sqlMapGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), "/") + mybatisExportConfig.getMapperXmlLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
     }
 
     /**
@@ -249,7 +249,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // mapper （dao） 位置配置
         final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
         javaClientGenerator.setAttribute("targetPackage", mybatisExportConfig.getMapperPackage());
-        javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace("\\", "/"));
+        javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
         if (null != mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType()) {
             javaClientGenerator.setAttribute("type", mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType().name());
         }

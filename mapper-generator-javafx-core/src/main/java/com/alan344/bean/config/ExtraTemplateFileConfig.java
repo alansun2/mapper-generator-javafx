@@ -29,17 +29,20 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      */
     private ExtraFileTypeEnum extraFileType = ExtraFileTypeEnum.MODEL;
     /**
-     * 文件输出地址
-     */
-    private String outputPath;
-    /**
      * 父类
      */
     private String superClass;
+
     /**
-     * 包名
+     * 默认的输出路径后缀
      */
-    private String packageName;
+    private String defaultOutputPathSuffix;
+
+    /**
+     * 默认的包名后缀
+     */
+    private String defaultPackageSuffix;
+
     /**
      * 当 TemplateTypeEnum 为 MODEL 时，可以指定后缀
      */
@@ -61,6 +64,15 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      * 自定义模板文件夹
      */
     private String customTemplateDir;
+
+    /**
+     * 文件输出地址
+     */
+    private String outputPath;
+    /**
+     * 包名
+     */
+    private String packageName;
 
     public void setModelIgnoreColumns(String modelIgnoreColumns) {
         if (StringUtils.isNotEmpty(modelIgnoreColumns)) {

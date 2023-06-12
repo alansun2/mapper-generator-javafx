@@ -1,6 +1,7 @@
 package com.alan344.controller;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.component.CustomTreeCell;
@@ -190,9 +191,9 @@ public class MainController implements Initializable {
             if (FileUtil.exist(BaseConstants.MG_CONF_HOME)) {
                 ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
             }
-            BaseConstants.baseFileDir = fileScan.getParent().replace("\\", "/");
-            final File importFIle = new File(BaseConstants.MG_HOME);
-            ZipUtil.unzip(fileScan, importFIle, Charset.defaultCharset());
+            BaseConstants.baseFileDir = fileScan.getParent().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
+            final File importFile = new File(BaseConstants.MG_HOME);
+            ZipUtil.unzip(fileScan, importFile, Charset.defaultCharset());
             // 弹框
             DialogFactory.successDialog(NodeConstants.primaryStage, "导入成功");
             // 从文件加载数据源至pane
@@ -205,7 +206,7 @@ public class MainController implements Initializable {
         Assert.isTrue(FileUtil.exist(BaseConstants.MG_CONF_HOME), "暂无可以导出的配置", NodeConstants.primaryStage);
         final File directory = FileDirChooserFactory.createDirectoryScan("导出文件名称", null);
         if (null != directory) {
-            final String absolutePath = directory.getAbsolutePath().replace("\\", "/");
+            final String absolutePath = directory.getAbsolutePath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
             ZipUtil.zip(BaseConstants.MG_CONF_HOME, absolutePath + "/config.zip", Charset.defaultCharset(), true);
             // 弹框
             DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出成功", absolutePath);

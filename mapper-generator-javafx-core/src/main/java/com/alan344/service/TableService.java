@@ -1,5 +1,6 @@
 package com.alan344.service;
 
+import cn.hutool.core.io.FileUtil;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
@@ -63,9 +64,9 @@ public class TableService {
                 }
             }
 
-            //删除表文件夹
+            // 删除表文件夹
             this.deleteTableDirectory(dataSource);
-            //表写入文件
+            // 表写入文件
             this.downLoadToFileBatch(dataSource, remoteTables);
         }
         return remoteTables;
@@ -129,10 +130,10 @@ public class TableService {
     private void loadTablesFromRemote(DataSource dataSource) {
         List<Table> tables = this.pullTablesFromRemote(dataSource);
         if (!tables.isEmpty()) {
-            //加载columns
+            // 加载columns
             columnService.loadColumns(dataSource, tables);
             dataSource.setTables(tables);
-            //写入文件
+            // 写入文件
             this.downLoadToFileBatch(dataSource, tables);
         }
     }
@@ -146,6 +147,18 @@ public class TableService {
         this.deleteTableDirectory(dataSource);
 
         columnService.deleteColumnsAll(dataSource);
+    }
+
+    /**
+     * 删除table 同时删除columns
+     *
+     * @param dataSource 数据源信息
+     */
+    void updateTableAndColumnName(DataSource old, DataSource dataSource) {
+        if (FileUtil.exist(BaseConstants.getTableDirectory(old))) {
+            FileUtil.rename(BaseConstants.getTableDirectory(old), BaseConstants.getTableDirectory(dataSource).getName(), true);
+            FileUtil.rename(BaseConstants.getColumnsDirectory(old), BaseConstants.getColumnsDirectory(dataSource).getName(), true);
+        }
     }
 
     /**
