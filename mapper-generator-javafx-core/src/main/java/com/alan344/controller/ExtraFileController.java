@@ -1,7 +1,6 @@
 package com.alan344.controller;
 
 import cn.hutool.core.util.StrUtil;
-import com.alan344.bean.Table;
 import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
@@ -190,7 +189,6 @@ public class ExtraFileController {
             final List<ExtraTemplateFileConfig> add = extraTemplateFileConfigs.stream()
                     .filter(extraTemplateFileConfig -> !existTemplateIdSet.contains(extraTemplateFileConfig.getId())).toList();
             final String sameFromPackage = configService.getSameFromPackage(mybatisExportConfig);
-            final String projectName = mybatisExportConfig.getProjectName();
             final int curSerialNumber = existTemplateIdSet.size();
             for (int i = 0; i < add.size(); i++) {
                 ExtraTemplateFileConfig extraTemplateFileConfig = add.get(i);

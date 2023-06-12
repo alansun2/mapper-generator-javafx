@@ -115,7 +115,6 @@ public class ConfigService {
             final Map<String, ExtraTemplateFileConfig> templateIdExtraFileConfigMap = extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
 
             final String sameFromPackage = this.getSameFromPackage(mybatisExportConfig);
-            final String projectName = mybatisExportConfig.getProjectName();
 
             // 设置内置示例的导出地址
             extraFileGroupConfigs.forEach(extraFileGroupConfig -> {
@@ -149,7 +148,8 @@ public class ConfigService {
                 break;
             }
         }
-        return sb.deleteCharAt(sb.lastIndexOf(".")).toString();
+
+        return StrUtil.removeSuffix(sb.toString(), ".");
     }
 
     /**
