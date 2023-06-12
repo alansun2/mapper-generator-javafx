@@ -309,8 +309,8 @@ com
 <div  align="left">
 <table width="300">
 　<tr>
-　<td><img src="image/alipay.jpg" width = "400" alt="alipay" align=center /></td>
-　<td><img src="image/wechat.jpg" width = "400" alt="wechat" align=center /></td>
+　<td><img src="image/alipay.jpg" width = "300" alt="alipay" align=center /></td>
+　<td><img src="image/wechat.jpg" width = "300" alt="wechat" align=center /></td>
 　</tr>
 </table>
 </div>
