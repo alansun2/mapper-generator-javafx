@@ -303,3 +303,10 @@ com
 > 2. `dd`: 领域描述, 使用位置为模板, 占位符名称为 `DOMAIN_DESC`
 > 3. 具体如何使用请见[占位符](#81-占位符)
 
+## 9. 请作者喝杯咖啡
+如果您觉得本项目对您有帮助, 欢迎赞助作者喝杯咖啡。
+
+<div  align="left">    
+    <img src="image/wechat.jpg" width = "400" alt="wechat" align=center /> &nbsp&nbsp&nbsp&nbsp&nbsp <img src="image/alipay.jpg" width = "400" alt="alipay" align=center />
+</div>
+
