@@ -306,7 +306,12 @@ com
 ## 9. 请作者喝杯咖啡
 如果您觉得本项目对您有帮助, 欢迎赞助作者喝杯咖啡。
 
-<div  align="left">    
-    <img src="image/wechat.jpg" width = "400" alt="wechat" align=center /> &nbsp&nbsp&nbsp&nbsp&nbsp <img src="image/alipay.jpg" width = "400" alt="alipay" align=center />
+<div  align="left">
+<table width="300">
+　<tr>
+　<td><img src="image/alipay.jpg" width = "400" alt="alipay" align=center /></td>
+　<td><img src="image/wechat.jpg" width = "400" alt="wechat" align=center /></td>
+　</tr>
+</table>
 </div>
 
