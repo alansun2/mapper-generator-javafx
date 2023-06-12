@@ -145,20 +145,6 @@ public class ExtraFileController {
                         extraTemplateFileConfig1.setPackageName(extraFileConfig.getPackageName());
                         return extraTemplateFileConfig1;
                     }).toList();
-
-            // 整理每个文件的包名，用于模板文件的导入
-
-            Map<String, String> nameImportMap = new HashMap<>(64);
-            Collection<Table> tables = BaseConstants.selectedTableNameTableMap.values();
-            for (Table table : tables) {
-                final String camelCaseTableName = StrUtil.toCamelCase(table.getTableName());
-                for (ExtraTemplateFileConfig extraTemplateFileConfig : ConfigConstants.extraTemplateFileConfigs) {
-                    final String packageName = extraTemplateFileConfig.getPackageName();
-                    nameImportMap.put(camelCaseTableName + extraTemplateFileConfig.getModelSuffix(), packageName + "." + camelCaseTableName + extraTemplateFileConfig.getModelSuffix());
-                }
-            }
-
-            ConfigConstants.globalParam.putAll(nameImportMap);
         } else {
             ConfigConstants.extraTemplateFileConfigs = null;
         }

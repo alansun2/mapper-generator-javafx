@@ -5,7 +5,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.component.*;
 import com.alan344.constants.BaseConstants;
-import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
@@ -156,10 +155,6 @@ public class MybatisExportSetupController {
         nodeHandler.addNode(next);
 
         NodeConstants.borderPaneWrap.setCenter(next);
-
-        // 把作者名称放入全局变量
-        ConfigConstants.globalParam.clear();
-        ConfigConstants.globalParam.put("author", config.getAuthor());
     }
 
     public void export() {

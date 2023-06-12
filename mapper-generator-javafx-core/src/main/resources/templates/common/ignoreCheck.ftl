@@ -8,3 +8,11 @@
         </#if>
     </#list>
 </#macro>
+
+<#macro getPackage prefix suffixs packageMap>
+    <#list suffixs as suffix>
+        <#assign key = prefix + suffix>
+        <#assign value = packageMap[key]!>
+import ${value};
+    </#list>
+</#macro>

@@ -1,9 +1,10 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import <#if package_prefix??>${package_prefix}.</#if>domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DO;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.dataobject.${TYPE_NAME_UPPER_CAMEL};
+<#assign suffixs = ["DO", ""]>
+<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

@@ -1,3 +1,4 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +9,8 @@ import org.springframework.stereotype.Component;
 import vip.tuoyang.base.core.constants.BaseConstants;
 import vip.tuoyang.base.core.support.UserResourceHolder;
 import vip.tuoyang.base.core.util.AssertUtils;
-import <#if package_prefix??>${package_prefix}.</#if>domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DO;
-import <#if package_prefix??>${package_prefix}.</#if>domain<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}GatewayI;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.convert.${TYPE_NAME_UPPER_CAMEL}DOConvertMapper;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.dataobject.${TYPE_NAME_UPPER_CAMEL};
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.mapper.${TYPE_NAME_UPPER_CAMEL}Mapper;
+<#assign suffixs = ["DO", "GatewayI", "DOConvertMapper", "", "Mapper"]>
+<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
 
 import java.time.LocalDateTime;
 import java.util.List;

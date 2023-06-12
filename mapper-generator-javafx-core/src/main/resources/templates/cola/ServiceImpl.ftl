@@ -1,19 +1,12 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vip.tuoyang.base.core.bean.response.Page;
-import <#if package_prefix??>${package_prefix}.</#if>api<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}ServiceI;
-import <#if package_prefix??>${package_prefix}.</#if>dto.data<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DTO;
-import <#if package_prefix??>${package_prefix}.</#if>dto.data<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageDTO;
-import <#if package_prefix??>${package_prefix}.</#if>dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}Cmd;
-import <#if package_prefix??>${package_prefix}.</#if>dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.${TYPE_NAME_UPPER_CAMEL}AddCmdExe;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.${TYPE_NAME_UPPER_CAMEL}DelByIdCmdExe;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.${TYPE_NAME_UPPER_CAMEL}UpdateCmdExe;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.query.${TYPE_NAME_UPPER_CAMEL}ByIdQryExe;
-import <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${DOMAIN}</#if>.executor.query.${TYPE_NAME_UPPER_CAMEL}PageQryExe;
+<#assign suffixs = ["ServiceI", "DTO", "PageDTO", "Cmd", "PageQry", "AddCmdExe", "DelByIdCmdExe", "UpdateCmdExe", "ByIdQryExe", "PageQryExe"]>
+<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

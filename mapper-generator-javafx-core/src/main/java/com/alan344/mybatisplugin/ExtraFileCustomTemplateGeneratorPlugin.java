@@ -78,7 +78,11 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         /**
          * 被忽略的字段
          */
-        IGNORE_FIELDS_MAP
+        IGNORE_FIELDS_MAP,
+        /**
+         * 自定义参数 map
+         */
+        CUSTOM_PARAMS_MAP
     }
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
@@ -167,7 +171,17 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
                 .collect(Collectors.toList());
         modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
 
+        // 自定义参数
         modelDataMap.putAll(ConfigConstants.globalParam);
+
+        final Map<String, String> namePackageMap = ConfigConstants.namePackageMap;
+        namePackageMap.forEach((s, s2) -> {
+            if (s.startsWith(upperCamel)) {
+                namePackageMap.put(s, PluginUtils.parse(s2, domain));
+            }
+        });
+        // 包名
+        modelDataMap.put(CUSTOM_PARAMS_MAP.name(), namePackageMap);
 
         return modelDataMap;
     }

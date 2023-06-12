@@ -5,12 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vip.tuoyang.base.core.bean.response.Page;
-import <#if package_prefix??>${package_prefix}.</#if>bean.dataobject.${TYPE_NAME_UPPER_CAMEL};
-import <#if package_prefix??>${package_prefix}.</#if>bean.dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}DTO;
-import <#if package_prefix??>${package_prefix}.</#if>bean.dto<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageDTO;
-import <#if package_prefix??>${package_prefix}.</#if>bean.request<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}Cmd;
-import <#if package_prefix??>${package_prefix}.</#if>bean.request<#if DOMAIN != "">.${DOMAIN}</#if>.${TYPE_NAME_UPPER_CAMEL}PageQry;
-import <#if package_prefix??>${package_prefix}.</#if>mapper.${TYPE_NAME_UPPER_CAMEL}Mapper;
+<#assign suffixs = ["", "DTO", "PageDTO", "Cmd", "PageQry", "Mapper"]>
+<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
 
 import java.util.Optional;
 /**
