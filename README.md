@@ -212,7 +212,7 @@ Controller, Service, DTO等)**, 使您有更多的时间去摸鱼🤩。
 >
 > 本项目 github [下载地址](https://github.com/alansun2/mapper-generator-javafx/releases)
 >
-> 本项目 gitee [下载地址](https://gitee.com/alansc/mapper-generator-javafx/releases)
+> 本项目 gitee [下载地址](https://gitee.com/alansc/mapper-generator-javafx/releases) （不支持上传大于 100m 的附件, 所以只能上传 jar 版本）
 
 ## 8. 其他
 
