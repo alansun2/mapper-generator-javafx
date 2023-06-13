@@ -19,7 +19,10 @@ public class MapperGenApplication {
         Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
             final Throwable rootCause = ExceptionUtil.getRootCause(e);
             if (!(rootCause instanceof BizException)) {
-                DialogFactory.exceptionDialog(e);
+                try {
+                    DialogFactory.exceptionDialog(e);
+                } catch (Exception ignore) {
+                }
                 log.error("捕捉到未处理的异常", e);
             }
         });
