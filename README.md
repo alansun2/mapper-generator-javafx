@@ -225,7 +225,7 @@ Controller, Service, DTO等)**, 使您有更多的时间去摸鱼🤩。
 1. 配置, 具体请见如下图:
    ![place-holder-1](image/15.jpg)
    ![place-holder-2](image/14.jpg)
-2. FreeMarker 模板, 具体请见如下图:
+2. **FreeMarker 模板（模板占位符）**, 具体请见如下图:
    ![template](image/16.jpg)
 
 #### 8.1.2. 占位符格式
@@ -250,6 +250,9 @@ ${placeHolder}
 | FIELDS_UPPER_CAMELS    | 首字母大写的字段 list                             | List \<String>             | 模板     |
 | IGNORE_FIELDS_MAP      | 被忽略的字段 map                                | Map<String, List\<String>> | 模板     |
 | author                 | 作者, 来源 [3.4.](#34-配置导出配置)中的作者名称           | String                     | 模板     |
+
+> 除此之外还包括首字母大写的驼峰格式的表名, 例如表名为 `user_info`, 则占位符为 `UserInfo` 以及加上模板后缀的占位符, 例如表名为 `user_info`, 则占位符为 `UserInfoDO
+> `UserInfoDTO` 等等, 具体可以参考内置模板 [AddCmdExe.ftl](mapper-generator-javafx-core%2Fsrc%2Fmain%2Fresources%2Ftemplates%2Fcola%2FAddCmdExe.ftl)
 
 ### 8.2. DOMAIN 说明
 
