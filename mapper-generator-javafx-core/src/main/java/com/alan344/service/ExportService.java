@@ -18,8 +18,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.CUSTOM_PARAMS_MAP;
-
 /**
  * @author AlanSun
  * @date 2020/9/11 8:57
@@ -64,7 +62,9 @@ public class ExportService {
         // 把作者名称放入全局变量
         ConfigConstants.globalParam.put("author", mybatisExportConfig.getAuthor());
         // 放入全局参数
-        ConfigConstants.globalParam.putAll(mybatisExportConfig.getCustomProperties());
+        if (null != mybatisExportConfig.getCustomProperties()) {
+            ConfigConstants.globalParam.putAll(mybatisExportConfig.getCustomProperties());
+        }
         // 调用 mybatis generator 生成文件
         mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
 
