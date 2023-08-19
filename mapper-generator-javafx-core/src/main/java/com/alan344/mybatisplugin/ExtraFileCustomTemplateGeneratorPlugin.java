@@ -87,8 +87,6 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
 
-    private static final Map<String, String> NAME_PACKAGE_MAP = new HashMap<>();
-
     @Override
     public void setProperties(Properties properties) {
         super.setProperties(properties);
@@ -230,9 +228,19 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
 
             final SpringTemplateLoader ftl1 = new SpringTemplateLoader(resourceLoader, "file:" + dir);
             final SpringTemplateLoader ftl2 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/common/");
-            final SpringTemplateLoader ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/cola/");
-            final SpringTemplateLoader ftl4 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/layer/");
-            TemplateLoader[] loaders = new TemplateLoader[]{ftl1, ftl2, ftl3, ftl4};
+            SpringTemplateLoader ftl3 = null;
+            if (filePath.contains("cola")) {
+                ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/cola/");
+            } else if (filePath.contains("layer")) {
+                ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/layer/");
+            }
+
+            TemplateLoader[] loaders;
+            if (ftl3 == null) {
+                loaders = new TemplateLoader[]{ftl1, ftl2};
+            } else {
+                loaders = new TemplateLoader[]{ftl1, ftl2, ftl3};
+            }
             cfg.setTemplateLoader(new MultiTemplateLoader(loaders));
 
             // From here we will set the settings recommended for new projects. These
