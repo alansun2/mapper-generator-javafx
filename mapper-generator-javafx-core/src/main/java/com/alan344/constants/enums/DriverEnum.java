@@ -23,6 +23,10 @@ public enum DriverEnum {
      * oracle 11g
      */
     ORACLE_11("oracle.jdbc.OracleDriver", "jdbc:oracle:thin:@localhost:1521:orcl"),
+    /**
+     * postgresql
+     */
+    POSTGRESQL("org.postgresql.Driver", "jdbc:postgresql://localhost:5432/test?currentSchema=test"),
     ;
 
     private final String driveName;

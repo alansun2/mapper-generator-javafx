@@ -76,6 +76,13 @@ public class DataSource implements DataItem {
             }
         } else if (driver.equals(DriverEnum.ORACLE_11)) {
             return this.getUser();
+        } else if (driver.equals(DriverEnum.POSTGRESQL)) {
+            // jdbc:postgresql://localhost:5432/test?currentSchema=test
+            String url = this.getUrl();
+            // get currentSchema from url for postgresql
+            final int startIndex = url.indexOf("currentSchema", 14);
+            final int endIndex = url.indexOf("&", startIndex);
+            return url.substring(startIndex, endIndex == -1 ? url.length() : endIndex);
         }
         return null;
     }
@@ -86,6 +93,8 @@ public class DataSource implements DataItem {
             return DriverEnum.MYSQL_8;
         } else if (lo.contains("oracle")) {
             return DriverEnum.ORACLE_11;
+        } else if (lo.contains("postgresql")) {
+            return DriverEnum.POSTGRESQL;
         }
         return null;
     }
