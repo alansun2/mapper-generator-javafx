@@ -10,7 +10,11 @@ import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
-import com.alan344.mybatisplugin.*;
+import com.alan344.mybatisplugin.DomainPlugin;
+import com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin;
+import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
+import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
+import com.alan344.mybatisplugin.PluginUtils;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -33,6 +37,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,7 +61,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
     private Element context;
 
-    private List<MybatisPluginConfig> mybatisPluginConfigs;
+    private final List<MybatisPluginConfig> mybatisPluginConfigs;
 
     static {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -67,7 +72,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         }
     }
 
-    public MapperGeneratorStrategyBase(MybatisExportConfig.ExportConfig exportConfig, List<MybatisPluginConfig> mybatisPluginConfigs) {
+    public MapperGeneratorStrategyBase(MybatisExportConfig.ExportConfig exportConfig,
+                                       List<MybatisPluginConfig> mybatisPluginConfigs) {
         this.exportConfig = exportConfig;
         this.mybatisPluginConfigs = mybatisPluginConfigs;
     }
@@ -117,7 +123,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
      */
     protected void addContextProperty(GeneratorUtils generatorUtils) {
         // 指定编码
-        generatorUtils.addProperty(true, context, PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING, "UTF-8");
+        generatorUtils.addProperty(true, context, PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING,
+                StandardCharsets.UTF_8.toString());
     }
 
     /**
@@ -146,7 +153,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
         // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
-        final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig = mybatisExportConfig.getMybatisOfficialExportConfig();
+        final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
+                mybatisExportConfig.getMybatisOfficialExportConfig();
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "getter", "true");
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "setter", "true");
         generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokBuilder(), lombok, "builder", "true");
@@ -161,8 +169,11 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
         commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
-        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS, String.valueOf(exportConfig.isUseComment()));
-        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss");
+        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS,
+                String.valueOf(exportConfig.isUseComment()));
+        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM" +
+                "-dd " +
+                "HH:mm:ss");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
     }
 
@@ -187,13 +198,15 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         if (exportConfig.isUserJava8() && exportConfig.isUseBigDecimal()) {
             final Element javaTypeResolver = generatorUtils.addElement(context, "javaTypeResolver");
             generatorUtils.addProperty(true, javaTypeResolver, PropertyRegistry.TYPE_RESOLVER_USE_JSR310_TYPES, "true");
-            generatorUtils.addProperty(true, javaTypeResolver, PropertyRegistry.TYPE_RESOLVER_FORCE_BIG_DECIMALS, "true");
+            generatorUtils.addProperty(true, javaTypeResolver, PropertyRegistry.TYPE_RESOLVER_FORCE_BIG_DECIMALS,
+                    "true");
         } else if (exportConfig.isUserJava8()) {
             final Element javaTypeResolver = generatorUtils.addElement(context, "javaTypeResolver");
             generatorUtils.addProperty(true, javaTypeResolver, PropertyRegistry.TYPE_RESOLVER_USE_JSR310_TYPES, "true");
         } else if (exportConfig.isUseBigDecimal()) {
             final Element javaTypeResolver = generatorUtils.addElement(context, "javaTypeResolver");
-            generatorUtils.addProperty(true, javaTypeResolver, PropertyRegistry.TYPE_RESOLVER_FORCE_BIG_DECIMALS, "true");
+            generatorUtils.addProperty(true, javaTypeResolver, PropertyRegistry.TYPE_RESOLVER_FORCE_BIG_DECIMALS,
+                    "true");
         }
     }
 
@@ -222,8 +235,10 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addModelGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // model 位置配置
         final Element javaModelGenerator = generatorUtils.addElement(context, "javaModelGenerator");
-        javaModelGenerator.setAttribute("targetPackage", mybatisExportConfig.getBeanPackage());
-        javaModelGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getBeanLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
+        javaModelGenerator.setAttribute("targetPackage",
+                StringUtils.getDefaultIfNull(mybatisExportConfig.getBeanPackage(), "."));
+        javaModelGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(),
+                StrUtil.SLASH) + mybatisExportConfig.getBeanLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
     }
 
     /**
@@ -236,7 +251,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // xml 位置配置
         final Element sqlMapGenerator = generatorUtils.addElement(context, "sqlMapGenerator");
         sqlMapGenerator.setAttribute("targetPackage", ".");
-        sqlMapGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), "/") + mybatisExportConfig.getMapperXmlLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
+        sqlMapGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(),
+                "/") + mybatisExportConfig.getMapperXmlLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
     }
 
     /**
@@ -248,14 +264,18 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void addClientGenerator(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
         // mapper （dao） 位置配置
         final Element javaClientGenerator = generatorUtils.addElement(context, "javaClientGenerator");
-        javaClientGenerator.setAttribute("targetPackage", mybatisExportConfig.getMapperPackage());
-        javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
+        javaClientGenerator.setAttribute("targetPackage",
+                StringUtils.getDefaultIfNull(mybatisExportConfig.getMapperPackage(), "."));
+        javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir()
+                , StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
         if (null != mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType()) {
-            javaClientGenerator.setAttribute("type", mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType().name());
+            javaClientGenerator.setAttribute("type",
+                    mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType().name());
         }
         // Mapper 接口
         final String mapperRootInterface = mybatisExportConfig.getMapperRootInterface();
-        generatorUtils.addProperty(StringUtils.isNotEmpty(mapperRootInterface), javaClientGenerator, PropertyRegistry.ANY_ROOT_INTERFACE, mapperRootInterface);
+        generatorUtils.addProperty(StringUtils.isNotEmpty(mapperRootInterface), javaClientGenerator,
+                PropertyRegistry.ANY_ROOT_INTERFACE, mapperRootInterface);
     }
 
     /**
@@ -291,7 +311,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             this.checkBoxSelected("enableSelectByExample", tableEl, table.isSelectExample());
 
             // 是否使用原来的字段名
-            generatorUtils.setAttribute(mybatisExportConfig.isUseActualColumnNames(), tableEl, "useActualColumnNames", "true");
+            generatorUtils.setAttribute(mybatisExportConfig.isUseActualColumnNames(), tableEl, "useActualColumnNames"
+                    , "true");
 
             List<Column> columns = table.getColumns();
 
@@ -321,22 +342,28 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                     final Element columnOverrideEl = generatorUtils.addElement(tableEl, "columnOverride");
                     columnOverrideEl.setAttribute("column", column.getColumnName());
 
-                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getProperty()), columnOverrideEl, GeneratorUtils.PROPERTY, columnOverride.getProperty());
-                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getJavaType()), columnOverrideEl, "javaType", columnOverride.getJavaType());
-                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getTypeHandler()), columnOverrideEl, "typeHandler", columnOverride.getTypeHandler());
-                    generatorUtils.setAttribute(columnOverride.isGeneratedAlways(), columnOverrideEl, "isGeneratedAlways", String.valueOf(columnOverride.isGeneratedAlways()));
-                    generatorUtils.setAttribute(columnOverride.isDelimitedColumnName(), columnOverrideEl, "delimitedColumnName", String.valueOf(columnOverride.isDelimitedColumnName()));
+                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getProperty()),
+                            columnOverrideEl, GeneratorUtils.PROPERTY, columnOverride.getProperty());
+                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getJavaType()),
+                            columnOverrideEl, "javaType", columnOverride.getJavaType());
+                    generatorUtils.setAttribute(StringUtils.isNotEmpty(columnOverride.getTypeHandler()),
+                            columnOverrideEl, "typeHandler", columnOverride.getTypeHandler());
+                    generatorUtils.setAttribute(columnOverride.isGeneratedAlways(), columnOverrideEl,
+                            "isGeneratedAlways", String.valueOf(columnOverride.isGeneratedAlways()));
+                    generatorUtils.setAttribute(columnOverride.isDelimitedColumnName(), columnOverrideEl,
+                            "delimitedColumnName", String.valueOf(columnOverride.isDelimitedColumnName()));
                 }
 
                 // 添加默认属性
                 generatorUtils.addProperty(table.isJdkSerializable(), tableEl, "jdkSerializable", "true");
-                generatorUtils.addProperty(StringUtils.isNotEmpty(mybatisExportConfig.getModelRootClass()), tableEl, PropertyRegistry.ANY_ROOT_CLASS, mybatisExportConfig.getModelRootClass());
-                this.addTableProperty(tableEl, generatorUtils);
+                generatorUtils.addProperty(StringUtils.isNotEmpty(mybatisExportConfig.getModelRootClass()), tableEl,
+                        PropertyRegistry.ANY_ROOT_CLASS, mybatisExportConfig.getModelRootClass());
+                this.addTableProperty();
             }
         }
     }
 
-    protected void addTableProperty(Element tableEl, GeneratorUtils generatorUtils) {
+    protected void addTableProperty() {
     }
 
     /**
@@ -388,7 +415,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         Configuration config;
         try {
             try {
-                final Method parseMyBatisGeneratorConfiguration = ConfigurationParser.class.getDeclaredMethod("parseMyBatisGeneratorConfiguration", Element.class);
+                final Method parseMyBatisGeneratorConfiguration = ConfigurationParser.class.getDeclaredMethod(
+                        "parseMyBatisGeneratorConfiguration", Element.class);
                 parseMyBatisGeneratorConfiguration.setAccessible(true);
                 config = ((Configuration) parseMyBatisGeneratorConfiguration.invoke(cp, document.getDocumentElement()));
             } catch (Exception e) {
@@ -420,7 +448,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     protected void domainHandle(Table table, String attributeName, Element tableEl) {
         final PluginUtils.Domain domainFromRemarks = PluginUtils.getDomainFromRemarks(table.getRemark(), true);
         if (domainFromRemarks != DOMAIN) {
-            tableEl.setAttribute(attributeName, domainFromRemarks.getD() + "." + JavaBeansUtil.getCamelCaseString(table.getTableName(), true));
+            tableEl.setAttribute(attributeName,
+                    domainFromRemarks.getD() + "." + JavaBeansUtil.getCamelCaseString(table.getTableName(), true));
         }
     }
 }
