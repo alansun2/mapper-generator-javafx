@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import lombok.Getter;
 
 import java.util.function.Consumer;
 
@@ -14,14 +15,9 @@ import java.util.function.Consumer;
  * @date 2022/8/21 15:01
  */
 public class FileSelectTextHBox extends HBox {
-
+    @Getter
     private final TextField textField;
     private final Button button;
-
-    public FileSelectTextHBox() {
-        this("浏览", null);
-    }
-
 
     public FileSelectTextHBox(String btnName, String initText) {
         textField = new TextField(initText);
@@ -29,7 +25,6 @@ public class FileSelectTextHBox extends HBox {
         textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
 
         button = new Button(btnName);
-        button.getStylesheets().add("css/common.css");
         button.getStyleClass().add("mf-scan");
         button.setPrefWidth(64);
         button.prefHeightProperty().bind(this.heightProperty());
@@ -49,16 +44,8 @@ public class FileSelectTextHBox extends HBox {
         this.textField.setText(text);
     }
 
-    public TextField getTextField() {
-        return this.textField;
-    }
-
     public void onAction(Consumer<ActionEvent> consumer) {
         this.button.setOnAction(consumer::accept);
-    }
-
-    public final String getPromptText() {
-        return this.textField.getPromptText();
     }
 
     public final void setPromptText(String value) {

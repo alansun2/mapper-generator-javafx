@@ -41,7 +41,6 @@ public class PropertyPane extends BorderPane {
             applyBtn = new Button("应用");
             applyBtn.getStyleClass().add("apply-btn");
             HBox btnHbox = new HBox(10, addBtn, cancelBtn, applyBtn);
-            btnHbox.setStyle("-fx-background-color: #F7F8FA;");
             btnHbox.setAlignment(Pos.CENTER_RIGHT);
 
             borderPane = new BorderPane();
@@ -76,7 +75,8 @@ public class PropertyPane extends BorderPane {
 
         applyBtn.setOnAction(event -> {
             customProperties.clear();
-            lv.getItems().forEach(customPropertyHbox -> customProperties.put(customPropertyHbox.getKey(), customPropertyHbox.getValue()));
+            lv.getItems().forEach(customPropertyHbox -> customProperties.put(customPropertyHbox.getKey(),
+                    customPropertyHbox.getValue()));
             stage.close();
         });
         stage.show();
@@ -125,8 +125,8 @@ public class PropertyPane extends BorderPane {
             BorderPane borderPane = new BorderPane();
             borderPane.getStyleClass().add("border-pane-padding");
             borderPane.getStylesheets().add("css/common.css");
-            borderPane.setPrefWidth(400);
-            borderPane.setPrefHeight(150);
+            borderPane.setPrefWidth(350);
+            borderPane.setPrefHeight(110);
             borderPane.setCenter(vBox);
             borderPane.setBottom(btnHbox);
 
@@ -143,7 +143,8 @@ public class PropertyPane extends BorderPane {
             if (validationSupport.isInvalid()) {
                 return;
             }
-            CustomPropertyHBox customPropertyHbox = new CustomPropertyHBox(keyTextField.getText(), valueTextField.getText());
+            CustomPropertyHBox customPropertyHbox = new CustomPropertyHBox(keyTextField.getText(),
+                    valueTextField.getText());
             consumer.accept(customPropertyHbox);
             stage1.close();
         });

@@ -1,10 +1,12 @@
 package com.alan344.component;
 
+import com.alan344.utils.StringUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import lombok.Getter;
 
 import java.util.function.Consumer;
 
@@ -13,43 +15,37 @@ import java.util.function.Consumer;
  * @date 2022/8/21 15:01
  */
 public class FileTemplateTextHBox extends HBox {
-
+    @Getter
     private final TextField textField;
     private final Button importBtn;
     private final Button exportBtn;
 
     public FileTemplateTextHBox(String initText) {
         textField = new TextField(initText);
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                this.setStyle("-fx-border-width: 1;" +
-                        "-fx-border-color: #38b1da;");
-            } else {
-                this.setStyle("-fx-border-width: 1;" +
-                        "-fx-border-color: #BABABA;");
-            }
-        });
-        textField.setStyle("-fx-background-insets: 0");
         textField.prefHeightProperty().bind(this.heightProperty());
-        textField.prefWidthProperty().bind(this.widthProperty().subtract(64));
+        textField.prefWidthProperty().bind(this.widthProperty().subtract(128));
 
         importBtn = new Button("导入");
-        importBtn.getStylesheets().add("css/common.css");
         importBtn.getStyleClass().add("mf-scan");
         importBtn.setPrefWidth(64);
         importBtn.prefHeightProperty().bind(this.heightProperty());
 
         exportBtn = new Button("导出");
         exportBtn.getStylesheets().add("css/common.css");
+        exportBtn.setStyle("-fx-background-insets: 0; -fx-border-radius: 0em; -fx-border-width: 1;");
         exportBtn.setPrefWidth(64);
         exportBtn.prefHeightProperty().bind(this.heightProperty());
+        this.exportBtn.setDisable(StringUtils.isEmpty(initText));
+
+        textField.textProperty().addListener((observable, oldValue, newValue) -> {
+            this.exportBtn.setDisable(StringUtils.isEmpty(newValue));
+        });
 
         this.getChildren().addAll(textField, importBtn, exportBtn);
         this.setAlignment(Pos.CENTER);
-        this.setStyle("-fx-border-width: 1;" +
-                "-fx-border-color: #BABABA;");
+        this.setStyle("-fx-border-width: 0; -fx-background-insets:0; -fx-background-color: #FFF");
 
-        this.getStylesheets().add("/css/text-button.css");
+        this.getStylesheets().add("css/text-button.css");
     }
 
 
@@ -59,10 +55,6 @@ public class FileTemplateTextHBox extends HBox {
 
     public void setText(String text) {
         this.textField.setText(text);
-    }
-
-    public TextField getTextField() {
-        return this.textField;
     }
 
     public void importAction(Consumer<ActionEvent> consumer) {

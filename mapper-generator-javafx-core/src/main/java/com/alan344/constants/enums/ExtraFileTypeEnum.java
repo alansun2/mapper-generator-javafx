@@ -12,6 +12,10 @@ public enum ExtraFileTypeEnum {
      */
     MODEL,
     /**
+     * jpa entity
+     */
+    JPA_ENTITY,
+    /**
      * 模板
      */
     CUSTOM_TEMPLATE
