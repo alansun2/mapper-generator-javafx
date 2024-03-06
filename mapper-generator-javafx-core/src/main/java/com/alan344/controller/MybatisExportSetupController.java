@@ -119,7 +119,7 @@ public class MybatisExportSetupController {
         saveBtn.setOnAction(event -> {
             this.valid(this.getCurrentConfig().getConfigName());
             exportService.saveSetup();
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置","成功");
         });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");

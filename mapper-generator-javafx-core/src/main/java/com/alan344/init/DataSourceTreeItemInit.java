@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author AlanSun
@@ -48,10 +49,11 @@ public class DataSourceTreeItemInit {
      */
     public void addExpandListenerForDataSource(DataSource dataSource, TreeItem<DataItem> treeItemDataSourceRoot) {
         TreeItem<DataItem> dataSourceTreeItem = TreeItemFactory.add2Tree(dataSource, treeItemDataSourceRoot);
-        dataSourceTreeItem.setGraphic(new FontIcon("unil-database:16:#388ce0"));
+        dataSourceTreeItem.setGraphic(new FontIcon("unil-database:16:#6E6E6F"));
         // 设置 dataSource 展开监听，展开时清除之前别的数据源的缓存
         dataSourceTreeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
+                dataSourceTreeItem.setGraphic(new FontIcon("unil-database:16:#388ce0"));
                 // 设置 table 可以多选
                 mainController.getTreeViewDataSource().getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
 
@@ -61,22 +63,15 @@ public class DataSourceTreeItemInit {
                 }
             } else {
                 // false : 全部都未展开； true: 有展开的
-                boolean hasExpanded = false;
                 final ObservableList<TreeItem<DataItem>> children = treeItemDataSourceRoot.getChildren();
-                if (children != null && !children.isEmpty()) {
-                    for (TreeItem<DataItem> dataSourceItem : children) {
-                        hasExpanded = dataSourceItem.isExpanded();
-                        if (hasExpanded) {
-                            break;
-                        }
-                    }
-                }
-
-                // 如果没有展开的 item，则改为单选
-                if (!hasExpanded) {
-                    // 设置 table 单选
-                    mainController.getTreeViewDataSource().getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-                }
+                Optional.ofNullable(children).map(treeItems -> treeItems.stream().anyMatch(TreeItem::isExpanded))
+                        .ifPresent(hasExpanded -> {
+                            // 如果没有展开的 item，则改为单选
+                            if (!hasExpanded) {
+                                // 设置 table 单选
+                                mainController.getTreeViewDataSource().getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+                            }
+                        });
             }
         });
 

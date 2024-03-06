@@ -35,12 +35,12 @@ public class DialogFactory {
         dialog.show();
     }
 
-    public static void successDialog(Stage primaryStage, String textContent) {
-        SuccessDialog successDialog = new SuccessDialog(primaryStage, textContent);
+    public static void successDialog(Stage primaryStage, String title, String textContent) {
+        SuccessDialog successDialog = new SuccessDialog(primaryStage, title, textContent);
     }
 
-    public static void successAndOpenFileDialog(Stage primaryStage, String textContent, String path) {
-        FileOpenAndSuccessDialog successDialog = new FileOpenAndSuccessDialog(primaryStage, textContent, path);
+    public static void successAndOpenFileDialog(Stage primaryStage, String title, String textContent, String path) {
+        FileOpenAndSuccessDialog successDialog = new FileOpenAndSuccessDialog(primaryStage, title, textContent, path);
     }
 
     public static void exceptionDialog(Throwable e) {

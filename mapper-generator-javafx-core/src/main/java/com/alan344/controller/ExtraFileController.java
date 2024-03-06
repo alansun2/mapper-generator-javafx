@@ -97,7 +97,7 @@ public class ExtraFileController {
             exportService.saveSetup();
 
             // 保存成功 dialog
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置","成功");
         });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
@@ -271,7 +271,7 @@ public class ExtraFileController {
         ExtraFileItemHBox extraFileLabel = new ExtraFileItemHBox(extraFileConfigNew);
         extraFileLabel.disable(extraFileGroupConfig.isSystem());
         extraFileLabel.setAlignment(Pos.CENTER);
-        extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(25));
+        extraFileLabel.prefWidthProperty().bind(listView.widthProperty().subtract(35));
         // 编辑
         extraFileLabel.onEditAction(actionEvent -> {
             this.openEdit(extraFileConfigNew, extraFileGroupConfig.isSystem());

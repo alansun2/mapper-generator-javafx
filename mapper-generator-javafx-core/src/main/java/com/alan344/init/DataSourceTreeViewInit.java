@@ -29,7 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -53,7 +57,7 @@ public class DataSourceTreeViewInit {
     @Resource
     private DataSourceSetupController dataSourceSetupController;
 
-    private Map<Integer, ContextMenu> contextMenuMap = new HashMap<>();
+    private final Map<Integer, ContextMenu> contextMenuMap = new HashMap<>();
 
     /**
      * treeView init
@@ -61,7 +65,8 @@ public class DataSourceTreeViewInit {
     public void treeViewInit(TreeView<DataItem> treeViewDataSource) {
         // 设置鼠标释放事件
         treeViewDataSource.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-            ObservableList<TreeItem<DataItem>> selectedItems = treeViewDataSource.getSelectionModel().getSelectedItems();
+            ObservableList<TreeItem<DataItem>> selectedItems =
+                    treeViewDataSource.getSelectionModel().getSelectedItems();
             if (event.getButton() == MouseButton.SECONDARY) {
                 // 右键释放
                 // item is selected - this prevents fail when clicking on empty space
@@ -69,8 +74,9 @@ public class DataSourceTreeViewInit {
                     ContextMenu contextMenu;
                     // open context menu on current screen position
                     if (selectedItems.size() == 1 && selectedItems.get(0).getValue() instanceof DataSource) {
-                        final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
-                        if (selectedDataSourceItem.isExpanded()) {
+                        final TreeItem<DataItem> selectedDataSourceItem =
+                                treeViewDataSource.getSelectionModel().getSelectedItem();
+                        if (CollectionUtils.isNotEmpty(selectedDataSourceItem.getChildren())) {
                             contextMenu = contextMenuMap.computeIfAbsent(1, integer -> {
                                 MenuItem closeMenuItem = new MenuItem("关闭");
                                 closeMenuItem.setGraphic(new FontIcon("unil-padlock:16:GRAY"));
@@ -90,7 +96,8 @@ public class DataSourceTreeViewInit {
                                 MenuItem deleteMenuItem = new MenuItem("删除数据源");
                                 deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
                                 deleteMenuItem.setOnAction(this::deleteDataSource);
-                                return new ContextMenu(closeMenuItem, updateMenuItem, exportMenuItem, copyMenuItem, refreshMenuItem, deleteMenuItem);
+                                return new ContextMenu(closeMenuItem, updateMenuItem, exportMenuItem, copyMenuItem,
+                                        refreshMenuItem, deleteMenuItem);
                             });
                         } else {
                             contextMenu = contextMenuMap.computeIfAbsent(2, integer -> {
@@ -118,12 +125,12 @@ public class DataSourceTreeViewInit {
                             return new ContextMenu(exportMenuItem);
                         });
                     }
-                    // 放入  contextMenu
+                    // 放入 contextMenu
                     treeViewDataSource.setContextMenu(contextMenu);
                 }
             } else if (event.getButton() == MouseButton.PRIMARY
-                    && event.getClickCount() == 1
-                    && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
+                       && event.getClickCount() == 1
+                       && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
                 // 左键释放时。切换 listView
                 final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
                 DataSource dataSource;
@@ -137,8 +144,8 @@ public class DataSourceTreeViewInit {
                 // 清除原来的数据
                 BaseConstants.tableNameSetUpTableRecordMap.clear();
             } else if (event.getButton() == MouseButton.PRIMARY
-                    && event.getClickCount() == 2
-                    && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
+                       && event.getClickCount() == 2
+                       && CollectionUtils.isNotEmpty(treeViewDataSource.getSelectionModel().getSelectedItems())) {
                 final TreeItem<DataItem> selectedDataSourceItem = treeViewDataSource.getSelectionModel().getSelectedItem();
                 if (selectedDataSourceItem.getValue() instanceof DataSource) {
                     // 双击数据源展开
@@ -226,7 +233,8 @@ public class DataSourceTreeViewInit {
                         lastParent = selectedItem.getParent();
                         dataSource = ((DataSource) selectedItem.getParent().getValue());
                     } else {
-                        Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出", NodeConstants.primaryStage);
+                        Assert.isTrue(lastParent == selectedItem.getParent(), "请选择一个数据源的表导出",
+                                NodeConstants.primaryStage);
                     }
 
                     tables.add(table);
@@ -242,7 +250,8 @@ public class DataSourceTreeViewInit {
         ObservableList<VBox> vBoxes = mybatisListViewInit.setListView(tables);
 
         // 选中的表放入map
-        BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName, o -> o));
+        BaseConstants.selectedTableNameTableMap = tables.stream().collect(Collectors.toMap(Table::getTableName,
+                o -> o));
 
         // 选中的 dataSource
         BaseConstants.selectedDateSource = dataSource;
@@ -250,7 +259,8 @@ public class DataSourceTreeViewInit {
         // 用于当再不同的 dataSource 之间切换时，保留原来的 tables
         BaseConstants.dataSourceTableVBoxListMap.put(BaseConstants.selectedDateSource, vBoxes);
 
-        BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource, tables.stream().collect(Collectors.toMap(Table::getTableName, table -> table)));
+        BaseConstants.dataSourceTableListMap.put(BaseConstants.selectedDateSource,
+                tables.stream().collect(Collectors.toMap(Table::getTableName, table -> table)));
 
         // 如果没有字段，则从远程加载
         tables.forEach(table -> columnService.reloadColumnsIfNotNull(table));
@@ -274,7 +284,8 @@ public class DataSourceTreeViewInit {
      */
     private void deleteDataSource(ActionEvent actionEvent) {
         // 选中的数据源
-        TreeItem<DataItem> dataItemTreeItem = mainController.getTreeViewDataSource().getSelectionModel().getSelectedItem();
+        TreeItem<DataItem> dataItemTreeItem =
+                mainController.getTreeViewDataSource().getSelectionModel().getSelectedItem();
 
         // 从根节点删除数据源
         mainController.getTreeItemDataSourceRoot().getChildren().remove(dataItemTreeItem);
@@ -323,7 +334,8 @@ public class DataSourceTreeViewInit {
         final DataItem value = dataSourceTreeItem.getValue();
         final DataSource dataSourceCopy = ((DataSource) value).copy();
         dataSourceCopy.setSort(dataSourceService.getMaxSort() + 1);
-        final List<DataItem> dataItemList = treeViewDataSource.getRoot().getChildren().stream().map(TreeItem::getValue).toList();
+        final List<DataItem> dataItemList =
+                treeViewDataSource.getRoot().getChildren().stream().map(TreeItem::getValue).toList();
         dataSourceCopy.setConfigName(NameUtils.generatorName(dataSourceCopy.getConfigName(), dataItemList));
         // 添加数据源
         dataSourceService.addDataSource(dataSourceCopy);
@@ -340,7 +352,11 @@ public class DataSourceTreeViewInit {
     private void close(TreeView<DataItem> treeViewDataSource) {
         TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         dataSourceTreeItem.setExpanded(false);
+        dataSourceTreeItem.setGraphic(new FontIcon("unil-database:16:#6E6E6F"));
         dataSourceTreeItem.getChildren().clear();
+
+        // 关闭右边的 Border 展示
+        this.rightBorderShowClose(((DataSource) dataSourceTreeItem.getValue()));
     }
 
     /**
@@ -349,10 +365,10 @@ public class DataSourceTreeViewInit {
      * @param treeViewDataSource 被选中的数据源
      */
     private void updateDataSource(TreeView<DataItem> treeViewDataSource) {
-        this.close(treeViewDataSource);
         TreeItem<DataItem> dataSourceTreeItem = treeViewDataSource.getSelectionModel().getSelectedItem();
         DataSource dataSource = (DataSource) dataSourceTreeItem.getValue();
         dataSourceSetupController.openDataSourceSetUp(NodeConstants.primaryStage, treeViewDataSource, dataSource);
+        this.close(treeViewDataSource);
     }
 
     /**

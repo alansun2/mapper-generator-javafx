@@ -16,6 +16,7 @@ import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExtraTemplateFileConfigService;
+import com.alan344.utils.Assert;
 import com.alan344.utils.NameUtils;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -166,7 +167,7 @@ public class ExtraTemplateFileController {
             // saveBtn.setDisable(true);
 
             // 保存成功 dialog
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置", "成功");
         });
 
         Button addBtn = new Button("添加");
@@ -184,12 +185,13 @@ public class ExtraTemplateFileController {
                 return;
             }
             ExtraTemplateFileConfig extraTemplateFileConfig = new ExtraTemplateFileConfig();
-            this.openExtraFileSetup(extraTemplateFileConfig, false, config.isSystem(), extraFileConfig1 -> {
-                listView.getItems().add(this.packageExtraFileLabel(config.isSystem(), extraFileConfig1,
-                        config.getExtraTemplateFileConfigList()));
-                config.getExtraTemplateFileConfigList().add(extraFileConfig1);
-                // saveBtn.setDisable(false);
-            });
+            this.openExtraFileSetup(extraTemplateFileConfig, config.getExtraTemplateFileConfigList(), false,
+                    config.isSystem(), extraFileConfig1 -> {
+                        listView.getItems().add(this.packageExtraFileLabel(config.isSystem(), extraFileConfig1,
+                                config.getExtraTemplateFileConfigList()));
+                        config.getExtraTemplateFileConfigList().add(extraFileConfig1);
+                        // saveBtn.setDisable(false);
+                    });
             // saveBtn.setDisable(false);
         });
 
@@ -211,7 +213,8 @@ public class ExtraTemplateFileController {
      * @param submitBtnAction         应用按钮操作
      * @param isEdit                  true:编辑,false:添加
      */
-    private void openExtraFileSetup(ExtraTemplateFileConfig extraTemplateFileConfig, boolean isEdit,
+    private void openExtraFileSetup(ExtraTemplateFileConfig extraTemplateFileConfig,
+                                    Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList, boolean isEdit,
                                     boolean isSystem, Consumer<ExtraTemplateFileConfig> submitBtnAction) {
         Stage addTemplateStage = new Stage();
         BorderPane borderPane = new BorderPane();
@@ -225,9 +228,6 @@ public class ExtraTemplateFileController {
         final TextField nameTextField = new TextField(extraTemplateFileConfig.getName());
         nameTextField.setPromptText("配置名称");
         nameTextField.setDisable(isSystem);
-        if (isEdit) {
-            nameTextField.setEditable(false);
-        }
         PropertyHBox nameHbox = new PropertyHBox("配置名称", labelWidth, nameTextField);
         vBox.getChildren().add(nameHbox);
 
@@ -338,7 +338,7 @@ public class ExtraTemplateFileController {
                     final File file = FileUtils.getFile(customTemplatePathTextField.getText());
                     IOUtils.copy(resource.getInputStream(), new FileOutputStream(path + "/" + file.getName()));
 
-                    DialogFactory.successDialog(addTemplateStage, "导出成功");
+                    DialogFactory.successDialog(addTemplateStage, "导出配置", "成功");
                 } catch (IOException e) {
                     log.error("导出文件失败", e);
                 }
@@ -367,7 +367,9 @@ public class ExtraTemplateFileController {
         applyBtn.setDisable(isSystem);
         applyBtn.setPrefWidth(50);
         applyBtn.setOnAction(actionEvent -> {
-            extraTemplateFileConfig.setId(UUID.randomUUID().toString());
+            if (!isEdit) {
+                extraTemplateFileConfig.setId(UUID.randomUUID().toString());
+            }
             extraTemplateFileConfig.setName(nameTextField.getText());
             extraTemplateFileConfig.setExtraFileType(fileTypeCb.getSelectionModel().getSelectedItem());
             extraTemplateFileConfig.setSuperClass(superClassTextField.getText());
@@ -382,7 +384,15 @@ public class ExtraTemplateFileController {
             extraTemplateFileConfig.setCustomTemplateDir(customTemplatePathTextField.getText());
 
             // 检查文件配置
-            this.checkConfig(extraTemplateFileConfig);
+            this.checkConfig(extraTemplateFileConfig, addTemplateStage);
+
+            // Check config name exist
+            if (isEdit) {
+                final boolean existed = extraTemplateFileConfigList.stream()
+                        .filter(item -> !item.getId().equals(extraTemplateFileConfig.getId()))
+                        .anyMatch(item -> item.getName().equals(extraTemplateFileConfig.getName()));
+                Assert.isTrue(!existed, "配置名已存在", addTemplateStage);
+            }
 
             submitBtnAction.accept(extraTemplateFileConfig);
             addTemplateStage.close();
@@ -410,15 +420,15 @@ public class ExtraTemplateFileController {
         addTemplateStage.show();
     }
 
-    private void checkConfig(ExtraTemplateFileConfig extraTemplateFileConfig) {
+    private void checkConfig(ExtraTemplateFileConfig extraTemplateFileConfig, Stage addTemplateStage) {
         if (StringUtils.isEmpty(extraTemplateFileConfig.getName())) {
-            Toast.makeTextDefault(NodeConstants.primaryStage, "配置名称必填");
+            Toast.makeTextDefault(addTemplateStage, "配置名称必填");
         }
 
         final ExtraFileTypeEnum templateType = extraTemplateFileConfig.getExtraFileType();
         if (templateType == ExtraFileTypeEnum.CUSTOM_TEMPLATE) {
             if (StringUtils.isEmpty(extraTemplateFileConfig.getCustomTemplateDir())) {
-                Toast.makeTextDefault(NodeConstants.primaryStage, extraTemplateFileConfig.getName() + "配置中，自定义模板路径必填");
+                Toast.makeTextDefault(addTemplateStage, extraTemplateFileConfig.getName() + "配置中，自定义模板路径必填");
             }
         }
     }
@@ -447,11 +457,11 @@ public class ExtraTemplateFileController {
             ignoreColumnHbox.setDisable(true);
         } else if (extraFileTypeEnum == ExtraFileTypeEnum.JPA_ENTITY) {
             customTemplatePathHbox.setDisable(true);
-            modelValidSuffixHbox.setDisable(true);
-            lombokGetterHbox.setDisable(true);
-            lombokSetterHbox.setDisable(true);
-            lombokToStringHbox.setDisable(true);
-            ignoreColumnHbox.setDisable(true);
+            modelValidSuffixHbox.setDisable(false);
+            lombokGetterHbox.setDisable(false);
+            lombokSetterHbox.setDisable(false);
+            lombokToStringHbox.setDisable(false);
+            ignoreColumnHbox.setDisable(false);
         }
     }
 
@@ -471,11 +481,13 @@ public class ExtraTemplateFileController {
     private ExtraTemplateFileItemHBox packageExtraFileLabel(boolean isSystem,
                                                             ExtraTemplateFileConfig extraTemplateFileConfig,
                                                             Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
-        ExtraTemplateFileItemHBox extraTemplateFileItemHbox = new ExtraTemplateFileItemHBox(isSystem, extraTemplateFileConfig);
+        ExtraTemplateFileItemHBox extraTemplateFileItemHbox = new ExtraTemplateFileItemHBox(isSystem,
+                extraTemplateFileConfig);
         extraTemplateFileItemHbox.setAlignment(Pos.CENTER);
         extraTemplateFileItemHbox.prefWidthProperty().bind(linkageBorderPane.getRightBorderPane().widthProperty().subtract(50));
         // 编辑
-        extraTemplateFileItemHbox.onEditAction(actionEvent -> this.openExtraFileSetup(extraTemplateFileConfig, true,
+        extraTemplateFileItemHbox.onEditAction(actionEvent -> this.openExtraFileSetup(extraTemplateFileConfig,
+                extraTemplateFileConfigList, true,
                 isSystem,
                 extraFileConfig1 -> {
                     extraTemplateFileItemHbox.setLabelText(extraFileConfig1.getName());

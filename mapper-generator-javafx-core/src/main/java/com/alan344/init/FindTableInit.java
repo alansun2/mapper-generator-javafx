@@ -1,12 +1,12 @@
 package com.alan344.init;
 
-import cn.hutool.core.util.ReUtil;
 import com.alan344.bean.DataItem;
 import com.alan344.bean.DataSource;
 import com.alan344.bean.Table;
 import com.alan344.constants.BaseConstants;
 import com.alan344.controller.MainController;
 import com.alan344.factory.TreeItemFactory;
+import com.alan344.utils.CollectionUtils;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
@@ -34,10 +34,11 @@ public class FindTableInit {
     /**
      * 给 DataSourceBorderPane 设置键盘监听，用于搜索 table
      */
-    public void addListener(TreeView<DataItem> treeViewDataSource, TextField tableFindTextField, BorderPane borderPaneWrap) {
+    public void addListener(TreeView<DataItem> treeViewDataSource, TextField tableFindTextField,
+                            BorderPane borderPaneWrap) {
         tableFindTextField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue != null && newValue != null) {
-                this.filterTables(newValue, treeViewDataSource.getRoot(), oldValue.length() > newValue.length());
+                this.filterTables(newValue, treeViewDataSource.getRoot(), newValue.length() < oldValue.length());
             }
         });
 
@@ -48,12 +49,6 @@ public class FindTableInit {
         borderPaneWrap.setOnKeyPressed(this::ctrlFListener);
     }
 
-    private String tableNameFilter = "";
-
-    private String tableNamePrefixCache = "";
-
-    private long lastUpdateTime = 0;
-
     /**
      * filter tables when type tableName in the left BorderPane
      *
@@ -61,57 +56,44 @@ public class FindTableInit {
      * @param treeViewDataSourceRoot treeViewDataSourceRoot
      */
     private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot, boolean isDelete) {
-        // System.out.println("a = " + (System.currentTimeMillis() - lastUpdateTime));
+        System.out.println("tableNamePrefix = " + tableNamePrefix);
         tableNamePrefix = tableNamePrefix.toLowerCase().replaceAll("'", "");
-        String tableNameFilterInit = tableNameFilter;
-        final long now = System.currentTimeMillis();
-        if (!isDelete) {
-            final long l = now - lastUpdateTime;
-            // System.out.println("l = " + l);
-            if (l > 500) {
-                tableNameFilterInit = tableNameFilterInit + tableNamePrefix.replace(tableNamePrefixCache, "") + ".*";
-            } else {
-                tableNameFilterInit = tableNameFilterInit + tableNamePrefix.replace(tableNamePrefixCache, "");
-            }
+        String tableNameFilterTem;
+        if (tableNamePrefix.isEmpty()) {
+            tableNameFilterTem = "";
         } else {
-            tableNameFilterInit = ReUtil.delLast(tableNamePrefixCache.replace(tableNamePrefix, ""), tableNameFilterInit);
-            tableNameFilterInit = tableNameFilterInit.replace(".*.*", ".*");
+            final char[] charArray = tableNamePrefix.toCharArray();
+            StringBuilder sb = new StringBuilder();
+            for (char c : charArray) {
+                sb.append(c).append(".*");
+            }
+            tableNameFilterTem = sb.toString();
         }
 
-        tableNamePrefixCache = tableNamePrefix;
-        tableNameFilter = tableNameFilterInit;
-        lastUpdateTime = now;
-
-        if (!tableNameFilterInit.endsWith(".*")) {
-            tableNameFilterInit = tableNameFilterInit + ".*";
-        }
-        System.out.println("tableNameFilterInit = " + tableNameFilterInit);
+        System.out.println("tableNameFilterTem = " + tableNameFilterTem);
         final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
         for (TreeItem<DataItem> dataSourceTreeItem : children) {
-            if (dataSourceTreeItem.isExpanded()) {
-                if (tableNamePrefix.length() > 0) {
-                    if (isDelete) {
-                        dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
-                        DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
-                        String finalTableNameFilterInit = tableNameFilterInit;
-                        List<Table> filteredTables = dataSource.getTables().stream().filter(table -> table.getTableName().toLowerCase().matches(finalTableNameFilterInit)).toList();
-                        for (Table filteredTable : filteredTables) {
-                            TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
-                            tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
-                        }
-                    }
-                    final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
-                    String finalTableNameFilterInit1 = tableNameFilterInit;
-                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().toLowerCase().matches(finalTableNameFilterInit1));
-
-
-                } else {
-                    dataSourceTreeItem.getChildren().removeIf(treeItem -> true);
-                    DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
+            DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
+            if (CollectionUtils.isNotEmpty(dataSource.getTables())) {
+                if (tableNamePrefix.isEmpty()) {
+                    dataSourceTreeItem.getChildren().clear();
                     for (Table filteredTable : dataSource.getTables()) {
                         TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
                         tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                     }
+                } else {
+                    if (isDelete) {
+                        dataSourceTreeItem.getChildren().clear();
+                        List<Table> filteredTables =
+                                dataSource.getTables().stream().filter(table -> table.getTableName().toLowerCase().matches(tableNameFilterTem)).toList();
+                        for (Table filteredTable : filteredTables) {
+                            TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable,
+                                    dataSourceTreeItem);
+                            tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
+                        }
+                    }
+                    final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
+                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().toLowerCase().matches(tableNameFilterTem));
                 }
             }
         }

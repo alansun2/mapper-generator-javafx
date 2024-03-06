@@ -18,7 +18,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
  */
 public class FileOpenAndSuccessDialog extends AlDialog {
 
-    public FileOpenAndSuccessDialog(Stage stage1, String textContent, String path) {
+    public FileOpenAndSuccessDialog(Stage stage1, String title, String textContent, String path) {
         super(stage1);
         this.setPrefHeight(150);
         this.setPrefWidth(300);
@@ -45,6 +45,7 @@ public class FileOpenAndSuccessDialog extends AlDialog {
 
         this.setCenter(hBox);
 
+        this.stage.setTitle(title);
         this.stage.show();
     }
 }

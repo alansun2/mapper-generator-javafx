@@ -195,7 +195,7 @@ public class MainController implements Initializable {
             final File importFile = new File(BaseConstants.MG_HOME);
             ZipUtil.unzip(fileScan, importFile, Charset.defaultCharset());
             // 弹框
-            DialogFactory.successDialog(NodeConstants.primaryStage, "导入成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "导入配置","成功");
             // 从文件加载数据源至pane
             dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
         }
@@ -209,7 +209,7 @@ public class MainController implements Initializable {
             final String absolutePath = directory.getAbsolutePath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
             ZipUtil.zip(BaseConstants.MG_CONF_HOME, absolutePath + "/config.zip", Charset.defaultCharset(), true);
             // 弹框
-            DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出成功", absolutePath);
+            DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出","成功", absolutePath);
         }
     }
 

@@ -12,6 +12,7 @@ import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.mybatisplugin.DomainPlugin;
 import com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin;
+import com.alan344.mybatisplugin.ExtraFileJPAlGeneratorPlugin;
 import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
 import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
 import com.alan344.mybatisplugin.PluginUtils;
@@ -142,6 +143,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         if (mybatisExportConfig.isExportExtraFile()) {
             // 额外 model 生成插件
             generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
+            // JPA
+            generatorUtils.addPlugin(ExtraFileJPAlGeneratorPlugin.class.getName());
             // 额外的模板文件生成插件
             generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
         }
@@ -172,8 +175,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS,
                 String.valueOf(exportConfig.isUseComment()));
         generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM" +
-                "-dd " +
-                "HH:mm:ss");
+                                                                                                           "-dd " +
+                                                                                                           "HH:mm:ss");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
     }
 
