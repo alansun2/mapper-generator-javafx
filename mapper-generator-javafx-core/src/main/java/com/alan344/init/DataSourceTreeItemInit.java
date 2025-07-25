@@ -10,9 +10,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeItem;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +24,10 @@ import java.util.Optional;
  */
 @Service
 public class DataSourceTreeItemInit {
-    @Resource
+    @Autowired
     private DataSourceService dataSourceService;
 
-    @Resource
+    @Autowired
     private MainController mainController;
 
     /**

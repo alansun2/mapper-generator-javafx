@@ -467,7 +467,9 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
         boolean isUseLombokGetSet();
 
-        boolean isUseComment();
+        boolean isUseJpaAnnotation();
+
+        boolean isUseValidationAnnotation();
 
         TargetNameEnum getTargetName();
 
@@ -514,9 +516,14 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
          */
         private SimpleBooleanProperty useLombokBuilder = new SimpleBooleanProperty(false);
         /**
-         * 使用注释
+         * 使用 jpa 注解
          */
-        private SimpleBooleanProperty useComment = new SimpleBooleanProperty(true);
+        private SimpleBooleanProperty useJpaAnnotation = new SimpleBooleanProperty(true);
+        /**
+         * 使用 validation 注解
+         */
+        private SimpleBooleanProperty useValidationAnnotation = new SimpleBooleanProperty(true);
+
         /**
          * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.mybatisplugin.PluginUtils.Domain}
          */
@@ -587,19 +594,6 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         }
 
         @Override
-        public boolean isUseComment() {
-            return useComment.get();
-        }
-
-        public SimpleBooleanProperty useCommentProperty() {
-            return useComment;
-        }
-
-        public void setUseComment(boolean useComment) {
-            this.useComment.set(useComment);
-        }
-
-        @Override
         public boolean isEnableDomain() {
             return enableDomain.get();
         }
@@ -623,6 +617,32 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
         public void setJavaClientType(JavaClientTypeEnum javaClientType) {
             this.javaClientType.set(javaClientType);
+        }
+
+        @Override
+        public boolean isUseJpaAnnotation() {
+            return useJpaAnnotation.get();
+        }
+
+        public SimpleBooleanProperty useJpaAnnotationProperty() {
+            return useJpaAnnotation;
+        }
+
+        public void setUseJpaAnnotation(final boolean useJpaAnnotation) {
+            this.useJpaAnnotation.set(useJpaAnnotation);
+        }
+
+        @Override
+        public boolean isUseValidationAnnotation() {
+            return useValidationAnnotation.get();
+        }
+
+        public SimpleBooleanProperty useValidationAnnotationProperty() {
+            return useValidationAnnotation;
+        }
+
+        public void setUseValidationAnnotation(final boolean useValidationAnnotation) {
+            this.useValidationAnnotation.set(useValidationAnnotation);
         }
 
         @Override

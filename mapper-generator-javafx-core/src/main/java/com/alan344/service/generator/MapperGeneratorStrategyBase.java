@@ -9,13 +9,17 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
+import com.alan344.constants.TablePropertyConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
 import com.alan344.mybatisplugin.DomainPlugin;
 import com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin;
 import com.alan344.mybatisplugin.ExtraFileJPAlGeneratorPlugin;
 import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
+import com.alan344.mybatisplugin.JpaAnnotationPlugin;
 import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
 import com.alan344.mybatisplugin.PluginUtils;
+import com.alan344.mybatisplugin.SerializablePlugin;
+import com.alan344.mybatisplugin.ValidationAnnotationPlugin;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
@@ -28,7 +32,6 @@ import org.mybatis.generator.config.PropertyRegistry;
 import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.exception.InvalidConfigurationException;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
-import org.mybatis.generator.plugins.SerializablePlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -140,6 +143,24 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         });
         // 添加序列化接口插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
+        final MybatisExportConfig.MybatisOfficialExportConfig exportConfig =
+                mybatisExportConfig.getMybatisOfficialExportConfig();
+
+        // lombok 插件
+        final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
+        generatorUtils.addProperty(exportConfig.isUseLombokGetSet(), lombok, "getter", "true");
+        generatorUtils.addProperty(exportConfig.isUseLombokGetSet(), lombok, "setter", "true");
+        generatorUtils.addProperty(exportConfig.isUseLombokBuilder(), lombok, "builder", "true");
+
+        if (exportConfig.isUseValidationAnnotation()) {
+            generatorUtils.addPlugin(ValidationAnnotationPlugin.class.getName());
+        }
+
+
+        if (exportConfig.isUseJpaAnnotation()) {
+            generatorUtils.addPlugin(JpaAnnotationPlugin.class.getName());
+        }
+
         if (mybatisExportConfig.isExportExtraFile()) {
             // 额外 model 生成插件
             generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
@@ -148,19 +169,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             // 额外的模板文件生成插件
             generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
         }
+
         // 用于控制是否生成对应的 mybatis 文件
         generatorUtils.addPlugin(MybatisGeneratorPlugin.class.getName());
 
         // 修改 domain 类名
         generatorUtils.addPlugin(DomainPlugin.class.getName());
-
-        // lombok 插件
-        final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
-        final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
-                mybatisExportConfig.getMybatisOfficialExportConfig();
-        generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "getter", "true");
-        generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokGetSet(), lombok, "setter", "true");
-        generatorUtils.addProperty(mybatisOfficialExportConfig.isUseLombokBuilder(), lombok, "builder", "true");
     }
 
     /**
@@ -172,11 +186,8 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // 是否成成注释
         final Element commentGenerator = generatorUtils.addElement(context, "commentGenerator");
         commentGenerator.setAttribute("type", MyCommentGenerator.class.getName());
-        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS,
-                String.valueOf(exportConfig.isUseComment()));
-        generatorUtils.addProperty(true, commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM" +
-                                                                                                           "-dd " +
-                                                                                                           "HH:mm:ss");
+        generatorUtils.addProperty(true,
+                commentGenerator, PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT, "yyyy-MM-dd HH:mm:ss");
         generatorUtils.addProperty(true, commentGenerator, "author", mybatisExportConfig.getAuthor());
     }
 
@@ -333,6 +344,12 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                     ignoreColumn.setAttribute("column", globalIgnore);
                 }
             }
+
+            // 添加默认属性
+            generatorUtils.addProperty(table.isJdkSerializable(), tableEl, TablePropertyConstants.JDK_SERIALIZABLE, "true");
+            generatorUtils.addProperty(StringUtils.isNotEmpty(mybatisExportConfig.getModelRootClass()), tableEl,
+                    PropertyRegistry.ANY_ROOT_CLASS, mybatisExportConfig.getModelRootClass());
+
             for (Column column : columns) {
                 if (column.isIgnore()) {
                     final Element ignoreColumn = generatorUtils.addElement(tableEl, "ignoreColumn");
@@ -357,10 +374,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                             "delimitedColumnName", String.valueOf(columnOverride.isDelimitedColumnName()));
                 }
 
-                // 添加默认属性
-                generatorUtils.addProperty(table.isJdkSerializable(), tableEl, "jdkSerializable", "true");
-                generatorUtils.addProperty(StringUtils.isNotEmpty(mybatisExportConfig.getModelRootClass()), tableEl,
-                        PropertyRegistry.ANY_ROOT_CLASS, mybatisExportConfig.getModelRootClass());
                 this.addTableProperty();
             }
         }

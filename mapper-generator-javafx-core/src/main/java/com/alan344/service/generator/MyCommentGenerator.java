@@ -1,27 +1,30 @@
 package com.alan344.service.generator;
 
+import cn.hutool.core.util.StrUtil;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.MyBatisGenerator;
-import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.InnerClass;
+import org.mybatis.generator.api.dom.java.InnerEnum;
+import org.mybatis.generator.api.dom.java.JavaElement;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.api.dom.kotlin.KotlinFile;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.MergeConstants;
 import org.mybatis.generator.config.PropertyRegistry;
-import org.mybatis.generator.internal.DefaultCommentGenerator;
 import org.mybatis.generator.internal.util.StringUtility;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
-
-import static org.mybatis.generator.internal.util.StringUtility.isTrue;
 
 /**
  * @author AlanSun
@@ -33,35 +36,28 @@ public class MyCommentGenerator implements CommentGenerator {
 
     private final Properties properties = new Properties();
 
-    private boolean suppressDate;
+    private final boolean suppressDate;
 
-    private boolean suppressAllComments;
+    private final boolean suppressAllComments;
 
     /**
      * If suppressAllComments is true, this option is ignored.
      */
-    private boolean addRemarkComments;
+    private final boolean addRemarkComments;
 
-    private DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
+    private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm:ss");
 
     private String author;
 
     public MyCommentGenerator() {
-        super();
-        suppressDate = false;
+        suppressDate = true;
         suppressAllComments = false;
-        addRemarkComments = false;
+        addRemarkComments = true;
     }
 
     @Override
     public void addConfigurationProperties(Properties props) {
         this.properties.putAll(props);
-
-        suppressDate = isTrue(properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE));
-
-        suppressAllComments = isTrue(properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS));
-
-        addRemarkComments = isTrue(properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS));
 
         author = properties.getProperty("author");
 
@@ -94,9 +90,9 @@ public class MyCommentGenerator implements CommentGenerator {
 
         topLevelClass.addJavaDocLine("/**");
         topLevelClass.addJavaDocLine(" * @author " + author);
-        topLevelClass.addJavaDocLine(" * @date " + this.getDateString());
+        topLevelClass.addJavaDocLine(" * @date " + LocalDateTime.now().format(dateFormat));
         topLevelClass.addJavaDocLine(" * <p>");
-        topLevelClass.addJavaDocLine(" * " + introspectedTable.getRemarks() + "对应表:" + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName());
+        topLevelClass.addJavaDocLine(" * " + introspectedTable.getRemarks() + "对应表: " + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName());
         topLevelClass.addJavaDocLine(" */");
     }
 
@@ -107,9 +103,12 @@ public class MyCommentGenerator implements CommentGenerator {
             return;
         }
 
+        String remarks = introspectedColumn.getRemarks();
+        if (StrUtil.isEmpty(remarks)) {
+            return;
+        }
         field.addJavaDocLine("/**");
 
-        String remarks = introspectedColumn.getRemarks();
         if (addRemarkComments && StringUtility.stringHasValue(remarks)) {
             String[] remarkLines = remarks.split(System.getProperty("line.separator"));
             for (String remarkLine : remarkLines) {
@@ -117,7 +116,7 @@ public class MyCommentGenerator implements CommentGenerator {
             }
         }
 
-        addJavadocTag(field, false);
+        // addJavadocTag(field, false);
 
         field.addJavaDocLine(" */");
     }
@@ -130,7 +129,7 @@ public class MyCommentGenerator implements CommentGenerator {
         }
 
         field.addJavaDocLine("/**");
-        addJavadocTag(field, false);
+        // addJavadocTag(field, false);
         field.addJavaDocLine(" */");
     }
 
@@ -154,7 +153,7 @@ public class MyCommentGenerator implements CommentGenerator {
         xmlElement.addElement(new TextElement(sb.toString()));
         xmlElement.addElement(
                 new TextElement("  This element is automatically generated by MyBatis Generator," //$NON-NLS-1$
-                        + " do not modify.")); //$NON-NLS-1$
+                                + " do not modify.")); //$NON-NLS-1$
 
         String s = getDateString();
         if (s != null) {
@@ -207,7 +206,7 @@ public class MyCommentGenerator implements CommentGenerator {
         sb.append(introspectedTable.getFullyQualifiedTable());
         innerClass.addJavaDocLine(sb.toString());
 
-        addJavadocTag(innerClass, false);
+        // addJavadocTag(innerClass, false);
 
         innerClass.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -227,7 +226,7 @@ public class MyCommentGenerator implements CommentGenerator {
         sb.append(introspectedTable.getFullyQualifiedTable());
         innerClass.addJavaDocLine(sb.toString());
 
-        addJavadocTag(innerClass, markAsDoNotDelete);
+        // addJavadocTag(innerClass, markAsDoNotDelete);
 
         innerClass.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -248,7 +247,7 @@ public class MyCommentGenerator implements CommentGenerator {
         sb.append(introspectedTable.getFullyQualifiedTable());
         innerEnum.addJavaDocLine(sb.toString());
 
-        addJavadocTag(innerEnum, false);
+        // addJavadocTag(innerEnum, false);
 
         innerEnum.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -268,7 +267,7 @@ public class MyCommentGenerator implements CommentGenerator {
         sb.append(introspectedTable.getFullyQualifiedTable());
         method.addJavaDocLine(sb.toString());
 
-        addJavadocTag(method, false);
+        // addJavadocTag(method, false);
 
         method.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -300,7 +299,7 @@ public class MyCommentGenerator implements CommentGenerator {
         sb.append(introspectedColumn.getActualColumnName());
         method.addJavaDocLine(sb.toString());
 
-        addJavadocTag(method, false);
+        // addJavadocTag(method, false);
 
         method.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -335,7 +334,7 @@ public class MyCommentGenerator implements CommentGenerator {
         sb.append(introspectedColumn.getActualColumnName());
         method.addJavaDocLine(sb.toString());
 
-        addJavadocTag(method, false);
+        // addJavadocTag(method, false);
 
         method.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -353,8 +352,8 @@ public class MyCommentGenerator implements CommentGenerator {
                                            IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> imports) {
         imports.add(new FullyQualifiedJavaType("javax.annotation.Generated")); //$NON-NLS-1$
         String comment = "Source field: " //$NON-NLS-1$
-                + introspectedTable.getFullyQualifiedTable().toString() + "." //$NON-NLS-1$
-                + introspectedColumn.getActualColumnName();
+                         + introspectedTable.getFullyQualifiedTable().toString() + "." //$NON-NLS-1$
+                         + introspectedColumn.getActualColumnName();
         method.addAnnotation(getGeneratedAnnotation(comment));
     }
 
@@ -371,8 +370,8 @@ public class MyCommentGenerator implements CommentGenerator {
                                    IntrospectedColumn introspectedColumn, Set<FullyQualifiedJavaType> imports) {
         imports.add(new FullyQualifiedJavaType("javax.annotation.Generated")); //$NON-NLS-1$
         String comment = "Source field: " //$NON-NLS-1$
-                + introspectedTable.getFullyQualifiedTable().toString() + "." //$NON-NLS-1$
-                + introspectedColumn.getActualColumnName();
+                         + introspectedTable.getFullyQualifiedTable().toString() + "." //$NON-NLS-1$
+                         + introspectedColumn.getActualColumnName();
         field.addAnnotation(getGeneratedAnnotation(comment));
 
         if (!suppressAllComments && addRemarkComments) {
@@ -435,7 +434,7 @@ public class MyCommentGenerator implements CommentGenerator {
         kotlinFile.addFileCommentLine(" * Auto-generated file. Created by MyBatis Generator"); //$NON-NLS-1$
         if (!suppressDate) {
             kotlinFile.addFileCommentLine(" * Generation date: " //$NON-NLS-1$
-                    + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()));
+                                          + DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now()));
         }
         kotlinFile.addFileCommentLine(" */"); //$NON-NLS-1$
     }

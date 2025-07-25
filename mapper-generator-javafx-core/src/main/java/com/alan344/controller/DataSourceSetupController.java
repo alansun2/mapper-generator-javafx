@@ -25,10 +25,10 @@ import lombok.Getter;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -58,13 +58,13 @@ public class DataSourceSetupController implements Initializable {
 
     //-----------------------------------------
 
-    @Resource
+    @Autowired
     private ApplicationContext applicationContext;
-    @Resource
+    @Autowired
     private MainController mainController;
-    @Resource
+    @Autowired
     private DataSourceService dataSourceService;
-    @Resource
+    @Autowired
     private DataSourceTreeItemInit dataSourceTreeItemInit;
     private Stage dateSourceStage;
     /**
