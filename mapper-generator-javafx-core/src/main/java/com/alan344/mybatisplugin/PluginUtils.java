@@ -88,6 +88,13 @@ public class PluginUtils {
         return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, upperCamel);
     }
 
+    /**
+     * 驼峰转下划线
+     */
+    public static String getLowerUnderscore(String upperCamel) {
+        return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, upperCamel);
+    }
+
     public static String parse(String content, Domain domain) {
 
         return ConfigConstants.GENERIC_TOKEN_PARSER.parse(content, key -> {

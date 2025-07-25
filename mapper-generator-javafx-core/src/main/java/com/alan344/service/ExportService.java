@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,11 +24,11 @@ import java.util.Map;
 @Slf4j
 @Service
 public class ExportService {
-    @Resource
+    @Autowired
     private MapperGeneratorStrategyContext mapperGeneratorStrategyContext;
-    @Resource
+    @Autowired
     private TableService tableService;
-    @Resource
+    @Autowired
     private ColumnService columnService;
     @Autowired
     private ConfigService configService;
@@ -52,9 +51,12 @@ public class ExportService {
                 }
 
                 nameImportMap.put(camelCaseTableName, mybatisExportConfig.getBeanPackage() + "." + camelCaseTableName);
-                nameImportMap.put(camelCaseTableName + "Example", mybatisExportConfig.getBeanPackage() + "." + camelCaseTableName + "Example");
-                nameImportMap.put(camelCaseTableName + "Mapper", mybatisExportConfig.getMapperPackage() + "." + camelCaseTableName + "Mapper");
-                nameImportMap.put(camelCaseTableName + "DynamicSqlSupport", mybatisExportConfig.getMapperPackage() + "." + camelCaseTableName + "DynamicSqlSupport");
+                nameImportMap.put(camelCaseTableName + "Example",
+                        mybatisExportConfig.getBeanPackage() + "." + camelCaseTableName + "Example");
+                nameImportMap.put(camelCaseTableName + "Mapper",
+                        mybatisExportConfig.getMapperPackage() + "." + camelCaseTableName + "Mapper");
+                nameImportMap.put(camelCaseTableName + "DynamicSqlSupport",
+                        mybatisExportConfig.getMapperPackage() + "." + camelCaseTableName + "DynamicSqlSupport");
             }
         }
         ConfigConstants.namePackageMap.putAll(nameImportMap);
@@ -69,7 +71,7 @@ public class ExportService {
         mapperGeneratorStrategyContext.getMapperGeneratorStrategy(mybatisExportConfig).generator(mybatisExportConfig);
 
         // 弹框
-        DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出","成功", mybatisExportConfig.getProjectDir());
+        DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出", "成功", mybatisExportConfig.getProjectDir());
 
         ConfigConstants.extraTemplateFileConfigs = null;
         ConfigConstants.globalParam.clear();

@@ -18,7 +18,11 @@ import com.alan344.utils.Assert;
 import com.alan344.utils.FileExploreUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -28,9 +32,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.textfield.TextFields;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -87,24 +91,24 @@ public class MainController implements Initializable {
 
     //-------------------------------service----------------------------------------------------------------------------
 
-    @Resource
+    @Autowired
     private DataSourceSetupController dataSourceSetupController;
 
-    @Resource
+    @Autowired
     private AboutController aboutController;
 
-    @Resource
+    @Autowired
     private BeanFactory beanFactory;
 
     // -------------------------init----------------------------------------------------------------------------------//
 
-    @Resource
+    @Autowired
     private DataSourceTreeItemInit dataSourceTreeItemInit;
 
-    @Resource
+    @Autowired
     private DataSourceTreeViewInit dataSourceTreeViewInit;
 
-    @Resource
+    @Autowired
     private FindTableInit findTableInit;
 
     //--------------------------------init----------------------------------------------------------------------//
@@ -179,6 +183,7 @@ public class MainController implements Initializable {
 
     @FXML
     public void openConfigDir() {
+        Assert.isTrue(!BaseConstants.allDataSources.isEmpty(), "请先添加配置", NodeConstants.primaryStage);
         FileExploreUtils.open(BaseConstants.MG_CONF_HOME);
     }
 
@@ -189,13 +194,14 @@ public class MainController implements Initializable {
         if (null != fileScan) {
             // 先备份
             if (FileUtil.exist(BaseConstants.MG_CONF_HOME)) {
-                ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(), true);
+                ZipUtil.zip(BaseConstants.MG_CONF_HOME, BaseConstants.MG_HOME + "/config-backup.zip", Charset.defaultCharset(),
+                        true);
             }
             BaseConstants.baseFileDir = fileScan.getParent().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
             final File importFile = new File(BaseConstants.MG_HOME);
             ZipUtil.unzip(fileScan, importFile, Charset.defaultCharset());
             // 弹框
-            DialogFactory.successDialog(NodeConstants.primaryStage, "导入配置","成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "导入配置", "成功");
             // 从文件加载数据源至pane
             dataSourceTreeItemInit.initLoadData(treeItemDataSourceRoot);
         }
@@ -209,7 +215,7 @@ public class MainController implements Initializable {
             final String absolutePath = directory.getAbsolutePath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
             ZipUtil.zip(BaseConstants.MG_CONF_HOME, absolutePath + "/config.zip", Charset.defaultCharset(), true);
             // 弹框
-            DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出","成功", absolutePath);
+            DialogFactory.successAndOpenFileDialog(NodeConstants.primaryStage, "导出", "成功", absolutePath);
         }
     }
 

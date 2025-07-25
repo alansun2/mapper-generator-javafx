@@ -8,15 +8,21 @@ import com.alibaba.fastjson2.JSONWriter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author ：AlanSun
@@ -25,8 +31,7 @@ import java.util.*;
 @Slf4j
 @Service
 public class DataSourceService {
-
-    @Resource
+    @Autowired
     private TableService tableService;
 
     /**
@@ -118,7 +123,8 @@ public class DataSourceService {
     void downLoadToFile(DataSource dataSource) throws IOException {
         String datasourceStr = JSON.toJSONString(dataSource, JSONWriter.Feature.PrettyFormat);
 
-        FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr, StandardCharsets.UTF_8.toString());
+        FileUtils.writeStringToFile(BaseConstants.getDataSourceFile(dataSource), datasourceStr,
+                StandardCharsets.UTF_8.toString());
     }
 
     /**
@@ -149,7 +155,8 @@ public class DataSourceService {
         List<DataSource> result = new ArrayList<>();
         try {
             for (File file : files) {
-                DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), DataSource.class);
+                DataSource dataSource = JSONObject.parseObject(FileUtils.readFileToString(file,
+                        StandardCharsets.UTF_8.toString()), DataSource.class);
                 if (dataSourceSet.add(dataSource)) {
                     result.add(dataSource);
                 }

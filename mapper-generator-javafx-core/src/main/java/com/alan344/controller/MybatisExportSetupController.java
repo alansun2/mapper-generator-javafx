@@ -48,7 +48,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -63,11 +62,11 @@ import java.util.Objects;
 @Slf4j
 @Controller
 public class MybatisExportSetupController {
-    @Resource
+    @Autowired
     private ConfigService configService;
-    @Resource
+    @Autowired
     private ExportService exportService;
-    @Resource
+    @Autowired
     private ExtraFileController extraFileController;
     @Autowired
     private MybatisAdvanceSetController mybatisAdvanceSetController;
@@ -119,7 +118,7 @@ public class MybatisExportSetupController {
         saveBtn.setOnAction(event -> {
             this.valid(this.getCurrentConfig().getConfigName());
             exportService.saveSetup();
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置","成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置", "成功");
         });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
@@ -376,21 +375,31 @@ public class MybatisExportSetupController {
             userJava8CheckBox.setLayoutX(27);
             userJava8CheckBox.setLayoutY(56);
             mybatisOfficialExportConfig.userJava8Property().bindBidirectional(userJava8CheckBox.selectedProperty());
+
             JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
             useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
             useBigDecimalCheckBox.setLayoutX(262);
             useBigDecimalCheckBox.setLayoutY(93);
             mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
-            JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用注释");
-            useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseComment());
+
+            JFXCheckBox useJpaAnnotationCheckBox = new JFXCheckBox("使用 JPA 注解");
+            useJpaAnnotationCheckBox.setSelected(mybatisOfficialExportConfig.isUseJpaAnnotation());
+            useJpaAnnotationCheckBox.setLayoutX(262);
+            useJpaAnnotationCheckBox.setLayoutY(93);
+            mybatisOfficialExportConfig.useJpaAnnotationProperty().bindBidirectional(useJpaAnnotationCheckBox.selectedProperty());
+
+            JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
+            useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
             useCommentCheckBox.setLayoutX(262);
             useCommentCheckBox.setLayoutY(56);
-            mybatisOfficialExportConfig.useCommentProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
+            mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
+
             JFXCheckBox useLombokGetSetCheckBox = new JFXCheckBox("启用 lombokGetSet 注解");
             useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
             useLombokGetSetCheckBox.setLayoutX(27);
             useLombokGetSetCheckBox.setLayoutY(93);
             mybatisOfficialExportConfig.useLombokGetSetProperty().bindBidirectional(useLombokGetSetCheckBox.selectedProperty());
+
             JFXCheckBox useLombokBuilderCheckBox = new JFXCheckBox("启用 lombokBuilder 注解");
             useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
             useLombokBuilderCheckBox.setLayoutX(27);
@@ -446,7 +455,7 @@ public class MybatisExportSetupController {
             targetNameJFXComboBox.setValue(mybatisOfficialExportConfig.getTargetName());
             targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
 
-            anchorPane.getChildren().addAll(userJava8CheckBox, useBigDecimalCheckBox, useCommentCheckBox,
+            anchorPane.getChildren().addAll(userJava8CheckBox, useJpaAnnotationCheckBox, useCommentCheckBox,
                     useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel,
                     javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
             return splitPane;

@@ -10,10 +10,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class TableService {
-    @Resource
+    @Autowired
     private ColumnService columnService;
 
     /**
@@ -44,7 +44,8 @@ public class TableService {
         if (!remoteTables.isEmpty()) {
             List<Table> existTables = dataSource.getTables();
             if (existTables != null && !existTables.isEmpty()) {
-                Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName, table -> table));
+                Map<String, Table> tableNameTableMap = existTables.stream().collect(Collectors.toMap(Table::getTableName,
+                        table -> table));
                 for (Table remoteTable : remoteTables) {
                     if (tableNameTableMap.containsKey(remoteTable.getTableName())) {
                         Table existTable = tableNameTableMap.get(remoteTable.getTableName());
@@ -110,7 +111,8 @@ public class TableService {
 
             try {
                 for (File file : files) {
-                    Table table = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()), Table.class);
+                    Table table = JSONObject.parseObject(FileUtils.readFileToString(file, StandardCharsets.UTF_8.toString()),
+                            Table.class);
                     tables.add(table);
                 }
             } catch (IOException e) {
@@ -157,7 +159,8 @@ public class TableService {
     void updateTableAndColumnName(DataSource old, DataSource dataSource) {
         if (FileUtil.exist(BaseConstants.getTableDirectory(old))) {
             FileUtil.rename(BaseConstants.getTableDirectory(old), BaseConstants.getTableDirectory(dataSource).getName(), true);
-            FileUtil.rename(BaseConstants.getColumnsDirectory(old), BaseConstants.getColumnsDirectory(dataSource).getName(), true);
+            FileUtil.rename(BaseConstants.getColumnsDirectory(old), BaseConstants.getColumnsDirectory(dataSource).getName(),
+                    true);
         }
     }
 
@@ -169,7 +172,8 @@ public class TableService {
         try {
             for (Table table : tables) {
                 String tablesStr = JSON.toJSONString(table, JSONWriter.Feature.PrettyFormat);
-                FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr, StandardCharsets.UTF_8.toString());
+                FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr,
+                        StandardCharsets.UTF_8.toString());
             }
         } catch (IOException e) {
             log.error("写入表文件错误", e);
@@ -183,7 +187,8 @@ public class TableService {
     void downLoadToFileSingle(DataSource dataSource, Table table) {
         try {
             String tablesStr = JSON.toJSONString(table, JSONWriter.Feature.PrettyFormat);
-            FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr, StandardCharsets.UTF_8.toString());
+            FileUtils.writeStringToFile(BaseConstants.getTableFile(dataSource, table.getTableName()), tablesStr,
+                    StandardCharsets.UTF_8.toString());
         } catch (IOException e) {
             log.error("写入表文件错误", e);
         }

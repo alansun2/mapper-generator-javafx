@@ -28,7 +28,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,19 +41,19 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DataSourceTreeViewInit {
-    @Resource
+    @Autowired
     private ColumnService columnService;
-    @Resource
+    @Autowired
     private DataSourceService dataSourceService;
-    @Resource
+    @Autowired
     private TableService tableService;
-    @Resource
+    @Autowired
     private MybatisListViewInit mybatisListViewInit;
-    @Resource
+    @Autowired
     private MainController mainController;
     @Autowired
     private DataSourceTreeItemInit dataSourceTreeItemInit;
-    @Resource
+    @Autowired
     private DataSourceSetupController dataSourceSetupController;
 
     private final Map<Integer, ContextMenu> contextMenuMap = new HashMap<>();

@@ -21,7 +21,6 @@ import javafx.scene.layout.VBox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -44,13 +43,13 @@ public class MybatisTableSetupController implements Initializable {
     private HBox mapperCheckBoxHbox1;
     @FXML
     private HBox mapperCheckBoxHbox2;
-    @Resource
+    @Autowired
     private TableAdvanceSetupController tableAdvanceSetUpController;
-    @Resource
+    @Autowired
     private ColumnService columnService;
-    @Resource
+    @Autowired
     private MybatisListViewInit mybatisListViewInit;
-    @Resource
+    @Autowired
     private MapperCheckBoxInit mapperCheckBoxInit;
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
     @Autowired

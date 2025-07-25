@@ -14,9 +14,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -32,7 +32,7 @@ public class TableAdvanceSetupController implements Initializable {
     @FXML
     private JFXCheckBox serializableCheckBox;
 
-    @Resource
+    @Autowired
     private BeanFactory beanFactory;
 
     private Stage tableAdvanceSetUpStage;

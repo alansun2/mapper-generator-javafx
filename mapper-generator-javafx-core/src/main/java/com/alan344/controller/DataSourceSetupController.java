@@ -17,18 +17,16 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.Getter;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
 import org.controlsfx.validation.decoration.StyleClassValidationDecoration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -58,13 +56,13 @@ public class DataSourceSetupController implements Initializable {
 
     //-----------------------------------------
 
-    @Resource
+    @Autowired
     private ApplicationContext applicationContext;
-    @Resource
+    @Autowired
     private MainController mainController;
-    @Resource
+    @Autowired
     private DataSourceService dataSourceService;
-    @Resource
+    @Autowired
     private DataSourceTreeItemInit dataSourceTreeItemInit;
     private Stage dateSourceStage;
     /**
@@ -178,11 +176,6 @@ public class DataSourceSetupController implements Initializable {
             dateSourceStage.setTitle("设置数据源");
             dateSourceStage.initModality(Modality.WINDOW_MODAL);
             dateSourceStage.initOwner(primaryStage);
-            dateSourceStage.addEventHandler(KeyEvent.KEY_RELEASED, event -> {
-                if (KeyCode.ENTER == event.getCode()) {
-                    dateSourceStage.close();
-                }
-            });
         }
         if (null != dataSource) {
             isAdd = false;
@@ -199,7 +192,8 @@ public class DataSourceSetupController implements Initializable {
         urlTextField.textProperty().bindBidirectional(dataSource.urlProperty());
         driveNameTextField.textProperty().bindBidirectional(dataSource.driveNameProperty());
         if (isAdd) {
-            driveTypeComboBox.getSelectionModel().select(0);
+            driveTypeComboBox.getSelectionModel().clearSelection();
+            driveTypeComboBox.getSelectionModel().selectFirst();
         }
 
         testConnectionBtn.setStyle("-fx-background-color: #FFF");
