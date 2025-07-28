@@ -203,6 +203,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         jdbcConnection.setAttribute("password", selectedDateSource.getPassword());
         generatorUtils.addProperty(true, jdbcConnection, "useInformationSchema", "true");
         generatorUtils.addProperty(true, jdbcConnection, "remarks", "true");
+        generatorUtils.addProperty(true, jdbcConnection, "nullCatalogMeansCurrent", "true");
     }
 
     /**
@@ -304,9 +305,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             final Element tableEl = generatorUtils.addElement(context, "table");
             tableEl.setAttribute("tableName", table.getTableName());
 
-            if (BaseConstants.selectedDateSource.getScheme() != null) {
-                tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getScheme());
-            }
+            // if (BaseConstants.selectedDateSource.getScheme() != null) {
+            //     tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getScheme());
+            // }
 
             // 处理 package 领域
             if (exportConfig.isEnableDomain()) {

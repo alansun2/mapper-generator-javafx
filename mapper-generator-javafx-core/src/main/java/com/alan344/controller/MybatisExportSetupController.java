@@ -406,11 +406,12 @@ public class MybatisExportSetupController {
             useLombokBuilderCheckBox.setLayoutY(128);
             mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
 
+            final int selectTab = mybatisExportConfig.getSelectTab();
+            tabPane1.getSelectionModel().select(selectTab);
+
             Label targetNameLabel = new Label("targetName:");
             targetNameLabel.setLayoutX(27);
             targetNameLabel.setLayoutY(25);
-            final int selectTab = mybatisExportConfig.getSelectTab();
-            tabPane1.getSelectionModel().select(selectTab);
 
             Label javaClientTypeLabel = new Label("javaClientType:");
             javaClientTypeLabel.setLayoutX(300);
@@ -419,7 +420,8 @@ public class MybatisExportSetupController {
             javaClientTypeComboBox.setPrefWidth(160);
             javaClientTypeComboBox.setLayoutX(400);
             javaClientTypeComboBox.setLayoutY(20);
-            javaClientTypeComboBox.setValue(mybatisOfficialExportConfig.getJavaClientType());
+            this.setJavaClient(javaClientTypeComboBox, mybatisOfficialExportConfig.getTargetName(),
+                    mybatisOfficialExportConfig.getJavaClientType());
             javaClientTypeComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.javaClientTypeProperty());
 
             // 高级设置按钮
@@ -434,42 +436,18 @@ public class MybatisExportSetupController {
             targetNameJFXComboBox.setPrefWidth(160);
             targetNameJFXComboBox.setLayoutX(115);
             targetNameJFXComboBox.setLayoutY(20);
-            targetNameJFXComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue,
-                                                                                          newValue) -> {
-                switch (newValue) {
-                    case Mybatis3 -> {
-                        javaClientTypeComboBox.setDisable(false);
-                        javaClientTypeComboBox.getItems().clear();
-                        javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.values());
-                        javaClientTypeComboBox.getSelectionModel().select(JavaClientTypeEnum.XMLMAPPER);
-                    }
-                    case MyBatis3Simple -> {
-                        javaClientTypeComboBox.setDisable(false);
-                        javaClientTypeComboBox.getItems().clear();
-                        javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.JAVA_CLIENT_TYPE_ENUMS);
-                        javaClientTypeComboBox.getSelectionModel().select(JavaClientTypeEnum.XMLMAPPER);
-                    }
-                    default -> this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
-                }
-            });
             targetNameJFXComboBox.setValue(mybatisOfficialExportConfig.getTargetName());
             targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
+            targetNameJFXComboBox.getSelectionModel().selectedItemProperty()
+                    .addListener((observable, oldValue,
+                                  newValue) -> this.setJavaClient(javaClientTypeComboBox, newValue,
+                            JavaClientTypeEnum.XMLMAPPER));
 
             anchorPane.getChildren().addAll(userJava8CheckBox, useJpaAnnotationCheckBox, useCommentCheckBox,
                     useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel,
                     javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
             return splitPane;
         });
-    }
-
-    /**
-     * 禁用 javaClientTypeComboBox
-     *
-     * @param javaClientTypeComboBox javaClientTypeComboBox
-     */
-    private void disableJavaClientTypeComboBox(JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox) {
-        javaClientTypeComboBox.setDisable(true);
-        javaClientTypeComboBox.getSelectionModel().clearSelection();
     }
 
     public void valid(String configName) {
@@ -518,5 +496,27 @@ public class MybatisExportSetupController {
         Assert.isTrue(null != selectedItem, "请先新增配置", NodeConstants.primaryStage);
         assert selectedItem != null;
         return selectedItem.getConfig();
+    }
+
+    private void setJavaClient(JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox, TargetNameEnum newValue,
+                               JavaClientTypeEnum value) {
+        switch (newValue) {
+            case Mybatis3 -> {
+                javaClientTypeComboBox.setDisable(false);
+                javaClientTypeComboBox.getItems().clear();
+                javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.values());
+                javaClientTypeComboBox.getSelectionModel().select(value);
+            }
+            case MyBatis3Simple -> {
+                javaClientTypeComboBox.setDisable(false);
+                javaClientTypeComboBox.getItems().clear();
+                javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.JAVA_CLIENT_TYPE_ENUMS);
+                javaClientTypeComboBox.getSelectionModel().select(value);
+            }
+            default -> {
+                javaClientTypeComboBox.setDisable(true);
+                javaClientTypeComboBox.getSelectionModel().clearSelection();
+            }
+        }
     }
 }
