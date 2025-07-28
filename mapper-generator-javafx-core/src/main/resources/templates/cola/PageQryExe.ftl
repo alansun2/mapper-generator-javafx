@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import vip.tuoyang.base.core.bean.request.PageRequest;
 import vip.tuoyang.base.core.bean.response.Page;
 <#assign suffixs = ["PageQry", "PageDTO", "", "Mapper"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 import java.util.stream.Collectors;
 

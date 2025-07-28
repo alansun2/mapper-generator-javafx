@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vip.tuoyang.base.core.bean.response.Page;
 <#assign suffixs = ["ServiceI", "DTO", "PageDTO", "Cmd", "PageQry", "AddCmdExe", "DelByIdCmdExe", "UpdateCmdExe", "ByIdQryExe", "PageQryExe"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

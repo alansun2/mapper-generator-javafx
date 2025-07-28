@@ -9,9 +9,9 @@
     </#list>
 </#macro>
 
-<#macro getPackage prefix suffixs packageMap>
+<#macro getPackage suffixs packageMap>
     <#list suffixs as suffix>
-        <#assign key = prefix + suffix>
+        <#assign key = 'PACKAGE_' + suffix>
         <#assign value = packageMap[key]!>
 import ${value};
     </#list>

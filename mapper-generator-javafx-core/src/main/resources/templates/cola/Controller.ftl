@@ -6,7 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import vip.tuoyang.base.core.bean.response.Page;
 <#assign suffixs = ["ServiceI", "DTO", "PageDTO", "Cmd", "PageQry"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

@@ -265,9 +265,9 @@ public class ExtraTemplateFileController {
 
         // model 后缀
         TextField modelSuffixTextField = new TextField(extraTemplateFileConfig.getModelSuffix());
-        modelSuffixTextField.setPromptText("model 后缀");
+        modelSuffixTextField.setPromptText("类名后缀");
         modelSuffixTextField.setDisable(isSystem);
-        PropertyHBox modelSuffixHbox = new PropertyHBox("model 后缀", labelWidth, modelSuffixTextField);
+        PropertyHBox modelSuffixHbox = new PropertyHBox("类名后缀", labelWidth, modelSuffixTextField);
         vBox.getChildren().add(modelSuffixHbox);
 
         // 是否开启 validation 注解

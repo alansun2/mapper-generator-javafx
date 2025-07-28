@@ -3,7 +3,7 @@ package ${PACKAGE};
 
 import vip.tuoyang.base.core.bean.response.Page;
 <#assign suffixs = ["DTO", "PageDTO", "Cmd", "PageQry"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vip.tuoyang.base.core.support.UserResourceHolder;
 <#assign suffixs = ["DO", "GatewayI", "Mapper"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 import java.util.Optional;
 

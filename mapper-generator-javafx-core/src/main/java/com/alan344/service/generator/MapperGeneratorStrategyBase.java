@@ -156,7 +156,6 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             generatorUtils.addPlugin(ValidationAnnotationPlugin.class.getName());
         }
 
-
         if (exportConfig.isUseJpaAnnotation()) {
             generatorUtils.addPlugin(JpaAnnotationPlugin.class.getName());
         }

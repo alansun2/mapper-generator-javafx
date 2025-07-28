@@ -31,10 +31,27 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
-import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.*;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.CLASS_SUFFIX;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.CUR_DATE_TIME;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.CUSTOM_PARAMS_MAP;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.DOMAIN;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.DOMAIN_DESC;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.FIELDS_UPPER_CAMELS;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.FULL_SUPER_CLASS;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.IGNORE_FIELDS_MAP;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.PACKAGE;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.SUPER_CLASS;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.TYPE_NAME_LOWER_CAMEL;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.TYPE_NAME_LOWER_HYPHEN;
+import static com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin.TemplatePropertyEnum.TYPE_NAME_UPPER_CAMEL;
 
 /**
  * @author AlanSun
@@ -82,7 +99,19 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         /**
          * 自定义参数 map
          */
-        CUSTOM_PARAMS_MAP
+        CUSTOM_PARAMS_MAP,
+        /**
+         * 父类
+         */
+        FULL_SUPER_CLASS,
+        /**
+         * 父类
+         */
+        SUPER_CLASS,
+        /**
+         * 类名后缀
+         */
+        CLASS_SUFFIX
     }
 
     private static final Map<String, Configuration> CONFIGURATION_HASH_MAP = new HashMap<>();
@@ -131,14 +160,16 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         }
     }
 
-    private String getFileName(MybatisExportConfig mybatisExportConfig, ExtraTemplateFileConfig extraTemplateFileConfig, Map<String, Object> modelData) throws IOException {
+    private String getFileName(MybatisExportConfig mybatisExportConfig, ExtraTemplateFileConfig extraTemplateFileConfig,
+                               Map<String, Object> modelData) throws IOException {
         final String upperCamel = modelData.get(TYPE_NAME_UPPER_CAMEL.name()).toString();
 
         final String outPathFromPackage = modelData.get(PACKAGE.name()).toString().replace(StrUtil.DOT, StrUtil.SLASH);
 
         String outputPath = StrUtil.addSuffixIfNot(extraTemplateFileConfig.getOutputPath(), StrUtil.SLASH);
 
-        String suffix = outputPath.contains(":") ? "" : StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(), StrUtil.SLASH);
+        String suffix = outputPath.contains(":") ? "" : StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir(),
+                StrUtil.SLASH);
 
         final File dir = new File(suffix + outputPath + outPathFromPackage + StrUtil.SLASH);
         if (!dir.exists()) {
@@ -163,9 +194,13 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         modelDataMap.put(DOMAIN_DESC.name(), domain.getDd());
         modelDataMap.put(PACKAGE.name(), this.getPackage(extraTemplateFileConfig, domain));
         modelDataMap.put(IGNORE_FIELDS_MAP.name(), modelSuffixIgnoreColumsMap);
+        modelDataMap.put(FULL_SUPER_CLASS.name(), extraTemplateFileConfig.getSuperClass());
+        modelDataMap.put(SUPER_CLASS.name(), PluginUtils.getClassName(extraTemplateFileConfig.getSuperClass()));
+        modelDataMap.put(CLASS_SUFFIX.name(), extraTemplateFileConfig.getModelSuffix());
         final List<IntrospectedColumn> allColumns = introspectedTable.getAllColumns();
         final List<String> fieldUpperCamels = allColumns.stream()
-                .map(introspectedColumn -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, introspectedColumn.getActualColumnName()))
+                .map(introspectedColumn -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL,
+                        introspectedColumn.getActualColumnName()))
                 .collect(Collectors.toList());
         modelDataMap.put(FIELDS_UPPER_CAMELS.name(), fieldUpperCamels);
 
@@ -173,13 +208,14 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
         modelDataMap.putAll(ConfigConstants.globalParam);
 
         final Map<String, String> namePackageMap = ConfigConstants.namePackageMap;
-        namePackageMap.forEach((s, s2) -> {
-            if (s.startsWith(upperCamel)) {
-                namePackageMap.put(s, PluginUtils.parse(s2, domain));
+        final Map<String, String> suffixPackageMap = new HashMap<>(8);
+        namePackageMap.forEach((key, packageName) -> {
+            if (key.startsWith(upperCamel)) {
+                suffixPackageMap.put("PACKAGE_" + key.replace(upperCamel, ""), PluginUtils.parse(packageName, domain));
             }
         });
         // 包名
-        modelDataMap.put(CUSTOM_PARAMS_MAP.name(), namePackageMap);
+        modelDataMap.put(CUSTOM_PARAMS_MAP.name(), suffixPackageMap);
 
         return modelDataMap;
     }
@@ -233,6 +269,8 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
                 ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/cola/");
             } else if (filePath.contains("layer")) {
                 ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/layer/");
+            } else if (filePath.contains("mybatis-flex")) {
+                ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/mybatis-flex/");
             }
 
             TemplateLoader[] loaders;
