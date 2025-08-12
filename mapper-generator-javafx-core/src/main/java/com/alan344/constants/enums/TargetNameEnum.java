@@ -10,6 +10,7 @@ public enum TargetNameEnum {
      */
     Mybatis3,
     MyBatis3Simple,
+    MyBatis3Flex,
     MyBatis3DynamicSql,
     MyBatis3Kotlin
 }

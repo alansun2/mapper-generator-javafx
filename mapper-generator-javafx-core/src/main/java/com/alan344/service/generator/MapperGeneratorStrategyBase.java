@@ -144,7 +144,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         // 添加序列化接口插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
         final MybatisExportConfig.MybatisOfficialExportConfig exportConfig =
-                mybatisExportConfig.getMybatisOfficialExportConfig();
+                mybatisExportConfig.getMybatisExportConfig();
 
         // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
@@ -282,9 +282,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 StringUtils.getDefaultIfNull(mybatisExportConfig.getMapperPackage(), "."));
         javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir()
                 , StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
-        if (null != mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType()) {
+        if (null != mybatisExportConfig.getMybatisExportConfig().getJavaClientType()) {
             javaClientGenerator.setAttribute("type",
-                    mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType().name());
+                    mybatisExportConfig.getMybatisExportConfig().getJavaClientType().name());
         }
         // Mapper 接口
         final String mapperRootInterface = mybatisExportConfig.getMapperRootInterface();

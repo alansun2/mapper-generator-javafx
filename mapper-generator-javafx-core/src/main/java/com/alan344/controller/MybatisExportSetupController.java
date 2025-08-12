@@ -12,6 +12,7 @@ import com.alan344.component.PropertyPane;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
+import com.alan344.constants.enums.FrameworkTypeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;
 import com.alan344.constants.enums.TargetNameEnum;
@@ -240,6 +241,10 @@ public class MybatisExportSetupController {
                     new JFXComboBox<>(FXCollections.observableArrayList(LanguageEnum.values()));
             MybatisExportItemHBox languageHbox = new MybatisExportItemHBox("语言:", languageComboBox);
 
+            JFXComboBox<FrameworkTypeEnum> frameworkComboBox =
+                    new JFXComboBox<>(FXCollections.observableArrayList(FrameworkTypeEnum.values()));
+            MybatisExportItemHBox frameworkHbox = new MybatisExportItemHBox("框架:", frameworkComboBox);
+
             FileSelectTextToggleHBox beanLocationText = new FileSelectTextToggleHBox("浏览",
                     mybatisExportConfig.modelEnableProperty(), mybatisExportConfig.getBeanLocation());
             mybatisExportConfig.beanLocationProperty().bindBidirectional(beanLocationText.getTextField().textProperty());
@@ -353,23 +358,16 @@ public class MybatisExportSetupController {
             mybatisExportConfig.languageProperty().bindBidirectional(languageComboBox.valueProperty());
 
             hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox
-                    , languageHbox,
+                    , languageHbox, frameworkHbox,
                     beanLocationHbox, beanPackageHbox, beanRootClassHbox, mapperLocationHbox, mapperPackageHbox,
                     mapperRootInterfaceHbox, xmlLocationHbox, globalIgnoreFieldHbox);
 
-            TabPane tabPane1 = new TabPane();
-            tabPane1.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-            splitPane.getItems().add(tabPane1);
-            tabPane1.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
-                final int selectedIndex = newValue.getSelectedIndex();
-                mybatisExportConfig.setSelectTab(selectedIndex);
-            });
+            // 底下的配置
             AnchorPane anchorPane = new AnchorPane();
-            Tab tab = new Tab("Official", anchorPane);
-            tabPane1.getTabs().add(tab);
+            splitPane.getItems().add(anchorPane);
 
             final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
-                    mybatisExportConfig.getMybatisOfficialExportConfig();
+                    mybatisExportConfig.getMybatisExportConfig();
             JFXCheckBox userJava8CheckBox = new JFXCheckBox("支持 java8");
             userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
             userJava8CheckBox.setLayoutX(27);
@@ -405,9 +403,6 @@ public class MybatisExportSetupController {
             useLombokBuilderCheckBox.setLayoutX(27);
             useLombokBuilderCheckBox.setLayoutY(128);
             mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
-
-            final int selectTab = mybatisExportConfig.getSelectTab();
-            tabPane1.getSelectionModel().select(selectTab);
 
             Label targetNameLabel = new Label("targetName:");
             targetNameLabel.setLayoutX(27);
@@ -518,5 +513,11 @@ public class MybatisExportSetupController {
                 javaClientTypeComboBox.getSelectionModel().clearSelection();
             }
         }
+    }
+
+    private void addMybatisFlex(TabPane tabPane) {
+        AnchorPane anchorPane = new AnchorPane();
+        Tab tab = new Tab("Mybatis-Flex", anchorPane);
+        tabPane.getTabs().add(tab);
     }
 }

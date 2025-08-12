@@ -3,12 +3,12 @@ package com.alan344.bean.config;
 import cn.hutool.core.util.StrUtil;
 import com.alan344.component.LeftRightLinkageBorderPane;
 import com.alan344.constants.enums.FileWriteModeEnum;
+import com.alan344.constants.enums.FrameworkTypeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;
 import com.alan344.constants.enums.TargetNameEnum;
 import com.alibaba.fastjson2.JSON;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
@@ -35,6 +35,11 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
      * 是否是系统内置
      */
     private final SimpleBooleanProperty system = new SimpleBooleanProperty(false);
+
+    /**
+     * 框架类型
+     */
+    private final SimpleObjectProperty<FrameworkTypeEnum> frameworkType = new SimpleObjectProperty<>(FrameworkTypeEnum.OFFICIAL);
 
     /**
      * 类中的作者信息
@@ -122,11 +127,6 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     private final SimpleBooleanProperty useActualColumnNames = new SimpleBooleanProperty(false);
 
     /**
-     * 选择的哪个tab
-     */
-    private final SimpleIntegerProperty selectTab = new SimpleIntegerProperty(0);
-
-    /**
      * 是否导出额外文件
      */
     @Getter
@@ -138,7 +138,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
      */
     @Getter
     @Setter
-    private MybatisOfficialExportConfig mybatisOfficialExportConfig = new MybatisOfficialExportConfig();
+    private MybatisOfficialExportConfig mybatisExportConfig;
 
     //---------------------extra file----------------
 
@@ -198,6 +198,18 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     @Override
     public void setSystem(boolean system) {
         this.system.set(system);
+    }
+
+    public FrameworkTypeEnum getFrameworkType() {
+        return frameworkType.get();
+    }
+
+    public SimpleObjectProperty<FrameworkTypeEnum> frameworkTypeProperty() {
+        return frameworkType;
+    }
+
+    public void setFrameworkType(FrameworkTypeEnum frameworkType) {
+        this.frameworkType.set(frameworkType);
     }
 
     public FileWriteModeEnum getWriteMode() {
@@ -390,18 +402,6 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
     public void setGlobalIgnoreField(String globalIgnoreField) {
         this.globalIgnoreField.set(globalIgnoreField);
-    }
-
-    public int getSelectTab() {
-        return selectTab.get();
-    }
-
-    public SimpleIntegerProperty selectTabProperty() {
-        return selectTab;
-    }
-
-    public void setSelectTab(int selectTab) {
-        this.selectTab.set(selectTab);
     }
 
     public String getModelRootClass() {
