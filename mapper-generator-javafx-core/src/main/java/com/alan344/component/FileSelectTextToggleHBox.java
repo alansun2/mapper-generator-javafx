@@ -27,7 +27,7 @@ public class FileSelectTextToggleHBox extends HBox {
         jfxToggleButton.setPadding(new Insets(-25, 0, -25, 0));
         jfxToggleButton.setSelected(curToggle.get());
         jfxToggleButton.setStyle("-fx-background-color: blue; -fx-border-width: 1");
-        curToggle.bind(jfxToggleButton.selectedProperty());
+        curToggle.bindBidirectional(jfxToggleButton.selectedProperty());
 
         button = new Button(btnName);
         button.setPrefWidth(64);

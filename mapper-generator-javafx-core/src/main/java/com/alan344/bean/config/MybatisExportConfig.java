@@ -138,7 +138,7 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
      */
     @Getter
     @Setter
-    private MybatisOfficialExportConfig mybatisExportConfig;
+    private MybatisOfficialExportConfig mybatisExportConfig = new MybatisOfficialExportConfig();
 
     //---------------------extra file----------------
 
