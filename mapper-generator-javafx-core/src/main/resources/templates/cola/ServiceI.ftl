@@ -1,7 +1,7 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import vip.tuoyang.base.core.bean.response.Page;
+import com.xxxx.base.core.bean.response.Page;
 <#assign suffixs = ["DTO", "PageDTO", "Cmd", "PageQry"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 

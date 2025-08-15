@@ -4,7 +4,7 @@ package ${PACKAGE};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import vip.tuoyang.base.core.bean.response.Page;
+import com.xxxx.base.core.bean.response.Page;
 <#assign suffixs = ["ServiceI", "DTO", "PageDTO", "Cmd", "PageQry"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 

@@ -146,6 +146,9 @@ public class PluginUtils {
      * @return 简单类名，即完整类名中最后一个点号之后的部分，例如 "MyClass"
      */
     public static String getClassName(String fullName) {
+        if (fullName == null) {
+            return null;
+        }
         return fullName.substring(fullName.lastIndexOf(".") + 1);
     }
 

@@ -1,6 +1,7 @@
+<#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import com.mybatisflex.spring.service.impl.ServiceImpl;
+import ${FULL_SUPER_CLASS};
 <#assign suffixs = ["", "Mapper", "Service"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 import org.springframework.stereotype.Service;
@@ -10,6 +11,6 @@ import org.springframework.stereotype.Service;
  * @since ${CUR_DATE_TIME}
  */
 @Service
-public class ${TYPE_NAME_UPPER_CAMEL}${CLASS_SUFFIX} extends ServiceImpl<${TYPE_NAME_UPPER_CAMEL}Mapper, ${TYPE_NAME_UPPER_CAMEL}> implements ${CUSTOM_PARAMS_MAP["CLASS_Service"]} {
+public class ${TYPE_NAME_UPPER_CAMEL}${CLASS_SUFFIX} extends ${SUPER_CLASS}<${TYPE_NAME_UPPER_CAMEL}Mapper, ${TYPE_NAME_UPPER_CAMEL}> implements ${TYPE_NAME_UPPER_CAMEL}Service {
 
 }

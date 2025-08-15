@@ -82,7 +82,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
         context = generatorUtils.addElement(root, "context");
         context.setAttribute("id", "context1");
-        context.setAttribute("targetRuntime", exportConfig.getTargetName().name());
+        context.setAttribute("targetRuntime", exportConfig.getTargetName().getValue());
 
         // 添加 context 属性
         this.addContextProperty(generatorUtils);

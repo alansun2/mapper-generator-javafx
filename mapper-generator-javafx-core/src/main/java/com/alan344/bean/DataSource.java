@@ -65,7 +65,6 @@ public class DataSource implements DataItem {
     public String getScheme() {
         final DriverEnum driver = this.getDriver();
         if (driver.equals(DriverEnum.MYSQL_8)) {
-            // jdbc:mysql://mysql_dev.tuoyang.vip:3306/school_safety
             String url = this.getUrl();
             final int startIndex = url.indexOf("/", 13);
             if (url.contains("?")) {

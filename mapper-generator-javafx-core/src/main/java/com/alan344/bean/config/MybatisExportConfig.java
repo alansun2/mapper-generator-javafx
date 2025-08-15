@@ -523,11 +523,18 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
          * 使用 validation 注解
          */
         private SimpleBooleanProperty useValidationAnnotation = new SimpleBooleanProperty(true);
-
         /**
          * 是否开启领域，开启后如果数据库表注释存在类似 {"d":"","dd":""} {@link com.alan344.mybatisplugin.PluginUtils.Domain}
          */
         private SimpleBooleanProperty enableDomain = new SimpleBooleanProperty(false);
+        /**
+         * 逻辑删除字段
+         */
+        private SimpleStringProperty logicDeleteField = new SimpleStringProperty();
+        /**
+         * 乐观锁字段
+         */
+        private SimpleStringProperty version = new SimpleStringProperty();
 
         @Override
         public TargetNameEnum getTargetName() {
@@ -643,6 +650,30 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
         public void setUseValidationAnnotation(final boolean useValidationAnnotation) {
             this.useValidationAnnotation.set(useValidationAnnotation);
+        }
+
+        public String getLogicDeleteField() {
+            return logicDeleteField.get();
+        }
+
+        public SimpleStringProperty logicDeleteFieldProperty() {
+            return logicDeleteField;
+        }
+
+        public void setLogicDeleteField(final String logicDeleteField) {
+            this.logicDeleteField.set(logicDeleteField);
+        }
+
+        public String getVersion() {
+            return version.get();
+        }
+
+        public SimpleStringProperty versionProperty() {
+            return version;
+        }
+
+        public void setVersion(final String version) {
+            this.version.set(version);
         }
 
         @Override

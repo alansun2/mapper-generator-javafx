@@ -4,8 +4,8 @@ package ${PACKAGE};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import vip.tuoyang.base.core.bean.response.Page;
-<#assign suffixs = ["ServiceI", "DTO", "PageDTO", "Cmd", "PageQry"]>
+import com.xxxx.base.core.bean.response.Page;
+<#assign suffixs = ["Service", "DTO", "PageDTO", "Cmd", "PageQry"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**
@@ -16,7 +16,7 @@ import vip.tuoyang.base.core.bean.response.Page;
 @RequestMapping(value = "/${TYPE_NAME_LOWER_HYPHEN}")
 public class ${TYPE_NAME_UPPER_CAMEL}Controller {
     @Autowired
-    private ${TYPE_NAME_UPPER_CAMEL}ServiceI ${TYPE_NAME_LOWER_CAMEL}ServiceI;
+    private ${TYPE_NAME_UPPER_CAMEL}Service ${TYPE_NAME_LOWER_CAMEL}Service;
 
     /**
      * 添加${DOMAIN_DESC}
@@ -25,7 +25,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      */
     @PostMapping
     public void add${TYPE_NAME_UPPER_CAMEL}(@Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
-        ${TYPE_NAME_LOWER_CAMEL}ServiceI.add${TYPE_NAME_UPPER_CAMEL}(cmd);
+        ${TYPE_NAME_LOWER_CAMEL}Service.add${TYPE_NAME_UPPER_CAMEL}(cmd);
     }
 
     /**
@@ -36,7 +36,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      */
     @GetMapping(value = "/page")
     public Page<${TYPE_NAME_UPPER_CAMEL}PageDTO> get${TYPE_NAME_UPPER_CAMEL}Page(${TYPE_NAME_UPPER_CAMEL}PageQry qry) {
-        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}Page(qry);
+        return ${TYPE_NAME_LOWER_CAMEL}Service.get${TYPE_NAME_UPPER_CAMEL}Page(qry);
     }
 
     /**
@@ -47,7 +47,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      */
     @GetMapping(value = "/{id}")
     public ${TYPE_NAME_UPPER_CAMEL}DTO get${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
-        return ${TYPE_NAME_LOWER_CAMEL}ServiceI.get${TYPE_NAME_UPPER_CAMEL}ById(id);
+        return ${TYPE_NAME_LOWER_CAMEL}Service.get${TYPE_NAME_UPPER_CAMEL}ById(id);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
     @PutMapping(value = "/{id}")
     public void update${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id, @Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
         cmd.setId(id);
-        ${TYPE_NAME_LOWER_CAMEL}ServiceI.update${TYPE_NAME_UPPER_CAMEL}ById(cmd);
+        ${TYPE_NAME_LOWER_CAMEL}Service.update${TYPE_NAME_UPPER_CAMEL}ById(cmd);
     }
 
     /**
@@ -69,6 +69,6 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      */
     @DeleteMapping(value = "/{id}")
     public void delete${TYPE_NAME_UPPER_CAMEL}ById(@PathVariable("id") Long id) {
-        ${TYPE_NAME_LOWER_CAMEL}ServiceI.delete${TYPE_NAME_UPPER_CAMEL}ById(id);
+        ${TYPE_NAME_LOWER_CAMEL}Service.delete${TYPE_NAME_UPPER_CAMEL}ById(id);
     }
 }

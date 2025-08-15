@@ -34,7 +34,7 @@ public class MainView extends Application {
         // 图标
         primaryStage.getIcons().add(new Image("/image/icon.png"));
         primaryStage.setWidth(1200);
-        primaryStage.setHeight(720);
+        primaryStage.setHeight(780);
         primaryStage.setTitle("Mybatis Friend");
         primaryStage.show();
     }

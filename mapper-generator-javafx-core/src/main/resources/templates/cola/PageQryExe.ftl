@@ -6,8 +6,8 @@ import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vip.tuoyang.base.core.bean.request.PageRequest;
-import vip.tuoyang.base.core.bean.response.Page;
+import com.xxxx.base.core.bean.request.PageRequest;
+import com.xxxx.base.core.bean.response.Page;
 <#assign suffixs = ["PageQry", "PageDTO", "", "Mapper"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 

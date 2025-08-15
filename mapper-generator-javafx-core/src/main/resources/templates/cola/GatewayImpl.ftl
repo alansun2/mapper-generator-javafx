@@ -6,9 +6,9 @@ import org.mybatis.dynamic.sql.SqlBuilder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vip.tuoyang.base.core.constants.BaseConstants;
-import vip.tuoyang.base.core.support.UserResourceHolder;
-import vip.tuoyang.base.core.util.AssertUtils;
+import com.xxxx.base.core.constants.BaseConstants;
+import com.xxxx.base.core.support.UserResourceHolder;
+import com.xxxx.base.core.util.AssertUtils;
 <#assign suffixs = ["DO", "GatewayI", "DOConvertMapper", "", "Mapper"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 

@@ -4,7 +4,7 @@ package ${PACKAGE};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vip.tuoyang.base.core.bean.response.Page;
+import com.xxxx.base.core.bean.response.Page;
 <#assign suffixs = ["ServiceI", "DTO", "PageDTO", "Cmd", "PageQry", "AddCmdExe", "DelByIdCmdExe", "UpdateCmdExe", "ByIdQryExe", "PageQryExe"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 

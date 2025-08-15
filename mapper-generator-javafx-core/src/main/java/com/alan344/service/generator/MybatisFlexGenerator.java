@@ -6,7 +6,7 @@ import com.alan344.mybatisplugin.DomainPlugin;
 import com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin;
 import com.alan344.mybatisplugin.ExtraFileJPAlGeneratorPlugin;
 import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
-import com.alan344.mybatisplugin.JpaAnnotationPlugin;
+import com.alan344.mybatisplugin.MybatisFlexPlugin;
 import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
 import com.alan344.mybatisplugin.SerializablePlugin;
 import com.alan344.mybatisplugin.ValidationAnnotationPlugin;
@@ -44,6 +44,8 @@ public class MybatisFlexGenerator extends MapperGeneratorStrategyBase {
         generatorUtils.addProperty(exportConfig.isUseLombokGetSet(), lombok, "getter", "true");
         generatorUtils.addProperty(exportConfig.isUseLombokGetSet(), lombok, "setter", "true");
         generatorUtils.addProperty(exportConfig.isUseLombokBuilder(), lombok, "builder", "true");
+
+        generatorUtils.addPlugin(MybatisFlexPlugin.class.getName());
 
         if (exportConfig.isUseValidationAnnotation()) {
             generatorUtils.addPlugin(ValidationAnnotationPlugin.class.getName());

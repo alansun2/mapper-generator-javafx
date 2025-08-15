@@ -76,9 +76,12 @@ public class MyCommentGenerator implements CommentGenerator {
 
         topLevelClass.addJavaDocLine("/**");
         topLevelClass.addJavaDocLine(" * @author " + author);
-        topLevelClass.addJavaDocLine(" * @date " + LocalDateTime.now().format(dateFormat));
+        topLevelClass.addJavaDocLine(" * @since " + LocalDateTime.now().format(dateFormat));
         topLevelClass.addJavaDocLine(" * <p>");
-        topLevelClass.addJavaDocLine(" * " + introspectedTable.getRemarks() + "对应表: " + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName());
+        topLevelClass.addJavaDocLine(" * 对应表: " + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName());
+        if (introspectedTable.getRemarks() != null) {
+            topLevelClass.addJavaDocLine(" * 注释" + introspectedTable.getRemarks());
+        }
         topLevelClass.addJavaDocLine(" */");
     }
 
