@@ -78,7 +78,7 @@ public class DataSourceService {
         // 删除旧的数据源文件
         this.deleteDataSourceFile(oldDataSource);
 
-        // 保存配置
+        // 保存
         try {
             this.downLoadToFile(newDataSource);
         } catch (IOException e) {

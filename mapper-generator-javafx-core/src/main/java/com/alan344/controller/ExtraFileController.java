@@ -92,12 +92,12 @@ public class ExtraFileController {
         openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties(mybatisExportConfig));
         openExtraPropertyStageBtn.setPrefWidth(100);
         openExtraTemplateFileStageBtn.setPrefWidth(100);
-        Button saveBtn = new Button("保存配置");
+        Button saveBtn = new Button("保存");
         saveBtn.setOnAction(event -> {
             exportService.saveSetup();
 
             // 保存成功 dialog
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置","成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存","成功");
         });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");

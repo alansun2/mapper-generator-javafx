@@ -156,7 +156,7 @@ public class ExtraTemplateFileController {
             consumer.accept(selectedItem.getConfig(), extraTemplateFileConfigs);
         });
 
-        Button saveBtn = new Button("保存配置");
+        Button saveBtn = new Button("保存");
         saveBtn.setPrefWidth(70);
         saveBtn.setOnAction(event -> {
             final List<ExtraTemplateFileGroupConfig> items =
@@ -167,7 +167,7 @@ public class ExtraTemplateFileController {
             // saveBtn.setDisable(true);
 
             // 保存成功 dialog
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置", "成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存", "成功");
         });
 
         Button addBtn = new Button("添加");
