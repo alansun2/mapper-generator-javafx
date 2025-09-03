@@ -3,7 +3,16 @@ package com.alan344.component;
 import com.alan344.utils.NameUtils;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -28,7 +37,8 @@ import java.util.function.Supplier;
  * @author AlanSun
  * @date 2023/2/4 0:10
  */
-public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.GroupName, GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {
+public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.GroupName,
+        GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {
     private final ListView<GI> groupListView = new ListView<>();
     private final BorderPane borderPane = new BorderPane();
     private final Stage stage;
@@ -66,7 +76,7 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 this.showRight(newValue.getConfig(), rightNodeFunc);
             }
         });
-        groupListView.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+        groupListView.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             final GI selectedItem = groupListView.getSelectionModel().getSelectedItem();
             if (event.getButton() == MouseButton.SECONDARY) {
                 // open context menu on current screen position

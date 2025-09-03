@@ -5,9 +5,9 @@ package ${PACKAGE};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vip.tuoyang.base.core.bean.response.Page;
+import com.xxxx.base.core.bean.response.Page;
 <#assign suffixs = ["", "DTO", "PageDTO", "Cmd", "PageQry", "Mapper"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 import java.util.Optional;
 /**

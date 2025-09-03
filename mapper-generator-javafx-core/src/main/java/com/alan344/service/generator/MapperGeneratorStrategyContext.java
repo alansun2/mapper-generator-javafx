@@ -18,11 +18,12 @@ public class MapperGeneratorStrategyContext {
     private MybatisPluginService mybatisPluginService;
 
     public MapperGeneratorStrategy getMapperGeneratorStrategy(MybatisExportConfig mybatisExportConfig) {
-        final int selectTab = mybatisExportConfig.getSelectTab();
         final List<MybatisPluginConfig> byIds = mybatisPluginService.getByIds(mybatisExportConfig.getPluginIds());
-        switch (selectTab) {
+        switch (mybatisExportConfig.getFrameworkType()) {
+            case MYBATIS_FLEX:
+                return new MybatisFlexGenerator(mybatisExportConfig.getMybatisExportConfig(), byIds);
             default:
-                return new ServiceMybatisGenerator(mybatisExportConfig.getMybatisOfficialExportConfig(), byIds);
+                return new OfficialMybatisGenerator(mybatisExportConfig.getMybatisExportConfig(), byIds);
         }
     }
 }

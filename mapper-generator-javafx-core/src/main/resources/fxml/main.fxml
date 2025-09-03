@@ -58,7 +58,7 @@
             </MenuBar>
         </top>
         <center>
-            <SplitPane dividerPositions="0.15">
+            <SplitPane dividerPositions="0.15" style="-fx-border-width: 2 0 0 0; -fx-border-color: #E8E8E8">
                 <BorderPane maxWidth="400.0" minWidth="300" prefWidth="300.0">
                     <top>
                         <HBox fx:id="tableFindTextFieldHbox"

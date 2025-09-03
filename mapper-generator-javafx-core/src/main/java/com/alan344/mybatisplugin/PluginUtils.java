@@ -134,7 +134,22 @@ public class PluginUtils {
                 return Domain.DOMAIN;
             }
         });
+    }
 
+    /**
+     * 从完整类名中提取简单类名
+     * <p>
+     * 该方法接收一个完整的类名（包含包路径），通过查找最后一个点号（.）的位置，
+     * 截取点号之后的部分作为简单类名返回。
+     *
+     * @param fullName 完整的类名，包含包路径，例如 "com.example.MyClass"
+     * @return 简单类名，即完整类名中最后一个点号之后的部分，例如 "MyClass"
+     */
+    public static String getClassName(String fullName) {
+        if (fullName == null) {
+            return null;
+        }
+        return fullName.substring(fullName.lastIndexOf(".") + 1);
     }
 
     @Getter

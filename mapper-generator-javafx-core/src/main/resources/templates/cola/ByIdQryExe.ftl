@@ -4,10 +4,10 @@ package ${PACKAGE};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import vip.tuoyang.base.core.constants.BaseConstants;
-import vip.tuoyang.base.core.util.AssertUtils;
+import com.xxxx.base.core.constants.BaseConstants;
+import com.xxxx.base.core.util.AssertUtils;
 <#assign suffixs = ["DO", "GatewayI", "DTO"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 import java.util.Optional;
 

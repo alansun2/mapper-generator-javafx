@@ -4,7 +4,7 @@ package ${PACKAGE};
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 <#assign suffixs = ["DO", "GatewayI", "Cmd"]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

@@ -11,19 +11,10 @@ import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.TablePropertyConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
-import com.alan344.mybatisplugin.DomainPlugin;
-import com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin;
-import com.alan344.mybatisplugin.ExtraFileJPAlGeneratorPlugin;
-import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
-import com.alan344.mybatisplugin.JpaAnnotationPlugin;
-import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
 import com.alan344.mybatisplugin.PluginUtils;
-import com.alan344.mybatisplugin.SerializablePlugin;
-import com.alan344.mybatisplugin.ValidationAnnotationPlugin;
 import com.alan344.utils.MyShellCallback;
 import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
-import com.github.uinio.mybatis.LombokPlugin;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.api.MyBatisGenerator;
@@ -46,7 +37,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import static com.alan344.mybatisplugin.PluginUtils.Domain.DOMAIN;
 
@@ -65,7 +55,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
     private Element context;
 
-    private final List<MybatisPluginConfig> mybatisPluginConfigs;
+    protected final List<MybatisPluginConfig> mybatisPluginConfigs;
 
     static {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -92,7 +82,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
 
         context = generatorUtils.addElement(root, "context");
         context.setAttribute("id", "context1");
-        context.setAttribute("targetRuntime", exportConfig.getTargetName().name());
+        context.setAttribute("targetRuntime", exportConfig.getTargetName().getValue());
 
         // 添加 context 属性
         this.addContextProperty(generatorUtils);
@@ -134,48 +124,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
     /**
      * 添加插件
      */
-    protected void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig) {
-        // 添加自定义插件
-        Optional.ofNullable(this.mybatisPluginConfigs).ifPresent(mybatisPluginConfigs -> {
-            for (MybatisPluginConfig mybatisPluginConfig : mybatisPluginConfigs) {
-                generatorUtils.addPlugin(mybatisPluginConfig.getClassName());
-            }
-        });
-        // 添加序列化接口插件
-        generatorUtils.addPlugin(SerializablePlugin.class.getName());
-        final MybatisExportConfig.MybatisOfficialExportConfig exportConfig =
-                mybatisExportConfig.getMybatisOfficialExportConfig();
-
-        // lombok 插件
-        final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());
-        generatorUtils.addProperty(exportConfig.isUseLombokGetSet(), lombok, "getter", "true");
-        generatorUtils.addProperty(exportConfig.isUseLombokGetSet(), lombok, "setter", "true");
-        generatorUtils.addProperty(exportConfig.isUseLombokBuilder(), lombok, "builder", "true");
-
-        if (exportConfig.isUseValidationAnnotation()) {
-            generatorUtils.addPlugin(ValidationAnnotationPlugin.class.getName());
-        }
-
-
-        if (exportConfig.isUseJpaAnnotation()) {
-            generatorUtils.addPlugin(JpaAnnotationPlugin.class.getName());
-        }
-
-        if (mybatisExportConfig.isExportExtraFile()) {
-            // 额外 model 生成插件
-            generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
-            // JPA
-            generatorUtils.addPlugin(ExtraFileJPAlGeneratorPlugin.class.getName());
-            // 额外的模板文件生成插件
-            generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
-        }
-
-        // 用于控制是否生成对应的 mybatis 文件
-        generatorUtils.addPlugin(MybatisGeneratorPlugin.class.getName());
-
-        // 修改 domain 类名
-        generatorUtils.addPlugin(DomainPlugin.class.getName());
-    }
+    protected abstract void addPlugin(GeneratorUtils generatorUtils, MybatisExportConfig mybatisExportConfig);
 
     /**
      * 添加注释
@@ -203,6 +152,7 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
         jdbcConnection.setAttribute("password", selectedDateSource.getPassword());
         generatorUtils.addProperty(true, jdbcConnection, "useInformationSchema", "true");
         generatorUtils.addProperty(true, jdbcConnection, "remarks", "true");
+        generatorUtils.addProperty(true, jdbcConnection, "nullCatalogMeansCurrent", "true");
     }
 
     /**
@@ -282,9 +232,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
                 StringUtils.getDefaultIfNull(mybatisExportConfig.getMapperPackage(), "."));
         javaClientGenerator.setAttribute("targetProject", (StrUtil.addSuffixIfNot(mybatisExportConfig.getProjectDir()
                 , StrUtil.SLASH) + mybatisExportConfig.getMapperLocation()).replace(StrUtil.BACKSLASH, StrUtil.SLASH));
-        if (null != mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType()) {
+        if (null != mybatisExportConfig.getMybatisExportConfig().getJavaClientType()) {
             javaClientGenerator.setAttribute("type",
-                    mybatisExportConfig.getMybatisOfficialExportConfig().getJavaClientType().name());
+                    mybatisExportConfig.getMybatisExportConfig().getJavaClientType().name());
         }
         // Mapper 接口
         final String mapperRootInterface = mybatisExportConfig.getMapperRootInterface();
@@ -304,9 +254,9 @@ public abstract class MapperGeneratorStrategyBase implements MapperGeneratorStra
             final Element tableEl = generatorUtils.addElement(context, "table");
             tableEl.setAttribute("tableName", table.getTableName());
 
-            if (BaseConstants.selectedDateSource.getScheme() != null) {
-                tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getScheme());
-            }
+            // if (BaseConstants.selectedDateSource.getScheme() != null) {
+            //     tableEl.setAttribute("catalog", BaseConstants.selectedDateSource.getScheme());
+            // }
 
             // 处理 package 领域
             if (exportConfig.isEnableDomain()) {

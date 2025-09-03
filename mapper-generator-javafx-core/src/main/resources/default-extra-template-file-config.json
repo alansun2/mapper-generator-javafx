@@ -17,8 +17,8 @@
         "defaultPackageSuffix": "dto.data.${DOMAIN}",
         "modelSuffix": "DTO",
         "name": "DTO",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.data.${DOMAIN}"
       },
       {
         "id": "cola-2",
@@ -34,8 +34,8 @@
         "defaultPackageSuffix": "dto.data.${DOMAIN}",
         "modelSuffix": "PageDTO",
         "name": "PageDTO",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.data.${DOMAIN}"
       },
       {
         "id": "cola-3",
@@ -51,8 +51,8 @@
         "defaultPackageSuffix": "domain.${DOMAIN}",
         "modelSuffix": "DO",
         "name": "DO",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-domain/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.domain.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-domain/src/main/java",
+        "packageName": "com.test.service.domain.${DOMAIN}"
       },
       {
         "id": "cola-4",
@@ -68,8 +68,8 @@
         "defaultPackageSuffix": "dto.${DOMAIN}",
         "modelSuffix": "Cmd",
         "name": "Cmd",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.${DOMAIN}"
       },
       {
         "id": "cola-5",
@@ -85,9 +85,9 @@
         "defaultPackageSuffix": "dto.${DOMAIN}",
         "modelSuffix": "PageQry",
         "name": "PageQry",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}",
-        "superClass": "vip.tuoyang.base.core.bean.request.PageRequest"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.${DOMAIN}",
+        "superClass": "com.test.base.core.bean.request.PageRequest"
       },
       {
         "id": "cola-6",
@@ -103,8 +103,8 @@
         "defaultPackageSuffix": "${DOMAIN}.executor",
         "modelSuffix": "AddCmdExe",
         "name": "AddCmdExe",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}.executor"
       },
       {
         "id": "cola-7",
@@ -120,8 +120,8 @@
         "defaultPackageSuffix": "${DOMAIN}.executor",
         "modelSuffix": "UpdateCmdExe",
         "name": "UpdateCmdExe",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}.executor"
       },
       {
         "id": "cola-8",
@@ -137,8 +137,8 @@
         "defaultPackageSuffix": "${DOMAIN}.executor",
         "modelSuffix": "DelByIdCmdExe",
         "name": "DelByIdCmdExe",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}.executor"
       },
       {
         "id": "cola-9",
@@ -154,8 +154,8 @@
         "defaultPackageSuffix": "${DOMAIN}.executor.query",
         "modelSuffix": "ByIdQryExe",
         "name": "ByIdQryExe",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor.query"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}.executor.query"
       },
       {
         "id": "cola-10",
@@ -171,8 +171,8 @@
         "defaultPackageSuffix": "${DOMAIN}.executor.query",
         "modelSuffix": "PageQryExe",
         "name": "PageQryExe",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.executor.query"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}.executor.query"
       },
       {
         "id": "cola-11",
@@ -188,8 +188,8 @@
         "defaultPackageSuffix": "${DOMAIN}",
         "modelSuffix": "ServiceImpl",
         "name": "ServiceImpl",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}"
       },
       {
         "id": "cola-12",
@@ -205,8 +205,8 @@
         "defaultPackageSuffix": "api.${DOMAIN}",
         "modelSuffix": "ServiceI",
         "name": "ServiceI",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.api.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.api.${DOMAIN}"
       },
       {
         "id": "cola-13",
@@ -222,8 +222,8 @@
         "defaultPackageSuffix": "web.${DOMAIN}",
         "modelSuffix": "Controller",
         "name": "Controller",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-adapter/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.web"
+        "outputPath": "D:/project/xxx-service-adapter/src/main/java",
+        "packageName": "com.test.service.web"
       },
       {
         "id": "cola-14",
@@ -239,8 +239,8 @@
         "defaultPackageSuffix": "domain.${DOMAIN}",
         "modelSuffix": "GatewayI",
         "name": "GatewayI",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-domain/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.domain.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-domain/src/main/java",
+        "packageName": "com.test.service.domain.${DOMAIN}"
       },
       {
         "id": "cola-15",
@@ -256,8 +256,8 @@
         "defaultPackageSuffix": "${DOMAIN}",
         "modelSuffix": "GatewayImpl",
         "name": "GatewayImpl",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-infrastructure/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-infrastructure/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}"
       },
       {
         "id": "cola-16",
@@ -273,8 +273,8 @@
         "defaultPackageSuffix": "${DOMAIN}.convert",
         "modelSuffix": "DOConvertMapper",
         "name": "DOConvertMapper",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-infrastructure/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}.convert"
+        "outputPath": "D:/project/xxx-service-infrastructure/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}.convert"
       }
     ]
   },
@@ -295,8 +295,8 @@
         "defaultPackageSuffix": "bean.dto",
         "modelSuffix": "DTO",
         "name": "DTO",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.data.${DOMAIN}"
       },
       {
         "id": "usual-2",
@@ -311,8 +311,8 @@
         "defaultPackageSuffix": "bean.dto",
         "modelSuffix": "PageDTO",
         "name": "PageDTO",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.data.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.data.${DOMAIN}"
       },
       {
         "id": "usual-3",
@@ -327,8 +327,8 @@
         "defaultPackageSuffix": "bean.request",
         "modelSuffix": "Cmd",
         "name": "Cmd",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.${DOMAIN}"
       },
       {
         "id": "usual-4",
@@ -343,9 +343,9 @@
         "defaultPackageSuffix": "bean.request",
         "modelSuffix": "PageQry",
         "name": "PageQry",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.dto.${DOMAIN}",
-        "superClass": "vip.tuoyang.base.core.bean.request.PageRequest"
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.${DOMAIN}",
+        "superClass": "com.test.base.core.bean.request.PageRequest"
       },
       {
         "id": "usual-5",
@@ -360,12 +360,12 @@
         "defaultPackageSuffix": "service.impl",
         "modelSuffix": "ServiceImpl",
         "name": "ServiceImpl",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-app/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.${DOMAIN}"
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}"
       },
       {
         "id": "usual-6",
-        "customTemplateDir": "classpath:templates/layer/ServiceI.ftl",
+        "customTemplateDir": "classpath:templates/layer/Service.ftl",
         "enable": false,
         "system": true,
         "extraFileType": "CUSTOM_TEMPLATE",
@@ -374,10 +374,10 @@
         "lombokSetter": false,
         "lombokToString": false,
         "defaultPackageSuffix": "service",
-        "modelSuffix": "ServiceI",
-        "name": "ServiceI",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-client/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.api.${DOMAIN}"
+        "modelSuffix": "Service",
+        "name": "Service",
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.api.${DOMAIN}"
       },
       {
         "id": "usual-7",
@@ -393,8 +393,129 @@
         "defaultPackageSuffix": "controller",
         "modelSuffix": "Controller",
         "name": "Controller",
-        "outputPath": "D:/project/jszn/重构/backend-tuoyang-school-safety-service/backend-tuoyang-school-safety-service-adapter/src/main/java",
-        "packageName": "vip.tuoyang.schoolsafe.service.web"
+        "outputPath": "D:/project/xxx-service-adapter/src/main/java",
+        "packageName": "com.test.service.web"
+      }
+    ]
+  },
+  {
+    "groupName": "mybatis flex",
+    "system": true,
+    "extraTemplateFileConfigList": [
+      {
+        "id": "flex-1",
+        "enable": false,
+        "system": true,
+        "extraFileType": "MODEL",
+        "generateValidAnnotation": false,
+        "lombokGetter": true,
+        "lombokSetter": true,
+        "lombokToString": true,
+        "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
+        "defaultPackageSuffix": "dto",
+        "modelSuffix": "DTO",
+        "name": "DTO",
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.data.${DOMAIN}"
+      },
+      {
+        "id": "flex-2",
+        "enable": false,
+        "system": true,
+        "extraFileType": "MODEL",
+        "generateValidAnnotation": true,
+        "lombokGetter": true,
+        "lombokSetter": true,
+        "lombokToString": false,
+        "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
+        "defaultPackageSuffix": "vo",
+        "modelSuffix": "VO",
+        "name": "VO",
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.${DOMAIN}"
+      },
+      {
+        "id": "flex-3",
+        "enable": false,
+        "system": true,
+        "extraFileType": "MODEL",
+        "generateValidAnnotation": true,
+        "lombokGetter": true,
+        "lombokSetter": true,
+        "lombokToString": true,
+        "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
+        "defaultPackageSuffix": "dto",
+        "modelSuffix": "PageDTO",
+        "name": "PageDTO",
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.data.${DOMAIN}"
+      },
+      {
+        "id": "flex-4",
+        "enable": false,
+        "system": true,
+        "extraFileType": "MODEL",
+        "generateValidAnnotation": false,
+        "lombokGetter": true,
+        "lombokSetter": true,
+        "lombokToString": false,
+        "modelIgnoreColumns": "id,is_delete,create_by,create_time,update_by,update_time",
+        "defaultPackageSuffix": "vo",
+        "modelSuffix": "PageVO",
+        "name": "PageVO",
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.dto.${DOMAIN}"
+      },
+      {
+        "id": "flex-5",
+        "customTemplateDir": "classpath:templates/mybatis-flex/ServiceImpl.ftl",
+        "enable": false,
+        "system": true,
+        "extraFileType": "CUSTOM_TEMPLATE",
+        "generateValidAnnotation": false,
+        "lombokGetter": false,
+        "lombokSetter": false,
+        "lombokToString": false,
+        "defaultPackageSuffix": "service.impl",
+        "modelSuffix": "ServiceImpl",
+        "name": "ServiceImpl",
+        "outputPath": "D:/project/xxx-service-app/src/main/java",
+        "packageName": "com.test.service.${DOMAIN}",
+        "superClass": "com.mybatisflex.spring.service.impl.ServiceImpl"
+      },
+      {
+        "id": "flex-6",
+        "customTemplateDir": "classpath:templates/mybatis-flex/Service.ftl",
+        "enable": false,
+        "system": true,
+        "extraFileType": "CUSTOM_TEMPLATE",
+        "generateValidAnnotation": false,
+        "lombokGetter": false,
+        "lombokSetter": false,
+        "lombokToString": false,
+        "defaultPackageSuffix": "service",
+        "modelSuffix": "Service",
+        "name": "Service",
+        "outputPath": "D:/project/xxx-service-client/src/main/java",
+        "packageName": "com.test.service.api.${DOMAIN}",
+        "superClass": "com.mybatisflex.spring.service.IService"
+      },
+      {
+        "id": "flex-7",
+        "customTemplateDir": "classpath:templates/mybatis-flex/Controller.ftl",
+        "customTemplateFileName": "Controller.ftl",
+        "enable": false,
+        "system": true,
+        "extraFileType": "CUSTOM_TEMPLATE",
+        "generateValidAnnotation": false,
+        "lombokGetter": false,
+        "lombokSetter": false,
+        "lombokToString": false,
+        "defaultPackageSuffix": "controller",
+        "modelSuffix": "Controller",
+        "name": "Controller",
+        "outputPath": "D:/project/xxx-service-adapter/src/main/java",
+        "packageName": "com.test.service.web"
       }
     ]
   }

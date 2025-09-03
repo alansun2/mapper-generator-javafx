@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,7 +77,7 @@ public class DataSourceService {
         // 删除旧的数据源文件
         this.deleteDataSourceFile(oldDataSource);
 
-        // 保存配置
+        // 保存
         try {
             this.downLoadToFile(newDataSource);
         } catch (IOException e) {
@@ -175,12 +174,7 @@ public class DataSourceService {
      * @return true 成功 false 失败
      */
     public boolean testConnection(DataSource dataSource) {
-        try (final Connection connection = dataSource.getDataSource().getConnection()) {
-            connection.getAutoCommit();
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
+        return dataSource.testConnection();
     }
 
     /**

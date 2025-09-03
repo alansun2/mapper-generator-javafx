@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Properties;
 
@@ -49,6 +50,16 @@ public class DataSource implements DataItem {
         return hikariDataSource;
     }
 
+    public boolean testConnection() {
+        try (final Connection connection = this.getDataSource().getConnection()) {
+            connection.getAutoCommit();
+        } catch (Exception e) {
+            dataSource = null;
+            return false;
+        }
+        return true;
+    }
+
     public void closeDataSource() {
         if (dataSource != null) {
             ((HikariDataSource) dataSource).close();
@@ -57,15 +68,14 @@ public class DataSource implements DataItem {
 
     public boolean isSame(DataSource dataSource) {
         return this.getConfigName().equals(dataSource.getConfigName()) && this.getUrl().equals(dataSource.getUrl())
-                && this.getUser().equals(dataSource.getUser()) && this.getPassword().equals(dataSource.getPassword())
-                && this.getDriveName().equals(dataSource.getDriveName());
+               && this.getUser().equals(dataSource.getUser()) && this.getPassword().equals(dataSource.getPassword())
+               && this.getDriveName().equals(dataSource.getDriveName());
 
     }
 
     public String getScheme() {
         final DriverEnum driver = this.getDriver();
         if (driver.equals(DriverEnum.MYSQL_8)) {
-            // jdbc:mysql://mysql_dev.tuoyang.vip:3306/school_safety
             String url = this.getUrl();
             final int startIndex = url.indexOf("/", 13);
             if (url.contains("?")) {

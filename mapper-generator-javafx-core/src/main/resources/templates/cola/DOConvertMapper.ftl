@@ -4,7 +4,7 @@ package ${PACKAGE};
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 <#assign suffixs = ["DO", ""]>
-<@ic.getPackage TYPE_NAME_UPPER_CAMEL suffixs CUSTOM_PARAMS_MAP/>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**
  * @author ${author}

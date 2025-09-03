@@ -63,7 +63,7 @@ public class DataSourceTreeViewInit {
      */
     public void treeViewInit(TreeView<DataItem> treeViewDataSource) {
         // 设置鼠标释放事件
-        treeViewDataSource.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+        treeViewDataSource.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> {
             ObservableList<TreeItem<DataItem>> selectedItems =
                     treeViewDataSource.getSelectionModel().getSelectedItems();
             if (event.getButton() == MouseButton.SECONDARY) {

@@ -181,7 +181,7 @@
       },
       {
         "templateId": "usual-6",
-        "name": "ServiceI",
+        "name": "Service",
         "outputPath": "src/main/java",
         "packageName": "com.service.${DOMAIN}",
         "enable": true,
@@ -189,6 +189,69 @@
       },
       {
         "templateId": "usual-7",
+        "name": "Controller",
+        "outputPath": "src/main/java",
+        "packageName": "com.controller",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      }
+    ]
+  },
+  {
+    "groupName": "mybatis flex",
+    "enable": false,
+    "system": true,
+    "extraFileConfigs": [
+      {
+        "templateId": "flex-1",
+        "name": "DTO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.dto.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "flex-2",
+        "name": "VO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.dto.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "flex-3",
+        "name": "PageDTO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.dto.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "flex-4",
+        "name": "PageVO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.request.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "flex-5",
+        "name": "ServiceImpl",
+        "outputPath": "src/main/java",
+        "packageName": "com.service.${DOMAIN}.impl",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      },
+      {
+        "templateId": "flex-6",
+        "name": "Service",
+        "outputPath": "src/main/java",
+        "packageName": "com.service.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      },
+      {
+        "templateId": "flex-7",
         "name": "Controller",
         "outputPath": "src/main/java",
         "packageName": "com.controller",

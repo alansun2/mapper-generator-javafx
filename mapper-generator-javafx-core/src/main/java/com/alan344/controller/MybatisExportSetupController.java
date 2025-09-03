@@ -12,6 +12,7 @@ import com.alan344.component.PropertyPane;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
+import com.alan344.constants.enums.FrameworkTypeEnum;
 import com.alan344.constants.enums.JavaClientTypeEnum;
 import com.alan344.constants.enums.LanguageEnum;
 import com.alan344.constants.enums.TargetNameEnum;
@@ -32,8 +33,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -54,6 +53,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * @author AlanSun
@@ -70,6 +70,8 @@ public class MybatisExportSetupController {
     private ExtraFileController extraFileController;
     @Autowired
     private MybatisAdvanceSetController mybatisAdvanceSetController;
+
+    private String currentMapperRootInterface;
 
     private final Map<String, Region> configNameBorderPaneMap = new HashMap<>();
     private final Map<String, ValidationSupport> configNameValidationMap = new HashMap<>() {
@@ -114,11 +116,11 @@ public class MybatisExportSetupController {
         Button openExtraPropertyStageBtn = new Button("添加额外属性");
         openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties());
         openExtraPropertyStageBtn.setPrefWidth(100);
-        Button saveBtn = new Button("保存配置");
+        Button saveBtn = new Button("保存");
         saveBtn.setOnAction(event -> {
             this.valid(this.getCurrentConfig().getConfigName());
             exportService.saveSetup();
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存配置", "成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存", "成功");
         });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
@@ -187,12 +189,13 @@ public class MybatisExportSetupController {
             final ValidationSupport validationSupport = configNameValidationMap.get(s);
             SplitPane splitPane = new SplitPane();
             splitPane.getStylesheets().add("css/common.css");
-            splitPane.setDividerPositions(0.69);
+            splitPane.setDividerPositions(0.78);
             splitPane.setOrientation(Orientation.VERTICAL);
             ListView<HBox> hBoxListView = new ListView<>();
             hBoxListView.prefWidthProperty().bind(splitPane.widthProperty());
 
-            splitPane.getItems().add(hBoxListView);
+            BorderPane borderPane = new BorderPane();
+            splitPane.getItems().addAll(hBoxListView, borderPane);
 
             TextField configNameText = new TextField(mybatisExportConfig.getConfigName());
             mybatisExportConfig.configNameProperty().bindBidirectional(configNameText.textProperty());
@@ -240,6 +243,10 @@ public class MybatisExportSetupController {
                     new JFXComboBox<>(FXCollections.observableArrayList(LanguageEnum.values()));
             MybatisExportItemHBox languageHbox = new MybatisExportItemHBox("语言:", languageComboBox);
 
+            JFXComboBox<FrameworkTypeEnum> frameworkComboBox =
+                    new JFXComboBox<>(FXCollections.observableArrayList(FrameworkTypeEnum.values()));
+            MybatisExportItemHBox frameworkHbox = new MybatisExportItemHBox("框架:", frameworkComboBox);
+
             FileSelectTextToggleHBox beanLocationText = new FileSelectTextToggleHBox("浏览",
                     mybatisExportConfig.modelEnableProperty(), mybatisExportConfig.getBeanLocation());
             mybatisExportConfig.beanLocationProperty().bindBidirectional(beanLocationText.getTextField().textProperty());
@@ -264,13 +271,16 @@ public class MybatisExportSetupController {
             mybatisExportConfig.modelRootClassProperty().bindBidirectional(beanRootClassText.textProperty());
             MybatisExportItemHBox beanRootClassHbox = new MybatisExportItemHBox("Bean 父类:", beanRootClassText);
 
-            mybatisExportConfig.modelEnableProperty().addListener((observable, oldValue, newValue) -> {
+            Consumer<Boolean> beanEnableConsumer = newValue -> {
                 beanLocationHbox.disable(!newValue);
                 beanLocationText.disable(!newValue);
                 beanPackageHbox.setDisable(!newValue);
                 beanRootClassHbox.setDisable(!newValue);
                 validationSupport.revalidate();
-            });
+            };
+            mybatisExportConfig.modelEnableProperty()
+                    .addListener((observable, oldValue, newValue) -> beanEnableConsumer.accept(newValue));
+            beanEnableConsumer.accept(mybatisExportConfig.isModelEnable());
 
             FileSelectTextToggleHBox mapperLocationText = new FileSelectTextToggleHBox("浏览",
                     mybatisExportConfig.mapperEnableProperty(), mybatisExportConfig.getMapperLocation());
@@ -296,13 +306,16 @@ public class MybatisExportSetupController {
             MybatisExportItemHBox mapperRootInterfaceHbox = new MybatisExportItemHBox("Mapper 父接口:",
                     mapperRootInterfaceText);
 
-            mybatisExportConfig.mapperEnableProperty().addListener((observable, oldValue, newValue) -> {
+            Consumer<Boolean> mapperEnableConsumer = newValue -> {
                 mapperLocationHbox.disable(!newValue);
                 mapperLocationText.disable(!newValue);
                 mapperPackageHbox.setDisable(!newValue);
                 mapperRootInterfaceHbox.setDisable(!newValue);
                 validationSupport.revalidate();
-            });
+            };
+            mybatisExportConfig.mapperEnableProperty()
+                    .addListener((observable, oldValue, newValue) -> mapperEnableConsumer.accept(newValue));
+            mapperEnableConsumer.accept(mybatisExportConfig.isMapperEnable());
 
             FileSelectTextToggleHBox xmlLocationText = new FileSelectTextToggleHBox("浏览",
                     mybatisExportConfig.xmlEnableProperty(), mybatisExportConfig.getMapperXmlLocation());
@@ -314,11 +327,14 @@ public class MybatisExportSetupController {
                 return ValidationResult.fromErrorIf(c, "Xml 地址必填", condition);
             });
 
-            mybatisExportConfig.xmlEnableProperty().addListener((observable, oldValue, newValue) -> {
+            Consumer<Boolean> xmlEnableConsumer = newValue -> {
                 xmlLocationHbox.disable(!newValue);
                 xmlLocationText.disable(!newValue);
                 validationSupport.revalidate();
-            });
+            };
+            mybatisExportConfig.xmlEnableProperty()
+                    .addListener((observable, oldValue, newValue) -> xmlEnableConsumer.accept(newValue));
+            xmlEnableConsumer.accept(mybatisExportConfig.isXmlEnable());
 
             TextField globalIgnoreFieldText = new TextField();
             globalIgnoreFieldText.setPromptText("逗号隔开");
@@ -352,124 +368,33 @@ public class MybatisExportSetupController {
             languageComboBox.setValue(mybatisExportConfig.getLanguage());
             mybatisExportConfig.languageProperty().bindBidirectional(languageComboBox.valueProperty());
 
+            frameworkComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (mybatisExportConfig.getMapperRootInterface() != null && !"com.mybatisflex.core.BaseMapper".equals(mybatisExportConfig.getMapperRootInterface())) {
+                    currentMapperRootInterface = mybatisExportConfig.getMapperRootInterface();
+                }
+                switch (newValue) {
+                    case OFFICIAL -> {
+                        borderPane.setCenter(this.officePanel(mybatisExportConfig));
+                        mybatisExportConfig.setXmlEnable(true);
+                        mybatisExportConfig.setMapperRootInterface(null);
+                    }
+                    case MYBATIS_FLEX -> {
+                        borderPane.setCenter(this.mybatisFlexPanel(mybatisExportConfig));
+                        mybatisExportConfig.setXmlEnable(false);
+                        mybatisExportConfig.setMapperRootInterface(Objects.requireNonNullElse(currentMapperRootInterface, "com.mybatisflex.core.BaseMapper"));
+                    }
+                }
+            });
+            frameworkComboBox.setValue(mybatisExportConfig.getFrameworkType());
+            mybatisExportConfig.frameworkTypeProperty().bindBidirectional(frameworkComboBox.valueProperty());
+
             hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox
-                    , languageHbox,
+                    , languageHbox, frameworkHbox,
                     beanLocationHbox, beanPackageHbox, beanRootClassHbox, mapperLocationHbox, mapperPackageHbox,
                     mapperRootInterfaceHbox, xmlLocationHbox, globalIgnoreFieldHbox);
 
-            TabPane tabPane1 = new TabPane();
-            tabPane1.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-            splitPane.getItems().add(tabPane1);
-            tabPane1.selectionModelProperty().addListener((observable, oldValue, newValue) -> {
-                final int selectedIndex = newValue.getSelectedIndex();
-                mybatisExportConfig.setSelectTab(selectedIndex);
-            });
-            AnchorPane anchorPane = new AnchorPane();
-            Tab tab = new Tab("Official", anchorPane);
-            tabPane1.getTabs().add(tab);
-
-            final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
-                    mybatisExportConfig.getMybatisOfficialExportConfig();
-            JFXCheckBox userJava8CheckBox = new JFXCheckBox("支持 java8");
-            userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
-            userJava8CheckBox.setLayoutX(27);
-            userJava8CheckBox.setLayoutY(56);
-            mybatisOfficialExportConfig.userJava8Property().bindBidirectional(userJava8CheckBox.selectedProperty());
-
-            JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
-            useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
-            useBigDecimalCheckBox.setLayoutX(262);
-            useBigDecimalCheckBox.setLayoutY(93);
-            mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
-
-            JFXCheckBox useJpaAnnotationCheckBox = new JFXCheckBox("使用 JPA 注解");
-            useJpaAnnotationCheckBox.setSelected(mybatisOfficialExportConfig.isUseJpaAnnotation());
-            useJpaAnnotationCheckBox.setLayoutX(262);
-            useJpaAnnotationCheckBox.setLayoutY(93);
-            mybatisOfficialExportConfig.useJpaAnnotationProperty().bindBidirectional(useJpaAnnotationCheckBox.selectedProperty());
-
-            JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
-            useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
-            useCommentCheckBox.setLayoutX(262);
-            useCommentCheckBox.setLayoutY(56);
-            mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
-
-            JFXCheckBox useLombokGetSetCheckBox = new JFXCheckBox("启用 lombokGetSet 注解");
-            useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
-            useLombokGetSetCheckBox.setLayoutX(27);
-            useLombokGetSetCheckBox.setLayoutY(93);
-            mybatisOfficialExportConfig.useLombokGetSetProperty().bindBidirectional(useLombokGetSetCheckBox.selectedProperty());
-
-            JFXCheckBox useLombokBuilderCheckBox = new JFXCheckBox("启用 lombokBuilder 注解");
-            useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
-            useLombokBuilderCheckBox.setLayoutX(27);
-            useLombokBuilderCheckBox.setLayoutY(128);
-            mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
-
-            Label targetNameLabel = new Label("targetName:");
-            targetNameLabel.setLayoutX(27);
-            targetNameLabel.setLayoutY(25);
-            final int selectTab = mybatisExportConfig.getSelectTab();
-            tabPane1.getSelectionModel().select(selectTab);
-
-            Label javaClientTypeLabel = new Label("javaClientType:");
-            javaClientTypeLabel.setLayoutX(300);
-            javaClientTypeLabel.setLayoutY(25);
-            final JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox = new JFXComboBox<>();
-            javaClientTypeComboBox.setPrefWidth(160);
-            javaClientTypeComboBox.setLayoutX(400);
-            javaClientTypeComboBox.setLayoutY(20);
-            javaClientTypeComboBox.setValue(mybatisOfficialExportConfig.getJavaClientType());
-            javaClientTypeComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.javaClientTypeProperty());
-
-            // 高级设置按钮
-            Button advanceSetButton = new Button();
-            advanceSetButton.setOnAction(event -> mybatisAdvanceSetController.openAdvanceSetStage(mybatisExportConfig));
-            advanceSetButton.setGraphic(new FontIcon("unil-setting:16:BLUE"));
-            advanceSetButton.setLayoutX(600);
-            advanceSetButton.setLayoutY(20);
-
-            final JFXComboBox<TargetNameEnum> targetNameJFXComboBox =
-                    new JFXComboBox<>(FXCollections.observableArrayList(TargetNameEnum.values()));
-            targetNameJFXComboBox.setPrefWidth(160);
-            targetNameJFXComboBox.setLayoutX(115);
-            targetNameJFXComboBox.setLayoutY(20);
-            targetNameJFXComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue,
-                                                                                          newValue) -> {
-                switch (newValue) {
-                    case Mybatis3 -> {
-                        javaClientTypeComboBox.setDisable(false);
-                        javaClientTypeComboBox.getItems().clear();
-                        javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.values());
-                        javaClientTypeComboBox.getSelectionModel().select(JavaClientTypeEnum.XMLMAPPER);
-                    }
-                    case MyBatis3Simple -> {
-                        javaClientTypeComboBox.setDisable(false);
-                        javaClientTypeComboBox.getItems().clear();
-                        javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.JAVA_CLIENT_TYPE_ENUMS);
-                        javaClientTypeComboBox.getSelectionModel().select(JavaClientTypeEnum.XMLMAPPER);
-                    }
-                    default -> this.disableJavaClientTypeComboBox(javaClientTypeComboBox);
-                }
-            });
-            targetNameJFXComboBox.setValue(mybatisOfficialExportConfig.getTargetName());
-            targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
-
-            anchorPane.getChildren().addAll(userJava8CheckBox, useJpaAnnotationCheckBox, useCommentCheckBox,
-                    useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel,
-                    javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
             return splitPane;
         });
-    }
-
-    /**
-     * 禁用 javaClientTypeComboBox
-     *
-     * @param javaClientTypeComboBox javaClientTypeComboBox
-     */
-    private void disableJavaClientTypeComboBox(JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox) {
-        javaClientTypeComboBox.setDisable(true);
-        javaClientTypeComboBox.getSelectionModel().clearSelection();
     }
 
     public void valid(String configName) {
@@ -518,5 +443,189 @@ public class MybatisExportSetupController {
         Assert.isTrue(null != selectedItem, "请先新增配置", NodeConstants.primaryStage);
         assert selectedItem != null;
         return selectedItem.getConfig();
+    }
+
+    private void setJavaClient(JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox, TargetNameEnum newValue,
+                               JavaClientTypeEnum value) {
+        switch (newValue) {
+            case Mybatis3 -> {
+                javaClientTypeComboBox.setDisable(false);
+                javaClientTypeComboBox.getItems().clear();
+                javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.values());
+                javaClientTypeComboBox.getSelectionModel().select(value);
+            }
+            case MyBatis3Simple -> {
+                javaClientTypeComboBox.setDisable(false);
+                javaClientTypeComboBox.getItems().clear();
+                javaClientTypeComboBox.getItems().addAll(JavaClientTypeEnum.JAVA_CLIENT_TYPE_ENUMS);
+                javaClientTypeComboBox.getSelectionModel().select(value);
+            }
+            default -> {
+                javaClientTypeComboBox.setDisable(true);
+                javaClientTypeComboBox.getSelectionModel().clearSelection();
+            }
+        }
+    }
+
+    private AnchorPane officePanel(MybatisExportConfig mybatisExportConfig) {
+// 底下的配置
+        AnchorPane anchorPane = new AnchorPane();
+
+        final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
+                mybatisExportConfig.getMybatisExportConfig();
+        JFXCheckBox userJava8CheckBox = new JFXCheckBox("支持 java8");
+        userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
+        userJava8CheckBox.setLayoutX(27);
+        userJava8CheckBox.setLayoutY(51);
+        mybatisOfficialExportConfig.userJava8Property().bindBidirectional(userJava8CheckBox.selectedProperty());
+
+        JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
+        useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
+        useBigDecimalCheckBox.setLayoutX(262);
+        useBigDecimalCheckBox.setLayoutY(88);
+        mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
+
+        JFXCheckBox useJpaAnnotationCheckBox = new JFXCheckBox("使用 JPA 注解");
+        useJpaAnnotationCheckBox.setSelected(mybatisOfficialExportConfig.isUseJpaAnnotation());
+        useJpaAnnotationCheckBox.setLayoutX(300);
+        useJpaAnnotationCheckBox.setLayoutY(88);
+        mybatisOfficialExportConfig.useJpaAnnotationProperty().bindBidirectional(useJpaAnnotationCheckBox.selectedProperty());
+
+        JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
+        useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
+        useCommentCheckBox.setLayoutX(300);
+        useCommentCheckBox.setLayoutY(51);
+        mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
+
+        JFXCheckBox useLombokGetSetCheckBox = new JFXCheckBox("启用 lombokGetSet 注解");
+        useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
+        useLombokGetSetCheckBox.setLayoutX(27);
+        useLombokGetSetCheckBox.setLayoutY(88);
+        mybatisOfficialExportConfig.useLombokGetSetProperty().bindBidirectional(useLombokGetSetCheckBox.selectedProperty());
+
+        JFXCheckBox useLombokBuilderCheckBox = new JFXCheckBox("启用 lombokBuilder 注解");
+        useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
+        useLombokBuilderCheckBox.setLayoutX(27);
+        useLombokBuilderCheckBox.setLayoutY(123);
+        mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
+
+        Label targetNameLabel = new Label("targetName:");
+        targetNameLabel.setLayoutX(27);
+        targetNameLabel.setLayoutY(15);
+
+        Label javaClientTypeLabel = new Label("javaClientType:");
+        javaClientTypeLabel.setLayoutX(300);
+        javaClientTypeLabel.setLayoutY(15);
+        final JFXComboBox<JavaClientTypeEnum> javaClientTypeComboBox = new JFXComboBox<>();
+        javaClientTypeComboBox.setPrefWidth(160);
+        javaClientTypeComboBox.setLayoutX(400);
+        javaClientTypeComboBox.setLayoutY(10);
+        this.setJavaClient(javaClientTypeComboBox, mybatisOfficialExportConfig.getTargetName(),
+                mybatisOfficialExportConfig.getJavaClientType());
+        javaClientTypeComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.javaClientTypeProperty());
+
+        // 高级设置按钮
+        Button advanceSetButton = new Button();
+        advanceSetButton.setOnAction(event -> mybatisAdvanceSetController.openAdvanceSetStage(mybatisExportConfig));
+        advanceSetButton.setGraphic(new FontIcon("unil-setting:16:BLUE"));
+        advanceSetButton.setLayoutX(600);
+        advanceSetButton.setLayoutY(10);
+
+        final JFXComboBox<TargetNameEnum> targetNameJFXComboBox =
+                new JFXComboBox<>(FXCollections.observableArrayList(TargetNameEnum.values()));
+        targetNameJFXComboBox.setPrefWidth(160);
+        targetNameJFXComboBox.setLayoutX(115);
+        targetNameJFXComboBox.setLayoutY(10);
+        targetNameJFXComboBox.setValue(mybatisOfficialExportConfig.getTargetName());
+        targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
+        targetNameJFXComboBox.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue,
+                              newValue) -> this.setJavaClient(javaClientTypeComboBox, newValue,
+                        JavaClientTypeEnum.XMLMAPPER));
+
+        anchorPane.getChildren().addAll(userJava8CheckBox, useJpaAnnotationCheckBox, useCommentCheckBox,
+                useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel,
+                javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
+        return anchorPane;
+    }
+
+    private AnchorPane mybatisFlexPanel(MybatisExportConfig mybatisExportConfig) {
+        // 底下的配置
+        AnchorPane anchorPane = new AnchorPane();
+
+        final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
+                mybatisExportConfig.getMybatisExportConfig();
+        JFXCheckBox userJava8CheckBox = new JFXCheckBox("支持 java8");
+        userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
+        userJava8CheckBox.setLayoutX(27);
+        userJava8CheckBox.setLayoutY(51);
+        mybatisOfficialExportConfig.userJava8Property().bindBidirectional(userJava8CheckBox.selectedProperty());
+
+        JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
+        useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
+        useBigDecimalCheckBox.setLayoutX(262);
+        useBigDecimalCheckBox.setLayoutY(88);
+        mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
+
+        JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
+        useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
+        useCommentCheckBox.setLayoutX(262);
+        useCommentCheckBox.setLayoutY(51);
+        mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
+
+        JFXCheckBox useLombokGetSetCheckBox = new JFXCheckBox("启用 lombokGetSet 注解");
+        useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
+        useLombokGetSetCheckBox.setLayoutX(27);
+        useLombokGetSetCheckBox.setLayoutY(88);
+        mybatisOfficialExportConfig.useLombokGetSetProperty().bindBidirectional(useLombokGetSetCheckBox.selectedProperty());
+
+        JFXCheckBox useLombokBuilderCheckBox = new JFXCheckBox("启用 lombokBuilder 注解");
+        useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
+        useLombokBuilderCheckBox.setLayoutX(27);
+        useLombokBuilderCheckBox.setLayoutY(123);
+        mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
+
+        // 高级设置按钮
+        Button advanceSetButton = new Button();
+        advanceSetButton.setOnAction(event -> mybatisAdvanceSetController.openAdvanceSetStage(mybatisExportConfig));
+        advanceSetButton.setGraphic(new FontIcon("unil-setting:16:BLUE"));
+        advanceSetButton.setLayoutX(600);
+        advanceSetButton.setLayoutY(10);
+
+        final JFXComboBox<TargetNameEnum> targetNameJFXComboBox =
+                new JFXComboBox<>(FXCollections.observableArrayList(TargetNameEnum.values()));
+        targetNameJFXComboBox.setPrefWidth(160);
+        targetNameJFXComboBox.setLayoutX(115);
+        targetNameJFXComboBox.setLayoutY(10);
+        targetNameJFXComboBox.setValue(TargetNameEnum.MyBatis3Flex);
+        targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
+        targetNameJFXComboBox.setVisible(false);
+
+        Label logicDeleteLabel = new Label("逻辑删除");
+        logicDeleteLabel.setLayoutX(27);
+        logicDeleteLabel.setLayoutY(15);
+        TextField logicDeleteField = new TextField();
+        logicDeleteField.setText(mybatisOfficialExportConfig.getLogicDeleteField());
+        logicDeleteField.setPromptText("逻辑删除字段");
+        logicDeleteField.textProperty().bindBidirectional(mybatisOfficialExportConfig.logicDeleteFieldProperty());
+        logicDeleteField.setLayoutX(90);
+        logicDeleteField.setLayoutY(10);
+
+        Label versionLabel = new Label("乐观锁");
+        versionLabel.setLayoutX(262);
+        versionLabel.setLayoutY(15);
+        TextField version = new TextField();
+        version.setText(mybatisOfficialExportConfig.getVersion());
+        version.setPromptText("乐观锁字段");
+        version.textProperty().bindBidirectional(mybatisOfficialExportConfig.versionProperty());
+        version.setLayoutX(320);
+        version.setLayoutY(10);
+
+        mybatisOfficialExportConfig.setTargetName(TargetNameEnum.MyBatis3Flex);
+
+        anchorPane.getChildren().addAll(userJava8CheckBox, useCommentCheckBox, logicDeleteLabel,
+                versionLabel, logicDeleteField, version,
+                useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameJFXComboBox, advanceSetButton);
+        return anchorPane;
     }
 }

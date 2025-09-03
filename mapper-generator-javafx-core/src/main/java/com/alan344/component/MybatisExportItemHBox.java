@@ -11,7 +11,7 @@ import javafx.scene.layout.Region;
  * @date 2023/2/22 0:40
  */
 public class MybatisExportItemHBox extends HBox {
-    private Label label;
+    private final Label label;
 
     public MybatisExportItemHBox(String name, Region node) {
         this.setSpacing(10);
