@@ -60,6 +60,9 @@ public class FindTableInit {
 
         final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
         for (TreeItem<DataItem> dataSourceTreeItem : children) {
+            if (!dataSourceTreeItem.isExpanded()) {
+                continue;
+            }
             DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
             if (CollectionUtils.isNotEmpty(dataSource.getTables())) {
                 dataSourceTreeItem.getChildren().clear();
