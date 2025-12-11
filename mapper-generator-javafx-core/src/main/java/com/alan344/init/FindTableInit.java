@@ -69,7 +69,7 @@ public class FindTableInit {
                     tablesToShow = dataSource.getTables();
                 } else {
                     tablesToShow = dataSource.getTables().stream()
-                            .filter(table -> isSubsequence(finalTableNamePrefix, table.getTableName().toLowerCase()))
+                            .filter(table -> this.isSubsequence(finalTableNamePrefix, table.getTableName().toLowerCase()))
                             .toList();
                 }
 
