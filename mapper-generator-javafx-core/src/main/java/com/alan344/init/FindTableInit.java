@@ -56,7 +56,6 @@ public class FindTableInit {
      * @param treeViewDataSourceRoot treeViewDataSourceRoot
      */
     private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot) {
-        System.out.println("tableNamePrefix = " + tableNamePrefix);
         final String finalTableNamePrefix = tableNamePrefix.toLowerCase().replaceAll("'", "");
 
         final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
