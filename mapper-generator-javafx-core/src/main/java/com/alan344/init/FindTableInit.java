@@ -37,8 +37,8 @@ public class FindTableInit {
     public void addListener(TreeView<DataItem> treeViewDataSource, TextField tableFindTextField,
                             BorderPane borderPaneWrap) {
         tableFindTextField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue != null && newValue != null) {
-                this.filterTables(newValue, treeViewDataSource.getRoot(), newValue.length() < oldValue.length());
+            if (newValue != null) {
+                this.filterTables(newValue, treeViewDataSource.getRoot());
             }
         });
 
@@ -55,48 +55,42 @@ public class FindTableInit {
      * @param tableNamePrefix        tableNamePrefix
      * @param treeViewDataSourceRoot treeViewDataSourceRoot
      */
-    private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot, boolean isDelete) {
+    private void filterTables(String tableNamePrefix, TreeItem<DataItem> treeViewDataSourceRoot) {
         System.out.println("tableNamePrefix = " + tableNamePrefix);
-        tableNamePrefix = tableNamePrefix.toLowerCase().replaceAll("'", "");
-        String tableNameFilterTem;
-        if (tableNamePrefix.isEmpty()) {
-            tableNameFilterTem = "";
-        } else {
-            final char[] charArray = tableNamePrefix.toCharArray();
-            StringBuilder sb = new StringBuilder();
-            for (char c : charArray) {
-                sb.append(c).append(".*");
-            }
-            tableNameFilterTem = sb.toString();
-        }
+        final String finalTableNamePrefix = tableNamePrefix.toLowerCase().replaceAll("'", "");
 
-        System.out.println("tableNameFilterTem = " + tableNameFilterTem);
         final ObservableList<TreeItem<DataItem>> children = treeViewDataSourceRoot.getChildren();
         for (TreeItem<DataItem> dataSourceTreeItem : children) {
             DataSource dataSource = BaseConstants.allDataSources.get(dataSourceTreeItem);
             if (CollectionUtils.isNotEmpty(dataSource.getTables())) {
-                if (tableNamePrefix.isEmpty()) {
-                    dataSourceTreeItem.getChildren().clear();
-                    for (Table filteredTable : dataSource.getTables()) {
-                        TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable, dataSourceTreeItem);
-                        tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
-                    }
+                dataSourceTreeItem.getChildren().clear();
+
+                final List<Table> tablesToShow;
+                if (finalTableNamePrefix.isEmpty()) {
+                    tablesToShow = dataSource.getTables();
                 } else {
-                    if (isDelete) {
-                        dataSourceTreeItem.getChildren().clear();
-                        List<Table> filteredTables =
-                                dataSource.getTables().stream().filter(table -> table.getTableName().toLowerCase().matches(tableNameFilterTem)).toList();
-                        for (Table filteredTable : filteredTables) {
-                            TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(filteredTable,
-                                    dataSourceTreeItem);
-                            tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
-                        }
-                    }
-                    final ObservableList<TreeItem<DataItem>> tableTreeItems = dataSourceTreeItem.getChildren();
-                    tableTreeItems.removeIf(treeItem -> !treeItem.getValue().toString().toLowerCase().matches(tableNameFilterTem));
+                    tablesToShow = dataSource.getTables().stream()
+                            .filter(table -> isSubsequence(finalTableNamePrefix, table.getTableName().toLowerCase()))
+                            .toList();
+                }
+
+                for (Table table : tablesToShow) {
+                    TreeItem<DataItem> tableTreeItem = TreeItemFactory.add2Tree(table, dataSourceTreeItem);
+                    tableTreeItem.setGraphic(new FontIcon("unim-table:16:BLACK"));
                 }
             }
         }
+    }
+
+    private boolean isSubsequence(String sub, String target) {
+        int subIndex = 0, targetIndex = 0;
+        while (subIndex < sub.length() && targetIndex < target.length()) {
+            if (sub.charAt(subIndex) == target.charAt(targetIndex)) {
+                subIndex++;
+            }
+            targetIndex++;
+        }
+        return subIndex == sub.length();
     }
 
     public void escListener(KeyEvent event) {
