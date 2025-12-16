@@ -9,7 +9,7 @@ import java.util.List;
  * bean工具类.
  *
  * @author demon
- * @date 2016/5/11 9:40
+ * @since 2016/5/11 9:40
  */
 public class BeanUtils {
 

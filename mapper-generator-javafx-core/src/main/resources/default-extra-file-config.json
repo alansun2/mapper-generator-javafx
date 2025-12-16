@@ -259,6 +259,85 @@
         "extraFileType": "CUSTOM_TEMPLATE"
       }
     ]
+  },
+  {
+    "groupName": "manager-dao",
+    "enable": false,
+    "system": true,
+    "extraFileConfigs": [
+      {
+        "templateId": "manager-dao-1",
+        "name": "DTO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.dto.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "manager-dao-2",
+        "name": "VO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.dto.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "manager-dao-3",
+        "name": "PageDTO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.dto.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "manager-dao-4",
+        "name": "PageVO",
+        "outputPath": "src/main/java",
+        "packageName": "com.bean.request.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "MODEL"
+      },
+      {
+        "templateId": "manager-dao-5",
+        "name": "Dao",
+        "outputPath": "src/main/java",
+        "packageName": "com.service.${DOMAIN}.dao",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      },
+      {
+        "templateId": "manager-dao-6",
+        "name": "Manager",
+        "outputPath": "src/main/java",
+        "packageName": "com.service.${DOMAIN}.manager",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      },
+      {
+        "templateId": "manager-dao-7",
+        "name": "ServiceImpl",
+        "outputPath": "src/main/java",
+        "packageName": "com.service.${DOMAIN}.impl",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      },
+      {
+        "templateId": "manager-dao-8",
+        "name": "Service",
+        "outputPath": "src/main/java",
+        "packageName": "com.service.${DOMAIN}",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      },
+      {
+        "templateId": "manager-dao-9",
+        "name": "Controller",
+        "outputPath": "src/main/java",
+        "packageName": "com.controller",
+        "enable": true,
+        "extraFileType": "CUSTOM_TEMPLATE"
+      }
+    ]
   }
 ]
 

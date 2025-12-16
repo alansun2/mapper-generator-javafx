@@ -30,7 +30,7 @@ import static org.mybatis.generator.internal.util.JavaBeansUtil.getJavaBeansFiel
 
 /**
  * @author AlanSun
- * @date 2022/11/4 13:13
+ * @since 2022/11/4 13:13
  **/
 public class ExtraFileJPAlGeneratorPlugin extends PluginAdapter {
 

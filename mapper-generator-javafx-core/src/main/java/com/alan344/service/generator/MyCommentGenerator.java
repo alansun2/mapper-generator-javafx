@@ -21,7 +21,7 @@ import java.util.Properties;
 
 /**
  * @author AlanSun
- * @date 2023/4/26 1:43
+ * @since 2023/4/26 1:43
  * <p>
  * mybatis-generator 自定义注释生成器
  **/

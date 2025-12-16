@@ -21,7 +21,7 @@ import java.util.Objects;
 
 /**
  * @author AlanSun
- * @date 2019/8/13 16:20
+ * @since 2019/8/13 16:20
  */
 public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName, Cloneable {
     /**

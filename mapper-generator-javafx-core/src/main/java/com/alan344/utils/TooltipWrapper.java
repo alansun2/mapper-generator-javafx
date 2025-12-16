@@ -5,7 +5,7 @@ import javafx.scene.control.Tooltip;
 
 /**
  * @author AlanSun
- * @date 2022/11/4 14:15
+ * @since 2022/11/4 14:15
  */
 public class TooltipWrapper {
 

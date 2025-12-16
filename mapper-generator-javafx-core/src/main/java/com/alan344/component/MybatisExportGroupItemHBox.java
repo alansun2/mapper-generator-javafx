@@ -8,7 +8,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * @author AlanSun
- * @date 2022/11/21 15:33
+ * @since 2022/11/21 15:33
  */
 public class MybatisExportGroupItemHBox extends HBox implements LeftRightLinkageBorderPane.Item<MybatisExportConfig> {
     private final Label label;

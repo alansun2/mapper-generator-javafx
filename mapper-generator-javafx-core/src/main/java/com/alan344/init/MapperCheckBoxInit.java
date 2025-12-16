@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author AlanSun
- * @date 2020/4/2 18:15
+ * @since 2020/4/2 18:15
  */
 @Service
 public class MapperCheckBoxInit {

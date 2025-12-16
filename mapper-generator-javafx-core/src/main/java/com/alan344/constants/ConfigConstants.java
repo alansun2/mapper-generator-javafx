@@ -10,7 +10,7 @@ import java.util.Map;
 
 /**
  * @author AlanSun
- * @date 2022/11/21 16:01
+ * @since 2022/11/21 16:01
  */
 public class ConfigConstants {
     /**

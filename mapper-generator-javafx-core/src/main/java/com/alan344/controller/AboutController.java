@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 
 /**
  * @author AlanSun
- * @date 2019/8/20 18:01
+ * @since 2019/8/20 18:01
  */
 @Controller
 public class AboutController {

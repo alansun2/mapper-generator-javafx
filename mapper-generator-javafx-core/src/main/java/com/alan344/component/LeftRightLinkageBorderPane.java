@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 
 /**
  * @author AlanSun
- * @date 2023/2/4 0:10
+ * @since 2023/2/4 0:10
  */
 public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.GroupName,
         GI extends LeftRightLinkageBorderPane.Item<GC>> extends BorderPane {

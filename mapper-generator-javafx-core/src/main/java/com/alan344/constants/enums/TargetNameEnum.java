@@ -6,7 +6,7 @@ import lombok.Getter;
 
 /**
  * @author AlanSun
- * @date 2023/3/28 23:54
+ * @since 2023/3/28 23:54
  **/
 @Getter
 @AllArgsConstructor

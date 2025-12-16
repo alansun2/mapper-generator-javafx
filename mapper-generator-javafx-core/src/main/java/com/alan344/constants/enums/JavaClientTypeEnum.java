@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * @author AlanSun
- * @date 2023/3/29 0:05
+ * @since 2023/3/29 0:05
  **/
 public enum JavaClientTypeEnum {
     /**

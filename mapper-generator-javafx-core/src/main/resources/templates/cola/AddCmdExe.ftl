@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author ${author}
- * @date ${CUR_DATE_TIME}
+ * @since ${CUR_DATE_TIME}
  */
 @Service
 public class ${TYPE_NAME_UPPER_CAMEL}AddCmdExe {

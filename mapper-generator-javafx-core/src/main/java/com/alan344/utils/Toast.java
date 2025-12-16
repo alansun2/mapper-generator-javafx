@@ -16,7 +16,7 @@ import javafx.util.Duration;
 
 /**
  * @author AlanSun
- * @date 2019/8/16 18:03
+ * @since 2019/8/16 18:03
  */
 public class Toast {
     public static void makeText(Stage stage, String message, final int displayTime, int fadeInDelay, final int fadeOutDelay, double size, double opacity) {

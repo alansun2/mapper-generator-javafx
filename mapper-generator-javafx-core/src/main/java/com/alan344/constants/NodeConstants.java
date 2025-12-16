@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 
 /**
  * @author AlanSun
- * @date 2020/4/7 11:31
+ * @since 2020/4/7 11:31
  */
 public class NodeConstants {
     public static Stage primaryStage;

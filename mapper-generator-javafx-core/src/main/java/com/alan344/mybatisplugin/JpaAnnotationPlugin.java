@@ -18,7 +18,7 @@ import java.util.Optional;
  * 添加@Entity、@Table和@Column注解
  *
  * @author AlanSun
- * @date 2023/4/19 0:16
+ * @since 2023/4/19 0:16
  */
 public class JpaAnnotationPlugin extends PluginAdapter {
 

@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
 
 /**
  * @author AlanSun
- * @date 2020/4/7 17:09
+ * @since 2020/4/7 17:09
  */
 @Controller
 public class MybatisTableSetupController implements Initializable {

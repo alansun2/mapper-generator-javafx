@@ -42,7 +42,7 @@ import static com.alan344.mybatisplugin.PluginUtils.Domain.DOMAIN;
 
 /**
  * @author AlanSun
- * @date 2020/6/5 16:54
+ * @since 2020/6/5 16:54
  */
 @Getter
 @Slf4j

@@ -8,7 +8,7 @@ import javafx.scene.layout.Region;
 
 /**
  * @author AlanSun
- * @date 2022/11/5 11:35
+ * @since 2022/11/5 11:35
  */
 public class PropertyHBox extends HBox {
 

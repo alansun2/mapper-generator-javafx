@@ -19,7 +19,7 @@ import java.util.Optional;
 
 /**
  * @author AlanSun
- * @date 2019/8/9 16:19
+ * @since 2019/8/9 16:19
  */
 @Slf4j
 public class OfficialMybatisGenerator extends MapperGeneratorStrategyBase {

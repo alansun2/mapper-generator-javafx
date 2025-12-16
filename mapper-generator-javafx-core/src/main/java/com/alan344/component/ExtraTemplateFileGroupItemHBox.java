@@ -7,7 +7,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * @author AlanSun
- * @date 2022/11/21 15:33
+ * @since 2022/11/21 15:33
  */
 public class ExtraTemplateFileGroupItemHBox extends HBox implements LeftRightLinkageBorderPane.Item<ExtraTemplateFileGroupConfig> {
     private final Label label;

@@ -14,7 +14,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 /**
  * @author AlanSun
- * @date 2023/1/30 11:26
+ * @since 2023/1/30 11:26
  */
 public class MainView extends Application {
     private ConfigurableApplicationContext applicationContext;

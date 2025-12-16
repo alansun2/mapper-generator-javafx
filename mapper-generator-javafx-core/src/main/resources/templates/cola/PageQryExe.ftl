@@ -18,7 +18,7 @@ import static <#if package_prefix??>${package_prefix}</#if><#if DOMAIN != "">.${
 
 /**
  * @author ${author}
- * @date ${CUR_DATE_TIME}
+ * @since ${CUR_DATE_TIME}
  */
 @Service
 public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {

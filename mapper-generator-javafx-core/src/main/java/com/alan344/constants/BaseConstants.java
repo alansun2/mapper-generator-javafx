@@ -17,7 +17,7 @@ import java.util.Map;
 
 /**
  * @author ：AlanSun
- * @date ：2019/8/8 21:43
+ * @since ：2019/8/8 21:43
  */
 public class BaseConstants {
     public static final String MG_HOME = System.getProperty("user.home").replace(StrUtil.BACKSLASH, StrUtil.SLASH) + "/AppData/Local/MapperGeneratorV2";

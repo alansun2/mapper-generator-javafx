@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 /**
  * @author AlanSun
- * @date 2022/8/21 15:01
+ * @since 2022/8/21 15:01
  */
 public class FileTemplateTextHBox extends HBox {
     @Getter

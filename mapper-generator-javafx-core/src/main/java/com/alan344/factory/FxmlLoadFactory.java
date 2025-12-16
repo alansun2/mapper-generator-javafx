@@ -8,7 +8,7 @@ import java.io.IOException;
 
 /**
  * @author AlanSun
- * @date 2020/9/9 9:30
+ * @since 2020/9/9 9:30
  */
 @Slf4j
 public class FxmlLoadFactory {

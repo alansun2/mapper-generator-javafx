@@ -4,7 +4,7 @@ import com.alan344.bean.config.MybatisExportConfig;
 
 /**
  * @author Alan
- * @date 2020/6/5 11:30
+ * @since 2020/6/5 11:30
  * mapper 生成策略类
  */
 public interface MapperGeneratorStrategy {

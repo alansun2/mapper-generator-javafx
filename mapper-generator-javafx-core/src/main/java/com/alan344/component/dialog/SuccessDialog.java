@@ -11,7 +11,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 /**
  * @author AlanSun
- * @date 2023/2/19 23:59
+ * @since 2023/2/19 23:59
  */
 public class SuccessDialog extends AlDialog {
 

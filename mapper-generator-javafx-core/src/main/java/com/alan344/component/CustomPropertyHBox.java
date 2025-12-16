@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * @author AlanSun
- * @date 2022/12/21 18:58
+ * @since 2022/12/21 18:58
  */
 public class CustomPropertyHBox extends HBox {
 

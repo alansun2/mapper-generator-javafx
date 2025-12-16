@@ -5,7 +5,7 @@ import java.util.Optional;
 
 /**
  * @author ${author}
- * @date ${CUR_DATE_TIME}
+ * @since ${CUR_DATE_TIME}
  */
 public interface ${TYPE_NAME_UPPER_CAMEL}GatewayI {
     /**

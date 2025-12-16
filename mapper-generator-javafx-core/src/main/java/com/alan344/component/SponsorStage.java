@@ -13,7 +13,7 @@ import javafx.stage.StageStyle;
 
 /**
  * @author AlanSun
- * @date 2023/6/11 0:52
+ * @since 2023/6/11 0:52
  */
 public class SponsorStage extends BorderPane {
 

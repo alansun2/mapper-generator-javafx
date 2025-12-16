@@ -13,7 +13,7 @@ import java.util.Properties;
 
 /**
  * @author ：AlanSun
- * @date ：2019/8/8 21:33
+ * @since ：2019/8/8 21:33
  */
 public class DataSource implements DataItem {
     private final SimpleStringProperty configName = new SimpleStringProperty();

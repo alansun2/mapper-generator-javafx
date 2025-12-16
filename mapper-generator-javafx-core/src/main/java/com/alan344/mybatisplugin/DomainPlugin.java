@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author AlanSun
- * @date 2023/4/19 0:16
+ * @since 2023/4/19 0:16
  */
 @Slf4j
 public class DomainPlugin extends PluginAdapter {

@@ -6,7 +6,7 @@ import javafx.scene.layout.HBox;
 
 /**
  * @author AlanSun
- * @date 2023/2/6 0:52
+ * @since 2023/2/6 0:52
  */
 public class ConfigNameItemHBox extends HBox {
 

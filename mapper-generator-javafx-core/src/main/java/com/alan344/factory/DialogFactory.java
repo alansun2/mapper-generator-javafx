@@ -13,7 +13,7 @@ import org.controlsfx.dialog.ExceptionDialog;
 
 /**
  * @author AlanSun
- * @date 2019/8/23 14:18
+ * @since 2019/8/23 14:18
  */
 public class DialogFactory {
     public static void closeDialog(Stage stage, StackPane stackPane) {

@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 
 /**
  * @author AlanSun
- * @date 2021/6/19 15:17
+ * @since 2021/6/19 15:17
  **/
 public class BooleanPropertyWriter implements ObjectWriter<SimpleBooleanProperty> {
     public static final BooleanPropertyWriter INSTANCE = new BooleanPropertyWriter();

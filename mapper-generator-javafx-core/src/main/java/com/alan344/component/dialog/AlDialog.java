@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 /**
  * @author AlanSun
- * @date 2023/2/8 9:44
+ * @since 2023/2/8 9:44
  */
 public class AlDialog extends BorderPane {
     protected HBox actionHBox = new HBox();

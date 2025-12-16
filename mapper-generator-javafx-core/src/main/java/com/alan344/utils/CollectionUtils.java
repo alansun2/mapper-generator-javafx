@@ -4,7 +4,7 @@ import java.util.Collection;
 
 /**
  * @author AlanSun
- * @date 2022/10/25 22:41
+ * @since 2022/10/25 22:41
  */
 public class CollectionUtils {
 

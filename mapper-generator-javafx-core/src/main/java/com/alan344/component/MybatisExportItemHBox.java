@@ -8,7 +8,7 @@ import javafx.scene.layout.Region;
 
 /**
  * @author AlanSun
- * @date 2023/2/22 0:40
+ * @since 2023/2/22 0:40
  */
 public class MybatisExportItemHBox extends HBox {
     private final Label label;

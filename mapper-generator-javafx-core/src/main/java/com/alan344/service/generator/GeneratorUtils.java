@@ -4,7 +4,7 @@ import org.w3c.dom.Element;
 
 /**
  * @author AlanSun
- * @date 2020/7/15 14:56
+ * @since 2020/7/15 14:56
  * <p>
  * 用于生成mybatis xml
  */

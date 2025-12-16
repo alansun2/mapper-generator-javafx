@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 /**
  * @author AlanSun
- * @date 2023/2/28 16:13
+ * @since 2023/2/28 16:13
  */
 public class PropertyPane extends BorderPane {
 

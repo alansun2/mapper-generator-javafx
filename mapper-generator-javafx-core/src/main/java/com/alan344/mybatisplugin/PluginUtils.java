@@ -17,7 +17,7 @@ import java.util.Properties;
 
 /**
  * @author AlanSun
- * @date 2020/12/3 15:33
+ * @since 2020/12/3 15:33
  */
 public class PluginUtils {
 

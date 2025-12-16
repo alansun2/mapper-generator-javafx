@@ -2,7 +2,7 @@ package com.alan344.constants.enums;
 
 /**
  * @author AlanSun
- * @date 2022/11/2 22:55
+ * @since 2022/11/2 22:55
  * <p>
  * 额外文件类型
  **/

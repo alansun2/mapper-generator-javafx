@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * @author AlanSun
- * @date 2023/3/27 0:12
+ * @since 2023/3/27 0:12
  */
 public class MybatisGeneratorPlugin extends PluginAdapter {
     private final boolean enableModel, enableClient, enableXml;

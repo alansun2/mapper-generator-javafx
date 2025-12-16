@@ -10,7 +10,7 @@ import com.xxxx.base.core.bean.response.Page;
 
 /**
  * @author ${author}
- * @date ${CUR_DATE_TIME}
+ * @since ${CUR_DATE_TIME}
  */
 @RestController
 @RequestMapping(value = "/${TYPE_NAME_LOWER_HYPHEN}")

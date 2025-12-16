@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 /**
  * @author ${author}
- * @date ${CUR_DATE_TIME}
+ * @since ${CUR_DATE_TIME}
  * <p>
  * DO 转换
  */
