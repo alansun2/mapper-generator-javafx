@@ -581,7 +581,7 @@
         "lombokGetter": true,
         "lombokSetter": true,
         "lombokToString": false,
-        "modelIgnoreColumns": "id,deleted,create_by,create_time,update_by,update_time",
+        "modelIgnoreColumns": "deleted,create_by,create_time,update_by,update_time",
         "defaultPackageSuffix": "vo",
         "modelSuffix": "PageVO",
         "name": "PageVO",
