@@ -614,7 +614,7 @@
         "lombokGetter": false,
         "lombokSetter": false,
         "lombokToString": false,
-        "defaultPackageSuffix": "manager",
+        "defaultPackageSuffix": "manage",
         "modelSuffix": "Manager",
         "name": "Manager",
         "outputPath": "D:/project/xxx-service-client/src/main/java",
