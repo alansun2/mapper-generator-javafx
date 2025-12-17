@@ -4,7 +4,7 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.bean.config.MybatisPluginConfig;
 import com.alan344.mybatisplugin.DomainPlugin;
 import com.alan344.mybatisplugin.ExtraFileCustomTemplateGeneratorPlugin;
-import com.alan344.mybatisplugin.ExtraFileJPAlGeneratorPlugin;
+import com.alan344.mybatisplugin.ExtraFileJPAGeneratorPlugin;
 import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
 import com.alan344.mybatisplugin.JpaAnnotationPlugin;
 import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
@@ -66,7 +66,7 @@ public class OfficialMybatisGenerator extends MapperGeneratorStrategyBase {
             // 额外 model 生成插件
             generatorUtils.addPlugin(ExtraFileModelGeneratorPlugin.class.getName());
             // JPA
-            generatorUtils.addPlugin(ExtraFileJPAlGeneratorPlugin.class.getName());
+            generatorUtils.addPlugin(ExtraFileJPAGeneratorPlugin.class.getName());
             // 额外的模板文件生成插件
             generatorUtils.addPlugin(ExtraFileCustomTemplateGeneratorPlugin.class.getName());
         }

@@ -32,7 +32,7 @@ import static org.mybatis.generator.internal.util.JavaBeansUtil.getJavaBeansFiel
  * @author AlanSun
  * @since 2022/11/4 13:13
  **/
-public class ExtraFileJPAlGeneratorPlugin extends PluginAdapter {
+public class ExtraFileJPAGeneratorPlugin extends PluginAdapter {
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -74,12 +74,13 @@ public class ExtraFileJPAlGeneratorPlugin extends PluginAdapter {
                     List<IntrospectedColumn> introspectedColumns = introspectedTable.getAllColumns();
 
                     //
+                    String packagePrefix = PluginUtils.getPackagePrefix();
                     topLevelClass.addAnnotation("@Entity");
-                    topLevelClass.addImportedType("jakarta.persistence.Entity");
+                    topLevelClass.addImportedType(packagePrefix + ".persistence.Entity");
 
                     topLevelClass.addAnnotation("@Table(name = \"" + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName() +
                                                 "\")");
-                    topLevelClass.addImportedType("jakarta.persistence.Table");
+                    topLevelClass.addImportedType(packagePrefix + ".persistence.Table");
 
                     Plugin plugins = context.getPlugins();
                     String rootClass = PluginUtils.getRootClass(introspectedTable, context);
@@ -165,23 +166,25 @@ public class ExtraFileJPAlGeneratorPlugin extends PluginAdapter {
             return;
         }
 
+        String packagePrefix = PluginUtils.getPackagePrefix();
+
         // 字符串
         if (field.getType().compareTo(FullyQualifiedJavaType.getStringInstance()) == 0) {
             final int length = introspectedColumn.getLength();
-            topLevelClass.addImportedType("jakarta.validation.constraints.Size");
+            topLevelClass.addImportedType(packagePrefix + ".validation.constraints.Size");
             field.addAnnotation("@Size(max = " + length + ")");
         }
 
         // 其他
         if (!introspectedColumn.isNullable()) {
-            topLevelClass.addImportedType("javax.validation.constraints.NotNull");
+            topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotNull");
             field.addAnnotation("@NotNull");
         }
     }
 
-    private void addColumnAnnotation(TopLevelClass topLevelClass,
-                                     Field field, IntrospectedColumn introspectedColumn) {
-        topLevelClass.addImportedType("jakarta.persistence.Column");
+    private void addColumnAnnotation(TopLevelClass topLevelClass, Field field, IntrospectedColumn introspectedColumn) {
+        String packagePrefix = PluginUtils.getPackagePrefix();
+        topLevelClass.addImportedType(packagePrefix + ".persistence.Column");
         StringBuilder sb = new StringBuilder();
         sb.append("@Column(name = \"").append(introspectedColumn.getActualColumnName()).append("\"");
         if (!introspectedColumn.isNullable()) {

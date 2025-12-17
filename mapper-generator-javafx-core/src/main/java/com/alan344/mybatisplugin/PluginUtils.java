@@ -1,5 +1,6 @@
 package com.alan344.mybatisplugin;
 
+import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.utils.StringUtils;
 import com.alibaba.fastjson2.JSON;
@@ -184,5 +185,18 @@ public class PluginUtils {
                 }
             }
         }
+    }
+
+    /**
+     * 根据JDK版本获取对应的包名前缀
+     * JDK 8及以下使用 javax，JDK 11及以上使用 jakarta
+     *
+     * @return 包名前缀
+     */
+    public static String getPackagePrefix() {
+        String jdkVersion = BaseConstants.currentConfig.getJdkVersion();
+
+        int version = Integer.parseInt(jdkVersion);
+        return version <= 8 ? "javax" : "jakarta";
     }
 }

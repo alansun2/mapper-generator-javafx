@@ -1,5 +1,6 @@
 package com.alan344.mybatisplugin;
 
+import com.alan344.constants.BaseConstants;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -45,6 +46,8 @@ public class ValidationAnnotationPlugin extends PluginAdapter {
      * @param introspectedTable 表信息
      */
     private void addValidationAnnotations(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        String packagePrefix = PluginUtils.getPackagePrefix();
+
         // 为每个字段添加@Column注解
         for (Field field : topLevelClass.getFields()) {
             // 查找字段对应的列
@@ -61,18 +64,18 @@ public class ValidationAnnotationPlugin extends PluginAdapter {
             if (field.getType().getFullyQualifiedName().equals(String.class.getName())) {
                 // 即使可为空，也可以添加长度验证
                 if (column.getLength() > 0) {
-                    topLevelClass.addImportedType("jakarta.validation.constraints.Size");
+                    topLevelClass.addImportedType(packagePrefix + ".validation.constraints.Size");
                     field.addAnnotation("@Size(max = " + column.getLength() + ", message = \"" + fieldName + "'s length cannot " +
                                         "exceed " + column.getLength() + "\")");
                 }
                 if (!column.isNullable()) {
-                    topLevelClass.addImportedType("jakarta.validation.constraints.NotBlank");
+                    topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotBlank");
                     field.addAnnotation("@NotBlank(message = \"" + fieldName + " cannot be blank\")");
                 }
             } else {
                 // 添加@NotNull注解（针对非空字段）
                 if (!column.isNullable()) {
-                    topLevelClass.addImportedType("jakarta.validation.constraints.NotNull");
+                    topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotNull");
                     field.addAnnotation("@NotNull(message = \"" + fieldName + " cannot be null\")");
                 }
             }
@@ -83,6 +86,8 @@ public class ValidationAnnotationPlugin extends PluginAdapter {
     @Override
     public boolean kotlinDataClassGenerated(final KotlinFile kotlinFile, final KotlinType dataClass,
                                             final IntrospectedTable introspectedTable) {
+        String packagePrefix = PluginUtils.getPackagePrefix();
+
         // Kotlin中通常使用@Size和@NotBlank等注解
         for (KotlinProperty field : dataClass.getConstructorProperties()) {
             final String fieldName = field.getName();
@@ -97,19 +102,19 @@ public class ValidationAnnotationPlugin extends PluginAdapter {
             if (field.getDataType().get().equalsIgnoreCase(String.class.getName())) {
                 // 添加@Size注解（针对字符串长度限制）
                 if (field.getDataType().get().equals(String.class.getName()) && column.getLength() > 0) {
-                    kotlinFile.addImport("jakarta.validation.constraints.Size");
+                    kotlinFile.addImport(packagePrefix + ".validation.constraints.Size");
                     field.addAnnotation("@field:Size(max = " + column.getLength() + ", message = " + fieldName + "\"'s length " +
                                         "cannot exceed " + column.getLength() + "\")");
                 }
                 // 添加@NotBlank注解（针对非空字符串字段）
                 if (!column.isNullable()) {
-                    kotlinFile.addImport("jakarta.validation.constraints.NotBlank");
+                    kotlinFile.addImport(packagePrefix + ".validation.constraints.NotBlank");
                     field.addAnnotation("@field:NotBlank(message = \"" + fieldName + " cannot be blank\")");
                 }
             } else {
                 // 添加@NotNull注解（针对非空字段）
                 if (!column.isNullable()) {
-                    kotlinFile.addImport("jakarta.validation.constraints.NotNull");
+                    kotlinFile.addImport(packagePrefix + ".validation.constraints.NotNull");
                     field.addAnnotation("@field:NotNull(message = \"" + fieldName + " cannot be null\")");
                 }
             }

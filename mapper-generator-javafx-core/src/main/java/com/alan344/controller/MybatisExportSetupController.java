@@ -239,6 +239,13 @@ public class MybatisExportSetupController {
 
             projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> projectNameText.setText(FileUtil.getName(newValue)));
 
+            JFXComboBox<String> jdkVersionComboBox = new JFXComboBox<>(
+                    FXCollections.observableArrayList("8", "11", "17", "21")
+            );
+            jdkVersionComboBox.setValue(mybatisExportConfig.getJdkVersion());
+            mybatisExportConfig.jdkVersionProperty().bindBidirectional(jdkVersionComboBox.valueProperty());
+            MybatisExportItemHBox jdkVersionHbox = new MybatisExportItemHBox("JDK版本:", jdkVersionComboBox);
+
             JFXComboBox<LanguageEnum> languageComboBox =
                     new JFXComboBox<>(FXCollections.observableArrayList(LanguageEnum.values()));
             MybatisExportItemHBox languageHbox = new MybatisExportItemHBox("语言:", languageComboBox);
@@ -388,8 +395,8 @@ public class MybatisExportSetupController {
             frameworkComboBox.setValue(mybatisExportConfig.getFrameworkType());
             mybatisExportConfig.frameworkTypeProperty().bindBidirectional(frameworkComboBox.valueProperty());
 
-            hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox
-                    , languageHbox, frameworkHbox,
+            hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox,
+                    jdkVersionHbox, languageHbox, frameworkHbox,
                     beanLocationHbox, beanPackageHbox, beanRootClassHbox, mapperLocationHbox, mapperPackageHbox,
                     mapperRootInterfaceHbox, xmlLocationHbox, globalIgnoreFieldHbox);
 

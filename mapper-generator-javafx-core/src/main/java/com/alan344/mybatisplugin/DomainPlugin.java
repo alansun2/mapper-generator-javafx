@@ -5,7 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.mybatis.generator.api.GeneratedXmlFile;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
-import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.java.AbstractJavaType;
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.InnerClass;
+import org.mybatis.generator.api.dom.java.Interface;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
+import org.mybatis.generator.api.dom.java.TypeParameter;
 import org.mybatis.generator.api.dom.kotlin.KotlinFile;
 import org.mybatis.generator.api.dom.kotlin.KotlinType;
 import org.mybatis.generator.api.dom.xml.Attribute;
@@ -58,7 +65,8 @@ public class DomainPlugin extends PluginAdapter {
 
     @Override
     public boolean sqlMapGenerated(GeneratedXmlFile sqlMap, IntrospectedTable introspectedTable) {
-        String targetProject = PluginUtils.parse(sqlMap.getTargetProject(), PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true));
+        String targetProject = PluginUtils.parse(sqlMap.getTargetProject(),
+                PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true));
         File xmlFile = new File(targetProject);
         if (!xmlFile.exists() && !xmlFile.mkdirs()) {
             log.error("创建xml文件夹：{} 失败", targetProject);
@@ -118,12 +126,14 @@ public class DomainPlugin extends PluginAdapter {
     }
 
     @Override
-    public boolean dynamicSqlSupportGenerated(KotlinFile kotlinFile, KotlinType outerSupportObject, KotlinType innerSupportClass, IntrospectedTable introspectedTable) {
+    public boolean dynamicSqlSupportGenerated(KotlinFile kotlinFile, KotlinType outerSupportObject,
+                                              KotlinType innerSupportClass, IntrospectedTable introspectedTable) {
         final String remarks = introspectedTable.getRemarks();
         this.kotlin(kotlinFile, remarks);
 
         final Set<String> imports = kotlinFile.getImports();
-        final Set<String> collect = imports.stream().map(s -> PluginUtils.parse(s, PluginUtils.getDomainFromRemarks(remarks, true))).collect(Collectors.toSet());
+        final Set<String> collect = imports.stream().map(s -> PluginUtils.parse(s, PluginUtils.getDomainFromRemarks(remarks,
+                true))).collect(Collectors.toSet());
 
         this.reflect(kotlinFile, "imports", collect);
 
@@ -136,7 +146,8 @@ public class DomainPlugin extends PluginAdapter {
         this.kotlin(mapperFile, remarks);
 
         final Set<String> imports = mapperFile.getImports();
-        final Set<String> collect = imports.stream().map(s -> PluginUtils.parse(s, PluginUtils.getDomainFromRemarks(remarks, true))).collect(Collectors.toSet());
+        final Set<String> collect = imports.stream().map(s -> PluginUtils.parse(s, PluginUtils.getDomainFromRemarks(remarks,
+                true))).collect(Collectors.toSet());
 
         this.reflect(mapperFile, "imports", collect);
         return super.mapperGenerated(mapperFile, mapper, introspectedTable);
@@ -166,7 +177,8 @@ public class DomainPlugin extends PluginAdapter {
 
             final Set<String> staticImports = topLevelClass.getStaticImports();
             if (CollectionUtils.isNotEmpty(staticImports)) {
-                final Set<String> collect = staticImports.stream().map(s -> PluginUtils.parse(s, PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true))).collect(Collectors.toSet());
+                final Set<String> collect = staticImports.stream().map(s -> PluginUtils.parse(s,
+                        PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true))).collect(Collectors.toSet());
                 this.reflect(topLevelClass, "staticImports", collect);
             }
         }
@@ -177,7 +189,8 @@ public class DomainPlugin extends PluginAdapter {
 
             final Set<String> staticImports = interfaze.getStaticImports();
             if (CollectionUtils.isNotEmpty(staticImports)) {
-                final Set<String> collect = staticImports.stream().map(s -> PluginUtils.parse(s, PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true))).collect(Collectors.toSet());
+                final Set<String> collect = staticImports.stream().map(s -> PluginUtils.parse(s,
+                        PluginUtils.getDomainFromRemarks(introspectedTable.getRemarks(), true))).collect(Collectors.toSet());
                 this.reflect(abstractJavaType, "staticImports", collect);
             }
         }
@@ -234,7 +247,6 @@ public class DomainPlugin extends PluginAdapter {
             }
         }
 
-
         targetPackage.setAccessible(true);
         try {
             targetPackage.set(o, value);
@@ -242,7 +254,6 @@ public class DomainPlugin extends PluginAdapter {
             throw new RuntimeException(e);
         }
     }
-
 
     private void type(FullyQualifiedJavaType type1, IntrospectedTable introspectedTable) {
         final List<FullyQualifiedJavaType> typeArguments = type1.getTypeArguments();

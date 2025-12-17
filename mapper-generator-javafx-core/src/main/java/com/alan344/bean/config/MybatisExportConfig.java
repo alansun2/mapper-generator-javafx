@@ -122,6 +122,11 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
     private final SimpleStringProperty globalIgnoreField = new SimpleStringProperty();
 
     /**
+     * JDK 版本
+     */
+    private final SimpleStringProperty jdkVersion = new SimpleStringProperty("8");
+
+    /**
      * 使用原来的字段名
      */
     private final SimpleBooleanProperty useActualColumnNames = new SimpleBooleanProperty(false);
@@ -368,6 +373,21 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
         this.xmlEnable.set(xmlEnable);
     }
 
+    public String getJdkVersion() {
+        return jdkVersion.get();
+    }
+
+    public SimpleStringProperty jdkVersionProperty() {
+        return jdkVersion;
+    }
+
+    public void setJdkVersion(String jdkVersion) {
+        this.jdkVersion.set(jdkVersion);
+    }
+
+    /**
+     * 使用原来的字段名
+     */
     public boolean isUseActualColumnNames() {
         return useActualColumnNames.get();
     }

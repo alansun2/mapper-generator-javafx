@@ -42,22 +42,19 @@ public class SerializablePlugin extends PluginAdapter {
     }
 
     @Override
-    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass,
-                                                 IntrospectedTable introspectedTable) {
+    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         makeSerializable(topLevelClass, introspectedTable);
         return true;
     }
 
     @Override
-    public boolean modelPrimaryKeyClassGenerated(TopLevelClass topLevelClass,
-                                                 IntrospectedTable introspectedTable) {
+    public boolean modelPrimaryKeyClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         makeSerializable(topLevelClass, introspectedTable);
         return true;
     }
 
     @Override
-    public boolean modelRecordWithBLOBsClassGenerated(
-            TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+    public boolean modelRecordWithBLOBsClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
         makeSerializable(topLevelClass, introspectedTable);
         return true;
     }
@@ -77,8 +74,7 @@ public class SerializablePlugin extends PluginAdapter {
             topLevelClass.addImportedType(serializable);
             topLevelClass.addSuperInterface(serializable);
 
-            Field field = new Field("serialVersionUID",
-                    new FullyQualifiedJavaType("long"));
+            Field field = new Field("serialVersionUID", new FullyQualifiedJavaType("long"));
             field.setFinal(true);
             field.setInitializationString("1L");
             field.setStatic(true);
@@ -96,8 +92,7 @@ public class SerializablePlugin extends PluginAdapter {
     }
 
     @Override
-    public boolean kotlinDataClassGenerated(KotlinFile kotlinFile, KotlinType dataClass,
-                                            IntrospectedTable introspectedTable) {
+    public boolean kotlinDataClassGenerated(KotlinFile kotlinFile, KotlinType dataClass, IntrospectedTable introspectedTable) {
         final String jdkSerializable = introspectedTable.getTableConfigurationProperty(TablePropertyConstants.JDK_SERIALIZABLE);
         if (StrUtil.isEmpty(jdkSerializable) || !Boolean.parseBoolean(jdkSerializable)) {
             return true;

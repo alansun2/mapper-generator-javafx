@@ -1,6 +1,7 @@
 package com.alan344.mybatisplugin;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.alan344.constants.BaseConstants;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -46,14 +47,16 @@ public class JpaAnnotationPlugin extends PluginAdapter {
      * @param introspectedTable 表信息
      */
     private void addJpaAnnotations(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        String packagePrefix = PluginUtils.getPackagePrefix();
+        
         // 添加@Entity注解
         topLevelClass.addAnnotation("@Entity");
-        topLevelClass.addImportedType("jakarta.persistence.Entity");
+        topLevelClass.addImportedType(packagePrefix + ".persistence.Entity");
 
         // 添加@Table注解
         String tableName = introspectedTable.getFullyQualifiedTable().getIntrospectedTableName();
         topLevelClass.addAnnotation("@Table(name = \"" + tableName + "\")");
-        topLevelClass.addImportedType("jakarta.persistence.Table");
+        topLevelClass.addImportedType(packagePrefix + ".persistence.Table");
 
         String primaryKey = null;
         final List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
@@ -65,7 +68,7 @@ public class JpaAnnotationPlugin extends PluginAdapter {
             if (primaryKeyOpt.isPresent()) {
                 final Field field = primaryKeyOpt.get();
                 field.addAnnotation("@Id");
-                topLevelClass.addImportedType("jakarta.persistence.Id");
+                topLevelClass.addImportedType(packagePrefix + ".persistence.Id");
                 primaryKey = primaryColumn.getJavaProperty();
             }
         }
@@ -101,19 +104,21 @@ public class JpaAnnotationPlugin extends PluginAdapter {
 
             field.addAnnotation(columnAnnotation.toString());
         }
-        topLevelClass.addImportedType("jakarta.persistence.Column");
+        topLevelClass.addImportedType(packagePrefix + ".persistence.Column");
     }
 
     @Override
     public boolean kotlinDataClassGenerated(final KotlinFile kotlinFile, final KotlinType dataClass,
                                             final IntrospectedTable introspectedTable) {
+        String packagePrefix = PluginUtils.getPackagePrefix();
+        
         // 添加@Entity注解
         dataClass.addAnnotation("@Entity");
-        kotlinFile.addImport("jakarta.persistence.Entity");
+        kotlinFile.addImport(packagePrefix + ".persistence.Entity");
         // 添加@Table注解
         String tableName = introspectedTable.getFullyQualifiedTable().getIntrospectedTableName();
         dataClass.addAnnotation("@Table(name = \"" + tableName + "\")");
-        kotlinFile.addImport("jakarta.persistence.Table");
+        kotlinFile.addImport(packagePrefix + ".persistence.Table");
 
         String primaryKey = null;
         final List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
@@ -125,7 +130,7 @@ public class JpaAnnotationPlugin extends PluginAdapter {
             if (primaryKeyOpt.isPresent()) {
                 final KotlinProperty field = primaryKeyOpt.get();
                 field.addAnnotation("@field:Id");
-                kotlinFile.addImport("jakarta.persistence.Id");
+                kotlinFile.addImport(packagePrefix + ".persistence.Id");
                 primaryKey = primaryColumn.getJavaProperty();
             }
         }
@@ -162,7 +167,7 @@ public class JpaAnnotationPlugin extends PluginAdapter {
 
             constructorProperty.addAnnotation(columnAnnotation.toString());
         }
-        kotlinFile.addImport("jakarta.persistence.Column");
+        kotlinFile.addImport(packagePrefix + ".persistence.Column");
         return true;
     }
 }

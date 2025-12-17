@@ -194,13 +194,15 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
             field.addAnnotation("@Length(max = " + length + ", message = \"" + remarks + "最多 " + length + " 个字符\")");
 
             if (!introspectedColumn.isNullable()) {
-                topLevelClass.addImportedType("javax.validation.constraints.NotBlank");
+                String packagePrefix = PluginUtils.getPackagePrefix();
+                topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotBlank");
                 field.addAnnotation("@NotBlank(message = \"" + remarks + " 必填\")");
             }
         } else {
             // 其他
             if (!introspectedColumn.isNullable()) {
-                topLevelClass.addImportedType("javax.validation.constraints.NotNull");
+                String packagePrefix = PluginUtils.getPackagePrefix();
+                topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotNull");
                 field.addAnnotation("@NotNull(message = \"" + remarks + " 必填\")");
             }
         }
