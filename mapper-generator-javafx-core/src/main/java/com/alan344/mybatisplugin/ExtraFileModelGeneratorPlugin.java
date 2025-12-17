@@ -21,7 +21,6 @@ import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.codegen.RootClassInfo;
 import org.mybatis.generator.config.PropertyRegistry;
-import org.mybatis.generator.internal.util.StringUtility;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,78 +36,78 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
 
     @Override
     public boolean validate(List<String> warnings) {
-        return true;
+        return CollectionUtils.isNotEmpty(ConfigConstants.extraTemplateFileConfigs);
     }
 
     @Override
     public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
-        if (CollectionUtils.isEmpty(ConfigConstants.extraTemplateFileConfigs)) {
-            return Collections.emptyList();
-        }
-
-        final MybatisExportConfig currentConfig = BaseConstants.currentConfig;
-
         return ConfigConstants.extraTemplateFileConfigs.stream()
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
-                .map(extraFileConfig -> {
-                    // 生成类
-                    TopLevelClass topLevelClass = new TopLevelClass(PluginUtils.getTypeFullName(introspectedTable,
-                            this.getPackageName(introspectedTable.getRemarks(), extraFileConfig),
-                            extraFileConfig.getModelSuffix()));
-                    topLevelClass.setVisibility(JavaVisibility.PUBLIC);
-                    // 添加 lombok 注解
-                    this.addLombok(extraFileConfig, topLevelClass);
+                .map(extraFileConfig ->
+                        this.getGeneratedJavaFile(introspectedTable, extraFileConfig, BaseConstants.currentConfig))
+                .collect(Collectors.toList());
+    }
 
-                    // 父类
-                    if (StringUtility.stringHasValue(extraFileConfig.getSuperClass())) {
-                        topLevelClass.setSuperClass(extraFileConfig.getSuperClass());
-                    }
+    private GeneratedJavaFile getGeneratedJavaFile(final IntrospectedTable introspectedTable,
+                                                   final ExtraTemplateFileConfig extraFileConfig,
+                                                   final MybatisExportConfig currentConfig) {
+        // 生成类
+        TopLevelClass topLevelClass = new TopLevelClass(PluginUtils.getTypeFullName(introspectedTable,
+                this.getPackageName(introspectedTable.getRemarks(), extraFileConfig), extraFileConfig.getModelSuffix()));
+        topLevelClass.setVisibility(JavaVisibility.PUBLIC);
+        // 添加 lombok 注解
+        this.addLombok(extraFileConfig, topLevelClass);
 
-                    CommentGenerator commentGenerator = context.getCommentGenerator();
-                    // 类注释
-                    commentGenerator.addModelClassComment(topLevelClass, introspectedTable);
+        // 父类
+        final String superClass = extraFileConfig.getSuperClass();
+        if (StringUtils.isNotEmpty(superClass)) {
+            final String name = superClass.substring(superClass.lastIndexOf(".") + 1);
+            topLevelClass.setSuperClass(name);
+            topLevelClass.addImportedType(superClass);
+        }
 
-                    // 无主键的字段
-                    List<IntrospectedColumn> introspectedColumns = introspectedTable.getAllColumns();
+        CommentGenerator commentGenerator = context.getCommentGenerator();
+        // 类注释
+        commentGenerator.addModelClassComment(topLevelClass, introspectedTable);
+        // 无主键的字段
+        List<IntrospectedColumn> introspectedColumns = introspectedTable.getAllColumns();
 
-                    Plugin plugins = context.getPlugins();
-                    String rootClass = PluginUtils.getRootClass(introspectedTable, context);
-                    for (IntrospectedColumn introspectedColumn : introspectedColumns) {
-                        if (RootClassInfo.getInstance(rootClass, Collections.emptyList()).containsProperty(introspectedColumn)) {
-                            continue;
-                        }
-                        // 全局忽略字段
-                        if (PluginUtils.isFieldIgnore(extraFileConfig.getModelIgnoreColumns(),
-                                introspectedColumn.getActualColumnName())) {
-                            continue;
-                        }
+        Plugin plugins = context.getPlugins();
+        String rootClass = PluginUtils.getRootClass(introspectedTable, context);
+        for (IntrospectedColumn introspectedColumn : introspectedColumns) {
+            if (RootClassInfo.getInstance(rootClass, Collections.emptyList()).containsProperty(introspectedColumn)) {
+                continue;
+            }
+            // 全局忽略字段
+            if (PluginUtils.isFieldIgnore(extraFileConfig.getModelIgnoreColumns(), introspectedColumn.getActualColumnName())) {
+                continue;
+            }
 
-                        // 添加成员变量注释
-                        Field field = getJavaBeansField(introspectedColumn, context, introspectedTable);
+            // 添加成员变量注释
+            Field field = getJavaBeansField(introspectedColumn, context, introspectedTable);
 
-                        // 插件执行
-                        if (plugins.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable,
-                                ModelClassType.BASE_RECORD)) {
-                            // 添加 validate 注解
-                            this.addValidationLengthAnnotation(extraFileConfig.isGenerateValidAnnotation(), topLevelClass,
-                                    field, introspectedColumn);
-                            topLevelClass.addField(field);
-                            topLevelClass.addImportedType(field.getType());
-                        }
-                    }
+            // 插件执行
+            if (plugins.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable,
+                    ModelClassType.BASE_RECORD)) {
+                // 添加 validate 注解
+                this.addValidationLengthAnnotation(extraFileConfig.isGenerateValidAnnotation(), topLevelClass,
+                        field, introspectedColumn);
+                topLevelClass.addField(field);
+                topLevelClass.addImportedType(field.getType());
+            }
+        }
 
-                    final String dir =
-                            StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath();
-                    if (!FileUtil.exist(dir)) {
-                        FileUtil.mkdir(dir);
-                    }
+        final String dir =
+                StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath();
+        if (!FileUtil.exist(dir)) {
+            FileUtil.mkdir(dir);
+        }
 
-                    // tinyint(1) 转 boolean
-                    PluginUtils.tinyInt2Boolean(topLevelClass, introspectedTable);
+        // tinyint(1) 转 boolean
+        PluginUtils.tinyInt2Boolean(topLevelClass, introspectedTable);
 
-                    return new GeneratedJavaFile(topLevelClass, dir,
-                            context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
-                }).collect(Collectors.toList());
+        return new GeneratedJavaFile(topLevelClass, dir,
+                context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
     }
 
     /**
@@ -133,10 +132,6 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
      * @param topLevelClass {@link TopLevelClass}
      */
     private void addLombok(ExtraTemplateFileConfig extraTemplateFileConfig, TopLevelClass topLevelClass) {
-//        if (data) {
-//            topLevelClass.addImportedType("lombok.Data");
-//            topLevelClass.addAnnotation("@Data");
-//        }
         if (extraTemplateFileConfig.isLombokGetter()) {
             topLevelClass.addImportedType("lombok.Getter");
             topLevelClass.addAnnotation("@Getter");
@@ -149,39 +144,18 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
             topLevelClass.addImportedType("lombok.ToString");
             topLevelClass.addAnnotation("@ToString");
         }
-//        if (!data && equalsAndHashCode) {
-//            topLevelClass.addImportedType("lombok.EqualsAndHashCode");
-//            topLevelClass.addAnnotation("@EqualsAndHashCode");
-//        }
-//        if (builder) {
-//            topLevelClass.addImportedType("lombok.Builder");
-//            topLevelClass.addAnnotation("@Builder");
-//        }
-//        if (noArgsConstructor) {
-//            topLevelClass.addImportedType("lombok.NoArgsConstructor");
-//            topLevelClass.addAnnotation("@NoArgsConstructor");
-//        }
-//
-//        if (allArgsConstructor) {
-//            topLevelClass.addImportedType("lombok.AllArgsConstructor");
-//            topLevelClass.addAnnotation("@AllArgsConstructor");
-//        }
-//        if (!data && requiredArgsConstructor) {
-//            topLevelClass.addImportedType("lombok.RequiredArgsConstructor");
-//            topLevelClass.addAnnotation("@RequiredArgsConstructor");
-//        }
     }
 
     /**
      * 添加 validation 注解
      */
-    private void addValidationLengthAnnotation(boolean isGenerateValidationAnnotation, TopLevelClass topLevelClass, Field field
-            , IntrospectedColumn introspectedColumn) {
+    private void addValidationLengthAnnotation(boolean isGenerateValidationAnnotation, TopLevelClass topLevelClass,
+                                               Field field, IntrospectedColumn introspectedColumn) {
         if (!isGenerateValidationAnnotation) {
             return;
         }
-        String remarks = StringUtils.isNotEmpty(introspectedColumn.getRemarks()) ? introspectedColumn.getRemarks() :
-                field.getName();
+        String remarks =
+                StringUtils.isNotEmpty(introspectedColumn.getRemarks()) ? introspectedColumn.getRemarks() : field.getName();
         // 使用逗号来做分割符防止注释过长
         final int i = remarks.indexOf("。");
         if (i != -1) {
