@@ -535,6 +535,10 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
          * 乐观锁字段
          */
         private SimpleStringProperty version = new SimpleStringProperty();
+        /**
+         * 是否将 tinyInt(1) 转换为 boolean
+         */
+        private SimpleBooleanProperty tinyInt1ToBoolean = new SimpleBooleanProperty(false);
 
         @Override
         public TargetNameEnum getTargetName() {
@@ -674,6 +678,18 @@ public class MybatisExportConfig implements LeftRightLinkageBorderPane.GroupName
 
         public void setVersion(final String version) {
             this.version.set(version);
+        }
+
+        public boolean isTinyInt1ToBoolean() {
+            return tinyInt1ToBoolean.get();
+        }
+
+        public SimpleBooleanProperty tinyInt1ToBooleanProperty() {
+            return tinyInt1ToBoolean;
+        }
+
+        public void setTinyInt1ToBoolean(final boolean tinyInt1ToBoolean) {
+            this.tinyInt1ToBoolean.set(tinyInt1ToBoolean);
         }
 
         @Override

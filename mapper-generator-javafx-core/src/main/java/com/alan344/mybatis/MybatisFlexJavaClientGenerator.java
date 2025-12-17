@@ -1,6 +1,7 @@
 package com.alan344.mybatis;
 
 import com.alan344.constants.BaseConstants;
+import com.alan344.mybatis.mapper.SelectListMethodGenerator;
 import com.alan344.mybatis.xml.ListXMLMapperGenerator;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
@@ -9,6 +10,7 @@ import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.codegen.AbstractJavaClientGenerator;
 import org.mybatis.generator.codegen.AbstractXmlGenerator;
+import org.mybatis.generator.codegen.mybatis3.javamapper.elements.AbstractJavaMapperMethodGenerator;
 import org.mybatis.generator.config.PropertyRegistry;
 
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class MybatisFlexJavaClientGenerator extends AbstractJavaClientGenerator 
             interfaze.addImportedType(fqjt);
         }
 
+        this.addSelectListMethod(interfaze);
+
         List<CompilationUnit> answer = new ArrayList<>();
         if (context.getPlugins().clientGenerated(interfaze, introspectedTable)) {
             answer.add(interfaze);
@@ -72,5 +76,19 @@ public class MybatisFlexJavaClientGenerator extends AbstractJavaClientGenerator 
     @Override
     public boolean requiresXMLGenerator() {
         return BaseConstants.currentConfig.isXmlEnable();
+    }
+
+    protected void addSelectListMethod(Interface interfaze) {
+        AbstractJavaMapperMethodGenerator methodGenerator = new SelectListMethodGenerator();
+        initializeAndExecuteGenerator(methodGenerator, interfaze);
+    }
+
+    protected void initializeAndExecuteGenerator(AbstractJavaMapperMethodGenerator methodGenerator,
+                                                 Interface interfaze) {
+        methodGenerator.setContext(context);
+        methodGenerator.setIntrospectedTable(introspectedTable);
+        methodGenerator.setProgressCallback(progressCallback);
+        methodGenerator.setWarnings(warnings);
+        methodGenerator.addInterfaceElements(interfaze);
     }
 }

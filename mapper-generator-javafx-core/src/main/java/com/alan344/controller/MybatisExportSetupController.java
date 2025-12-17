@@ -468,46 +468,53 @@ public class MybatisExportSetupController {
     }
 
     private AnchorPane officePanel(MybatisExportConfig mybatisExportConfig) {
-// 底下的配置
         AnchorPane anchorPane = new AnchorPane();
 
         final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
                 mybatisExportConfig.getMybatisExportConfig();
+        // 第一列
         JFXCheckBox userJava8CheckBox = new JFXCheckBox("支持 java8");
         userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
         userJava8CheckBox.setLayoutX(27);
-        userJava8CheckBox.setLayoutY(51);
+        userJava8CheckBox.setLayoutY(50);
         mybatisOfficialExportConfig.userJava8Property().bindBidirectional(userJava8CheckBox.selectedProperty());
-
-        JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
-        useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
-        useBigDecimalCheckBox.setLayoutX(262);
-        useBigDecimalCheckBox.setLayoutY(88);
-        mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
-
-        JFXCheckBox useJpaAnnotationCheckBox = new JFXCheckBox("使用 JPA 注解");
-        useJpaAnnotationCheckBox.setSelected(mybatisOfficialExportConfig.isUseJpaAnnotation());
-        useJpaAnnotationCheckBox.setLayoutX(300);
-        useJpaAnnotationCheckBox.setLayoutY(88);
-        mybatisOfficialExportConfig.useJpaAnnotationProperty().bindBidirectional(useJpaAnnotationCheckBox.selectedProperty());
-
-        JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
-        useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
-        useCommentCheckBox.setLayoutX(300);
-        useCommentCheckBox.setLayoutY(51);
-        mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
 
         JFXCheckBox useLombokGetSetCheckBox = new JFXCheckBox("启用 lombokGetSet 注解");
         useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
         useLombokGetSetCheckBox.setLayoutX(27);
-        useLombokGetSetCheckBox.setLayoutY(88);
+        useLombokGetSetCheckBox.setLayoutY(80);
         mybatisOfficialExportConfig.useLombokGetSetProperty().bindBidirectional(useLombokGetSetCheckBox.selectedProperty());
 
         JFXCheckBox useLombokBuilderCheckBox = new JFXCheckBox("启用 lombokBuilder 注解");
         useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
         useLombokBuilderCheckBox.setLayoutX(27);
-        useLombokBuilderCheckBox.setLayoutY(123);
+        useLombokBuilderCheckBox.setLayoutY(110);
         mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
+
+        JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
+        useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
+        useBigDecimalCheckBox.setLayoutX(27);
+        useBigDecimalCheckBox.setLayoutY(140);
+        mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
+
+        // 第二列
+        JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
+        useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
+        useCommentCheckBox.setLayoutX(300);
+        useCommentCheckBox.setLayoutY(50);
+        mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
+
+        JFXCheckBox useJpaAnnotationCheckBox = new JFXCheckBox("使用 JPA 注解");
+        useJpaAnnotationCheckBox.setSelected(mybatisOfficialExportConfig.isUseJpaAnnotation());
+        useJpaAnnotationCheckBox.setLayoutX(300);
+        useJpaAnnotationCheckBox.setLayoutY(80);
+        mybatisOfficialExportConfig.useJpaAnnotationProperty().bindBidirectional(useJpaAnnotationCheckBox.selectedProperty());
+
+        JFXCheckBox tinyInt1ToBooleanCheckBox = new JFXCheckBox("tinyInt(1) 转为 Boolean");
+        tinyInt1ToBooleanCheckBox.setSelected(mybatisOfficialExportConfig.isTinyInt1ToBoolean());
+        tinyInt1ToBooleanCheckBox.setLayoutX(300);
+        tinyInt1ToBooleanCheckBox.setLayoutY(110);
+        mybatisOfficialExportConfig.tinyInt1ToBooleanProperty().bindBidirectional(tinyInt1ToBooleanCheckBox.selectedProperty());
 
         Label targetNameLabel = new Label("targetName:");
         targetNameLabel.setLayoutX(27);
@@ -544,46 +551,54 @@ public class MybatisExportSetupController {
                         JavaClientTypeEnum.XMLMAPPER));
 
         anchorPane.getChildren().addAll(userJava8CheckBox, useJpaAnnotationCheckBox, useCommentCheckBox,
-                useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameLabel, javaClientTypeLabel,
-                javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton);
+                useLombokGetSetCheckBox, useLombokBuilderCheckBox, tinyInt1ToBooleanCheckBox, targetNameLabel,
+                javaClientTypeLabel,
+                javaClientTypeComboBox, targetNameJFXComboBox, advanceSetButton, useBigDecimalCheckBox);
         return anchorPane;
     }
 
     private AnchorPane mybatisFlexPanel(MybatisExportConfig mybatisExportConfig) {
-        // 底下的配置
         AnchorPane anchorPane = new AnchorPane();
 
         final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
                 mybatisExportConfig.getMybatisExportConfig();
+        // 第一列
         JFXCheckBox userJava8CheckBox = new JFXCheckBox("支持 java8");
         userJava8CheckBox.setSelected(mybatisOfficialExportConfig.isUserJava8());
         userJava8CheckBox.setLayoutX(27);
-        userJava8CheckBox.setLayoutY(51);
+        userJava8CheckBox.setLayoutY(50);
         mybatisOfficialExportConfig.userJava8Property().bindBidirectional(userJava8CheckBox.selectedProperty());
-
-        JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
-        useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
-        useBigDecimalCheckBox.setLayoutX(262);
-        useBigDecimalCheckBox.setLayoutY(88);
-        mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
-
-        JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
-        useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
-        useCommentCheckBox.setLayoutX(262);
-        useCommentCheckBox.setLayoutY(51);
-        mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
 
         JFXCheckBox useLombokGetSetCheckBox = new JFXCheckBox("启用 lombokGetSet 注解");
         useLombokGetSetCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokGetSet());
         useLombokGetSetCheckBox.setLayoutX(27);
-        useLombokGetSetCheckBox.setLayoutY(88);
+        useLombokGetSetCheckBox.setLayoutY(80);
         mybatisOfficialExportConfig.useLombokGetSetProperty().bindBidirectional(useLombokGetSetCheckBox.selectedProperty());
 
         JFXCheckBox useLombokBuilderCheckBox = new JFXCheckBox("启用 lombokBuilder 注解");
         useLombokBuilderCheckBox.setSelected(mybatisOfficialExportConfig.isUseLombokBuilder());
         useLombokBuilderCheckBox.setLayoutX(27);
-        useLombokBuilderCheckBox.setLayoutY(123);
+        useLombokBuilderCheckBox.setLayoutY(110);
         mybatisOfficialExportConfig.useLombokBuilderProperty().bindBidirectional(useLombokBuilderCheckBox.selectedProperty());
+
+        JFXCheckBox useBigDecimalCheckBox = new JFXCheckBox("使用 BigDecimal");
+        useBigDecimalCheckBox.setSelected(mybatisOfficialExportConfig.isUseBigDecimal());
+        useBigDecimalCheckBox.setLayoutX(27);
+        useBigDecimalCheckBox.setLayoutY(140);
+        mybatisOfficialExportConfig.useBigDecimalProperty().bindBidirectional(useBigDecimalCheckBox.selectedProperty());
+
+        // 第二列
+        JFXCheckBox useCommentCheckBox = new JFXCheckBox("启用 Validation 注解");
+        useCommentCheckBox.setSelected(mybatisOfficialExportConfig.isUseValidationAnnotation());
+        useCommentCheckBox.setLayoutX(262);
+        useCommentCheckBox.setLayoutY(50);
+        mybatisOfficialExportConfig.useValidationAnnotationProperty().bindBidirectional(useCommentCheckBox.selectedProperty());
+
+        JFXCheckBox tinyInt1ToBooleanCheckBox = new JFXCheckBox("tinyInt(1)转为Boolean");
+        tinyInt1ToBooleanCheckBox.setSelected(mybatisOfficialExportConfig.isTinyInt1ToBoolean());
+        tinyInt1ToBooleanCheckBox.setLayoutX(262);
+        tinyInt1ToBooleanCheckBox.setLayoutY(80);
+        mybatisOfficialExportConfig.tinyInt1ToBooleanProperty().bindBidirectional(tinyInt1ToBooleanCheckBox.selectedProperty());
 
         // 高级设置按钮
         Button advanceSetButton = new Button();
@@ -624,8 +639,9 @@ public class MybatisExportSetupController {
         mybatisOfficialExportConfig.setTargetName(TargetNameEnum.MyBatis3Flex);
 
         anchorPane.getChildren().addAll(userJava8CheckBox, useCommentCheckBox, logicDeleteLabel,
-                versionLabel, logicDeleteField, version,
-                useLombokGetSetCheckBox, useLombokBuilderCheckBox, targetNameJFXComboBox, advanceSetButton);
+                versionLabel, logicDeleteField, version, useBigDecimalCheckBox,
+                useLombokGetSetCheckBox, useLombokBuilderCheckBox, tinyInt1ToBooleanCheckBox, targetNameJFXComboBox,
+                advanceSetButton);
         return anchorPane;
     }
 }

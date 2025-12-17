@@ -16,10 +16,6 @@ import static org.mybatis.generator.internal.util.messages.Messages.getString;
  **/
 public class ListXMLMapperGenerator extends AbstractXmlGenerator {
 
-    public ListXMLMapperGenerator() {
-        super();
-    }
-
     protected XmlElement getSqlMapElement() {
         FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();
         progressCallback.startTask(getString("Progress.12", table.toString()));
@@ -29,23 +25,9 @@ public class ListXMLMapperGenerator extends AbstractXmlGenerator {
 
         context.getCommentGenerator().addRootComment(answer);
 
-        addSelectAllElement(answer);
+        addSelectListElement(answer);
 
         return answer;
-    }
-
-    private void addSelectAllElement(XmlElement parentElement) {
-        AbstractXmlElementGenerator elementGenerator = new ListElementGenerator();
-        initializeAndExecuteGenerator(elementGenerator, parentElement);
-    }
-
-    private void initializeAndExecuteGenerator(AbstractXmlElementGenerator elementGenerator,
-                                               XmlElement parentElement) {
-        elementGenerator.setContext(context);
-        elementGenerator.setIntrospectedTable(introspectedTable);
-        elementGenerator.setProgressCallback(progressCallback);
-        elementGenerator.setWarnings(warnings);
-        elementGenerator.addElements(parentElement);
     }
 
     @Override
@@ -58,5 +40,19 @@ public class ListXMLMapperGenerator extends AbstractXmlGenerator {
         }
 
         return document;
+    }
+
+    private void addSelectListElement(XmlElement parentElement) {
+        AbstractXmlElementGenerator elementGenerator = new ListElementGenerator();
+        initializeAndExecuteGenerator(elementGenerator, parentElement);
+    }
+
+    private void initializeAndExecuteGenerator(AbstractXmlElementGenerator elementGenerator,
+                                               XmlElement parentElement) {
+        elementGenerator.setContext(context);
+        elementGenerator.setIntrospectedTable(introspectedTable);
+        elementGenerator.setProgressCallback(progressCallback);
+        elementGenerator.setWarnings(warnings);
+        elementGenerator.addElements(parentElement);
     }
 }
