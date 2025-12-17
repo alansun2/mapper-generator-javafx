@@ -6,11 +6,15 @@ import com.alibaba.fastjson2.JSON;
 import com.google.common.base.CaseFormat;
 import lombok.Getter;
 import lombok.Setter;
+import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.PropertyRegistry;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -161,5 +165,24 @@ public class PluginUtils {
         private String d = "";
 
         private String dd = "";
+    }
+
+    /**
+     * 处理字段，将 TINYINT(1) 对应的字段类型改为 Boolean
+     */
+    public static void tinyInt2Boolean(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+        for (Field field : topLevelClass.getFields()) {
+            // 查找对应的列
+            for (IntrospectedColumn column : introspectedTable.getAllColumns()) {
+                if (column.getJavaProperty().equals(field.getName())) {
+                    // 检查是否是 TINYINT(1) 类型
+                    if (column.getJdbcType() == Types.TINYINT && column.getLength() == 1) {
+                        // 将字段类型改为 Boolean
+                        field.setType(FullyQualifiedJavaType.getBooleanPrimitiveInstance());
+                    }
+                    break;
+                }
+            }
+        }
     }
 }

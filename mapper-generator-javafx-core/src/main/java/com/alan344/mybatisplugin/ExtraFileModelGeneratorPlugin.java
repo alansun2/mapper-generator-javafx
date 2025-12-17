@@ -9,7 +9,12 @@ import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.StringUtils;
-import org.mybatis.generator.api.*;
+import org.mybatis.generator.api.CommentGenerator;
+import org.mybatis.generator.api.GeneratedJavaFile;
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.Plugin;
+import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
@@ -47,7 +52,9 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                 .filter(extraFileConfig -> extraFileConfig.getExtraFileType().equals(ExtraFileTypeEnum.MODEL))
                 .map(extraFileConfig -> {
                     // 生成类
-                    TopLevelClass topLevelClass = new TopLevelClass(PluginUtils.getTypeFullName(introspectedTable, this.getPackageName(introspectedTable.getRemarks(), extraFileConfig), extraFileConfig.getModelSuffix()));
+                    TopLevelClass topLevelClass = new TopLevelClass(PluginUtils.getTypeFullName(introspectedTable,
+                            this.getPackageName(introspectedTable.getRemarks(), extraFileConfig),
+                            extraFileConfig.getModelSuffix()));
                     topLevelClass.setVisibility(JavaVisibility.PUBLIC);
                     // 添加 lombok 注解
                     this.addLombok(extraFileConfig, topLevelClass);
@@ -71,7 +78,8 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                             continue;
                         }
                         // 全局忽略字段
-                        if (PluginUtils.isFieldIgnore(extraFileConfig.getModelIgnoreColumns(), introspectedColumn.getActualColumnName())) {
+                        if (PluginUtils.isFieldIgnore(extraFileConfig.getModelIgnoreColumns(),
+                                introspectedColumn.getActualColumnName())) {
                             continue;
                         }
 
@@ -79,20 +87,26 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                         Field field = getJavaBeansField(introspectedColumn, context, introspectedTable);
 
                         // 插件执行
-                        if (plugins.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable, ModelClassType.BASE_RECORD)) {
+                        if (plugins.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable,
+                                ModelClassType.BASE_RECORD)) {
                             // 添加 validate 注解
-                            this.addValidationLengthAnnotation(extraFileConfig.isGenerateValidAnnotation(), topLevelClass, field, introspectedColumn);
+                            this.addValidationLengthAnnotation(extraFileConfig.isGenerateValidAnnotation(), topLevelClass,
+                                    field, introspectedColumn);
                             topLevelClass.addField(field);
                             topLevelClass.addImportedType(field.getType());
                         }
                     }
 
-                    final String dir = StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath();
+                    final String dir =
+                            StrUtil.addSuffixIfNot(currentConfig.getProjectDir(), StrUtil.SLASH) + extraFileConfig.getOutputPath();
                     if (!FileUtil.exist(dir)) {
                         FileUtil.mkdir(dir);
                     }
-                    return new GeneratedJavaFile(topLevelClass,
-                            dir,
+
+                    // tinyint(1) 转 boolean
+                    PluginUtils.tinyInt2Boolean(topLevelClass, introspectedTable);
+
+                    return new GeneratedJavaFile(topLevelClass, dir,
                             context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING), context.getJavaFormatter());
                 }).collect(Collectors.toList());
     }
@@ -161,11 +175,13 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
     /**
      * 添加 validation 注解
      */
-    private void addValidationLengthAnnotation(boolean isGenerateValidationAnnotation, TopLevelClass topLevelClass, Field field, IntrospectedColumn introspectedColumn) {
+    private void addValidationLengthAnnotation(boolean isGenerateValidationAnnotation, TopLevelClass topLevelClass, Field field
+            , IntrospectedColumn introspectedColumn) {
         if (!isGenerateValidationAnnotation) {
             return;
         }
-        String remarks = StringUtils.isNotEmpty(introspectedColumn.getRemarks()) ? introspectedColumn.getRemarks() : field.getName();
+        String remarks = StringUtils.isNotEmpty(introspectedColumn.getRemarks()) ? introspectedColumn.getRemarks() :
+                field.getName();
         // 使用逗号来做分割符防止注释过长
         final int i = remarks.indexOf("。");
         if (i != -1) {

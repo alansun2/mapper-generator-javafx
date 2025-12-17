@@ -4,6 +4,7 @@ import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.codegen.mybatis3.javamapper.elements.AbstractJavaMapperMethodGenerator;
 
 import java.util.Set;
@@ -17,15 +18,16 @@ import java.util.TreeSet;
 public class SelectListMethodGenerator extends AbstractJavaMapperMethodGenerator {
     @Override
     public void addInterfaceElements(Interface interfaze) {
-        Method method = new Method(introspectedTable.getSelectAllStatementId());
+        Method method = new Method("selectList");
         method.setVisibility(JavaVisibility.PUBLIC);
         method.setAbstract(true);
 
         FullyQualifiedJavaType returnType = FullyQualifiedJavaType.getNewListInstance();
         FullyQualifiedJavaType listType = new FullyQualifiedJavaType(introspectedTable.getBaseRecordType());
-
         returnType.addTypeArgument(listType);
         method.setReturnType(returnType);
+
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("com.sy.common.bo.Query"), "query"));
 
         // 添加 import
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
@@ -35,6 +37,8 @@ public class SelectListMethodGenerator extends AbstractJavaMapperMethodGenerator
         this.addImportedType(interfaze, importedTypes);
 
         context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);
+
+        interfaze.addMethod(method);
     }
 
     private void addImportedType(Interface interfaze, Set<FullyQualifiedJavaType> importedTypes) {

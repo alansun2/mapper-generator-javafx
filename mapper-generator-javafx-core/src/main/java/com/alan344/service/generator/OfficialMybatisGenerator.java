@@ -9,6 +9,7 @@ import com.alan344.mybatisplugin.ExtraFileModelGeneratorPlugin;
 import com.alan344.mybatisplugin.JpaAnnotationPlugin;
 import com.alan344.mybatisplugin.MybatisGeneratorPlugin;
 import com.alan344.mybatisplugin.SerializablePlugin;
+import com.alan344.mybatisplugin.TinyIntToBooleanPlugin;
 import com.alan344.mybatisplugin.ValidationAnnotationPlugin;
 import com.github.uinio.mybatis.LombokPlugin;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +39,14 @@ public class OfficialMybatisGenerator extends MapperGeneratorStrategyBase {
         });
         // 添加序列化接口插件
         generatorUtils.addPlugin(SerializablePlugin.class.getName());
+
         final MybatisExportConfig.MybatisOfficialExportConfig exportConfig =
                 mybatisExportConfig.getMybatisExportConfig();
+
+        // tinyInt(1) 转 Boolean 插件
+        if (exportConfig.isTinyInt1ToBoolean()) {
+            generatorUtils.addPlugin(TinyIntToBooleanPlugin.class.getName());
+        }
 
         // lombok 插件
         final Element lombok = generatorUtils.addPlugin(LombokPlugin.class.getName());

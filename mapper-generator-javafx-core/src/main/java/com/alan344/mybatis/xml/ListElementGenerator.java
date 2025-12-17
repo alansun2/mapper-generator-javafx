@@ -4,12 +4,12 @@ import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.dom.xml.Attribute;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
-import org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities;
 import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.AbstractXmlElementGenerator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import static org.mybatis.generator.codegen.mybatis3.MyBatis3FormattingUtilities.getAliasedEscapedColumnName;
 
 /**
  * @author AlanSun
@@ -46,15 +46,16 @@ public class ListElementGenerator extends AbstractXmlElementGenerator {
     protected List<TextElement> buildSelectList(String initial, List<IntrospectedColumn> columns) {
         List<TextElement> answer = new ArrayList<>();
         StringBuilder sb = new StringBuilder(initial);
-        Iterator<IntrospectedColumn> iter = columns.iterator();
-        while (iter.hasNext()) {
-            sb.append(MyBatis3FormattingUtilities.getSelectListPhrase(iter.next()));
-
-            if (iter.hasNext()) {
+        sb.append("\n");
+        final int size = columns.size();
+        for (int i = 0; i < size; i++) {
+            IntrospectedColumn column = columns.get(i);
+            sb.append("    ").append(getAliasedEscapedColumnName(column));
+            if (i != size - 1) {
                 sb.append(",\n");
             }
         }
-
+        // MyBatis3FormattingUtilities.getSelectListPhrase(column)
         if (!sb.isEmpty()) {
             answer.add(new TextElement(sb.toString()));
         }
