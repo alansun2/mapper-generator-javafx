@@ -6,6 +6,7 @@ import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.InnerClass;
 import org.mybatis.generator.api.dom.java.InnerEnum;
+import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaElement;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
@@ -109,7 +110,6 @@ public class MyCommentGenerator implements CommentGenerator {
         field.addJavaDocLine(" */");
     }
 
-
     @Override
     public void addFieldComment(Field field, IntrospectedTable introspectedTable) {
         if (suppressAllComments) {
@@ -169,6 +169,22 @@ public class MyCommentGenerator implements CommentGenerator {
         innerClass.addJavaDocLine(" */");
     }
 
+    @Override
+    public void addInterfaceComment(final Interface interfaceClass, final IntrospectedTable introspectedTable) {
+        if (suppressAllComments) {
+            return;
+        }
+
+        interfaceClass.addJavaDocLine("/**");
+        interfaceClass.addJavaDocLine(" * @author " + author);
+        interfaceClass.addJavaDocLine(" * @since " + LocalDateTime.now().format(dateFormat));
+        interfaceClass.addJavaDocLine(" * <p>");
+        interfaceClass.addJavaDocLine(" * 对应表: " + introspectedTable.getFullyQualifiedTable().getIntrospectedTableName());
+        if (introspectedTable.getRemarks() != null) {
+            interfaceClass.addJavaDocLine(" * 注释" + introspectedTable.getRemarks());
+        }
+        interfaceClass.addJavaDocLine(" */");
+    }
 
     @Override
     public void addEnumComment(InnerEnum innerEnum, IntrospectedTable introspectedTable) {

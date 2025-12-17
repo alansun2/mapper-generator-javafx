@@ -98,7 +98,6 @@ public class TableService {
      */
     public void loadTables(DataSource dataSource) {
         List<Table> tables = new ArrayList<>();
-        dataSource.setTables(tables);
 
         File tableDirectory = BaseConstants.getTableDirectory(dataSource);
         if (!tableDirectory.exists()) {
@@ -119,7 +118,7 @@ public class TableService {
                 log.error("加载tables文件失败", e);
                 return;
             }
-
+            dataSource.setTables(tables);
             columnService.loadColumnsFromFile(dataSource, tables);
         }
     }

@@ -24,8 +24,8 @@ public class SerializablePlugin extends PluginAdapter {
 
     public SerializablePlugin() {
         super();
-        serializable = new FullyQualifiedJavaType("java.io.Serializable"); //$NON-NLS-1$
-        gwtSerializable = new FullyQualifiedJavaType("com.google.gwt.user.client.rpc.IsSerializable"); //$NON-NLS-1$
+        serializable = new FullyQualifiedJavaType("java.io.Serializable");
+        gwtSerializable = new FullyQualifiedJavaType("com.google.gwt.user.client.rpc.IsSerializable");
     }
 
     @Override
@@ -37,8 +37,8 @@ public class SerializablePlugin extends PluginAdapter {
     @Override
     public void setProperties(Properties properties) {
         super.setProperties(properties);
-        addGWTInterface = Boolean.parseBoolean(properties.getProperty("addGWTInterface")); //$NON-NLS-1$
-        suppressJavaInterface = Boolean.parseBoolean(properties.getProperty("suppressJavaInterface")); //$NON-NLS-1$
+        addGWTInterface = Boolean.parseBoolean(properties.getProperty("addGWTInterface"));
+        suppressJavaInterface = Boolean.parseBoolean(properties.getProperty("suppressJavaInterface"));
     }
 
     @Override
@@ -77,10 +77,10 @@ public class SerializablePlugin extends PluginAdapter {
             topLevelClass.addImportedType(serializable);
             topLevelClass.addSuperInterface(serializable);
 
-            Field field = new Field("serialVersionUID", //$NON-NLS-1$
-                    new FullyQualifiedJavaType("long")); //$NON-NLS-1$
+            Field field = new Field("serialVersionUID",
+                    new FullyQualifiedJavaType("long"));
             field.setFinal(true);
-            field.setInitializationString("1L"); //$NON-NLS-1$
+            field.setInitializationString("1L");
             field.setStatic(true);
             field.setVisibility(JavaVisibility.PRIVATE);
 
@@ -102,8 +102,8 @@ public class SerializablePlugin extends PluginAdapter {
         if (StrUtil.isEmpty(jdkSerializable) || !Boolean.parseBoolean(jdkSerializable)) {
             return true;
         }
-        kotlinFile.addImport("java.io.Serializable"); //$NON-NLS-1$
-        dataClass.addSuperType("Serializable"); //$NON-NLS-1$
+        kotlinFile.addImport("java.io.Serializable");
+        dataClass.addSuperType("Serializable");
         return true;
     }
 }

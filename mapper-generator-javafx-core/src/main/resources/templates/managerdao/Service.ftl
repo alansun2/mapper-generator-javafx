@@ -1,8 +1,8 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import com.xxxx.base.core.bean.response.Page;
-<#assign suffixs = ["DTO", "PageDTO", "VO", "PageVO"]>
+import com.sy.common.bo.Page;
+<#assign suffixs = ["DTO", "PageDTO", "PageVO", "VO"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 
 /**

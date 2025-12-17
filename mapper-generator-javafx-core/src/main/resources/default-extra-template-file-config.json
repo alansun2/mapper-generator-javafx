@@ -532,7 +532,7 @@
         "lombokGetter": true,
         "lombokSetter": true,
         "lombokToString": true,
-        "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
+        "modelIgnoreColumns": "deleted,create_by,create_time,update_by,update_time",
         "defaultPackageSuffix": "dto",
         "modelSuffix": "DTO",
         "name": "DTO",
@@ -548,7 +548,7 @@
         "lombokGetter": true,
         "lombokSetter": true,
         "lombokToString": false,
-        "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
+        "modelIgnoreColumns": "deleted,create_by,create_time,update_by,update_time",
         "defaultPackageSuffix": "vo",
         "modelSuffix": "VO",
         "name": "VO",
@@ -564,12 +564,13 @@
         "lombokGetter": true,
         "lombokSetter": true,
         "lombokToString": true,
-        "modelIgnoreColumns": "is_delete,create_by,create_time,update_by,update_time",
+        "modelIgnoreColumns": "deleted,create_by,create_time,update_by,update_time",
         "defaultPackageSuffix": "dto",
         "modelSuffix": "PageDTO",
         "name": "PageDTO",
         "outputPath": "D:/project/xxx-service-client/src/main/java",
-        "packageName": "com.test.service.dto.data.${DOMAIN}"
+        "packageName": "com.test.service.dto.data.${DOMAIN}",
+        "superClass": "com.sy.common.bo.PageRequest"
       },
       {
         "id": "manager-dao-4",
@@ -580,7 +581,7 @@
         "lombokGetter": true,
         "lombokSetter": true,
         "lombokToString": false,
-        "modelIgnoreColumns": "id,is_delete,create_by,create_time,update_by,update_time",
+        "modelIgnoreColumns": "id,deleted,create_by,create_time,update_by,update_time",
         "defaultPackageSuffix": "vo",
         "modelSuffix": "PageVO",
         "name": "PageVO",
@@ -601,7 +602,7 @@
         "modelSuffix": "Dao",
         "name": "Dao",
         "outputPath": "D:/project/xxx-service-app/src/main/java",
-        "packageName": "com.test.service.${DOMAIN}",
+        "packageName": "com.test.service.${DOMAIN}"
       },
       {
         "id": "manager-dao-6",

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Connection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,7 +26,6 @@ public class DataSource implements DataItem {
     @Setter
     private Long sort;
     @Getter
-    @Setter
     private transient List<Table> tables;
 
     @Setter
@@ -178,6 +178,13 @@ public class DataSource implements DataItem {
         this.password.set(password);
     }
 
+    public void setTables(final List<Table> tables) {
+        if (tables != null) {
+            tables.sort(Comparator.comparing(Table::getTableName));
+        }
+
+        this.tables = tables;
+    }
 
     public DataSource copy() {
         DataSource dataSource = new DataSource();

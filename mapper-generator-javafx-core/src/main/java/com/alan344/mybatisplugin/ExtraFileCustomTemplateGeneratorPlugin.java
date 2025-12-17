@@ -271,6 +271,8 @@ public class ExtraFileCustomTemplateGeneratorPlugin extends PluginAdapter {
                 ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/layer/");
             } else if (filePath.contains("mybatis-flex")) {
                 ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/mybatis-flex/");
+            } else if (filePath.contains("managerdao")) {
+                ftl3 = new SpringTemplateLoader(resourceLoader, "classpath:/templates/managerdao/");
             }
 
             TemplateLoader[] loaders;

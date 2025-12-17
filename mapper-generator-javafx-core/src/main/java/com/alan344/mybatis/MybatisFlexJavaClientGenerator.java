@@ -1,5 +1,7 @@
 package com.alan344.mybatis;
 
+import com.alan344.constants.BaseConstants;
+import com.alan344.mybatis.xml.ListXMLMapperGenerator;
 import org.mybatis.generator.api.CommentGenerator;
 import org.mybatis.generator.api.dom.java.CompilationUnit;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
@@ -10,12 +12,15 @@ import org.mybatis.generator.codegen.AbstractXmlGenerator;
 import org.mybatis.generator.config.PropertyRegistry;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
 import static org.mybatis.generator.internal.util.messages.Messages.getString;
 
+/**
+ * @author AlanSun
+ * @since 2025/12/17 11:15
+ **/
 public class MybatisFlexJavaClientGenerator extends AbstractJavaClientGenerator {
 
     public MybatisFlexJavaClientGenerator(String project) {
@@ -28,19 +33,18 @@ public class MybatisFlexJavaClientGenerator extends AbstractJavaClientGenerator 
 
     @Override
     public List<CompilationUnit> getCompilationUnits() {
-        progressCallback.startTask(getString("Progress.17", //$NON-NLS-1$
-                introspectedTable.getFullyQualifiedTable().toString()));
+        progressCallback.startTask(getString("Progress.17", introspectedTable.getFullyQualifiedTable().toString()));
         CommentGenerator commentGenerator = context.getCommentGenerator();
 
         FullyQualifiedJavaType type = new FullyQualifiedJavaType(introspectedTable.getMyBatis3JavaMapperType());
         Interface interfaze = new Interface(type);
         interfaze.setVisibility(JavaVisibility.PUBLIC);
-        commentGenerator.addJavaFileComment(interfaze);
+        interfaze.addAnnotation("@Mapper");
+        interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
 
         String rootInterface = introspectedTable.getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
         if (!stringHasValue(rootInterface)) {
-            rootInterface = context.getJavaClientGeneratorConfiguration()
-                    .getProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+            rootInterface = context.getJavaClientGeneratorConfiguration().getProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
         }
 
         if (stringHasValue(rootInterface)) {
@@ -55,25 +59,18 @@ public class MybatisFlexJavaClientGenerator extends AbstractJavaClientGenerator 
             answer.add(interfaze);
         }
 
-        List<CompilationUnit> extraCompilationUnits = getExtraCompilationUnits();
-        if (extraCompilationUnits != null) {
-            answer.addAll(extraCompilationUnits);
-        }
-
+        commentGenerator.addInterfaceComment(interfaze, introspectedTable);
         return answer;
-    }
-
-    public List<CompilationUnit> getExtraCompilationUnits() {
-        return Collections.emptyList();
     }
 
     @Override
     public AbstractXmlGenerator getMatchedXMLGenerator() {
-        return null;
+        return new ListXMLMapperGenerator();
     }
+
 
     @Override
     public boolean requiresXMLGenerator() {
-        return false;
+        return BaseConstants.currentConfig.isXmlEnable();
     }
 }

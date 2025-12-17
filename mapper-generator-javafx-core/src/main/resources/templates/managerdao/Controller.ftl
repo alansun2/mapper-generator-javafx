@@ -1,12 +1,19 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
+import com.sy.common.bo.Page;
+<#assign suffixs = ["DTO", "PageDTO", "Service", "PageVO", "VO"]>
+<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import com.xxxx.base.core.bean.response.Page;
-<#assign suffixs = ["Service", "DTO", "PageVO", "PageDTO"]>
-<@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author ${author}
@@ -21,7 +28,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
     /**
      * 添加 ${DOMAIN_DESC}
      *
-     * @param cmd {@link ${TYPE_NAME_UPPER_CAMEL}DTO}
+     * @param dto {@link ${TYPE_NAME_UPPER_CAMEL}DTO}
      */
     @PostMapping
     public void add${TYPE_NAME_UPPER_CAMEL}(@Validated @RequestBody ${TYPE_NAME_UPPER_CAMEL}DTO dto) {
@@ -36,7 +43,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Controller {
      */
     @GetMapping(value = "/page")
     public Page<${TYPE_NAME_UPPER_CAMEL}PageVO> list${TYPE_NAME_UPPER_CAMEL}(${TYPE_NAME_UPPER_CAMEL}PageDTO dto) {
-        return ${TYPE_NAME_LOWER_CAMEL}Service.get${TYPE_NAME_UPPER_CAMEL}Page(dto);
+        return ${TYPE_NAME_LOWER_CAMEL}Service.list${TYPE_NAME_UPPER_CAMEL}(dto);
     }
 
     /**

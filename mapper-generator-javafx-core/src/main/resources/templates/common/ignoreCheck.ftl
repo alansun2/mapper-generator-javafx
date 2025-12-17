@@ -1,5 +1,5 @@
 <#macro ignoreColumnCheck className name name1 suffixName1 suffixName2 items ignoreItemsMap>
-        ${className} ${name} = new ${className}();
+        final ${className} ${name} = new ${className}();
     <#assign ignoreItems1 = ignoreItemsMap[suffixName1]!>
     <#assign ignoreItems2 = ignoreItemsMap[suffixName2]!>
     <#list items as item>

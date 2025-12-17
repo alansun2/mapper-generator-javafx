@@ -376,7 +376,7 @@ public class MybatisExportSetupController {
                     case OFFICIAL -> {
                         borderPane.setCenter(this.officePanel(mybatisExportConfig));
                         mybatisExportConfig.setXmlEnable(true);
-                        mybatisExportConfig.setMapperRootInterface(null);
+                        // mybatisExportConfig.setMapperRootInterface(null);
                     }
                     case MYBATIS_FLEX -> {
                         borderPane.setCenter(this.mybatisFlexPanel(mybatisExportConfig));
