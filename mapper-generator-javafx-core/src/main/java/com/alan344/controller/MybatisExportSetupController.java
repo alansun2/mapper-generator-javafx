@@ -237,7 +237,24 @@ public class MybatisExportSetupController {
             MybatisExportItemHBox projectNameHbox = new MybatisExportItemHBox("项目名称:", projectNameText);
             validationSupport.registerValidator(projectNameText, Validator.createEmptyValidator("项目名称必填"));
 
-            projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> projectNameText.setText(FileUtil.getName(newValue)));
+            projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
+                projectNameText.setText(FileUtil.getName(newValue));
+                
+                // 自动填充 bean 和 mapper 包名
+                if (StringUtils.isNotEmpty(newValue)) {
+                    // 尝试从项目目录结构推断基础包名
+                    String basePackage = this.inferBasePackage(newValue);
+                    if (StringUtils.isNotEmpty(basePackage)) {
+                        // 只有当包名字段为空时才自动填充
+                        if (StringUtils.isEmpty(mybatisExportConfig.getBeanPackage())) {
+                            mybatisExportConfig.setBeanPackage(basePackage + ".bean");
+                        }
+                        if (StringUtils.isEmpty(mybatisExportConfig.getMapperPackage())) {
+                            mybatisExportConfig.setMapperPackage(basePackage + ".mapper");
+                        }
+                    }
+                }
+            });
 
             JFXComboBox<String> jdkVersionComboBox = new JFXComboBox<>(
                     FXCollections.observableArrayList("8", "11", "17", "21")
@@ -650,5 +667,71 @@ public class MybatisExportSetupController {
                 useLombokGetSetCheckBox, useLombokBuilderCheckBox, tinyInt1ToBooleanCheckBox, targetNameJFXComboBox,
                 advanceSetButton);
         return anchorPane;
+    }
+
+    /**
+     * 根据项目路径推断基础包名
+     * 
+     * @param projectPath 项目路径
+     * @return 基础包名
+     */
+    private String inferBasePackage(String projectPath) {
+        try {
+            // 查找 src/main/java 目录
+            File srcMainJavaDir = new File(projectPath, "src/main/java");
+            if (!srcMainJavaDir.exists()) {
+                return "";
+            }
+            
+            // 遍历 src/main/java 下的目录，查找可能的包结构
+            File[] packageDirs = srcMainJavaDir.listFiles(File::isDirectory);
+            if (packageDirs != null && packageDirs.length > 0) {
+                // 如果只有一个顶级包，很可能就是基础包
+                if (packageDirs.length == 1) {
+                    String packageName = packageDirs[0].getName();
+                    // 检查是否是常见的基础包名组成部分
+                    if (packageName.equals("com") || packageName.equals("org") || packageName.equals("cn")) {
+                        // 如果是 com/org/cn 等，继续深入一层
+                        File[] subDirs = packageDirs[0].listFiles(File::isDirectory);
+                        if (subDirs != null && subDirs.length > 0) {
+                            if (subDirs.length == 1) {
+                                // 继续深入
+                                File[] subSubDirs = subDirs[0].listFiles(File::isDirectory);
+                                if (subSubDirs != null && subSubDirs.length > 0 && subSubDirs.length == 1) {
+                                    return packageName + "." + subDirs[0].getName() + "." + subSubDirs[0].getName();
+                                }
+                                return packageName + "." + subDirs[0].getName();
+                            }
+                        }
+                    } else {
+                        return packageName;
+                    }
+                }
+                // 如果有多个顶级包，尝试构建一个合理的包名
+                else {
+                    // 使用项目名称作为包名的一部分
+                    String projectName = FileUtil.getName(projectPath);
+                    if (projectName.contains("-")) {
+                        projectName = projectName.substring(0, projectName.indexOf("-"));
+                    }
+                    return "com." + projectName.toLowerCase();
+                }
+            }
+            
+            // 如果没有找到现有的包结构，则基于项目名称创建一个
+            String projectName = FileUtil.getName(projectPath);
+            if (projectName.contains("-")) {
+                projectName = projectName.substring(0, projectName.indexOf("-"));
+            }
+            // 移除任何非字母数字字符
+            projectName = projectName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+            if (StringUtils.isNotEmpty(projectName)) {
+                return "com." + projectName;
+            }
+        } catch (Exception e) {
+            log.warn("推断基础包名时发生错误", e);
+        }
+        
+        return "";
     }
 }

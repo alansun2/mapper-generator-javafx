@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import lombok.Getter;
 
 import java.util.function.Consumer;
 
@@ -18,6 +19,7 @@ import java.util.function.Consumer;
  */
 public class FileSelectTextToggleHBox extends HBox {
 
+    @Getter
     private final TextField textField;
     private final Button button;
 
@@ -50,10 +52,6 @@ public class FileSelectTextToggleHBox extends HBox {
 
     public void setText(String text) {
         this.textField.setText(text);
-    }
-
-    public TextField getTextField() {
-        return this.textField;
     }
 
     public void onAction(Consumer<ActionEvent> consumer) {
