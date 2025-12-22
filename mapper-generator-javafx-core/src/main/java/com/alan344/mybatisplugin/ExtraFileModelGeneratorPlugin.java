@@ -7,6 +7,7 @@ import com.alan344.bean.config.MybatisExportConfig;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
+import com.alan344.constants.enums.HttpParamType;
 import com.alan344.utils.CollectionUtils;
 import com.alan344.utils.StringUtils;
 import org.mybatis.generator.api.CommentGenerator;
@@ -160,13 +161,15 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
     private void addSpringDocAnnotations(ExtraTemplateFileConfig extraFileConfig, TopLevelClass topLevelClass,
                                          IntrospectedTable introspectedTable) {
         // 检查是否启用 SpringDoc 支持
-        if (!extraFileConfig.isGenerateValidAnnotation()) { // 复用这个配置标志位，实际应该增加专门的配置
+        if (!extraFileConfig.isGenerateSpringDocAnnotation()) {
             return;
         }
 
-        // 添加 @ParameterObject 注解
-        topLevelClass.addImportedType("org.springdoc.api.annotations.ParameterObject");
-        topLevelClass.addAnnotation("@ParameterObject");
+        if (extraFileConfig.getHttpParamType() == HttpParamType.PATH) {
+            // 添加 @ParameterObject 注解
+            topLevelClass.addImportedType("org.springdoc.api.annotations.ParameterObject");
+            topLevelClass.addAnnotation("@ParameterObject");
+        }
     }
 
     /**
@@ -180,7 +183,7 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
     private void addSpringDocFieldAnnotations(ExtraTemplateFileConfig extraFileConfig, TopLevelClass topLevelClass, Field field
             , IntrospectedColumn introspectedColumn) {
         // 检查是否启用 SpringDoc 支持
-        if (!extraFileConfig.isGenerateValidAnnotation()) { // 复用这个配置标志位，实际应该增加专门的配置
+        if (!extraFileConfig.isGenerateSpringDocAnnotation()) {
             return;
         }
 

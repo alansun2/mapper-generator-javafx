@@ -1,6 +1,7 @@
 package com.alan344.bean.config;
 
 import com.alan344.constants.enums.ExtraFileTypeEnum;
+import com.alan344.constants.enums.HttpParamType;
 import com.alan344.utils.NameUtils;
 import com.alan344.utils.StringUtils;
 import com.alibaba.fastjson2.JSON;
@@ -56,6 +57,10 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      */
     private boolean isGenerateSpringDocAnnotation;
     /**
+     * HTTP 参数类型 (path, query, body, none)
+     */
+    private HttpParamType httpParamType = HttpParamType.NONE;
+    /**
      * 生成 model 时的忽略字段，逗号分隔
      */
     private String modelIgnoreColumns;
@@ -86,7 +91,8 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
 
     @Override
     public ExtraTemplateFileConfig clone() {
-        final ExtraTemplateFileConfig extraTemplateFileConfig = JSON.parseObject(JSON.toJSONString(this), ExtraTemplateFileConfig.class);
+        final ExtraTemplateFileConfig extraTemplateFileConfig = JSON.parseObject(JSON.toJSONString(this),
+                ExtraTemplateFileConfig.class);
         extraTemplateFileConfig.setId(UUID.randomUUID().toString());
         return extraTemplateFileConfig;
     }

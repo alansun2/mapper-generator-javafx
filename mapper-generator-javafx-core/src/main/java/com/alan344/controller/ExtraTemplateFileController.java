@@ -13,6 +13,7 @@ import com.alan344.component.SelectBtnBarHBox;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
+import com.alan344.constants.enums.HttpParamType;
 import com.alan344.factory.DialogFactory;
 import com.alan344.factory.FileDirChooserFactory;
 import com.alan344.service.ExtraTemplateFileConfigService;
@@ -28,6 +29,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -240,6 +242,13 @@ public class ExtraTemplateFileController {
         PropertyHBox fileTypeHbox = new PropertyHBox("文件类型", labelWidth, fileTypeCb);
         vBox.getChildren().add(fileTypeHbox);
 
+        // HTTP 参数类型
+        ComboBox<HttpParamType> httpParamTypeComboBox = new ComboBox<>(FXCollections.observableArrayList(HttpParamType.values()));
+        httpParamTypeComboBox.setValue(extraTemplateFileConfig.getHttpParamType());
+        httpParamTypeComboBox.setDisable(isSystem);
+        PropertyHBox httpParamTypeHbox = new PropertyHBox("HTTP 参数类型", labelWidth, httpParamTypeComboBox);
+        vBox.getChildren().add(httpParamTypeHbox);
+
         // 父类
         final TextField superClassTextField = new TextField(extraTemplateFileConfig.getSuperClass());
         superClassTextField.setPromptText("父类，类全限定名称");
@@ -356,12 +365,13 @@ public class ExtraTemplateFileController {
         vBox.getChildren().add(customTemplatePathHbox);
 
         // 展示
-        this.showByExtraFileType(extraTemplateFileConfig.getExtraFileType(), modelValidSuffixHbox, springDocHbox, lombokGetterHbox,
+        this.showByExtraFileType(extraTemplateFileConfig.getExtraFileType(), httpParamTypeHbox, modelValidSuffixHbox,
+                springDocHbox, lombokGetterHbox,
                 lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox);
 
         fileTypeCb.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             final ExtraFileTypeEnum extraFileTypeEnum = fileTypeCb.getItems().get(newValue.intValue());
-            this.showByExtraFileType(extraFileTypeEnum, modelValidSuffixHbox, springDocHbox, lombokGetterHbox,
+            this.showByExtraFileType(extraFileTypeEnum, httpParamTypeHbox, modelValidSuffixHbox, springDocHbox, lombokGetterHbox,
                     lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox);
         });
 
@@ -379,6 +389,7 @@ public class ExtraTemplateFileController {
             }
             extraTemplateFileConfig.setName(nameTextField.getText());
             extraTemplateFileConfig.setExtraFileType(fileTypeCb.getSelectionModel().getSelectedItem());
+            extraTemplateFileConfig.setHttpParamType(httpParamTypeComboBox.getValue());
             extraTemplateFileConfig.setSuperClass(superClassTextField.getText());
             extraTemplateFileConfig.setDefaultOutputPathSuffix(defaultOutputPathSuffixTextField.getText());
             extraTemplateFileConfig.setDefaultPackageSuffix(defaultPackageSuffixTextField.getText());
@@ -442,6 +453,7 @@ public class ExtraTemplateFileController {
     }
 
     private void showByExtraFileType(ExtraFileTypeEnum extraFileTypeEnum,
+                                     PropertyHBox httpParamTypeHbox,
                                      PropertyHBox modelValidSuffixHbox,
                                      PropertyHBox springDocHbox,
                                      PropertyHBox lombokGetterHbox,
@@ -450,6 +462,7 @@ public class ExtraTemplateFileController {
                                      PropertyHBox ignoreColumnHbox,
                                      PropertyHBox customTemplatePathHbox) {
         if (extraFileTypeEnum == ExtraFileTypeEnum.MODEL) {
+            httpParamTypeHbox.setDisable(false);
             customTemplatePathHbox.setDisable(true);
             modelValidSuffixHbox.setDisable(false);
             springDocHbox.setDisable(false);
@@ -458,6 +471,7 @@ public class ExtraTemplateFileController {
             lombokToStringHbox.setDisable(false);
             ignoreColumnHbox.setDisable(false);
         } else if (extraFileTypeEnum == ExtraFileTypeEnum.CUSTOM_TEMPLATE) {
+            httpParamTypeHbox.setDisable(true);
             customTemplatePathHbox.setDisable(false);
             modelValidSuffixHbox.setDisable(true);
             springDocHbox.setDisable(true);
@@ -466,6 +480,7 @@ public class ExtraTemplateFileController {
             lombokToStringHbox.setDisable(true);
             ignoreColumnHbox.setDisable(true);
         } else if (extraFileTypeEnum == ExtraFileTypeEnum.JPA_ENTITY) {
+            httpParamTypeHbox.setDisable(true);
             customTemplatePathHbox.setDisable(true);
             modelValidSuffixHbox.setDisable(false);
             springDocHbox.setDisable(false);
