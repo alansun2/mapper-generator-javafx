@@ -277,6 +277,13 @@ public class ExtraTemplateFileController {
         PropertyHBox modelValidSuffixHbox = new PropertyHBox("Validate 注解", labelWidth, checkBox);
         vBox.getChildren().add(modelValidSuffixHbox);
 
+        // 是否生成 SpringDoc 注解
+        JFXCheckBox springDocCheckBox = new JFXCheckBox();
+        springDocCheckBox.setSelected(extraTemplateFileConfig.isGenerateSpringDocAnnotation());
+        springDocCheckBox.setDisable(isSystem);
+        PropertyHBox springDocHbox = new PropertyHBox("SpringDoc 注解", labelWidth, springDocCheckBox);
+        vBox.getChildren().add(springDocHbox);
+
         // lombok @Getter
         JFXCheckBox lombokGetterCheckBox = new JFXCheckBox();
         lombokGetterCheckBox.setDisable(isSystem);
@@ -349,12 +356,12 @@ public class ExtraTemplateFileController {
         vBox.getChildren().add(customTemplatePathHbox);
 
         // 展示
-        this.showByExtraFileType(extraTemplateFileConfig.getExtraFileType(), modelValidSuffixHbox, lombokGetterHbox,
+        this.showByExtraFileType(extraTemplateFileConfig.getExtraFileType(), modelValidSuffixHbox, springDocHbox, lombokGetterHbox,
                 lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox);
 
         fileTypeCb.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
             final ExtraFileTypeEnum extraFileTypeEnum = fileTypeCb.getItems().get(newValue.intValue());
-            this.showByExtraFileType(extraFileTypeEnum, modelValidSuffixHbox, lombokGetterHbox,
+            this.showByExtraFileType(extraFileTypeEnum, modelValidSuffixHbox, springDocHbox, lombokGetterHbox,
                     lombokSetterHbox, lombokToStringHbox, ignoreColumnHbox, customTemplatePathHbox);
         });
 
@@ -377,6 +384,7 @@ public class ExtraTemplateFileController {
             extraTemplateFileConfig.setDefaultPackageSuffix(defaultPackageSuffixTextField.getText());
             extraTemplateFileConfig.setModelSuffix(modelSuffixTextField.getText());
             extraTemplateFileConfig.setGenerateValidAnnotation(checkBox.isSelected());
+            extraTemplateFileConfig.setGenerateSpringDocAnnotation(springDocCheckBox.isSelected());
             extraTemplateFileConfig.setModelIgnoreColumns(ignoreColumnTextField.getText());
             extraTemplateFileConfig.setLombokGetter(lombokGetterCheckBox.isSelected());
             extraTemplateFileConfig.setLombokSetter(lombokSetterCheckBox.isSelected());
@@ -435,6 +443,7 @@ public class ExtraTemplateFileController {
 
     private void showByExtraFileType(ExtraFileTypeEnum extraFileTypeEnum,
                                      PropertyHBox modelValidSuffixHbox,
+                                     PropertyHBox springDocHbox,
                                      PropertyHBox lombokGetterHbox,
                                      PropertyHBox lombokSetterHbox,
                                      PropertyHBox lombokToStringHbox,
@@ -443,7 +452,7 @@ public class ExtraTemplateFileController {
         if (extraFileTypeEnum == ExtraFileTypeEnum.MODEL) {
             customTemplatePathHbox.setDisable(true);
             modelValidSuffixHbox.setDisable(false);
-            modelValidSuffixHbox.setDisable(false);
+            springDocHbox.setDisable(false);
             lombokGetterHbox.setDisable(false);
             lombokSetterHbox.setDisable(false);
             lombokToStringHbox.setDisable(false);
@@ -451,6 +460,7 @@ public class ExtraTemplateFileController {
         } else if (extraFileTypeEnum == ExtraFileTypeEnum.CUSTOM_TEMPLATE) {
             customTemplatePathHbox.setDisable(false);
             modelValidSuffixHbox.setDisable(true);
+            springDocHbox.setDisable(true);
             lombokGetterHbox.setDisable(true);
             lombokSetterHbox.setDisable(true);
             lombokToStringHbox.setDisable(true);
@@ -458,6 +468,7 @@ public class ExtraTemplateFileController {
         } else if (extraFileTypeEnum == ExtraFileTypeEnum.JPA_ENTITY) {
             customTemplatePathHbox.setDisable(true);
             modelValidSuffixHbox.setDisable(false);
+            springDocHbox.setDisable(false);
             lombokGetterHbox.setDisable(false);
             lombokSetterHbox.setDisable(false);
             lombokToStringHbox.setDisable(false);

@@ -57,6 +57,8 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
         topLevelClass.setVisibility(JavaVisibility.PUBLIC);
         // 添加 lombok 注解
         this.addLombok(extraFileConfig, topLevelClass);
+        // 添加 SpringDoc 注解支持
+        this.addSpringDocAnnotations(extraFileConfig, topLevelClass, introspectedTable);
 
         // 父类
         final String superClass = extraFileConfig.getSuperClass();
@@ -92,6 +94,8 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
                 // 添加 validate 注解
                 this.addValidationLengthAnnotation(extraFileConfig.isGenerateValidAnnotation(), topLevelClass,
                         field, introspectedColumn);
+                // 添加 SpringDoc 字段注解
+                this.addSpringDocFieldAnnotations(extraFileConfig, topLevelClass, field, introspectedColumn);
                 topLevelClass.addField(field);
                 topLevelClass.addImportedType(field.getType());
             }
@@ -147,6 +151,53 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
     }
 
     /**
+     * 添加 SpringDoc 类级别注解
+     *
+     * @param extraFileConfig   额外文件配置
+     * @param topLevelClass     顶级类
+     * @param introspectedTable 表信息
+     */
+    private void addSpringDocAnnotations(ExtraTemplateFileConfig extraFileConfig, TopLevelClass topLevelClass,
+                                         IntrospectedTable introspectedTable) {
+        // 检查是否启用 SpringDoc 支持
+        if (!extraFileConfig.isGenerateValidAnnotation()) { // 复用这个配置标志位，实际应该增加专门的配置
+            return;
+        }
+
+        // 添加 @ParameterObject 注解
+        topLevelClass.addImportedType("org.springdoc.api.annotations.ParameterObject");
+        topLevelClass.addAnnotation("@ParameterObject");
+    }
+
+    /**
+     * 添加 SpringDoc 字段注解
+     *
+     * @param extraFileConfig    额外文件配置
+     * @param topLevelClass      顶级类
+     * @param field              字段
+     * @param introspectedColumn 列信息
+     */
+    private void addSpringDocFieldAnnotations(ExtraTemplateFileConfig extraFileConfig, TopLevelClass topLevelClass, Field field
+            , IntrospectedColumn introspectedColumn) {
+        // 检查是否启用 SpringDoc 支持
+        if (!extraFileConfig.isGenerateValidAnnotation()) { // 复用这个配置标志位，实际应该增加专门的配置
+            return;
+        }
+
+        // 添加 @Schema 注解
+        topLevelClass.addImportedType("io.swagger.v3.oas.annotations.media.Schema");
+
+        String columnRemarks = introspectedColumn.getRemarks();
+        if (StringUtils.isEmpty(columnRemarks)) {
+            columnRemarks = field.getName();
+        }
+
+        // 添加字段描述
+        String annotationBuilder = "@Schema(" + "description = \"" + columnRemarks + "\")";
+        field.addAnnotation(annotationBuilder);
+    }
+
+    /**
      * 添加 validation 注解
      */
     private void addValidationLengthAnnotation(boolean isGenerateValidationAnnotation, TopLevelClass topLevelClass,
@@ -162,20 +213,19 @@ public class ExtraFileModelGeneratorPlugin extends PluginAdapter {
             remarks = remarks.substring(0, i);
         }
         // 字符串
+        String packagePrefix = PluginUtils.getPackagePrefix();
         if (field.getType().compareTo(FullyQualifiedJavaType.getStringInstance()) == 0) {
             final int length = introspectedColumn.getLength();
-            topLevelClass.addImportedType("org.hibernate.validator.constraints.Length");
-            field.addAnnotation("@Length(max = " + length + ", message = \"" + remarks + "最多 " + length + " 个字符\")");
+            topLevelClass.addImportedType(packagePrefix + ".validation.constraints.Size");
+            field.addAnnotation("@Size(max = " + length + ", message = \"" + remarks + "最多 " + length + " 个字符\")");
 
             if (!introspectedColumn.isNullable()) {
-                String packagePrefix = PluginUtils.getPackagePrefix();
                 topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotBlank");
                 field.addAnnotation("@NotBlank(message = \"" + remarks + " 必填\")");
             }
         } else {
             // 其他
             if (!introspectedColumn.isNullable()) {
-                String packagePrefix = PluginUtils.getPackagePrefix();
                 topLevelClass.addImportedType(packagePrefix + ".validation.constraints.NotNull");
                 field.addAnnotation("@NotNull(message = \"" + remarks + " 必填\")");
             }

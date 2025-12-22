@@ -30,6 +30,9 @@ public class FileDirChooserFactory {
      * 文件选择器
      */
     public static File createFileScan(String title, String initDirectory, String filterDesc, String... extensions) {
+        if (StringUtils.contains(initDirectory, "classpath")) {
+            initDirectory = "";
+        }
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(filterDesc, extensions));

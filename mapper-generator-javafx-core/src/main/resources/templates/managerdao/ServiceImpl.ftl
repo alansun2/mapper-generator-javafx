@@ -48,11 +48,12 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void update${TYPE_NAME_UPPER_CAMEL}ById(final ${TYPE_NAME_UPPER_CAMEL}DTO dto) {
+    public void update${TYPE_NAME_UPPER_CAMEL}ById(final Long id,final ${TYPE_NAME_UPPER_CAMEL}DTO dto) {
         final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Dao.queryById(dto.getId());
         AssertUtils.isTrue(${TYPE_NAME_LOWER_CAMEL}Opt.isPresent() && !${TYPE_NAME_LOWER_CAMEL}Opt.get().getDeleted(),
                 "记录不存在", HttpStatus.NOT_FOUND.value());
         final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL} = ${TYPE_NAME_LOWER_CAMEL}Manager.convert(dto);
+        ${TYPE_NAME_LOWER_CAMEL}.setId(id);
         ${TYPE_NAME_LOWER_CAMEL}Dao.updateByIdSelective(${TYPE_NAME_LOWER_CAMEL});
     }
 

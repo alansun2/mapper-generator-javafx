@@ -52,6 +52,10 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      */
     private boolean isGenerateValidAnnotation;
     /**
+     * 当 TemplateTypeEnum 为 MODEL 时，是否生成 SpringDoc 注解
+     */
+    private boolean isGenerateSpringDocAnnotation;
+    /**
      * 生成 model 时的忽略字段，逗号分隔
      */
     private String modelIgnoreColumns;

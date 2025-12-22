@@ -166,7 +166,7 @@ public class StringUtils {
      * @param subStr 字串列表
      * @return true 保存
      */
-    public static boolean contains(String source, String[] subStr) {
+    public static boolean contains(String source, String... subStr) {
         for (String url : subStr) {
             if (source.contains(url)) {
                 return true;
