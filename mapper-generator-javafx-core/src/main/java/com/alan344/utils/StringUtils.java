@@ -167,6 +167,9 @@ public class StringUtils {
      * @return true 保存
      */
     public static boolean contains(String source, String... subStr) {
+        if (source == null) {
+            return false;
+        }
         for (String url : subStr) {
             if (source.contains(url)) {
                 return true;

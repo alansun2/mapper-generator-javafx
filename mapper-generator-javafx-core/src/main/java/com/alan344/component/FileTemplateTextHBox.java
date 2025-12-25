@@ -19,11 +19,12 @@ public class FileTemplateTextHBox extends HBox {
     private final TextField textField;
     private final Button importBtn;
     private final Button exportBtn;
+    private final Button editBtn;
 
     public FileTemplateTextHBox(String initText) {
         textField = new TextField(initText);
         textField.prefHeightProperty().bind(this.heightProperty());
-        textField.prefWidthProperty().bind(this.widthProperty().subtract(128));
+        textField.prefWidthProperty().bind(this.widthProperty().subtract(192));
 
         importBtn = new Button("导入");
         importBtn.getStyleClass().add("mf-scan");
@@ -37,11 +38,16 @@ public class FileTemplateTextHBox extends HBox {
         exportBtn.prefHeightProperty().bind(this.heightProperty());
         this.exportBtn.setDisable(StringUtils.isEmpty(initText));
 
+        editBtn = new Button("编辑");
+        editBtn.getStyleClass().add("mf-scan");
+        editBtn.setPrefWidth(64);
+        editBtn.prefHeightProperty().bind(this.heightProperty());
+
         textField.textProperty().addListener((observable, oldValue, newValue) -> {
             this.exportBtn.setDisable(StringUtils.isEmpty(newValue));
         });
 
-        this.getChildren().addAll(textField, importBtn, exportBtn);
+        this.getChildren().addAll(textField, importBtn, exportBtn, editBtn);
         this.setAlignment(Pos.CENTER);
         this.setStyle("-fx-border-width: 0; -fx-background-insets:0; -fx-background-color: #FFF");
 
@@ -65,6 +71,10 @@ public class FileTemplateTextHBox extends HBox {
         this.exportBtn.setOnAction(consumer::accept);
     }
 
+    public void editAction(Consumer<ActionEvent> consumer) {
+        this.editBtn.setOnAction(consumer::accept);
+    }
+
     public final void setPromptText(String value) {
         this.textField.setPromptText(value);
     }
@@ -72,5 +82,6 @@ public class FileTemplateTextHBox extends HBox {
     public void disable(boolean disable) {
         textField.setDisable(disable);
         this.importBtn.setDisable(disable);
+        this.editBtn.setDisable(disable);
     }
 }

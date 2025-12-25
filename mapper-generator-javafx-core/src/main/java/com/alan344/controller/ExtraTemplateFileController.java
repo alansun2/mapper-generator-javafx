@@ -10,6 +10,7 @@ import com.alan344.component.FileTemplateTextHBox;
 import com.alan344.component.LeftRightLinkageBorderPane;
 import com.alan344.component.PropertyHBox;
 import com.alan344.component.SelectBtnBarHBox;
+import com.alan344.component.TextEditorDialog;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
@@ -23,6 +24,10 @@ import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -57,6 +62,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -358,6 +365,49 @@ public class ExtraTemplateFileController {
                 } catch (IOException e) {
                     log.error("导出文件失败", e);
                 }
+            }
+        });
+        customTemplatePathTextField.editAction(actionEvent -> {
+            final String templatePath = customTemplatePathTextField.getText();
+            if (StringUtils.isEmpty(templatePath)) {
+                DialogFactory.exceptionDialog(new RuntimeException("请先选择模板文件"));
+                return;
+            }
+
+            try {
+                // 读取模板文件内容
+                String templateContent;
+                final Resource resource = resourceLoader.getResource(templatePath);
+                try (InputStream inputStream = resource.getInputStream()) {
+                    templateContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+                }
+
+                // 打开文本编辑器
+                TextEditorDialog textEditorDialog = new TextEditorDialog("编辑模板文件", templateContent);
+                
+                // 取消按钮动作
+                textEditorDialog.setCancelAction(event -> textEditorDialog.close());
+                
+                // 应用按钮动作
+                textEditorDialog.setApplyAction(event -> {
+                    try {
+                        final String newContent = textEditorDialog.getText();
+                        // 保存修改后的内容
+                        File file = FileUtils.getFile(templatePath);
+                        FileUtils.writeStringToFile(file, newContent, StandardCharsets.UTF_8);
+                        
+                        DialogFactory.successDialog(addTemplateStage, "编辑模板", "保存成功");
+                        textEditorDialog.close();
+                    } catch (IOException e) {
+                        log.error("保存模板文件失败", e);
+                        DialogFactory.exceptionDialog(e);
+                    }
+                });
+                
+                textEditorDialog.show();
+            } catch (IOException e) {
+                log.error("读取模板文件失败", e);
+                DialogFactory.exceptionDialog(e);
             }
         });
 
