@@ -4,7 +4,13 @@ import cn.hutool.core.util.StrUtil;
 import com.alan344.bean.config.ExtraFileGroupConfig;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.MybatisExportConfig;
-import com.alan344.component.*;
+import com.alan344.component.ExtraFileGroupItemHBox;
+import com.alan344.component.ExtraFileItemHBox;
+import com.alan344.component.FileSelectTextHBox;
+import com.alan344.component.LeftRightLinkageBorderPane;
+import com.alan344.component.PropertyHBox;
+import com.alan344.component.PropertyPane;
+import com.alan344.component.SelectBtnBarHBox;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.ConfigConstants;
 import com.alan344.constants.NodeConstants;
@@ -37,7 +43,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,20 +74,42 @@ public class ExtraFileController {
     private final NodeHandler nodeHandler = NodeHandler.getSingleTon(true);
     private final Map<String, BorderPane> groupNameBorderPaneMapCache = new HashMap<>();
     private LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane;
-    private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> CACHE = new HashMap<>(8);
+    private static final Map<String, LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox>> CACHE =
+            new HashMap<>(8);
 
     public BorderPane getBorderPane(MybatisExportConfig mybatisExportConfig) {
         linkageBorderPane = CACHE.computeIfAbsent(mybatisExportConfig.getConfigName(), s -> {
-            final LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane1 = new LeftRightLinkageBorderPane<>(
-                    ExtraFileGroupConfig::new,
-                    this::convert2ExtraFileGroupItem,
-                    this::getRightBorderPane,
-                    NodeConstants.primaryStage,
-                    this.getBottomBtns(mybatisExportConfig),
-                    0.25
-            );
+            // 先创建按钮组
+            final List<Button> bottomBtns = this.getBottomBtns(mybatisExportConfig);
+
+            // 创建linkageBorderPane
+            final LeftRightLinkageBorderPane<ExtraFileGroupConfig, ExtraFileGroupItemHBox> linkageBorderPane1 =
+                    new LeftRightLinkageBorderPane<>(
+                            ExtraFileGroupConfig::new,
+                            this::convert2ExtraFileGroupItem,
+                            this::getRightBorderPane,
+                            NodeConstants.primaryStage,
+                            bottomBtns,
+                            0.25
+                    );
 
             linkageBorderPane1.addLeftItems(configService.getExtraFileGroupConfigs(mybatisExportConfig));
+
+            // 在linkageBorderPane完全创建后，设置按钮状态和监听
+            final Button openExtraTemplateFileStageBtn = bottomBtns.stream()
+                    .filter(button -> button.getText().equals("导入额外文件"))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("未找到导入额外文件按钮"));
+
+            // 初始化按钮状态
+            final ExtraFileGroupItemHBox selectedItem =
+                    linkageBorderPane1.getGroupLeftListView().getSelectionModel().getSelectedItem();
+            this.disable(selectedItem, openExtraTemplateFileStageBtn);
+
+            // 监听分组选择变化，系统配置时禁用导入按钮
+            linkageBorderPane1.getGroupLeftListView().getSelectionModel().selectedItemProperty()
+                    .addListener((observable, oldValue, newValue) -> this.disable(newValue, openExtraTemplateFileStageBtn));
+
             return linkageBorderPane1;
         });
         return linkageBorderPane;
@@ -82,12 +118,14 @@ public class ExtraFileController {
     private List<Button> getBottomBtns(MybatisExportConfig mybatisExportConfig) {
         Button openExtraTemplateFileStageBtn = new Button("导入额外文件");
         openExtraTemplateFileStageBtn.setOnAction(event -> {
-            final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+            final ExtraFileGroupItemHBox selectedItem =
+                    linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
             Assert.isTrue(Objects.nonNull(selectedItem), "请选择一个分组再添加", NodeConstants.primaryStage);
             final ExtraFileGroupConfig config = selectedItem.getConfig();
             Assert.isTrue(!config.isSystem(), "不能使用默认分组， 请新建分组后再使用", NodeConstants.primaryStage);
             this.openExtraFilePage(mybatisExportConfig);
         });
+
         Button openExtraPropertyStageBtn = new Button("添加额外属性");
         openExtraPropertyStageBtn.setOnAction(event -> this.openExtraFileCustomProperties(mybatisExportConfig));
         openExtraPropertyStageBtn.setPrefWidth(100);
@@ -97,16 +135,19 @@ public class ExtraFileController {
             exportService.saveSetup();
 
             // 保存成功 dialog
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存","成功");
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存", "成功");
         });
         saveBtn.setPrefWidth(70);
         Button exportBtn = new Button("导出");
         exportBtn.getStyleClass().add("export");
         exportBtn.setOnAction(event -> {
             // 判断是否有未设置的
-            final ExtraFileGroupItemHBox selectedItem = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
-            final Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = selectedItem.getConfig().getExtraFileConfigs();
-            final String s = extraFileConfigs.stream().filter(extraFileConfig -> StrUtil.hasEmpty(extraFileConfig.getOutputPath(), extraFileConfig.getPackageName()))
+            final ExtraFileGroupItemHBox selectedItem =
+                    linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+            final Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs =
+                    selectedItem.getConfig().getExtraFileConfigs();
+            final String s = extraFileConfigs.stream().filter(extraFileConfig -> StrUtil.hasEmpty(extraFileConfig.getOutputPath(),
+                            extraFileConfig.getPackageName()))
                     .map(ExtraFileGroupConfig.ExtraFileConfig::getName).collect(Collectors.joining(","));
             if (StrUtil.isNotEmpty(s)) {
                 Toast.makeTextDefault(NodeConstants.primaryStage, s + ", 未设置输出路径或包名");
@@ -119,6 +160,7 @@ public class ExtraFileController {
         Button preBtn = new Button("返回");
         preBtn.setOnAction(event -> this.pre());
         preBtn.setPrefWidth(70);
+
         return List.of(openExtraTemplateFileStageBtn, openExtraPropertyStageBtn, saveBtn, exportBtn, preBtn);
     }
 
@@ -134,12 +176,14 @@ public class ExtraFileController {
             // 获取模板 id
             final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream()
                     .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
-            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
+            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap =
+                    extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
 
             ConfigConstants.extraTemplateFileConfigs = extraFileGroupConfig.getExtraFileConfigs().stream()
                     .filter(ExtraFileGroupConfig.ExtraFileConfig::isEnable)
                     .map(extraFileConfig -> {
-                        final ExtraTemplateFileConfig extraTemplateFileConfig1 = extraFileConfigMap.get(extraFileConfig.getTemplateId());
+                        final ExtraTemplateFileConfig extraTemplateFileConfig1 =
+                                extraFileConfigMap.get(extraFileConfig.getTemplateId());
                         extraTemplateFileConfig1.setOutputPath(extraFileConfig.getOutputPath());
                         extraTemplateFileConfig1.setPackageName(extraFileConfig.getPackageName());
                         return extraTemplateFileConfig1;
@@ -162,9 +206,11 @@ public class ExtraFileController {
     private void openExtraFilePage(MybatisExportConfig mybatisExportConfig) {
         extraTemplateFileController.openExtraFilePageInternal((extraTemplateFileGroupConfig, extraTemplateFileConfigs) -> {
             // 获取选中的分组
-            final ExtraFileGroupConfig curExtraFileGroupConfig = linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
+            final ExtraFileGroupConfig curExtraFileGroupConfig =
+                    linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem().getConfig();
             // 获取已经存在的配置
-            Collection<ExtraFileGroupConfig.ExtraFileConfig> existExtraFileConfigs = curExtraFileGroupConfig.getExtraFileConfigs();
+            Collection<ExtraFileGroupConfig.ExtraFileConfig> existExtraFileConfigs =
+                    curExtraFileGroupConfig.getExtraFileConfigs();
             if (null == existExtraFileConfigs) {
                 // 不存在则创建
                 existExtraFileConfigs = new ArrayList<>();
@@ -176,14 +222,17 @@ public class ExtraFileController {
                     .map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).collect(Collectors.toSet());
 
             // 根据分组获取所有的配置，用于用户少写配置
-            final Map<String, ExtraFileGroupConfig.ExtraFileConfig> allExistTemplateIdMap = linkageBorderPane.getGroupLeftListView()
-                    .getItems().stream()
-                    .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
-                    .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
-                    .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(), (extraFileConfig, extraFileConfig2) -> extraFileConfig2));
+            final Map<String, ExtraFileGroupConfig.ExtraFileConfig> allExistTemplateIdMap =
+                    linkageBorderPane.getGroupLeftListView()
+                            .getItems().stream()
+                            .filter(extraFileGroupItemHbox -> !extraFileGroupItemHbox.getConfig().isSystem())
+                            .flatMap(extraFileGroupItemHbox -> extraFileGroupItemHbox.getConfig().getList().stream())
+                            .collect(Collectors.toMap(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId, Function.identity(),
+                                    (extraFileConfig, extraFileConfig2) -> extraFileConfig2));
 
             // 获取当前选中的 listView
-            ListView<ExtraFileItemHBox> rightListView = ((ListView<ExtraFileItemHBox>) this.getRightBorderPane(curExtraFileGroupConfig).getCenter());
+            ListView<ExtraFileItemHBox> rightListView =
+                    ((ListView<ExtraFileItemHBox>) this.getRightBorderPane(curExtraFileGroupConfig).getCenter());
 
             // 添加新的模板
             final List<ExtraTemplateFileConfig> add = extraTemplateFileConfigs.stream()
@@ -205,7 +254,8 @@ public class ExtraFileController {
                     extraFileConfigNew.setOutputPath(original.getOutputPath());
                     extraFileConfigNew.setPackageName(original.getPackageName());
                 } else {
-                    configService.fillOutputPathAndPackageName(extraFileConfigNew, extraTemplateFileConfig, mybatisExportConfig, sameFromPackage);
+                    configService.fillOutputPathAndPackageName(extraFileConfigNew, extraTemplateFileConfig, mybatisExportConfig
+                            , sameFromPackage);
                 }
                 rightListView.getItems().add(this.convert2ExtraFileItem(rightListView, existExtraFileConfigs,
                         extraFileConfigNew, curExtraFileGroupConfig));
@@ -239,11 +289,14 @@ public class ExtraFileController {
             ListView<ExtraFileItemHBox> extraFileItemHboxListView = new ListView<>();
 
             // 根据 id 获取模板列表
-            final List<String> templateIds = extraFileGroupConfig.getExtraFileConfigs().stream().map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
-            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap = extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
+            final List<String> templateIds =
+                    extraFileGroupConfig.getExtraFileConfigs().stream().map(ExtraFileGroupConfig.ExtraFileConfig::getTemplateId).toList();
+            final Map<String, ExtraTemplateFileConfig> extraFileConfigMap =
+                    extraTemplateFileConfigService.getExtraFileConfigMap(templateIds);
             final Collection<ExtraFileGroupConfig.ExtraFileConfig> extraFileConfigs = extraFileGroupConfig.getExtraFileConfigs();
             if (CollectionUtils.isNotEmpty(extraFileConfigs)) {
-                final List<ExtraFileGroupConfig.ExtraFileConfig> list = extraFileConfigs.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getTemplateId())).toList();
+                final List<ExtraFileGroupConfig.ExtraFileConfig> list =
+                        extraFileConfigs.stream().filter(extraFileConfig -> extraFileConfigMap.containsKey(extraFileConfig.getTemplateId())).toList();
                 for (int i = 0; i < list.size(); i++) {
                     ExtraFileGroupConfig.ExtraFileConfig extraFileConfig = list.get(i);
                     extraFileConfig.setSerialNumber(String.valueOf(i + 1));
@@ -371,5 +424,13 @@ public class ExtraFileController {
         });
         applyBtn.setDisable(isSystem);
         stage.show();
+    }
+
+    private void disable(ExtraFileGroupItemHBox selectedItem, Button openExtraTemplateFileStageBtn) {
+        if (selectedItem != null) {
+            openExtraTemplateFileStageBtn.setDisable(selectedItem.getConfig().isSystem());
+        } else {
+            openExtraTemplateFileStageBtn.setDisable(true);
+        }
     }
 }
