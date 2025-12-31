@@ -53,4 +53,8 @@ public class Column {
     public void setIgnore(boolean ignore) {
         this.ignore.set(ignore);
     }
+
+    public void setIsAutoIncr(boolean isAutoIncr) {
+        this.isAutoIncr = isAutoIncr;
+    }
 }

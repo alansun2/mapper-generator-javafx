@@ -81,7 +81,8 @@ public class ColumnService {
         DataSource dataSource = BaseConstants.selectedDateSource;
         List<Column> columns = this.getColumnsFromRemote(dataSource, tableName);
         if (existColumns != null && !existColumns.isEmpty()) {
-            Map<String, Column> existColumnNameColumnMap = existColumns.stream().collect(Collectors.toMap(Column::getColumnName, column -> column));
+            Map<String, Column> existColumnNameColumnMap = existColumns.stream().collect(Collectors.toMap(Column::getColumnName
+                    , column -> column));
             this.deleteColumnFile(dataSource, tableName);
             for (Column column : columns) {
                 if (existColumnNameColumnMap.containsKey(column.getColumnName())) {
@@ -137,7 +138,7 @@ public class ColumnService {
      * @param table      表信息
      */
     @Async
-    void downLoadColumnsToFileSingle(DataSource dataSource, Table table) {
+    public void downLoadColumnsToFileSingle(DataSource dataSource, Table table) {
         File columnsFile = BaseConstants.getColumnsFile(dataSource, table.getTableName());
         String tableNameColumnsMapStr = JSONArray.toJSONString(table.getColumns(), JSONWriter.Feature.PrettyFormat);
         try {

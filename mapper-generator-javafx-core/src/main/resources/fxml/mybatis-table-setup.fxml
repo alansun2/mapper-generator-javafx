@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane fx:id="borderPane" managed="false" visible="false"
             xmlns="http://javafx.com/javafx"
@@ -51,10 +57,14 @@
         </StackPane>
     </center>
     <bottom>
-        <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 0 10">
-            <Button mnemonicParsing="false" prefWidth="70" text="下一步" onAction="#next"/>
-        </HBox>
+        <VBox>
+            <HBox prefHeight="40.0" alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 10 10">
+                <Button mnemonicParsing="false" text="新增字段" onAction="#addField"/>
+                <Button mnemonicParsing="false" text="删除字段" onAction="#deleteField"/>
+                <Button mnemonicParsing="false" text="保存" onAction="#saveFields"/>
+                <Button mnemonicParsing="false" text="撤销" onAction="#revertFields"/>
+                <Button mnemonicParsing="false" prefWidth="70" text="下一步" onAction="#next"/>
+            </HBox>
+        </VBox>
     </bottom>
 </BorderPane>
-
-

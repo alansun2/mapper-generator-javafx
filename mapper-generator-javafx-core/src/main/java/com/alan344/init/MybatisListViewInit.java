@@ -136,7 +136,7 @@ public class MybatisListViewInit {
             count.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isCount() != newValue) {
                     table.setCount(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -145,7 +145,7 @@ public class MybatisListViewInit {
             update.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isUpdate() != newValue) {
                     table.setUpdate(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -154,7 +154,7 @@ public class MybatisListViewInit {
             delete.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isDelete() != newValue) {
                     table.setDelete(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -163,7 +163,7 @@ public class MybatisListViewInit {
             select.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isSelect() != newValue) {
                     table.setSelect(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -176,7 +176,7 @@ public class MybatisListViewInit {
             updateExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isUpdateExample() != newValue) {
                     table.setUpdateExample(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -185,7 +185,7 @@ public class MybatisListViewInit {
             deleteExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isDeleteExample() != newValue) {
                     table.setDeleteExample(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -194,7 +194,7 @@ public class MybatisListViewInit {
             selectExample.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 if (table.isSelectExample() != newValue) {
                     table.setSelectExample(newValue);
-                    BaseConstants.tableNameSetUpTableRecordMap.put(tableName, true);
+                    BaseConstants.tableNameIsOverrideRecodeMap.put(tableName, true);
                 }
             });
 
@@ -265,14 +265,50 @@ public class MybatisListViewInit {
         columnTableView.prefWidthProperty().bind(hBox.widthProperty().subtract(100));
         // columnTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
+        // 添加监听器，当点击表格时，确保当前表被选中
+        columnTableView.setOnMouseClicked(event -> {
+            ListView<VBox> listView = NodeConstants.mybatisListView;
+            int index = listView.getItems().indexOf(selectedVBox);
+            if (index >= 0) {
+                listView.getSelectionModel().select(index);
+            }
+        });
+
         ReadOnlyDoubleProperty widthBind = columnTableView.widthProperty();
 
+        // 字段名列
         TableColumn<Column, String> tcColumnNam = new TableColumn<>("字段名");
         tcColumnNam.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnName()));
         tcColumnNam.setSortable(false);
         tcColumnNam.prefWidthProperty().bind(widthBind.multiply(0.16));
         tcColumnNam.getStyleClass().setAll("columnStyleClass");
+        // 为字段名列添加单元格点击事件
+        tcColumnNam.setCellFactory(column -> {
+            TableCell<Column, String> cell = new TableCell<Column, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        setText(item);
+                    }
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    ListView<VBox> listView = NodeConstants.mybatisListView;
+                    int index = listView.getItems().indexOf(selectedVBox);
+                    if (index >= 0) {
+                        listView.getSelectionModel().select(index);
+                    }
+                }
+            });
+            return cell;
+        });
 
+        // 类型列
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
         tcType.setCellValueFactory(param -> {
             Column column = param.getValue();
@@ -286,8 +322,33 @@ public class MybatisListViewInit {
         tcType.setSortable(false);
         tcType.prefWidthProperty().bind(widthBind.multiply(0.16));
         tcType.getStyleClass().setAll(columnStyleClass);
+        // 为类型列添加单元格点击事件
+        tcType.setCellFactory(column -> {
+            TableCell<Column, String> cell = new TableCell<Column, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty) {
+                        setText(null);
+                        setGraphic(null);
+                    } else {
+                        setText(item);
+                    }
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    ListView<VBox> listView = NodeConstants.mybatisListView;
+                    int index = listView.getItems().indexOf(selectedVBox);
+                    if (index >= 0) {
+                        listView.getSelectionModel().select(index);
+                    }
+                }
+            });
+            return cell;
+        });
 
-        // 可空
+        // 可空列
         TableColumn<Column, Boolean> nullable = new TableColumn<>("非空");
         nullable.setCellFactory(MyCheckBoxTableCell.forTableColumn(param -> {
             Column column = columnTableView.getItems().get(param);
@@ -298,29 +359,60 @@ public class MybatisListViewInit {
         nullable.getStyleClass().setAll(columnStyleClass);
         nullable.setEditable(false);
 
-        // 备注
+        // 备注列
         TableColumn<Column, String> remark = new TableColumn<>("备注");
         remark.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getRemark()));
         remark.setSortable(false);
         remark.prefWidthProperty().bind(widthBind.multiply(0.16));
         remark.getStyleClass().setAll(columnStyleClass);
-        // 添加鼠标悬停提示功能
-        remark.setCellFactory(column -> new TableCell<>() {
+        // 为备注列添加单元格点击事件和悬停提示功能
+        remark.setCellFactory(column -> new TableCell<Column, String>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(item);
                 if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
                     this.setTooltip(null);
                 } else {
+                    setText(item);
                     Tooltip tooltip = new Tooltip(item);
                     this.setTooltip(tooltip);
                 }
             }
         });
 
+        // 为备注列添加点击事件
+        remark.setCellFactory(column -> {
+            TableCell<Column, String> cell = new TableCell<Column, String>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setGraphic(null);
+                        this.setTooltip(null);
+                    } else {
+                        setText(item);
+                        Tooltip tooltip = new Tooltip(item);
+                        this.setTooltip(tooltip);
+                    }
+                }
+            };
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    ListView<VBox> listView = NodeConstants.mybatisListView;
+                    int index = listView.getItems().indexOf(selectedVBox);
+                    if (index >= 0) {
+                        listView.getSelectionModel().select(index);
+                    }
+                }
+            });
+            return cell;
+        });
+
+        // property列
         TableColumn<Column, String> property = new TableColumn<>("property");
-        property.setCellFactory(TextFieldTableCell.forTableColumn());
         property.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getProperty()));
         property.setOnEditCommit(event -> {
             event.getRowValue().getColumnOverride().setProperty(event.getNewValue());
@@ -329,9 +421,24 @@ public class MybatisListViewInit {
         property.setSortable(false);
         property.prefWidthProperty().bind(widthBind.multiply(0.16));
         property.getStyleClass().setAll(columnStyleClass);
+        // 为property列添加点击事件
+        property.setCellFactory(TextFieldTableCell.forTableColumn());
+        property.setCellFactory(column -> {
+            TextFieldTableCell<Column, String> cell = new TextFieldTableCell<>();
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    ListView<VBox> listView = NodeConstants.mybatisListView;
+                    int index = listView.getItems().indexOf(selectedVBox);
+                    if (index >= 0) {
+                        listView.getSelectionModel().select(index);
+                    }
+                }
+            });
+            return cell;
+        });
 
+        // java type列
         TableColumn<Column, String> javaType = new TableColumn<>("java type");
-        javaType.setCellFactory(TextFieldTableCell.forTableColumn());
         javaType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getJavaType()));
         javaType.setOnEditCommit(event -> {
             event.getRowValue().getColumnOverride().setJavaType(event.getNewValue());
@@ -340,10 +447,24 @@ public class MybatisListViewInit {
         javaType.setSortable(false);
         javaType.prefWidthProperty().bind(widthBind.multiply(0.2));
         javaType.getStyleClass().setAll(columnStyleClass);
+        // 为javaType列添加点击事件
+        javaType.setCellFactory(TextFieldTableCell.forTableColumn());
+        javaType.setCellFactory(column -> {
+            TextFieldTableCell<Column, String> cell = new TextFieldTableCell<>();
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    ListView<VBox> listView = NodeConstants.mybatisListView;
+                    int index = listView.getItems().indexOf(selectedVBox);
+                    if (index >= 0) {
+                        listView.getSelectionModel().select(index);
+                    }
+                }
+            });
+            return cell;
+        });
 
-        // type handler
+        // type handler列
         TableColumn<Column, String> typeHandler = new TableColumn<>("type handler");
-        typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
         typeHandler.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getColumnOverride().getTypeHandler()));
         typeHandler.setOnEditCommit(event -> {
             event.getRowValue().getColumnOverride().setTypeHandler(event.getNewValue());
@@ -352,8 +473,23 @@ public class MybatisListViewInit {
         typeHandler.setSortable(false);
         typeHandler.prefWidthProperty().bind(widthBind.multiply(0.21));
         typeHandler.getStyleClass().setAll(columnStyleClass);
+        // 为typeHandler列添加点击事件
+        typeHandler.setCellFactory(TextFieldTableCell.forTableColumn());
+        typeHandler.setCellFactory(column -> {
+            TextFieldTableCell<Column, String> cell = new TextFieldTableCell<>();
+            cell.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 1) {
+                    ListView<VBox> listView = NodeConstants.mybatisListView;
+                    int index = listView.getItems().indexOf(selectedVBox);
+                    if (index >= 0) {
+                        listView.getSelectionModel().select(index);
+                    }
+                }
+            });
+            return cell;
+        });
 
-        // 是否忽略
+        // 是否忽略列
         TableColumn<Column, Boolean> ignoreCheckBox = new TableColumn<>("是否忽略");
         ignoreCheckBox.setCellFactory(MyCheckBoxTableCell.forTableColumn(param -> {
             final Column column = columnTableView.getItems().get(param);
