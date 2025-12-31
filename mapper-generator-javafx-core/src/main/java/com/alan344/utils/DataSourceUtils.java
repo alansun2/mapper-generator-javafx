@@ -80,7 +80,7 @@ public class DataSourceUtils {
                 column.setType(columns.getString("TYPE_NAME"));
                 column.setSize(columns.getInt("COLUMN_SIZE"));
                 column.setRemark(columns.getString("REMARKS"));
-                column.setNullable(columns.getInt("NULLABLE") == DatabaseMetaData.columnNullable);
+                column.setNonNullable(columns.getInt("NULLABLE") != DatabaseMetaData.columnNullable);
                 if (supportsIsAutoIncrement) {
                     column.setAutoIncr("YES".equals(columns.getString("IS_AUTOINCREMENT")));
                 }

@@ -3,6 +3,7 @@ package com.alan344.component.dialog;
 import com.alan344.utils.FileExploreUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -32,6 +33,11 @@ public class FileOpenAndSuccessDialog extends AlDialog {
         button.setPrefWidth(60);
         button.setOnAction(event -> stage.close());
         this.setActions(open, button);
+        button.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                stage.close();
+            }
+        });
 
         final FontIcon fontIcon = new FontIcon("unis-check-circle:40:#81E069");
 

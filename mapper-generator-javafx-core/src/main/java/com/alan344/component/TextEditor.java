@@ -20,21 +20,21 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @since 2023/12/17
  */
-public class TextEditorDialog extends BorderPane {
+public class TextEditor extends BorderPane {
     private final Stage stage;
     private final TextArea textArea;
     private final Button cancelBtn;
     private final Button applyBtn;
 
-    public TextEditorDialog(String title, String initText) {
+    public TextEditor(String title, String initText) {
         // 创建舞台
         stage = new Stage();
         stage.initStyle(StageStyle.DECORATED);
         stage.setTitle(title);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(true);
-        stage.setMinWidth(600);
-        stage.setMinHeight(400);
+        stage.setMinWidth(1200);
+        stage.setMinHeight(800);
 
         // 文本编辑器
         textArea = new TextArea(initText);

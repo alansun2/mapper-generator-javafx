@@ -5,6 +5,7 @@ import com.alan344.constants.enums.HttpParamType;
 import com.alan344.utils.NameUtils;
 import com.alan344.utils.StringUtils;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,17 +34,14 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      * 父类
      */
     private String superClass;
-
     /**
      * 默认的输出路径后缀
      */
     private String defaultOutputPathSuffix;
-
     /**
      * 默认的包名后缀
      */
     private String defaultPackageSuffix;
-
     /**
      * 当 TemplateTypeEnum 为 MODEL 时，可以指定后缀
      */
@@ -64,16 +62,13 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      * 生成 model 时的忽略字段，逗号分隔
      */
     private String modelIgnoreColumns;
-
     private boolean lombokGetter;
     private boolean lombokSetter;
     private boolean lombokToString;
-
     /**
      * 自定义模板文件夹
      */
     private String customTemplateDir;
-
     /**
      * 文件输出地址
      */
@@ -82,6 +77,13 @@ public class ExtraTemplateFileConfig implements NameUtils.CheckNameRepeat, Clone
      * 包名
      */
     private String packageName;
+    /**
+     * 分组, 当是系统配置时，该字段为 null
+     * <p>
+     * 不序列化，防止循环引用
+     */
+    @JSONField(serialize = false, deserialize = false)
+    private ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig;
 
     public void setModelIgnoreColumns(String modelIgnoreColumns) {
         if (StringUtils.isNotEmpty(modelIgnoreColumns)) {

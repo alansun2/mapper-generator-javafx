@@ -1,6 +1,5 @@
 package com.alan344.service;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.alan344.bean.config.ExtraTemplateFileConfig;
 import com.alan344.bean.config.ExtraTemplateFileGroupConfig;
 import com.alan344.constants.BaseConstants;
@@ -18,7 +17,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,23 +37,24 @@ public class ExtraTemplateFileConfigService {
     @Value("classpath:default-extra-template-file-config.json")
     private Resource resource;
 
-    private List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigs;
+    private List<ExtraTemplateFileGroupConfig> extraTemplateFileGroupConfigs;
 
     public void saveExtraFileConfig(List<ExtraTemplateFileGroupConfig> items) {
         // 去除系统配置
         final List<ExtraTemplateFileGroupConfig> extraTemplateFileGroupConfigs = items.stream()
                 .filter(extraTemplateFileGroupConfig -> !extraTemplateFileGroupConfig.isSystem())
                 .collect(Collectors.toList());
-
         try {
-            FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(), JSONArray.toJSONString(extraTemplateFileGroupConfigs, JSONWriter.Feature.PrettyFormat, JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
+            FileUtils.writeStringToFile(BaseConstants.getExtraFileConfigFile(),
+                    JSONArray.toJSONString(extraTemplateFileGroupConfigs, JSONWriter.Feature.PrettyFormat,
+                            JSONWriter.Feature.WriteEnumsUsingName), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public Map<String, ExtraTemplateFileConfig> getExtraFileConfigMap(List<String> templateIds) {
-        if (CollectionUtil.isEmpty(templateIds)) {
+        if (CollectionUtils.isEmpty(templateIds)) {
             return Collections.emptyMap();
         }
         final List<ExtraTemplateFileGroupConfig> extraTemplateFileConfigList = this.getExtraTemplateFileGroupConfig();
@@ -64,20 +70,23 @@ public class ExtraTemplateFileConfigService {
     }
 
     public List<ExtraTemplateFileGroupConfig> getExtraTemplateFileGroupConfig() {
-        if (null != extraTemplateFileConfigs) {
-            return extraTemplateFileConfigs;
+        if (null != extraTemplateFileGroupConfigs) {
+            return extraTemplateFileGroupConfigs;
         }
 
+        // 家在自定义的配置
         final File extraFileConfigFile = BaseConstants.getExtraFileConfigFile();
         if (!extraFileConfigFile.exists()) {
-            extraTemplateFileConfigs = new ArrayList<>();
+            extraTemplateFileGroupConfigs = new ArrayList<>();
         } else {
             try {
-                extraTemplateFileConfigs = JSONArray.parseArray(FileUtils.readFileToString(extraFileConfigFile, StandardCharsets.UTF_8)).toList(ExtraTemplateFileGroupConfig.class);
-                extraTemplateFileConfigs.forEach(extraTemplateFileGroupConfig -> {
-                    // 防止空指针
-                    final Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
-                    if (CollectionUtil.isEmpty(extraTemplateFileConfigList)) {
+                extraTemplateFileGroupConfigs = JSONArray.parseArray(FileUtils.readFileToString(extraFileConfigFile,
+                        StandardCharsets.UTF_8)).toList(ExtraTemplateFileGroupConfig.class);
+                // 确保每个分组都有非空的配置列表
+                extraTemplateFileGroupConfigs.forEach(extraTemplateFileGroupConfig -> {
+                    Collection<ExtraTemplateFileConfig> configList =
+                            extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
+                    if (CollectionUtils.isEmpty(configList)) {
                         extraTemplateFileGroupConfig.setExtraTemplateFileConfigList(new ArrayList<>());
                     }
                 });
@@ -86,15 +95,24 @@ public class ExtraTemplateFileConfigService {
             }
         }
 
+        // 加载默认的配置
         final List<ExtraTemplateFileGroupConfig> defaults = this.getDefault();
-        if (CollectionUtils.isEmpty(extraTemplateFileConfigs)) {
-            extraTemplateFileConfigs = defaults;
+        if (CollectionUtils.isEmpty(extraTemplateFileGroupConfigs)) {
+            extraTemplateFileGroupConfigs = defaults;
         } else {
-            for (int i = 0; i < defaults.size(); i++) {
-                extraTemplateFileConfigs.add(i, defaults.get(i));
-            }
+            // 将默认配置插入到开头
+            extraTemplateFileGroupConfigs.addAll(0, defaults);
         }
-        return extraTemplateFileConfigs;
+
+        // 设置反向引用
+        extraTemplateFileGroupConfigs.forEach(extraTemplateFileGroupConfig -> {
+            Collection<ExtraTemplateFileConfig> configList = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
+            if (CollectionUtils.isNotEmpty(configList)) {
+                configList.forEach(extraTemplateFileConfig ->
+                        extraTemplateFileConfig.setExtraTemplateFileGroupConfig(extraTemplateFileGroupConfig));
+            }
+        });
+        return extraTemplateFileGroupConfigs;
     }
 
     /**

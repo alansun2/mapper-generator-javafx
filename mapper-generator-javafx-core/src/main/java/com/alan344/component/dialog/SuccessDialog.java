@@ -2,6 +2,7 @@ package com.alan344.component.dialog;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -25,6 +26,11 @@ public class SuccessDialog extends AlDialog {
         button.setPrefWidth(60);
         button.setOnAction(event -> stage.close());
         this.setActions(button);
+        button.setOnKeyReleased(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                stage.close();
+            }
+        });
 
         final FontIcon fontIcon = new FontIcon("unis-check-circle:40:#81E069");
 

@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import lombok.Getter;
 
 import java.util.function.Consumer;
 
@@ -19,10 +20,10 @@ public class ExtraTemplateFileItemHBox extends HBox implements SelectBtnBarHBox.
     private final Button deleteButton;
     private final Button copyBtn;
     private final Label nameLabel;
-    private final ExtraTemplateFileConfig extraTemplateFileConfig;
-
     private final JFXCheckBox jfxCheckBox;
-
+    @Getter
+    private final ExtraTemplateFileConfig extraTemplateFileConfig;
+    @Getter
     private final boolean isSystem;
 
     public ExtraTemplateFileItemHBox(boolean isSystem, ExtraTemplateFileConfig extraTemplateFileConfig) {
@@ -80,10 +81,6 @@ public class ExtraTemplateFileItemHBox extends HBox implements SelectBtnBarHBox.
         nameLabel.setText(text);
     }
 
-    public ExtraTemplateFileConfig getExtraTemplateFileConfig() {
-        return this.extraTemplateFileConfig;
-    }
-
     @Override
     public boolean isSelected() {
         return this.jfxCheckBox.isSelected();
@@ -92,10 +89,6 @@ public class ExtraTemplateFileItemHBox extends HBox implements SelectBtnBarHBox.
     @Override
     public void setSelect(boolean select) {
         this.jfxCheckBox.setSelected(select);
-    }
-
-    public boolean isSystem() {
-        return isSystem;
     }
 
     private void disable(boolean disable) {

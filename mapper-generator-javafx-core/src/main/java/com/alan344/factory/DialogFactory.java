@@ -36,11 +36,11 @@ public class DialogFactory {
     }
 
     public static void successDialog(Stage primaryStage, String title, String textContent) {
-        SuccessDialog successDialog = new SuccessDialog(primaryStage, title, textContent);
+        new SuccessDialog(primaryStage, title, textContent);
     }
 
     public static void successAndOpenFileDialog(Stage primaryStage, String title, String textContent, String path) {
-        FileOpenAndSuccessDialog successDialog = new FileOpenAndSuccessDialog(primaryStage, title, textContent, path);
+        new FileOpenAndSuccessDialog(primaryStage, title, textContent, path);
     }
 
     public static void exceptionDialog(Throwable e) {

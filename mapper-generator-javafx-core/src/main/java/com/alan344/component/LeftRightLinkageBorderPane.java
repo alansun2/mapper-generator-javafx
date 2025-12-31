@@ -23,6 +23,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.ArrayList;
@@ -47,6 +48,24 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
     private List<GC> gcList;
 
     private final Function<GC, Region> rightNodeSupplier;
+    
+    /**
+     * 分组复制时的回调函数，用于自定义复制逻辑（如复制模板文件）
+     * -- SETTER --
+     *  设置分组复制时的回调函数
+
+     */
+    @Setter
+    private Consumer<GC> copyCallback;
+    
+    /**
+     * 分组删除时的回调函数，用于自定义删除逻辑（如删除模板文件）
+     * -- SETTER --
+     *  设置分组删除时的回调函数
+
+     */
+    @Setter
+    private Consumer<GC> deleteCallback;
 
     public LeftRightLinkageBorderPane(Supplier<GC> generatorGc,
                                       Function<GC, GI> generatorGi,
@@ -114,6 +133,12 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                     final GC cloneGc = (GC) gc.clone();
                     cloneGc.setGroupName(NameUtils.generatorName(cloneGc.getGroupName(), groupListView.getItems()));
                     cloneGc.setSystem(false);
+                    
+                    // 调用复制回调函数，用于处理模板文件等自定义复制逻辑
+                    if (copyCallback != null) {
+                        copyCallback.accept(cloneGc);
+                    }
+                    
                     GI cloneGi = generatorGi.apply(cloneGc);
                     if (cloneGi instanceof Region) {
                         ((Region) cloneGi).setPrefHeight(25);
@@ -134,6 +159,10 @@ public class LeftRightLinkageBorderPane<GC extends LeftRightLinkageBorderPane.Gr
                 MenuItem deleteMenuItem = new MenuItem("Del");
                 deleteMenuItem.setGraphic(new FontIcon("unil-times-circle:16:RED"));
                 deleteMenuItem.setOnAction(event1 -> {
+                    // 调用删除回调函数，用于处理模板文件等自定义删除逻辑
+                    if (deleteCallback != null) {
+                        deleteCallback.accept(selectedItem.getConfig());
+                    }
                     gcList.remove(selectedItem.getConfig());
                     groupListView.getItems().remove(selectedItem);
                 });

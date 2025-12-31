@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  * @author AlanSun
  * @since 2022/8/21 15:01
  */
-public class FileSelectTextToggleHBox extends HBox {
+public class FileSelectTextToggleHBox extends HBox implements TextFieldButton {
 
     @Getter
     private final TextField textField;
@@ -50,6 +50,7 @@ public class FileSelectTextToggleHBox extends HBox {
         return this.textField.getText();
     }
 
+    @Override
     public void setText(String text) {
         this.textField.setText(text);
     }

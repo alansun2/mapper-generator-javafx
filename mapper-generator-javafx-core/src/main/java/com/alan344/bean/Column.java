@@ -18,18 +18,29 @@ public class Column {
     private String type;
     private Integer size;
     private String remark;
-    private boolean nullable;
+    @JSONField(serializeUsing = BooleanPropertyWriter.class)
+    private BooleanProperty nonNullable = new SimpleBooleanProperty(true);
     private boolean isAutoIncr;
-
     @JSONField(serializeUsing = BooleanPropertyWriter.class)
     private BooleanProperty ignore = new SimpleBooleanProperty(false);
-
     private ColumnOverride columnOverride = new ColumnOverride();
 
     /**
      * 用于业务的分页查询
      */
     private String condition;
+
+    public void setNonNullable(boolean nonNullable) {
+        this.nonNullable.set(nonNullable);
+    }
+
+    public BooleanProperty nonNullableProperty() {
+        return nonNullable;
+    }
+
+    public boolean isNonNullable() {
+        return nonNullable.get();
+    }
 
     public boolean isIgnore() {
         return ignore.get();

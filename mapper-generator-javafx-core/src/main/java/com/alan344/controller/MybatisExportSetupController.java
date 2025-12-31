@@ -9,6 +9,7 @@ import com.alan344.component.LeftRightLinkageBorderPane;
 import com.alan344.component.MybatisExportGroupItemHBox;
 import com.alan344.component.MybatisExportItemHBox;
 import com.alan344.component.PropertyPane;
+import com.alan344.component.TextFieldButton;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.FileWriteModeEnum;
@@ -239,7 +240,7 @@ public class MybatisExportSetupController {
 
             projectDirText.getTextField().textProperty().addListener((observable, oldValue, newValue) -> {
                 projectNameText.setText(FileUtil.getName(newValue));
-                
+
                 // 自动填充 bean 和 mapper 包名
                 if (StringUtils.isNotEmpty(newValue)) {
                     // 尝试从项目目录结构推断基础包名
@@ -247,7 +248,7 @@ public class MybatisExportSetupController {
                     if (StringUtils.isNotEmpty(basePackage)) {
                         // 只有当包名字段为空时才自动填充
                         if (StringUtils.isEmpty(mybatisExportConfig.getBeanPackage())) {
-                            mybatisExportConfig.setBeanPackage(basePackage + ".bean");
+                            mybatisExportConfig.setBeanPackage(basePackage + ".entity");
                         }
                         if (StringUtils.isEmpty(mybatisExportConfig.getMapperPackage())) {
                             mybatisExportConfig.setMapperPackage(basePackage + ".mapper");
@@ -392,18 +393,23 @@ public class MybatisExportSetupController {
             languageComboBox.setValue(mybatisExportConfig.getLanguage());
             mybatisExportConfig.languageProperty().bindBidirectional(languageComboBox.valueProperty());
 
+            // 创建 Office Panel 的组件
+            final AnchorPane officeAnchorPane = createOfficePanelComponents(mybatisExportConfig);
+            // 创建 MyBatis Flex Panel 的组件
+            final AnchorPane flexAnchorPane = createMyBatisFlexPanelComponents(mybatisExportConfig);
+
+            // 框架类型选择的监听器 - 现在使用预先创建的组件
             frameworkComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (mybatisExportConfig.getMapperRootInterface() != null && !"com.mybatisflex.core.BaseMapper".equals(mybatisExportConfig.getMapperRootInterface())) {
                     currentMapperRootInterface = mybatisExportConfig.getMapperRootInterface();
                 }
                 switch (newValue) {
                     case OFFICIAL -> {
-                        borderPane.setCenter(this.officePanel(mybatisExportConfig));
+                        borderPane.setCenter(officeAnchorPane);
                         mybatisExportConfig.setXmlEnable(true);
-                        // mybatisExportConfig.setMapperRootInterface(null);
                     }
                     case MYBATIS_FLEX -> {
-                        borderPane.setCenter(this.mybatisFlexPanel(mybatisExportConfig));
+                        borderPane.setCenter(flexAnchorPane);
                         mybatisExportConfig.setXmlEnable(false);
                         mybatisExportConfig.setMapperRootInterface(Objects.requireNonNullElse(currentMapperRootInterface, "com.mybatisflex.core.BaseMapper"));
                     }
@@ -411,6 +417,13 @@ public class MybatisExportSetupController {
             });
             frameworkComboBox.setValue(mybatisExportConfig.getFrameworkType());
             mybatisExportConfig.frameworkTypeProperty().bindBidirectional(frameworkComboBox.valueProperty());
+
+            // 根据当前框架类型设置初始面板
+            if (mybatisExportConfig.getFrameworkType() == FrameworkTypeEnum.MYBATIS_FLEX) {
+                borderPane.setCenter(flexAnchorPane);
+            } else {
+                borderPane.setCenter(officeAnchorPane);
+            }
 
             hBoxListView.getItems().addAll(configNameHbox, authorHbox, writeFileHbox, projectDirHbox, projectNameHbox,
                     jdkVersionHbox, languageHbox, frameworkHbox,
@@ -438,20 +451,7 @@ public class MybatisExportSetupController {
     /**
      * bean 文件夹选择器
      */
-    public void beanDirectoryScan(FileSelectTextToggleHBox fileSelectTextHBox) {
-        File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ?
-                null : this.baseDir);
-        if (directory != null) {
-            final String path = directory.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
-            fileSelectTextHBox.setText(path);
-            this.baseDir = path;
-        }
-    }
-
-    /**
-     * bean 文件夹选择器
-     */
-    public void beanDirectoryScan(FileSelectTextHBox fileSelectTextHBox) {
+    public <T extends TextFieldButton> void beanDirectoryScan(T fileSelectTextHBox) {
         File directory = FileDirChooserFactory.createDirectoryScan(null, !StringUtils.isNotEmpty(this.baseDir) ?
                 null : this.baseDir);
         if (directory != null) {
@@ -491,7 +491,7 @@ public class MybatisExportSetupController {
         }
     }
 
-    private AnchorPane officePanel(MybatisExportConfig mybatisExportConfig) {
+    private AnchorPane createOfficePanelComponents(MybatisExportConfig mybatisExportConfig) {
         AnchorPane anchorPane = new AnchorPane();
 
         final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
@@ -569,10 +569,10 @@ public class MybatisExportSetupController {
         targetNameJFXComboBox.setLayoutY(10);
         targetNameJFXComboBox.setValue(mybatisOfficialExportConfig.getTargetName());
         targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
+        // 为了解决监听器被重复注册的问题，现在只在创建组件时注册一次监听器
         targetNameJFXComboBox.getSelectionModel().selectedItemProperty()
-                .addListener((observable, oldValue,
-                              newValue) -> this.setJavaClient(javaClientTypeComboBox, newValue,
-                        JavaClientTypeEnum.XMLMAPPER));
+                .addListener((observable, oldValue, newValue) ->
+                        this.setJavaClient(javaClientTypeComboBox, newValue, JavaClientTypeEnum.XMLMAPPER));
 
         anchorPane.getChildren().addAll(userJava8CheckBox, useJpaAnnotationCheckBox, useCommentCheckBox,
                 useLombokGetSetCheckBox, useLombokBuilderCheckBox, tinyInt1ToBooleanCheckBox, targetNameLabel,
@@ -581,7 +581,7 @@ public class MybatisExportSetupController {
         return anchorPane;
     }
 
-    private AnchorPane mybatisFlexPanel(MybatisExportConfig mybatisExportConfig) {
+    private AnchorPane createMyBatisFlexPanelComponents(MybatisExportConfig mybatisExportConfig) {
         AnchorPane anchorPane = new AnchorPane();
 
         final MybatisExportConfig.MybatisOfficialExportConfig mybatisOfficialExportConfig =
@@ -631,15 +631,6 @@ public class MybatisExportSetupController {
         advanceSetButton.setLayoutX(600);
         advanceSetButton.setLayoutY(10);
 
-        final JFXComboBox<TargetNameEnum> targetNameJFXComboBox =
-                new JFXComboBox<>(FXCollections.observableArrayList(TargetNameEnum.values()));
-        targetNameJFXComboBox.setPrefWidth(160);
-        targetNameJFXComboBox.setLayoutX(115);
-        targetNameJFXComboBox.setLayoutY(10);
-        targetNameJFXComboBox.setValue(TargetNameEnum.MyBatis3Flex);
-        targetNameJFXComboBox.valueProperty().bindBidirectional(mybatisOfficialExportConfig.targetNameProperty());
-        targetNameJFXComboBox.setVisible(false);
-
         Label logicDeleteLabel = new Label("逻辑删除");
         logicDeleteLabel.setLayoutX(27);
         logicDeleteLabel.setLayoutY(15);
@@ -660,18 +651,15 @@ public class MybatisExportSetupController {
         version.setLayoutX(320);
         version.setLayoutY(10);
 
-        mybatisOfficialExportConfig.setTargetName(TargetNameEnum.MyBatis3Flex);
-
         anchorPane.getChildren().addAll(userJava8CheckBox, useCommentCheckBox, logicDeleteLabel,
                 versionLabel, logicDeleteField, version, useBigDecimalCheckBox,
-                useLombokGetSetCheckBox, useLombokBuilderCheckBox, tinyInt1ToBooleanCheckBox, targetNameJFXComboBox,
-                advanceSetButton);
+                useLombokGetSetCheckBox, useLombokBuilderCheckBox, tinyInt1ToBooleanCheckBox, advanceSetButton);
         return anchorPane;
     }
 
     /**
      * 根据项目路径推断基础包名
-     * 
+     *
      * @param projectPath 项目路径
      * @return 基础包名
      */
@@ -682,7 +670,7 @@ public class MybatisExportSetupController {
             if (!srcMainJavaDir.exists()) {
                 return "";
             }
-            
+
             // 遍历 src/main/java 下的目录，查找可能的包结构
             File[] packageDirs = srcMainJavaDir.listFiles(File::isDirectory);
             if (packageDirs != null && packageDirs.length > 0) {
@@ -697,7 +685,7 @@ public class MybatisExportSetupController {
                             if (subDirs.length == 1) {
                                 // 继续深入
                                 File[] subSubDirs = subDirs[0].listFiles(File::isDirectory);
-                                if (subSubDirs != null && subSubDirs.length > 0 && subSubDirs.length == 1) {
+                                if (subSubDirs != null && subSubDirs.length == 1) {
                                     return packageName + "." + subDirs[0].getName() + "." + subSubDirs[0].getName();
                                 }
                                 return packageName + "." + subDirs[0].getName();
@@ -717,7 +705,7 @@ public class MybatisExportSetupController {
                     return "com." + projectName.toLowerCase();
                 }
             }
-            
+
             // 如果没有找到现有的包结构，则基于项目名称创建一个
             String projectName = FileUtil.getName(projectPath);
             if (projectName.contains("-")) {
@@ -731,7 +719,7 @@ public class MybatisExportSetupController {
         } catch (Exception e) {
             log.warn("推断基础包名时发生错误", e);
         }
-        
+
         return "";
     }
 }

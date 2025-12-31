@@ -20,7 +20,8 @@ import java.util.Map;
  * @since ：2019/8/8 21:43
  */
 public class BaseConstants {
-    public static final String MG_HOME = System.getProperty("user.home").replace(StrUtil.BACKSLASH, StrUtil.SLASH) + "/AppData/Local/MapperGeneratorV2";
+    public static final String MG_HOME = System.getProperty("user.home")
+                                                 .replace(StrUtil.BACKSLASH, StrUtil.SLASH) + "/mybatis-friend";
     public static final String MG_CONF_HOME = MG_HOME + "/config/";
     public static final String MG_DATA_HOME = MG_CONF_HOME + "/data/";
     /**
@@ -39,6 +40,10 @@ public class BaseConstants {
      * 插件配置
      */
     public static final String PLUGIN_DIR = MG_CONF_HOME + "plugin/";
+    /**
+     * 模板目录
+     */
+    public static final String TEMPLATE_DIR = MG_CONF_HOME + "template/";
     /**
      * 插件配置文件名称
      */

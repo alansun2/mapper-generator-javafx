@@ -10,7 +10,7 @@ import com.alan344.component.FileTemplateTextHBox;
 import com.alan344.component.LeftRightLinkageBorderPane;
 import com.alan344.component.PropertyHBox;
 import com.alan344.component.SelectBtnBarHBox;
-import com.alan344.component.TextEditorDialog;
+import com.alan344.component.TextEditor;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.alan344.constants.enums.ExtraFileTypeEnum;
@@ -24,10 +24,6 @@ import com.alan344.utils.StringUtils;
 import com.alan344.utils.Toast;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXComboBox;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -55,15 +51,16 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -108,12 +105,21 @@ public class ExtraTemplateFileController {
         linkageBorderPane.setPrefHeight(550);
         linkageBorderPane.setPrefWidth(800);
 
+        // 设置复制回调，用于复制分组时复制模板文件
+        linkageBorderPane.setCopyCallback(groupConfig -> {
+            // 遍历分组中的所有模板配置
+            groupConfig.getExtraTemplateFileConfigList().forEach(this::copyTemplateFile);
+        });
+
+        // 设置删除回调，用于删除分组时删除对应的配置文件夹
+        linkageBorderPane.setDeleteCallback(this::deleteTemplateFolder);
+
         linkageBorderPane.addLeftItems(extraTemplateFileConfigService.getExtraTemplateFileGroupConfig());
         return linkageBorderPane;
     }
 
     private BorderPane getCenterBorderPane(ExtraTemplateFileGroupConfig groupConfig) {
-        final BorderPane borderPane1 = groupNameBorderPaneMapCache.computeIfAbsent(groupConfig.getGroupName(), s -> {
+        final BorderPane centerBorderPane = groupNameBorderPaneMapCache.computeIfAbsent(groupConfig.getGroupName(), s -> {
             ListView<ExtraTemplateFileItemHBox> listView = new ListView<>();
             groupConfig.getExtraTemplateFileConfigList().forEach(extraFileConfig ->
                     listView.getItems().add(this.packageExtraFileLabel(groupConfig.isSystem(), extraFileConfig,
@@ -128,13 +134,67 @@ public class ExtraTemplateFileController {
             return borderPane;
         });
 
-        listView = (ListView<ExtraTemplateFileItemHBox>) borderPane1.getCenter();
-        return borderPane1;
+        listView = (ListView<ExtraTemplateFileItemHBox>) centerBorderPane.getCenter();
+        return centerBorderPane;
     }
 
     private List<Button> getBottomBtns(Stage stage, BiConsumer<ExtraTemplateFileGroupConfig,
             List<ExtraTemplateFileConfig>> consumer) {
         int btnWidth = 70;
+        final Button importBtn = this.initImportBtn(stage, consumer, btnWidth);
+        final Button saveBtn = this.initSaveBtn();
+
+        Button addBtn = new Button("添加");
+        addBtn.setPrefWidth(btnWidth);
+        addBtn.setOnAction(event -> {
+            final ExtraTemplateFileGroupItemHBox selectedItem =
+                    linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
+            if (null == selectedItem) {
+                Toast.makeTextDefault(stage, "请选择一个分组再添加");
+                return;
+            }
+            final ExtraTemplateFileGroupConfig config = selectedItem.getConfig();
+            if (config.isSystem()) {
+                Toast.makeTextDefault(stage, "不能使用默认分组， 请新建分组后再使用");
+                return;
+            }
+            ExtraTemplateFileConfig extraTemplateFileConfig = new ExtraTemplateFileConfig();
+            this.openExtraFileSetup(extraTemplateFileConfig, config.getExtraTemplateFileConfigList(), false,
+                    config.isSystem(), extraFileConfig1 -> {
+                        listView.getItems().add(this.packageExtraFileLabel(config.isSystem(), extraFileConfig1,
+                                config.getExtraTemplateFileConfigList()));
+                        config.getExtraTemplateFileConfigList().add(extraFileConfig1);
+                    });
+        });
+
+        Button cancelBtn = new Button("取消");
+        cancelBtn.setPrefWidth(btnWidth);
+        cancelBtn.setOnAction(event -> {
+            // 删除未保存的配置
+            this.deleteUnsavedConfigs();
+            stage.hide();
+        });
+        return List.of(importBtn, saveBtn, addBtn, cancelBtn);
+    }
+
+    private Button initSaveBtn() {
+        Button saveBtn = new Button("保存");
+        saveBtn.setPrefWidth(70);
+        saveBtn.setOnAction(event -> {
+            final List<ExtraTemplateFileGroupConfig> items = linkageBorderPane.getGroupLeftListView().getItems().stream()
+                    .map(ExtraTemplateFileGroupItemHBox::getConfig).toList();
+            // 保存到磁盘
+            extraTemplateFileConfigService.saveExtraFileConfig(items);
+            // 标记所有配置为已保存
+            items.forEach(config -> config.setSaved(true));
+            // 保存成功 dialog
+            DialogFactory.successDialog(NodeConstants.primaryStage, "保存", "成功");
+        });
+        return saveBtn;
+    }
+
+    private Button initImportBtn(final Stage stage, final BiConsumer<ExtraTemplateFileGroupConfig,
+            List<ExtraTemplateFileConfig>> consumer, final int btnWidth) {
         Button importBtn = new Button("导入");
         importBtn.setPrefWidth(btnWidth);
         importBtn.setOnAction(event -> {
@@ -164,50 +224,7 @@ public class ExtraTemplateFileController {
                     .map(ExtraTemplateFileItemHBox::getExtraTemplateFileConfig).collect(Collectors.toList());
             consumer.accept(selectedItem.getConfig(), extraTemplateFileConfigs);
         });
-
-        Button saveBtn = new Button("保存");
-        saveBtn.setPrefWidth(70);
-        saveBtn.setOnAction(event -> {
-            final List<ExtraTemplateFileGroupConfig> items =
-                    linkageBorderPane.getGroupLeftListView().getItems().stream()
-                            .map(ExtraTemplateFileGroupItemHBox::getConfig).toList();
-            // 保存到磁盘
-            extraTemplateFileConfigService.saveExtraFileConfig(items);
-            // saveBtn.setDisable(true);
-
-            // 保存成功 dialog
-            DialogFactory.successDialog(NodeConstants.primaryStage, "保存", "成功");
-        });
-
-        Button addBtn = new Button("添加");
-        addBtn.setPrefWidth(btnWidth);
-        addBtn.setOnAction(event -> {
-            final ExtraTemplateFileGroupItemHBox selectedItem =
-                    linkageBorderPane.getGroupLeftListView().getSelectionModel().getSelectedItem();
-            if (null == selectedItem) {
-                Toast.makeTextDefault(stage, "请选择一个分组再添加");
-                return;
-            }
-            final ExtraTemplateFileGroupConfig config = selectedItem.getConfig();
-            if (config.isSystem()) {
-                Toast.makeTextDefault(stage, "不能使用默认分组， 请新建分组后再使用");
-                return;
-            }
-            ExtraTemplateFileConfig extraTemplateFileConfig = new ExtraTemplateFileConfig();
-            this.openExtraFileSetup(extraTemplateFileConfig, config.getExtraTemplateFileConfigList(), false,
-                    config.isSystem(), extraFileConfig1 -> {
-                        listView.getItems().add(this.packageExtraFileLabel(config.isSystem(), extraFileConfig1,
-                                config.getExtraTemplateFileConfigList()));
-                        config.getExtraTemplateFileConfigList().add(extraFileConfig1);
-                        // saveBtn.setDisable(false);
-                    });
-            // saveBtn.setDisable(false);
-        });
-
-        Button cancelBtn = new Button("取消");
-        cancelBtn.setPrefWidth(btnWidth);
-        cancelBtn.setOnAction(event -> stage.hide());
-        return List.of(importBtn, saveBtn, addBtn, cancelBtn);
+        return importBtn;
     }
 
     /**
@@ -356,14 +373,17 @@ public class ExtraTemplateFileController {
                 final String path = directory.getPath().replace(StrUtil.BACKSLASH, StrUtil.SLASH);
                 BaseConstants.baseFileDir = path;
                 this.exportDir = path;
-                final Resource resource = resourceLoader.getResource(customTemplatePathTextField.getText());
+                final String templatePath = customTemplatePathTextField.getText();
                 try {
-                    final File file = FileUtils.getFile(customTemplatePathTextField.getText());
-                    IOUtils.copy(resource.getInputStream(), new FileOutputStream(path + "/" + file.getName()));
+                    final Resource resource = this.getResource(templatePath);
+                    try (InputStream inputStream = resource.getInputStream()) {
+                        IOUtils.copy(inputStream, new FileOutputStream(path + "/" + resource.getFilename()));
+                    }
 
-                    DialogFactory.successDialog(addTemplateStage, "导出配置", "成功");
+                    DialogFactory.successAndOpenFileDialog(addTemplateStage, "导出配置", "成功", path);
                 } catch (IOException e) {
                     log.error("导出文件失败", e);
+                    throw new RuntimeException("导出文件失败");
                 }
             }
         });
@@ -373,41 +393,35 @@ public class ExtraTemplateFileController {
                 DialogFactory.exceptionDialog(new RuntimeException("请先选择模板文件"));
                 return;
             }
-
             try {
                 // 读取模板文件内容
                 String templateContent;
-                final Resource resource = resourceLoader.getResource(templatePath);
+                final Resource resource = this.getResource(templatePath);
                 try (InputStream inputStream = resource.getInputStream()) {
                     templateContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 }
-
                 // 打开文本编辑器
-                TextEditorDialog textEditorDialog = new TextEditorDialog("编辑模板文件", templateContent);
-                
+                TextEditor textEditorDialog = new TextEditor("编辑模板文件", templateContent);
                 // 取消按钮动作
                 textEditorDialog.setCancelAction(event -> textEditorDialog.close());
-                
                 // 应用按钮动作
                 textEditorDialog.setApplyAction(event -> {
                     try {
                         final String newContent = textEditorDialog.getText();
                         // 保存修改后的内容
-                        File file = FileUtils.getFile(templatePath);
+                        File file = new File(templatePath);
                         FileUtils.writeStringToFile(file, newContent, StandardCharsets.UTF_8);
-                        
-                        DialogFactory.successDialog(addTemplateStage, "编辑模板", "保存成功");
                         textEditorDialog.close();
                     } catch (IOException e) {
                         log.error("保存模板文件失败", e);
-                        DialogFactory.exceptionDialog(e);
+                        throw new RuntimeException("保存模板文件失败");
                     }
                 });
-                
+
                 textEditorDialog.show();
             } catch (IOException e) {
                 log.error("读取模板文件失败", e);
-                DialogFactory.exceptionDialog(e);
+                throw new RuntimeException("读取模板文件失败");
             }
         });
 
@@ -541,14 +555,80 @@ public class ExtraTemplateFileController {
         }
     }
 
-    private void copyItem(ExtraTemplateFileItemHBox old,
-                          Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
-        final ExtraTemplateFileConfig extraTemplateFileConfigSource = old.getExtraTemplateFileConfig();
-        final ExtraTemplateFileConfig clone = extraTemplateFileConfigSource.clone();
+    /**
+     * 复制模板文件并为每个配置创建单独的文件夹
+     *
+     * @param config 原始模板配置
+     */
+    private void copyTemplateFile(final ExtraTemplateFileConfig config) {
+        final String customTemplateDir = config.getCustomTemplateDir();
+        if (ExtraFileTypeEnum.CUSTOM_TEMPLATE != config.getExtraFileType() || StringUtils.isEmpty(customTemplateDir)) {
+            return;
+        }
+        // 为每个配置创建单独的文件夹，使用配置ID作为文件夹名
+        File destFile = new File(this.getTemplateDir(config.getExtraTemplateFileGroupConfig()),
+                FileUtils.getFile(customTemplateDir).getName());
+        // 复制文件
+        Resource resource = this.getResource(customTemplateDir);
+        try (InputStream inputStream = resource.getInputStream()) {
+            FileUtils.copyToFile(inputStream, destFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        config.setCustomTemplateDir(destFile.getAbsolutePath());
+    }
+
+    /**
+     * 删除配置文件夹（包含该配置的所有模板文件）
+     *
+     * @param config 模板配置
+     */
+    private void deleteTemplateFolder(final ExtraTemplateFileGroupConfig config) {
+        final File templateDir = this.getTemplateDir(config);
+        try {
+            // 直接删除整个配置文件夹（包含所有模板文件）
+            FileUtils.deleteDirectory(templateDir);
+        } catch (Exception e) {
+            log.error("删除配置文件夹失败: {}", templateDir.getAbsolutePath(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 删除单个模板文件
+     *
+     * @param templateConfig 模板配置
+     */
+    private void deleteTemplateFile(ExtraTemplateFileConfig templateConfig) {
+        // 只处理自定义模板类型的文件
+        if (ExtraFileTypeEnum.CUSTOM_TEMPLATE != templateConfig.getExtraFileType()) {
+            return;
+        }
+        try {
+            final String customTemplateDir = templateConfig.getCustomTemplateDir();
+            if (StringUtils.isNotEmpty(customTemplateDir)) {
+                File fileToDelete = new File(customTemplateDir);
+                if (fileToDelete.exists()) {
+                    FileUtils.deleteQuietly(fileToDelete);
+                    log.info("已删除模板文件: {}", customTemplateDir);
+                }
+            }
+        } catch (Exception e) {
+            log.error("删除模板文件失败: {}", templateConfig.getCustomTemplateDir(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void copyItem(ExtraTemplateFileItemHBox old, Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
+        final ExtraTemplateFileConfig clone = old.getExtraTemplateFileConfig().clone();
         clone.setId(UUID.randomUUID().toString());
         clone.setName(NameUtils.generatorName(clone.getName(), extraTemplateFileConfigList));
-        final ExtraTemplateFileItemHBox extraTemplateFileItemHbox = this.packageExtraFileLabel(old.isSystem(), clone,
-                extraTemplateFileConfigList);
+        // 复制模板文件到配置文件夹
+        this.copyTemplateFile(clone);
+
+        final ExtraTemplateFileItemHBox extraTemplateFileItemHbox =
+                this.packageExtraFileLabel(old.isSystem(), clone, extraTemplateFileConfigList);
         final int i = listView.getItems().indexOf(old);
         listView.getItems().add(i + 1, extraTemplateFileItemHbox);
         ((List) extraTemplateFileConfigList).add(i + 1, clone);
@@ -557,30 +637,79 @@ public class ExtraTemplateFileController {
     private ExtraTemplateFileItemHBox packageExtraFileLabel(boolean isSystem,
                                                             ExtraTemplateFileConfig extraTemplateFileConfig,
                                                             Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList) {
-        ExtraTemplateFileItemHBox extraTemplateFileItemHbox = new ExtraTemplateFileItemHBox(isSystem,
-                extraTemplateFileConfig);
+        ExtraTemplateFileItemHBox extraTemplateFileItemHbox = new ExtraTemplateFileItemHBox(isSystem, extraTemplateFileConfig);
         extraTemplateFileItemHbox.setAlignment(Pos.CENTER);
         extraTemplateFileItemHbox.prefWidthProperty().bind(linkageBorderPane.getRightBorderPane().widthProperty().subtract(50));
         // 编辑
-        extraTemplateFileItemHbox.onEditAction(actionEvent -> this.openExtraFileSetup(extraTemplateFileConfig,
-                extraTemplateFileConfigList, true,
+        extraTemplateFileItemHbox.onEditAction(actionEvent -> this.openExtraFileSetup(
+                extraTemplateFileConfig,
+                extraTemplateFileConfigList,
+                true,
                 isSystem,
-                extraFileConfig1 -> {
-                    extraTemplateFileItemHbox.setLabelText(extraFileConfig1.getName());
-                    // saveBtn.setDisable(false);
-                }));
+                extraFileConfig1 -> extraTemplateFileItemHbox.setLabelText(extraFileConfig1.getName())));
         // 删除
         extraTemplateFileItemHbox.onDelAction(actionEvent -> {
+            // 获取要删除的模板配置
+            ExtraTemplateFileConfig configToDelete = extraTemplateFileItemHbox.getExtraTemplateFileConfig();
+
+            // 删除对应的配置文件
+            this.deleteTemplateFile(configToDelete);
+
+            // 从界面和配置列表中删除
             listView.getItems().remove(extraTemplateFileItemHbox);
-            extraTemplateFileConfigList.remove(extraTemplateFileItemHbox.getExtraTemplateFileConfig());
-            // saveBtn.setDisable(false);
+            extraTemplateFileConfigList.remove(configToDelete);
         });
         // 复制
-        extraTemplateFileItemHbox.onCopyAction(actionEvent -> {
-            this.copyItem(extraTemplateFileItemHbox, extraTemplateFileConfigList);
-            // saveBtn.setDisable(false);
-        });
+        extraTemplateFileItemHbox.onCopyAction(actionEvent ->
+                this.copyItem(extraTemplateFileItemHbox, extraTemplateFileConfigList));
 
         return extraTemplateFileItemHbox;
+    }
+
+    /**
+     * 获取模板文件夹, 如果不存在则创建
+     *
+     * @param groupConfig 分组配置
+     * @return 模板文件夹
+     */
+    private File getTemplateDir(ExtraTemplateFileGroupConfig groupConfig) {
+        final String dirName = Base64.getEncoder().encodeToString(groupConfig.getGroupName().getBytes(StandardCharsets.UTF_8));
+        File templateDir = new File(BaseConstants.TEMPLATE_DIR, dirName);
+        if (!templateDir.exists()) {
+            templateDir.mkdirs();
+        }
+        return templateDir;
+    }
+
+    /**
+     * 获取资源，支持classpath:和文件系统路径
+     *
+     * @param location 资源位置，可以是classpath:路径或文件系统路径
+     * @return Resource对象
+     */
+    private Resource getResource(String location) {
+        if (location.startsWith("classpath:")) {
+            return resourceLoader.getResource(location);
+        } else {
+            // 文件系统路径，使用file:协议
+            return resourceLoader.getResource("file:" + location);
+        }
+    }
+
+    /**
+     * 删除未保存的配置
+     */
+    private void deleteUnsavedConfigs() {
+        final List<ExtraTemplateFileGroupConfig> items =
+                linkageBorderPane.getGroupLeftListView().getItems().stream()
+                        .map(ExtraTemplateFileGroupItemHBox::getConfig).toList();
+
+        // 过滤出未保存的非系统配置并删除它们的文件
+        items.stream()
+                .filter(config -> !config.isSaved())
+                .forEach(this::deleteTemplateFolder);
+
+        // 删除未保存的配置项
+        linkageBorderPane.getGroupLeftListView().getItems().removeIf(item -> !item.getConfig().isSaved());
     }
 }

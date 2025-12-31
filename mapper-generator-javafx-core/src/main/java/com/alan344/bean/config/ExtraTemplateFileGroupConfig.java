@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.UUID;
 
 /**
@@ -28,14 +27,24 @@ public class ExtraTemplateFileGroupConfig implements LeftRightLinkageBorderPane.
      */
     private boolean isSystem;
 
+    /**
+     * 标识该配置是否已经保存到磁盘
+     */
+    private boolean isSaved = true;
+
     private Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList;
 
     @Override
     public ExtraTemplateFileGroupConfig clone() {
-        final ExtraTemplateFileGroupConfig extraTemplateFileGroupConfig = JSON.parseObject(JSON.toJSONString(this), ExtraTemplateFileGroupConfig.class);
-        final Collection<ExtraTemplateFileConfig> extraTemplateFileConfigList1 = extraTemplateFileGroupConfig.getExtraTemplateFileConfigList();
-        extraTemplateFileConfigList1.forEach(extraTemplateFileConfig -> extraTemplateFileConfig.setId(UUID.randomUUID().toString()));
-        return extraTemplateFileGroupConfig;
+        final ExtraTemplateFileGroupConfig groupConfig =
+                JSON.parseObject(JSON.toJSONString(this), ExtraTemplateFileGroupConfig.class);
+        groupConfig.setSaved(false);
+        final Collection<ExtraTemplateFileConfig> configList = groupConfig.getExtraTemplateFileConfigList();
+        configList.forEach(extraTemplateFileConfig -> {
+            extraTemplateFileConfig.setId(UUID.randomUUID().toString());
+            extraTemplateFileConfig.setExtraTemplateFileGroupConfig(groupConfig);
+        });
+        return groupConfig;
     }
 
     @JSONField(serialize = false, deserialize = false)

@@ -7,7 +7,6 @@ import com.alan344.component.MyCheckBoxTableCell;
 import com.alan344.constants.BaseConstants;
 import com.alan344.constants.NodeConstants;
 import com.jfoenix.controls.JFXCheckBox;
-import com.jfoenix.controls.cells.editors.base.GenericEditableTableCell;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,8 +14,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -254,7 +259,8 @@ public class MybatisListViewInit {
         String columnStyleClass = "myColumn";
 
         String tableName = ((Label) (((HBox) selectedVBox.getChildren().get(0))).getChildren().get(0)).getText();
-        TableView<Column> columnTableView = new TableView<>(FXCollections.observableArrayList(BaseConstants.selectedTableNameTableMap.get(tableName).getColumns()));
+        TableView<Column> columnTableView =
+                new TableView<>(FXCollections.observableArrayList(BaseConstants.selectedTableNameTableMap.get(tableName).getColumns()));
         columnTableView.setEditable(true);
         columnTableView.prefWidthProperty().bind(hBox.widthProperty().subtract(100));
         // columnTableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
@@ -268,10 +274,50 @@ public class MybatisListViewInit {
         tcColumnNam.getStyleClass().setAll("columnStyleClass");
 
         TableColumn<Column, String> tcType = new TableColumn<>("类型");
-        tcType.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getType()));
+        tcType.setCellValueFactory(param -> {
+            Column column = param.getValue();
+            String type = column.getType();
+            Integer size = column.getSize();
+            if (size != null && size > 0) {
+                type = type + "(" + size + ")";
+            }
+            return new SimpleStringProperty(type);
+        });
         tcType.setSortable(false);
         tcType.prefWidthProperty().bind(widthBind.multiply(0.16));
         tcType.getStyleClass().setAll(columnStyleClass);
+
+        // 可空
+        TableColumn<Column, Boolean> nullable = new TableColumn<>("非空");
+        nullable.setCellFactory(MyCheckBoxTableCell.forTableColumn(param -> {
+            Column column = columnTableView.getItems().get(param);
+            return column.nonNullableProperty();
+        }));
+        nullable.setSortable(false);
+        nullable.prefWidthProperty().bind(widthBind.multiply(0.08));
+        nullable.getStyleClass().setAll(columnStyleClass);
+        nullable.setEditable(false);
+
+        // 备注
+        TableColumn<Column, String> remark = new TableColumn<>("备注");
+        remark.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().getRemark()));
+        remark.setSortable(false);
+        remark.prefWidthProperty().bind(widthBind.multiply(0.16));
+        remark.getStyleClass().setAll(columnStyleClass);
+        // 添加鼠标悬停提示功能
+        remark.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(item);
+                if (empty || item == null) {
+                    this.setTooltip(null);
+                } else {
+                    Tooltip tooltip = new Tooltip(item);
+                    this.setTooltip(tooltip);
+                }
+            }
+        });
 
         TableColumn<Column, String> property = new TableColumn<>("property");
         property.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -323,6 +369,8 @@ public class MybatisListViewInit {
 
         columnTableView.getColumns().add(tcColumnNam);
         columnTableView.getColumns().add(tcType);
+        columnTableView.getColumns().add(nullable);
+        columnTableView.getColumns().add(remark);
         columnTableView.getColumns().add(ignoreCheckBox);
         columnTableView.getColumns().add(property);
         columnTableView.getColumns().add(javaType);

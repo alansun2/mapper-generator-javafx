@@ -2,7 +2,6 @@ package com.alan344.component;
 
 import com.alan344.bean.DataSource;
 import com.jfoenix.controls.JFXTreeCell;
-import javafx.css.PseudoClass;
 import javafx.scene.Node;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -18,8 +17,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
  * 自定义 tree cell 箭头
  **/
 public class CustomTreeCell<T> extends JFXTreeCell<T> {
-
-    private static final PseudoClass ROOT = PseudoClass.getPseudoClass("root");
 
     public static <T> Callback<TreeView<T>, TreeCell<T>> forTreeView() {
         return treeView -> new CustomTreeCell<>();
