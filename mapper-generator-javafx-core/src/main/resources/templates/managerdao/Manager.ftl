@@ -18,12 +18,15 @@ public class ${TYPE_NAME_UPPER_CAMEL}Manager {
     }
 
     public ${TYPE_NAME_UPPER_CAMEL}PageVO convert2PageVO(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}PageVO" "${TYPE_NAME_LOWER_CAMEL}PageVO" "${TYPE_NAME_LOWER_CAMEL}" "PageVO" "null" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
-        return ${TYPE_NAME_LOWER_CAMEL}PageVO;
+        return this.convert2VO(${TYPE_NAME_LOWER_CAMEL}, new ${TYPE_NAME_UPPER_CAMEL}PageVO());
     }
 
     public ${TYPE_NAME_UPPER_CAMEL}VO convert2VO(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}" "VO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
+        return this.convert2VO(${TYPE_NAME_LOWER_CAMEL}, new ${TYPE_NAME_UPPER_CAMEL}VO());
+    }
+
+    private <T extends ${TYPE_NAME_UPPER_CAMEL}VO> T convert2VO(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}, T ${TYPE_NAME_LOWER_CAMEL}VO) {
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}" "VO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP! false/>
         return ${TYPE_NAME_LOWER_CAMEL}VO;
     }
 }

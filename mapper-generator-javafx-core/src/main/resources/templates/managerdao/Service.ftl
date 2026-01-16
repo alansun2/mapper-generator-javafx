@@ -1,9 +1,9 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import com.sy.common.bo.Page;
 <#assign suffixs = ["DTO", "PageDTO", "PageVO", "VO"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
+import com.sysafari.common.core.bo.Page;
 
 /**
  * @author ${author}

@@ -1,10 +1,10 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import com.sy.common.bo.Page;
-import com.sy.common.bo.Query;
 <#assign suffixs = ["Dao", "DTO", "PageDTO", "", "Manager", "Service", "PageVO", "VO"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
+import com.sysafari.common.core.bo.Page;
+import com.sysafari.common.core.bo.Query;
 import com.sysafari.common.core.utils.AssertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +49,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void update${TYPE_NAME_UPPER_CAMEL}ById(final Long id,final ${TYPE_NAME_UPPER_CAMEL}DTO dto) {
-        final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Dao.queryById(dto.getId());
+        final Optional<${TYPE_NAME_UPPER_CAMEL}> ${TYPE_NAME_LOWER_CAMEL}Opt = ${TYPE_NAME_LOWER_CAMEL}Dao.queryById(id);
         AssertUtils.isTrue(${TYPE_NAME_LOWER_CAMEL}Opt.isPresent() && !${TYPE_NAME_LOWER_CAMEL}Opt.get().getDeleted(),
                 "记录不存在", HttpStatus.NOT_FOUND.value());
         final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL} = ${TYPE_NAME_LOWER_CAMEL}Manager.convert(dto);

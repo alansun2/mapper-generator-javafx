@@ -1,10 +1,10 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import com.sy.common.bo.Page;
-import com.sy.common.config.response.ResWrapper;
 <#assign suffixs = ["DTO", "PageDTO", "Service", "PageVO", "VO"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
+import com.sysafari.common.core.bo.Page;
+import com.sysafari.common.rest.annotations.ResWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

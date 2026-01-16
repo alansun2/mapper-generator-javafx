@@ -27,13 +27,13 @@ public class SelectListMethodGenerator extends AbstractJavaMapperMethodGenerator
         returnType.addTypeArgument(listType);
         method.setReturnType(returnType);
 
-        method.addParameter(new Parameter(new FullyQualifiedJavaType("com.sy.common.bo.Query"), "query"));
+        method.addParameter(new Parameter(new FullyQualifiedJavaType("com.sysafari.common.core.bo.Query"), "query"));
 
         // 添加 import
         Set<FullyQualifiedJavaType> importedTypes = new TreeSet<>();
         importedTypes.add(FullyQualifiedJavaType.getNewListInstance());
         importedTypes.add(listType);
-        importedTypes.add(new FullyQualifiedJavaType("com.sy.common.bo.Query"));
+        importedTypes.add(new FullyQualifiedJavaType("com.sysafari.common.core.bo.Query"));
         this.addImportedType(interfaze, importedTypes);
 
         context.getCommentGenerator().addGeneralMethodComment(method, introspectedTable);

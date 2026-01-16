@@ -1,5 +1,9 @@
-<#macro ignoreColumnCheck className name name1 suffixName1 suffixName2 items ignoreItemsMap>
+<#macro ignoreColumnCheck className name name1 suffixName1 suffixName2 items ignoreItemsMap needNew>
+<#--    判断needNew 为 null，如果为 null，默认值为 true-->
+        <#assign needNew = needNew!true>
+        <#if needNew>
         final ${className} ${name} = new ${className}();
+        </#if>
     <#assign ignoreItems1 = ignoreItemsMap[suffixName1]!>
     <#assign ignoreItems2 = ignoreItemsMap[suffixName2]!>
     <#list items as item>

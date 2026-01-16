@@ -30,7 +30,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Dao {
     public void insertSelective(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
         ${TYPE_NAME_LOWER_CAMEL}.setId(snowflakeIdGenerator.nextId());
         final int c = ${TYPE_NAME_LOWER_CAMEL}Mapper.insertSelective(${TYPE_NAME_LOWER_CAMEL});
-        AssertUtils.isTrue(c > 0, "插入失败");
+        AssertUtils.isTrue(c > 0, "保存失败");
     }
 
     public List<${TYPE_NAME_UPPER_CAMEL}> queryList(final Query query) {

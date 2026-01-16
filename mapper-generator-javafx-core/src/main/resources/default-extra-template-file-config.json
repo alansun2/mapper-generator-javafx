@@ -636,7 +636,7 @@
         "name": "PageDTO",
         "outputPath": "D:/project/xxx-service-client/src/main/java",
         "packageName": "com.test.service.dto.data.${DOMAIN}",
-        "superClass": "com.sy.common.bo.PageRequest"
+        "superClass": "com.sysafari.common.core.bo.PageRequest"
       },
       {
         "id": "manager-dao-4",
