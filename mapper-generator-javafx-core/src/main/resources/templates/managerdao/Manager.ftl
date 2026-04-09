@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class ${TYPE_NAME_UPPER_CAMEL}Manager {
 
     public ${TYPE_NAME_UPPER_CAMEL} convert(final ${TYPE_NAME_UPPER_CAMEL}DTO dto) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}" "${TYPE_NAME_LOWER_CAMEL}" "dto" "null" "DTO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}" "${TYPE_NAME_LOWER_CAMEL}" "dto" "null" "DTO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP true !/>
         return ${TYPE_NAME_LOWER_CAMEL};
     }
 
@@ -26,7 +26,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Manager {
     }
 
     private <T extends ${TYPE_NAME_UPPER_CAMEL}VO> T convert2VO(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}, T ${TYPE_NAME_LOWER_CAMEL}VO) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}" "VO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP! false/>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}VO" "${TYPE_NAME_LOWER_CAMEL}" "VO" "DO" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP false !/>
         return ${TYPE_NAME_LOWER_CAMEL}VO;
     }
 }

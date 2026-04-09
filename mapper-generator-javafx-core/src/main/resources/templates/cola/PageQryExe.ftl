@@ -39,7 +39,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}PageQryExe {
     }
 
     private ${TYPE_NAME_UPPER_CAMEL}PageDTO convert(${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}" "PageDTO" "null" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}PageDTO" "${TYPE_NAME_LOWER_CAMEL}" "PageDTO" "null" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP true !/>
         return ${TYPE_NAME_LOWER_CAMEL}PageDTO;
     }
 }

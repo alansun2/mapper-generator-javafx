@@ -21,7 +21,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}AddCmdExe {
     }
 
     static ${TYPE_NAME_UPPER_CAMEL}DO convert(${TYPE_NAME_UPPER_CAMEL}Cmd cmd) {
-        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DO" "${TYPE_NAME_LOWER_CAMEL}DO" "cmd" "DO" "Cmd" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP!/>
+        <@ic.ignoreColumnCheck "${TYPE_NAME_UPPER_CAMEL}DO" "${TYPE_NAME_LOWER_CAMEL}DO" "cmd" "DO" "Cmd" FIELDS_UPPER_CAMELS IGNORE_FIELDS_MAP true !/>
         return ${TYPE_NAME_LOWER_CAMEL}DO;
     }
 }
