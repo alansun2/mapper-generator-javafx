@@ -60,7 +60,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}ServiceImpl implements ${TYPE_NAME_UPPER_CA
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void delete${TYPE_NAME_UPPER_CAMEL}ById(final Long id) {
-    final Optional<${TYPE_NAME_UPPER_CAMEL}> byIdOpt = ${TYPE_NAME_LOWER_CAMEL}Dao.queryById(id);
+        final Optional<${TYPE_NAME_UPPER_CAMEL}> byIdOpt = ${TYPE_NAME_LOWER_CAMEL}Dao.queryById(id);
         if (byIdOpt.isPresent() && !byIdOpt.get().getDeleted()) {
             ${TYPE_NAME_LOWER_CAMEL}Dao.deleteById(id);
         }
