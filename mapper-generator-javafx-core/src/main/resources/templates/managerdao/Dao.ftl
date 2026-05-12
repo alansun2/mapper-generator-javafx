@@ -1,20 +1,17 @@
 <#import "ignoreCheck.ftl" as ic>
 package ${PACKAGE};
 
-import com.sy.common.bo.Query;
 <#assign suffixs = ["", "Mapper"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
+import com.sysafari.common.core.bo.Query;
 import com.sysafari.common.core.utils.AssertUtils;
 import com.sysafari.common.snowflakegen.SnowflakeIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import tk.mybatis.mapper.entity.Example;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author ${author}
