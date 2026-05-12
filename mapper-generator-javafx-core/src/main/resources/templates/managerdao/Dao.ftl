@@ -3,6 +3,7 @@ package ${PACKAGE};
 
 <#assign suffixs = ["", "Mapper"]>
 <@ic.getPackage suffixs CUSTOM_PARAMS_MAP/>
+import com.sy.common.support.UserResourceHolder;
 import com.sysafari.common.core.bo.Query;
 import com.sysafari.common.core.utils.AssertUtils;
 import com.sysafari.common.snowflakegen.SnowflakeIdGenerator;
@@ -26,6 +27,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Dao {
 
     public void insertSelective(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
         ${TYPE_NAME_LOWER_CAMEL}.setId(snowflakeIdGenerator.nextId());
+        ${TYPE_NAME_LOWER_CAMEL}.setCreateBy(UserResourceHolder.getCreateBy());
         final int c = ${TYPE_NAME_LOWER_CAMEL}Mapper.insertSelective(${TYPE_NAME_LOWER_CAMEL});
         AssertUtils.isTrue(c > 0, "保存失败");
     }
@@ -42,6 +44,7 @@ public class ${TYPE_NAME_UPPER_CAMEL}Dao {
 
     public void updateByIdSelective(final ${TYPE_NAME_UPPER_CAMEL} ${TYPE_NAME_LOWER_CAMEL}) {
         final Example example = new Example(${TYPE_NAME_UPPER_CAMEL}.class);
+        ${TYPE_NAME_LOWER_CAMEL}.setCreateBy(UserResourceHolder.getCreateBy());
         example.createCriteria().andEqualTo("id", ${TYPE_NAME_LOWER_CAMEL}.getId()).andEqualTo("deleted", false);
         final int c = ${TYPE_NAME_LOWER_CAMEL}Mapper.updateByExampleSelective(${TYPE_NAME_LOWER_CAMEL}, example);
         AssertUtils.isTrue(c > 0, "更新失败, 可能数据已删除");
